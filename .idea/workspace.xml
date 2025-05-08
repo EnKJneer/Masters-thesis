@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/Master_thesis.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataSets/FilterData.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/experiment_material_dependency.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Helper/handling_hyperopt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Helper/handling_plots.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_all_curr/Hyperparameter_all_curr_2025_04_08_18_50_11.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_all_curr/default_search_space.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_06_17_2024_11_04_56.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_07_08_2024_10_23_28.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_07_08_2024_16_42_34.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_07_15_2024_11_57_38.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/default_search_space.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_06_17_2024_11_04_56.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_07_08_2024_10_23_28.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_07_08_2024_16_42_34.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_07_15_2024_11_57_38.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/model_base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2viOkGQWWGApAJ2VFNo496mpVhy" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.experiment_material_dependency.executor&quot;: &quot;Run&quot;,
+    &quot;Python.handling_plots.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
+        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="" />
+      <created>1744624568374</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744624568374</updated>
+      <workItem from="1744624569400" duration="6312000" />
+      <workItem from="1744641474559" duration="1449000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Experiments/experiment_material_dependency.py</url>
+          <line>82</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Master_thesis$handling_plots.coverage" NAME="handling_plots Coverage Results" MODIFIED="1744631419667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
+    <SUITE FILE_PATH="coverage/Master_thesis$experiment_material_dependency.coverage" NAME="experiment_material_dependency Coverage Results" MODIFIED="1744641603565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments" />
+  </component>
+</project>
