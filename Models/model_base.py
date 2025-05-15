@@ -27,43 +27,6 @@ class BaseModel(ABC):
     @abstractmethod
     def test_model(self, X, y_target):
         pass
-    @staticmethod
-    def preprocessing(X, y, n=12):
-        """
-        Remove outliers from the input data and adjust the corresponding y values.
-
-        Parameters:
-        X (DataFrame or Series): The input data.
-        y (Series or DataFrame): The corresponding target values.
-        n (int): The number of standard deviations to consider for outlier removal. Default is 12.
-
-        Returns:
-        Tuple: The cleaned input data and the adjusted target values.
-        """
-        if isinstance(y, pd.Series):
-            # Calculate the mean and standard deviation for the target values
-            mean = y.mean()
-            std = y.std()
-
-            # Identify outliers in the target values
-            outliers = np.abs(y - mean) > n * std
-        elif isinstance(y, pd.DataFrame):
-            # Calculate the mean and standard deviation for each feature
-            mean = y.mean(axis=0)
-            std = y.std(axis=0)
-
-            # Identify outliers
-            outliers = np.abs(y - mean) > n * std
-            outliers = outliers.any(axis=1)
-        else:
-            raise ValueError("y must be a pandas Series or DataFrame")
-
-        # Remove rows that contain outliers
-        x_cleaned = X[~outliers]
-        y_cleaned = y[~outliers]
-
-        return x_cleaned, y_cleaned
-
 
 class BaseNetModel(BaseModel, nn.Module):
     @abstractmethod
@@ -104,10 +67,6 @@ class BaseNetModel(BaseModel, nn.Module):
 
     def train_model(self, X_train, y_train, X_val, y_val, learning_rate=0.0001, n_epochs=100, patience=20, draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
         print(self.device)
-
-        # Preprocess the data to remove outliers
-        X_train, y_train = self.preprocessing(X_train, y_train, n=n_outlier)
-        X_val, y_val = self.preprocessing(X_val, y_val, n=n_outlier)
 
         X_train_scaled = self.scale_data(X_train)
         X_val_scaled = self.scale_data(X_val)

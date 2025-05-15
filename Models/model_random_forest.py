@@ -84,10 +84,6 @@ class RandomForestModel(mb.BaseModel):
         best_val_error : float
             The best validation error achieved during training.
         """
-        # Preprocess the data to remove outliers
-        X_train, y_train = self.preprocessing(X_train, y_train, n=n_outlier)
-        X_val, y_val = self.preprocessing(X_val, y_val, n=n_outlier)
-
         best_val_error = float('inf')
 
         # Training loop (for compatibility, though Random Forest is not iterative)
@@ -137,4 +133,5 @@ class RandomForestModel(mb.BaseModel):
         loss = self.criterion(y_target, y_pred)
         return loss, y_pred
 
+rf_reference = RandomForestModel(n_estimators=10, max_features = 1, min_samples_split = 2, min_samples_leaf = 1)
 # ToDo: Graident Boosting hinzufügen

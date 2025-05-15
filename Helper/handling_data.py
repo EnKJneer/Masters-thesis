@@ -31,21 +31,45 @@ HEADER_x = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim",
 HEADER_y = ["curr_x", "curr_y", "curr_z", "curr_sp"]
 
 # Datenklassen
-"""
-Datensätze bekannt bis Material_Bauteil_unbekannt werden verwendet um zu messen wie die Modelle sich verhalten, wenn gewisses wissen nicht in den Trainingsdaten enthalten ist.
-St_Tr_Mat_1 wurde dabei aus dem Datensatz rausgenommen, da es da scheinbar zu einer anomalie gekommen ist.
-CMX_St_Val_Mat_2 wird als Testsdatensatz verwendet
-"""
-
 class DataClass:
-    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, percentage_used = 100):
+    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, percentage_used=100, load_all_geometrie_variations=True):
         self.name = name
         self.folder = folder
-        self.training_data_paths = training_data_paths
-        self.validation_data_paths = validation_data_paths
+        self.training_validation_datas = training_validation_datas
         self.testing_data_paths = testing_data_paths
         self.target_channels = target_channels
         self.percentage_used = percentage_used
+        self.load_all_geometrie_variations = load_all_geometrie_variations
+
+
+folder_data = '..\\DataSets\DataFiltered'
+Al_Al_Gear_Plate = DataClass('Al_Al_Gear_Plate', folder_data,
+                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                    ['AL_2007_T4_Plate_Normal_3.csv'],
+                                  ["curr_x"],100,)
+Al_St_Gear_Gear = DataClass('Al_St_Gear_Gear', folder_data,
+                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                    ['S235JR_Gear_Normal_3.csv'],
+                                  ["curr_x"],100,)
+Al_St_Gear_Plate = DataClass('Al_St_Gear_Plate', folder_data,
+                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                    ['S235JR_Plate_Normal_3.csv'],
+                                  ["curr_x"],100,)
+dataSets_list_Gear = [Al_Al_Gear_Plate,Al_St_Gear_Gear,Al_St_Gear_Plate]
+
+Al_Al_Plate_Gear = DataClass('Al_Al_Plate_Gear', folder_data,
+                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                    ['AL_2007_T4_Gear_Normal_3.csv'],
+                                  ["curr_x"],100,)
+Al_St_Plate_Plate = DataClass('Al_St_Plate_Plate', folder_data,
+                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                    ['S235JR_Plate_Normal_3.csv'],
+                                  ["curr_x"],100,)
+Al_St_Plate_Gear = DataClass('Al_St_Plate_Gear', folder_data,
+                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                    ['S235JR_Gear_Normal_3.csv'],
+                                  ["curr_x"],100,)
+dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
 def create_full_ml_vector_optimized_old(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """
@@ -246,102 +270,6 @@ def replace_outliners(data, threshold=10):
     # Replace outliers with the standard deviation multiplied by the threshold
     data_copy[z_scores > threshold] = 0
     return data_copy
-
-def load_data(data_params: DataClass, past_values=2, future_values=2, window_size=1, homogenous_data=False, keep_separate=False):
-    """
-    Loads and preprocesses data for training, validation, and testing.
-
-    Parameters
-    ----------
-    data_params : DataClass
-        A DataClass containing the data parameters for loading the dataset.
-    past_values : int, optional
-        The number of past values to consider. The default is 2.
-    future_values : int, optional
-        The number of future values to predict. The default is 2.
-    window_size : int, optional
-        The size of the sliding window. The default is 1.
-    homogenous_data : bool, optional
-        Whether to compute the mean of the training data. The default is False.
-        If False, the data will be concatenated.
-    keep_separate : bool, optional
-        Whether to keep the data separate or combine it. The default is False.
-
-    Returns
-    -------
-    tuple
-        A tuple containing the preprocessed training, validation, and testing data as Pandas DataFrames:
-        - X_train : pd.DataFrame
-            Preprocessed training data features.
-        - y_train : pd.DataFrame
-            Preprocessed training data labels.
-        - X_val : pd.DataFrame
-            Preprocessed validation data features.
-        - y_val : pd.DataFrame
-            Preprocessed validation data labels.
-        - X_test : pd.DataFrame
-            Preprocessed test data features.
-        - y_test : pd.DataFrame
-            Preprocessed test data labels.
-    """
-    if window_size == 0:
-        window_size = 1
-    elif window_size < 0:
-        window_size = abs(window_size)
-
-    # Getting validation data to right format:
-    fulltrainingdatas = read_fulldata(data_params.training_data_paths, data_params.folder)
-    fulltestdatas = read_fulldata(data_params.testing_data_paths, data_params.folder)
-    fullvaldatas = read_fulldata(data_params.validation_data_paths, data_params.folder)
-
-    # Apply rolling mean to each DataFrame in the lists
-    training_datas = apply_action(fulltrainingdatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-    test_datas = apply_action(fulltestdatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-    val_datas = apply_action(fullvaldatas,lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-
-    # Input data
-    X_train = apply_action(training_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
-    X_val = apply_action(val_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
-    X_test = apply_action(test_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
-
-    # Extract the target columns from each DataFrame in the lists
-    training_targets = apply_action(fulltrainingdatas, lambda data: data[data_params.target_channels])
-    test_targets = apply_action(fulltestdatas, lambda data: data[data_params.target_channels])
-    val_targets = apply_action(fullvaldatas, lambda data: data[data_params.target_channels])
-
-    # Output data
-    y_train = apply_action(training_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
-    y_val = apply_action(val_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
-    y_test = apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
-
-    if past_values + future_values != 0:
-        y_train = apply_action(y_train, lambda target: target.iloc[past_values:-future_values])
-        y_val = apply_action(y_val, lambda target: target.iloc[past_values:-future_values])
-        y_test = apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
-
-    if not keep_separate:
-        if not homogenous_data:
-            if isinstance(X_train, list):
-                X_train = pd.concat(X_train, axis=0).reset_index(drop=True)
-                y_train = pd.concat(y_train, axis=0).reset_index(drop=True)
-            if isinstance(X_val, list):
-                X_val = pd.concat(X_val, axis=0).reset_index(drop=True)
-                y_val = pd.concat(y_val, axis=0).reset_index(drop=True)
-            if isinstance(X_test, list):
-                X_test = pd.concat(X_test, axis=0).reset_index(drop=True)
-                y_test = pd.concat(y_test, axis=0).reset_index(drop=True)
-        else:
-            if isinstance(X_train, list):
-                X_train = pd.concat(X_train, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
-                y_train = pd.concat(y_train, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
-            if isinstance(X_val, list):
-                X_val = pd.concat(X_val, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
-                y_val = pd.concat(y_val, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
-            if isinstance(X_test, list):
-                X_test = pd.concat(X_test, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
-                y_test = pd.concat(y_test, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
-
-    return X_train, X_val, X_test, y_train, y_val, y_test
 
 def load_filtered_data(data_params: DataClass, past_values=2, future_values=2, window_size=1):
     """
@@ -587,6 +515,7 @@ def save_data(data, file_path):
     else:
         # If the file does not exist, create a new file
         data.to_csv(file_path, index=False, header=True)
+
 def add_pd_to_csv(file_path, data, header):
     if os.path.exists(file_path):
         # Read the existing file
@@ -608,17 +537,43 @@ def add_pd_to_csv(file_path, data, header):
         data.to_csv(file_path, index=False)
         print(f"{file_path} created")
 
-class DataClass_new:
-    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, percentage_used=100, load_all_geometrie_variations=True):
-        self.name = name
-        self.folder = folder
-        self.training_validation_datas = training_validation_datas
-        self.testing_data_paths = testing_data_paths
-        self.target_channels = target_channels
-        self.percentage_used = percentage_used
-        self.load_all_geometrie_variations = load_all_geometrie_variations
+def preprocessing(X, y, n=12):
+    """
+    Remove outliers from the input data and adjust the corresponding y values.
 
-def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3):
+    Parameters:
+    X (DataFrame or Series): The input data.
+    y (Series or DataFrame): The corresponding target values.
+    n (int): The number of standard deviations to consider for outlier removal. Default is 12.
+
+    Returns:
+    Tuple: The cleaned input data and the adjusted target values.
+    """
+    if isinstance(y, pd.Series):
+        # Calculate the mean and standard deviation for the target values
+        mean = y.mean()
+        std = y.std()
+
+        # Identify outliers in the target values
+        outliers = np.abs(y - mean) > n * std
+    elif isinstance(y, pd.DataFrame):
+        # Calculate the mean and standard deviation for each feature
+        mean = y.mean(axis=0)
+        std = y.std(axis=0)
+
+        # Identify outliers
+        outliers = np.abs(y - mean) > n * std
+        outliers = outliers.any(axis=1)
+    else:
+        raise ValueError("y must be a pandas Series or DataFrame")
+
+    # Remove rows that contain outliers
+    x_cleaned = X[~outliers]
+    y_cleaned = y[~outliers]
+
+    return x_cleaned, y_cleaned
+
+def load_data(data_params: DataClass, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, preprocessing=True, n=12):
     """
     Loads and preprocesses data for training, validation, and testing.
 
@@ -636,6 +591,10 @@ def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, wi
         If True, return lists of DataFrames instead of concatenated ones.
     N : int, optional
         Number of packages per file (for train/val split). Default is 3.
+    preprocessing : bool, optional
+        If True, remove outliers from training and validation data. The default is True.
+    n : int, optional
+        The number of standard deviations to consider for outlier removal. Default is 12.
 
     Returns
     -------
@@ -683,6 +642,10 @@ def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, wi
             X_train_parts = X_split[:mid] + X_split[mid+1:]
             y_train_parts = y_split[:mid] + y_split[mid+1:]
 
+            if preprocessing:
+                X_train_parts, y_train_parts = zip(*[preprocessing(X, y, n) for X, y in zip(X_train_parts, y_train_parts)])
+                X_val_part, y_val_part = preprocessing(X_val_part, y_val_part, n)
+
             all_X_train.extend(X_train_parts)
             all_y_train.extend(y_train_parts)
             all_X_val.append(X_val_part)
@@ -697,4 +660,5 @@ def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, wi
         y_val = pd.concat(all_y_val).reset_index(drop=True)
         X_test = pd.concat(X_test).reset_index(drop=True)
         y_test = pd.concat(y_test).reset_index(drop=True)
+
         return X_train, X_val, X_test, y_train, y_val, y_test

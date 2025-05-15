@@ -71,6 +71,8 @@ class Net(mb.BaseNetModel):
         x = self.fc3(x)
         return x
 
+def get_reference_net(input_size):
+    return Net(input_size, 1, input_size, 3, nn.ReLU)
 
 class QuantileIdNetModel(Net):
     def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform'):
@@ -113,7 +115,6 @@ class QuantileIdNetModel(Net):
         X_scaled = np.hstack((X_quantile, X))
         return X_scaled
 
-
 class RiemannQuantileClassifierNet(Net):
     def __init__(self, input_size, output_size=1, n_neurons=64, n_layers=3, activation=nn.ReLU, min_bins=8,
                  max_bins=64):
@@ -140,9 +141,6 @@ class RiemannQuantileClassifierNet(Net):
     def train_model(self, X_train, y_train, X_val, y_val, learning_rate=0.0001, n_epochs=100, patience=20,
                     draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
         print(self.device)
-
-        X_train, y_train = self.preprocessing(X_train, y_train, n=n_outlier)
-        X_val, y_val = self.preprocessing(X_val, y_val, n=n_outlier)
 
         y_train_discrete = self.discretize_targets(y_train)
         y_val_discrete = self.discretize_targets(y_val)
@@ -218,7 +216,6 @@ class RiemannQuantileClassifierNet(Net):
 
         return loss.item(), y_pred
 
-
 # ToDo: Im gegensatz zu RiemanQuantileClassifier funktioniert das noch nicht, Theoretisch müsste normierung ergebniss aber verbessern
 class QuantileIdRiemannClassifierNet(Net):
     def __init__(self, input_size, output_size=1, n_neurons=64, n_layers=3, activation=nn.ReLU, min_bins=8, max_bins=64,
@@ -258,9 +255,6 @@ class QuantileIdRiemannClassifierNet(Net):
     def train_model(self, X_train, y_train, X_val, y_val, learning_rate=0.0001, n_epochs=100, patience=20,
                     draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
         print(self.device)
-
-        X_train, y_train = self.preprocessing(X_train, y_train, n=n_outlier)
-        X_val, y_val = self.preprocessing(X_val, y_val, n=n_outlier)
 
         y_train_discrete = self.discretize_targets(y_train)
         y_val_discrete = self.discretize_targets(y_val)
