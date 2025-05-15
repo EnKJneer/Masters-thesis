@@ -4,32 +4,46 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Master_thesis.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataSets/FilterData.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/experiment_material_dependency.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Helper/handling_hyperopt.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Helper/handling_plots.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_all_curr/Hyperparameter_all_curr_2025_04_08_18_50_11.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_all_curr/default_search_space.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_06_17_2024_11_04_56.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_07_08_2024_10_23_28.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_07_08_2024_16_42_34.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_Neural_Net_07_15_2024_11_57_38.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/default_search_space.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_06_17_2024_11_04_56.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_07_08_2024_10_23_28.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_07_08_2024_16_42_34.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/search_space_07_15_2024_11_57_38.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/model_base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
+      <change afterPath="$PROJECT_DIR$/Experiments/Load_Data/Load_Data_Method_Comparsion.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/ML_Model_Improvmend/Setup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/ML_Model_Improvmend/Visualise.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/Hyperparameter_all_curr_NN2025_04_15_16_55_15.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/QuantilIDNet/Hyperparameter_Neural_Net_QId2025_04_28_14_51_37.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/QuantilIDNet/Hyperparameter_Neural_Net_QId2025_04_28_14_53_23.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/QuantilIDNet/Hyperparameter_Neural_Net_QId2025_04_28_14_55_34.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/QuantilIDNet/Hyperparameter_Neural_Net_QId2025_04_28_14_57_26.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/QuantilIDNet/Hyperparameter_Neural_Net_QId2025_04_28_15_02_33.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/QuantilIDNet/default_search_space.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest/Hyperparameter_all_curr_RF2025_04_15_17_19_18.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest/Hyperparameter_all_curr_RF2025_04_15_17_21_58.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest/Hyperparameter_all_curr_RF2025_04_15_21_04_28.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest/Hyperparameter_all_curr_RF2025_04_17_13_19_50.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest/default_search_space.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini/Hyperparameter_RF_mini2025_04_22_16_01_12.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini/Hyperparameter_RF_mini2025_04_22_16_01_42.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini/Hyperparameter_RF_mini2025_04_22_16_02_14.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini/Hyperparameter_RF_mini2025_04_22_16_02_39.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini/default_search_space.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini_moreData/Hyperparameter_RF_mini_2025_04_28_15_04_27.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini_moreData/Hyperparameter_RF_mini_2025_04_28_15_05_20.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini_moreData/Hyperparameter_RF_mini_2025_04_28_15_06_12.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini_moreData/Hyperparameter_RF_mini_2025_04_28_15_07_05.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RandomForest_mini_moreData/default_search_space.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RiemannQuantileNet/Hyperparameter_Neural_Net_Riemann2025_04_29_15_20_53.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RiemannQuantileNet/Hyperparameter_Neural_Net_Riemann2025_04_29_15_22_46.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RiemannQuantileNet/Hyperparameter_Neural_Net_Riemann2025_04_29_15_24_25.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RiemannQuantileNet/Hyperparameter_Neural_Net_Riemann2025_04_29_15_26_16.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RiemannQuantileNet/Hyperparameter_Neural_Net_Riemann2025_04_29_15_27_55.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/Hyperparameter/RiemannQuantileNet/default_search_space.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/DataFiltered/AL_2007_T4_Gear_Blowhole_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Anomalie/AL_2007_T4_Gear_Blowhole_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/DataFiltered/AL_2007_T4_Gear_Blowhole_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Anomalie/AL_2007_T4_Gear_Blowhole_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/DataFiltered/AL_2007_T4_Gear_Blowhole_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Anomalie/AL_2007_T4_Gear_Blowhole_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Helper/handling_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/default_search_space.json" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Hyperparameter/NeuralNet_curr_x/default_search_space.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_neural_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +60,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;EnKJneer&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/EnKJneer/Master-Thesis.git&quot;,
+    &quot;accountId&quot;: &quot;088ad780-0db9-41ba-960c-165a52c47ef2&quot;
+  }
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
@@ -58,25 +84,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.experiment_material_dependency.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_plots.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Experiment.executor": "Run",
+    "Python.Load_Data_Method_Comparsion.executor": "Run",
+    "Python.experiment_material_dependency.executor": "Run",
+    "Python.handling_plots.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/Models/Hyperparameter",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Models\Hyperparameter" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Models" />
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets\DataFiltered" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets\Anomalie" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -97,7 +131,20 @@
       <updated>1744624568374</updated>
       <workItem from="1744624569400" duration="6312000" />
       <workItem from="1744641474559" duration="1449000" />
+      <workItem from="1746702290740" duration="297000" />
+      <workItem from="1747056147839" duration="9955000" />
+      <workItem from="1747208307058" duration="6482000" />
+      <workItem from="1747229619359" duration="9784000" />
     </task>
+    <task id="LOCAL-00001" summary="Initial Commit">
+      <option name="closed" value="true" />
+      <created>1746702383368</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1746702383368</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,6 +161,10 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial Commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -127,6 +178,8 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Master_thesis$handling_plots.coverage" NAME="handling_plots Coverage Results" MODIFIED="1744631419667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Load_Data_Method_Comparsion.coverage" NAME="Load_Data_Method_Comparsion Coverage Results" MODIFIED="1747239422807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1747232909733" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data" />
     <SUITE FILE_PATH="coverage/Master_thesis$experiment_material_dependency.coverage" NAME="experiment_material_dependency Coverage Results" MODIFIED="1744641603565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments" />
   </component>
 </project>

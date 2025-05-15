@@ -1,0 +1,14 @@
+DataSet                 | Model           | Method | MSE        | StdDev
+---------------------------------------------------------------------------
+Al_Al_Gear_Plate          | Neural_Net      | Old    | 0.145195 | 0.051821
+Al_Al_Gear_Plate          | Neural_Net      | New    | 0.094348 | 0.031056
+Al_Al_Gear_Plate          | Random_Forest   | Old    | 0.361844 | 0.002337
+Al_Al_Gear_Plate          | Random_Forest   | New    | 0.097607 | 0.006752
+Al_St_Gear_Gear           | Neural_Net      | Old    | 1.709058 | 0.178204
+Al_St_Gear_Gear           | Neural_Net      | New    | 1.408334 | 0.173478
+Al_St_Gear_Gear           | Random_Forest   | Old    | 1.299837 | 0.106086
+Al_St_Gear_Gear           | Random_Forest   | New    | 0.475503 | 0.065700
+Al_St_Gear_Plate          | Neural_Net      | Old    | 1.458249 | 0.262482
+Al_St_Gear_Plate          | Neural_Net      | New    | 1.329656 | 0.097979
+Al_St_Gear_Plate          | Random_Forest   | Old    | 1.494429 | 0.163520
+Al_St_Gear_Plate          | Random_Forest   | New    | 0.798266 | 0.154839

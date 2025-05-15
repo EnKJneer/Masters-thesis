@@ -399,6 +399,54 @@ def load_filtered_data(data_params: DataClass, past_values=2, future_values=2, w
         base_names.append('_'.join(name_without_extension.split('_')[:-1]))
     return training_datas, val_datas, test_datas, base_names
 
+def get_test_data_as_pd(data_params: DataClass, past_values=2, future_values=2, window_size=1):
+    """
+    Loads and preprocesses test data for evaluation purposes.
+    Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
+
+    Parameters
+    ----------
+    data_params : DataClass
+        A DataClass containing the data parameters for loading the dataset.
+    past_values : int, optional
+        The number of past values to consider for each sample. The default is 2.
+    future_values : int, optional
+        The number of future values to predict for each sample. The default is 2.
+    window_size : int, optional
+        The size of the sliding window for calculating the rolling mean. The default is 1.
+        If 0 or negative, it is adjusted to a positive value.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the preprocessed test data and base names of the test files:
+        - test_datas : list of pd.DataFrame
+            Preprocessed test data with rolling mean applied.
+        - base_names : list of str
+            Base names of the test files without the index part.
+    """
+    if window_size == 0:
+        window_size = 1
+    elif window_size < 0:
+        window_size = abs(window_size)
+
+    # Getting validation data to right format:
+    fulltestdatas = read_fulldata(data_params.testing_data_paths, data_params.folder)
+
+    # Apply rolling mean to each DataFrame in the lists
+    test_datas = apply_action(fulltestdatas, lambda data: data[HEADER].rolling(window=window_size, min_periods=1).mean())
+
+    if past_values + future_values != 0:
+        test_datas = apply_action(test_datas, lambda target: target.iloc[past_values:-future_values])
+
+    base_names = []
+    for path in data_params.testing_data_paths:
+        file_name = os.path.basename(path)
+        name_without_extension = os.path.splitext(file_name)[0]
+        # Split the name by underscore and remove the last part (the index)
+        base_names.append('_'.join(name_without_extension.split('_')[:-1]))
+    return pd.concat(test_datas, axis=0).reset_index(drop=True), base_names
+
 def extract_base_names(file_names):
     """
     Extracts the base names from a list of file names, removing the index and file extension.
@@ -447,106 +495,6 @@ def get_csv_files(folder_path):
     csv_file_names = [os.path.basename(file) for file in csv_files]
 
     return csv_file_names
-def count_base_names(file_names):
-    """
-    Counts the occurrences of base names in a list of file names.
-
-    Parameters
-    ----------
-    file_names : list of str
-        A list of file names with the format 'name_example_index.extension'.
-
-    Returns
-    -------
-    dict
-        A dictionary with base names as keys and their occurrence counts as values.
-    """
-    base_names = []
-
-    for file_name in file_names:
-        # Remove the file extension
-        name_without_extension = os.path.splitext(file_name)[0]
-
-        # Split the name by underscore and remove the last part (the index)
-        base_name = '_'.join(name_without_extension.split('_')[:-1])
-
-        # Add the base name to the list
-        base_names.append(base_name)
-
-    # Count occurrences of each base name
-    base_name_counts = Counter(base_names)
-
-    return dict(base_name_counts)
-def check_anomali_in_filename(anomalie_replacements, file_name):
-    """
-    Checks if any "anomali" value from the list of dictionaries is present in the file name.
-
-    Parameters
-    ----------
-    anomalie_replacements : list of dict
-        A list of dictionaries with "anomali" and "normal" keys.
-    file_name : str
-        The file name to check.
-
-    Returns
-    -------
-    bool
-        True if any "anomali" value is found in the file name, False otherwise.
-    """
-    for entry in anomalie_replacements:
-        anomali_value = entry.get("anomali")
-        if anomali_value and anomali_value in file_name:
-            return True
-    return False
-def replace_anomali_with_normal(anomalie_replacements, file_name):
-    """
-    Replaces substrings in the file name based on "anomali" and "normal" values from a list of dictionaries.
-
-    Parameters
-    ----------
-    anomalie_replacements : list of dict
-        A list of dictionaries with "anomali" and "normal" keys.
-    file_name : str
-        The file name to perform replacements on.
-
-    Returns
-    -------
-    str
-        The file name with replacements made.
-    """
-    for entry in anomalie_replacements:
-        anomali_value = entry.get("anomali")
-        normal_value = entry.get("normal")
-        if anomali_value and anomali_value in file_name:
-            file_name = file_name.replace(anomali_value, normal_value)
-    return file_name
-
-def get_DataClasses_old(folder_path, anomalie_replacements = [{"anomali": 'Blowhole', "normal": 'Normal'}]):
-    file_names = get_csv_files(folder_path)
-    base_names = extract_base_names(file_names)
-    base_name_counts = count_base_names(file_names)
-
-    data_classes = []
-
-    for name in base_names:
-        # Check if enough versions exist
-        if base_name_counts[name] >= 3:
-            # check if data contains anomalie
-            if anomalie_replacements is None or check_anomali_in_filename(anomalie_replacements, name):
-                training_name = [name + '_1.csv']
-                validation_name = [name + '_2.csv']
-                test_name = [name + '_3.csv']
-
-            else:
-                # training and validation data should be replaced with normal data
-                new_name = replace_anomali_with_normal(anomalie_replacements, name)
-                training_name = [new_name + '_1.csv']
-                validation_name = [new_name + '_2.csv']
-                test_name = [name + '_3.csv']
-
-            data_classes.append(DataClass(name, folder_path, training_name, validation_name, test_name))
-
-    return data_classes
 
 def get_material_lists(file_names, materials):
     filtered = {material: [name for name in file_names if material in name] for material in materials}
@@ -562,7 +510,6 @@ def filter_out_file_names(file_names, filters):
     :return: List of file names that do not contain any of the specified substrings.
     """
     return [file_name for file_name in file_names if not any(filter in file_name for filter in filters)]
-
 
 def get_DataClasses_material_spereated(folder_path, materials = ['AL_2007_T4', 'S235JR'], anomalies = ['Blowhole', 'Ano', 'Fehler']):
     file_names = get_csv_files(folder_path)
@@ -613,3 +560,141 @@ def create_DataClasses_from_base_names(folder_path, training_base_names, validat
     test_name = [file_name for file_name in file_names if any(name in file_name for name in test_base_names)]
 
     return DataClass(name, folder_path, training_name, validation_name, test_name)
+
+def save_data(data, file_path):
+    """
+    Saves the data to a CSV file. If the file already exists, existing columns
+    are overwritten and new columns are added.
+
+    Parameters:
+        data (pd.DataFrame): The new data to be saved.
+        file_path (string): String containing the file path.
+
+    Returns:
+        None
+    """
+    # Check if the file already exists
+    if os.path.exists(file_path):
+        # Read the existing file
+        existing_data = pd.read_csv(file_path)
+
+        # Update existing columns and add new columns
+        for col in data.columns:
+            existing_data[col] = data[col]
+
+        # Save the updated data back to the file
+        existing_data.to_csv(file_path, index=False, header=True)
+    else:
+        # If the file does not exist, create a new file
+        data.to_csv(file_path, index=False, header=True)
+def add_pd_to_csv(file_path, data, header):
+    if os.path.exists(file_path):
+        # Read the existing file
+        existing_data = pd.read_csv(file_path)
+
+        # Check if header columns already exist
+        if all(col in existing_data.columns for col in header):
+            # Update the existing columns with new data
+            existing_data.update(data)
+        else:
+            # Concatenate new columns to the existing data
+            existing_data = pd.concat([existing_data, data], axis=1)
+
+        # Save the combined data
+        existing_data.to_csv(file_path, index=False)
+        print(f"{file_path} updated")
+    else:
+        # Create the file with the new data
+        data.to_csv(file_path, index=False)
+        print(f"{file_path} created")
+
+class DataClass_new:
+    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, percentage_used=100, load_all_geometrie_variations=True):
+        self.name = name
+        self.folder = folder
+        self.training_validation_datas = training_validation_datas
+        self.testing_data_paths = testing_data_paths
+        self.target_channels = target_channels
+        self.percentage_used = percentage_used
+        self.load_all_geometrie_variations = load_all_geometrie_variations
+
+def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3):
+    """
+    Loads and preprocesses data for training, validation, and testing.
+
+    Parameters
+    ----------
+    data_params : DataClass_new
+        A DataClass_new containing the data parameters for loading the dataset.
+    past_values : int, optional
+        The number of past values to consider. The default is 2.
+    future_values : int, optional
+        The number of future values to predict. The default is 2.
+    window_size : int, optional
+        The size of the sliding window. The default is 1.
+    keep_separate : bool, optional
+        If True, return lists of DataFrames instead of concatenated ones.
+    N : int, optional
+        Number of packages per file (for train/val split). Default is 3.
+
+    Returns
+    -------
+    tuple
+        X_train, X_val, X_test, y_train, y_val, y_test
+    """
+    if window_size <= 0:
+        window_size = 1
+
+    # Load test data
+    fulltestdatas = read_fulldata(data_params.testing_data_paths, data_params.folder)
+    test_datas = apply_action(fulltestdatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+    X_test = apply_action(test_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+    test_targets = apply_action(fulltestdatas, lambda data: data[data_params.target_channels])
+    y_test = apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
+    if past_values + future_values != 0:
+        y_test = apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
+
+    # Namen der Testdateien zum Ausschluss
+    test_files = set(os.path.basename(p) for p in data_params.testing_data_paths)
+
+    # Trainings- und Validierungsdaten vorbereiten
+    all_X_train, all_y_train = [], []
+    all_X_val, all_y_val = [], []
+
+    for name in data_params.training_validation_datas:
+        pattern = f"{name}_*.csv"
+        files = glob.glob(os.path.join(data_params.folder, pattern))
+        files = [f for f in files if os.path.basename(f) not in test_files]
+
+        file_datas = read_fulldata(files, data_params.folder)
+        file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+        file_datas_y = apply_action(file_datas, lambda data: data[data_params.target_channels].rolling(window=window_size, min_periods=1).mean())
+
+        X_files = apply_action(file_datas_x, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+        y_files = apply_action(file_datas_y, lambda target: target.iloc[past_values:-future_values] if past_values + future_values != 0 else target)
+
+        for X_df, y_df in zip(X_files, y_files):
+            X_split = np.array_split(X_df, N)
+            y_split = np.array_split(y_df, N)
+            # einfache Regel: mittleres Paket = val, Rest = train
+            mid = N // 2
+            X_val_part = X_split[mid]
+            y_val_part = y_split[mid]
+            X_train_parts = X_split[:mid] + X_split[mid+1:]
+            y_train_parts = y_split[:mid] + y_split[mid+1:]
+
+            all_X_train.extend(X_train_parts)
+            all_y_train.extend(y_train_parts)
+            all_X_val.append(X_val_part)
+            all_y_val.append(y_val_part)
+
+    if keep_separate:
+        return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
+    else:
+        X_train = pd.concat(all_X_train).reset_index(drop=True)
+        y_train = pd.concat(all_y_train).reset_index(drop=True)
+        X_val = pd.concat(all_X_val).reset_index(drop=True)
+        y_val = pd.concat(all_y_val).reset_index(drop=True)
+        X_test = pd.concat(X_test).reset_index(drop=True)
+        y_test = pd.concat(y_test).reset_index(drop=True)
+        return X_train, X_val, X_test, y_train, y_val, y_test
