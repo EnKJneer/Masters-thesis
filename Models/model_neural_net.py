@@ -21,7 +21,7 @@ import Models.model_base as mb
 
 # Defines a configurable neural network
 class Net(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU):
+    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, activation=nn.ReLU, learning_rate=0.0001, name = "Neural_Net"):
         """
         Initializes a configurable neural network.
 
@@ -31,9 +31,9 @@ class Net(mb.BaseNetModel):
             The number of input features.
         output_size : int
             The number of output features.
-        n_neurons : int
-            The number of neurons in each hidden layer.
-        n_layers : int
+        hidden_size : int
+            The number of features in each hidden layer.
+        n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
             The activation function to be used in the hidden layers. The default is nn.ReLU.
@@ -43,13 +43,18 @@ class Net(mb.BaseNetModel):
         None
         """
         super(Net, self).__init__()
-        self.fc1 = nn.Linear(input_size, n_neurons)
+        self.fc1 = nn.Linear(input_size, n_hidden_size)
         self.activation = activation()  # instantiate the activation function
-        self.fcs = nn.ModuleList([nn.Linear(n_neurons, n_neurons) for _ in range(n_layers - 2)])
-        self.fc3 = nn.Linear(n_neurons, output_size)
+        self.fcs = nn.ModuleList([nn.Linear(n_hidden_size, n_hidden_size) for _ in range(n_hidden_layers)])
+        self.fc3 = nn.Linear(n_hidden_size, output_size)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
+        # Save parameter for documentation
+        self.learning_rate = learning_rate
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
+        self.name = name
 
     def forward(self, x):
         """
@@ -72,7 +77,82 @@ class Net(mb.BaseNetModel):
         return x
 
 def get_reference_net(input_size):
-    return Net(input_size, 1, input_size, 3, nn.ReLU)
+    """
+    Get the reference neural network
+
+    Parameters
+    ----------
+    input_size : int
+        The number of input features.
+
+    Returns
+    -------
+    Net(input_size, 1, input_size, n_hidden_layers=1, nn.ReLU, 0.001)
+    """
+    return Net(input_size, 1, input_size, 1, learning_rate=0.001)
+
+class RNN(mb.BaseNetModel):
+    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, activation=nn.ReLU, learning_rate=0.0001, name = "Recurrent_Neural_Net", batched_input = True):
+        """
+        Initializes a configurable recurrent neural network.
+
+        Parameters
+        ----------
+        input_size : int
+            The number of input features.
+        output_size : int
+            The number of output features.
+        n_hidden_size : int
+            The number of features in each hidden layer.
+        n_hidden_layers : int
+            The number of hidden layers in the network.
+        activation : torch.nn.Module, optional
+            The activation function to be used in the hidden layers. The default is nn.ReLU.
+        name: str
+            The name of the model.
+        batched_input : bool
+            Is the input batched or not. Default is True.
+        Returns
+        -------
+        None
+        """
+        super(RNN, self).__init__()
+        self.rnn = nn.RNN(input_size, n_hidden_size, n_hidden_layers, batch_first=batched_input)
+        self.fc = nn.Linear(n_hidden_size, output_size)
+        self.activation = activation()
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+        # Save parameter for documentation
+        self.learning_rate = learning_rate
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
+        self.name = name
+
+    def forward(self, x):
+        """
+        Defines the forward pass of the recurrent neural network.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor to the neural network.
+
+        Returns
+        -------
+        x : torch.Tensor
+            The output tensor from the neural network.
+        """
+        # Initialize hidden state
+        h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
+
+        # Forward pass through RNN layer
+        out, _ = self.rnn(x, h0)
+
+        # Decode the hidden state of the last time step
+        out = self.fc(out[:, -1, :])
+        out = self.activation(out)
+        return out
 
 class QuantileIdNetModel(Net):
     def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform'):
@@ -163,6 +243,9 @@ class RiemannQuantileClassifierNet(Net):
             self.train()
             optimizer.zero_grad()
             y_pred = self(X_train)
+            # TODO: Prüfen was stimmt
+            # logits = self.predict(X_tensor)
+            # loss = self.loss_fn(logits, torch.tensor(y_target_discrete))
             loss = self.criterion(y_train_tensor, y_pred)
             loss.backward()
             optimizer.step()

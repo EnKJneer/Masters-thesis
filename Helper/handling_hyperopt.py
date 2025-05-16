@@ -134,65 +134,17 @@ class Objective:
             input_size = X_train.shape[1]
             output_size = y_train.T.shape[0] if len(y_train.shape) > 1 else 1  # handle single output case
 
-            # Use the groups from the grouped search_space if available
-            if is_grouped(self.search_space):
-                model_params = {key: params[key] for key in self.search_space['model_parameters'].keys()}
-                hyp_params = {key: params[key] for key in self.search_space['hyperparameters'].keys()}
-            else:
-                model_params = {key: value for key, value in params.items() if key != 'learning_rate'}
-                hyp_params = {key: value for key, value in params.items() if key == 'learning_rate'}
-
             # Initialize the model with model parameters and move it to the appropriate device
-            model = self.model(input_size=input_size, output_size=output_size, **model_params).to(device)
+            model = self.model(input_size=input_size, output_size=output_size, **params).to(device)
             # Train the model and get the validation error
-            val_error = model.train_model(X_train, y_train, X_val, y_val, **hyp_params, n_epochs=self.n_epochs, trial=trial_prun)
+            val_error = model.train_model(X_train, y_train, X_val, y_val, n_epochs=self.n_epochs, trial=trial_prun)
         else:
             # Train the model and get the validation error
             val_error, _ = self.model(X_train, y_train, X_val, y_val, **params, n_epochs=self.n_epochs, trial=trial_prun)
 
         return val_error
 
-"""
-# dient als beispiel muss für jede analyse neu geschrieben werden
-def objective(trial, n_epochs):
-    '''
-    Defines the objective function for hyperparameter optimization of an NN using Optuna.
-    (Only as example)
-    
-    Parameters
-    ----------
-    trial : optuna.trial.Trial
-        A trial object that provides methods to suggest hyperparameter values.
-    
-    Returns
-    -------
-    float
-        The validation error, which is the objective value to be minimized.
-    '''
-    # Define the search space for the hyperparameters
-    n_layers = trial.suggest_int('n_layers', search_space['n_layers'][0], search_space['n_layers'][1])
-    n_neurons = trial.suggest_int('n_neurons', search_space['n_neurons'][0], search_space['n_neurons'][1]) # trial.suggest_int('n_neurons', 2, 128)
-    lr = trial.suggest_float('learning_rate', search_space['learning_rate'][0], search_space['learning_rate'][1], log=True)
-    #activation = trial.suggest_categorical('activation', search_space['activation'])
-    activation = 'ReLU'
-
-    # Load the data    
-    X_train, X_val, X_test, y_train, y_val, y_test = hda.load_data(data_params)
-
-    # Train the neural network and compute the validation error
-    val_error, model = mnn.train_model(X_train, y_train, X_val, y_val, n_layers, n_neurons, activation, lr, NUMBEROFEPOCHS)
-    
-    # Report intermediate values to the pruner
-    trial.report(val_error, n_epochs)
-
-    # Handle pruning based on the intermediate value
-    if trial.should_prune():
-        raise optuna.exceptions.TrialPruned()
-        
-    # Return the validation error as the objective value
-    return val_error
-"""
-def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor=3, show_plots=True):
+def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor=3, sampler = "	TPESampler", show_plots=True):
     """
    Optimizes the hyperparameters of a model using Optuna's hyperparameter optimization framework.
 
@@ -216,6 +168,9 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
        Number of epochs for training the model within each trial. Default is 20.
    n_reduction_factor : int, optional
        Factor by which to reduce resources in the Hyperband pruning strategy. Default is 3.
+   sampler : str, optional
+       Sampler used for optimization. Possible Sampler are 'RandomSampler', 'GridSampler', 'TPESampler'. Default is 'TPESampler'.
+       For more information see https://optuna.readthedocs.io/en/stable/reference/samplers/index.html#module-optuna.samplers
    show_plots : bool, optional
        Whether to display optimization and hyperparameter search visualizations. Default is True.
    **kwargs : dict
@@ -241,11 +196,21 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
     study_name = study_name + time
     storage_name = f"sqlite:///{folderpath}\\{study_name}.db"
 
+    if sampler == "TPESampler":
+        sampler_opt = optuna.samplers.TPESampler()
+    elif sampler == "RandomSampler":
+        sampler_opt = optuna.samplers.RandomSampler()
+    elif sampler == "GridSampler":
+        sampler_opt = optuna.samplers.GridSampler()
+    else:
+        print("No valid sampler was selected. TPESampler will be used.")
+        sampler_opt = optuna.samplers.TPESampler()
     if(objective.pruning):
         study = optuna.create_study(
             direction='minimize', 
             study_name=study_name, 
             storage=storage_name,
+            sampler=sampler_opt,
             pruner=optuna.pruners.HyperbandPruner(
                 min_resource=1, 
                 max_resource=n_trials, 

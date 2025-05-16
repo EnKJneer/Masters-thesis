@@ -18,10 +18,15 @@ class RandomForestModel(mb.BaseModel):
         random_state : int, optional
             Controls the randomness of the estimator. The default is None.
         """
-        self.n_estimators = n_estimators
-        self.random_state = random_state
         self.model = RandomForestRegressor(n_estimators=n_estimators, max_features = max_features, min_samples_split = min_samples_split, min_samples_leaf = min_samples_leaf, random_state=random_state, n_jobs = -1)
         self.scaler = None
+
+        # Save Parameter for documentation
+        self.n_estimators = n_estimators
+        self.random_state = random_state
+        self.max_features = max_features
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
 
     def criterion(self, y_target, y_pred):
         """
@@ -133,5 +138,5 @@ class RandomForestModel(mb.BaseModel):
         loss = self.criterion(y_target, y_pred)
         return loss, y_pred
 
-rf_reference = RandomForestModel(n_estimators=10, max_features = 1, min_samples_split = 2, min_samples_leaf = 1)
+rf_reference = RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)
 # ToDo: Graident Boosting hinzufügen

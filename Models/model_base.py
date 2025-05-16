@@ -65,7 +65,7 @@ class BaseNetModel(BaseModel, nn.Module):
         loss = self.criterion(y_target, y_pred)
         return loss.item(), y_pred.detach().cpu().numpy()
 
-    def train_model(self, X_train, y_train, X_val, y_val, learning_rate=0.0001, n_epochs=100, patience=20, draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
+    """def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=20, draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
         print(self.device)
 
         X_train_scaled = self.scale_data(X_train)
@@ -80,7 +80,7 @@ class BaseNetModel(BaseModel, nn.Module):
             y_val = y_val.to_numpy()
         y_val = torch.tensor(y_val, dtype=torch.float32).to(self.device)
 
-        optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+        optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
 
         if draw_loss:
@@ -97,7 +97,7 @@ class BaseNetModel(BaseModel, nn.Module):
             self.train()
             optimizer.zero_grad()
             y_pred = self(X_train)
-            loss = self.criterion(y_pred, y_train)
+            loss = self.criterion(y_train, y_pred)
             loss.backward()
             optimizer.step()
 
@@ -144,4 +144,4 @@ class BaseNetModel(BaseModel, nn.Module):
             plt.show()
 
         self.load_state_dict(best_model_state)
-        return best_val_error
+        return best_val_error"""

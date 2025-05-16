@@ -23,6 +23,8 @@ import pandas as pd
 import numpy as np
 import pickle
 
+from sympy import false
+
 # konstanten
 WINDOWSIZE = 1
 
@@ -42,7 +44,7 @@ class DataClass:
         self.load_all_geometrie_variations = load_all_geometrie_variations
 
 
-folder_data = '..\\DataSets\DataFiltered'
+folder_data = '..\\..\\DataSets\DataFiltered'
 Al_Al_Gear_Plate = DataClass('Al_Al_Gear_Plate', folder_data,
                                     ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                     ['AL_2007_T4_Plate_Normal_3.csv'],
@@ -573,7 +575,7 @@ def preprocessing(X, y, n=12):
 
     return x_cleaned, y_cleaned
 
-def load_data(data_params: DataClass, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, preprocessing=True, n=12):
+def load_data(data_params: DataClass, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """
     Loads and preprocesses data for training, validation, and testing.
 
@@ -591,10 +593,6 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
         If True, return lists of DataFrames instead of concatenated ones.
     N : int, optional
         Number of packages per file (for train/val split). Default is 3.
-    preprocessing : bool, optional
-        If True, remove outliers from training and validation data. The default is True.
-    n : int, optional
-        The number of standard deviations to consider for outlier removal. Default is 12.
 
     Returns
     -------
@@ -606,12 +604,12 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
 
     # Load test data
     fulltestdatas = read_fulldata(data_params.testing_data_paths, data_params.folder)
-    test_datas = apply_action(fulltestdatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-    X_test = apply_action(test_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
-    test_targets = apply_action(fulltestdatas, lambda data: data[data_params.target_channels])
-    y_test = apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
+    test_datas =  apply_action(fulltestdatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+    X_test =  apply_action(test_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+    test_targets =  apply_action(fulltestdatas, lambda data: data[data_params.target_channels])
+    y_test =  apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
     if past_values + future_values != 0:
-        y_test = apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
+        y_test =  apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
 
     # Namen der Testdateien zum Ausschluss
     test_files = set(os.path.basename(p) for p in data_params.testing_data_paths)
@@ -620,36 +618,52 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
     all_X_train, all_y_train = [], []
     all_X_val, all_y_val = [], []
 
+    toggle = True  # Start mit gerade = Train
+
     for name in data_params.training_validation_datas:
         pattern = f"{name}_*.csv"
         files = glob.glob(os.path.join(data_params.folder, pattern))
         files = [f for f in files if os.path.basename(f) not in test_files]
 
         file_datas = read_fulldata(files, data_params.folder)
-        file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-        file_datas_y = apply_action(file_datas, lambda data: data[data_params.target_channels].rolling(window=window_size, min_periods=1).mean())
+        file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=window_size,
+                                                                                                min_periods=1).mean())
+        file_datas_y = apply_action(file_datas,
+                                          lambda data: data[data_params.target_channels].rolling(window=window_size,
+                                                                                                 min_periods=1).mean())
 
-        X_files = apply_action(file_datas_x, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
-        y_files = apply_action(file_datas_y, lambda target: target.iloc[past_values:-future_values] if past_values + future_values != 0 else target)
+        X_files = apply_action(file_datas_x,
+                                     lambda data: create_full_ml_vector_optimized(past_values, future_values,
+                                                                                        data))
+        y_files = apply_action(file_datas_y, lambda target: target.iloc[
+                                                                  past_values:-future_values] if past_values + future_values != 0 else target)
 
         for X_df, y_df in zip(X_files, y_files):
             X_split = np.array_split(X_df, N)
             y_split = np.array_split(y_df, N)
-            # einfache Regel: mittleres Paket = val, Rest = train
-            mid = N // 2
-            X_val_part = X_split[mid]
-            y_val_part = y_split[mid]
-            X_train_parts = X_split[:mid] + X_split[mid+1:]
-            y_train_parts = y_split[:mid] + y_split[mid+1:]
 
-            if preprocessing:
+            if toggle:
+                train_indices = [i for i in range(N) if i % 2 == 0]
+                val_indices = [i for i in range(N) if i % 2 != 0]
+            else:
+                train_indices = [i for i in range(N) if i % 2 != 0]
+                val_indices = [i for i in range(N) if i % 2 == 0]
+
+            X_train_parts = [X_split[i].reset_index(drop=True) for i in train_indices]
+            y_train_parts = [y_split[i].reset_index(drop=True) for i in train_indices]
+            X_val_parts = [X_split[i].reset_index(drop=True) for i in val_indices]
+            y_val_parts = [y_split[i].reset_index(drop=True) for i in val_indices]
+
+            if do_preprocessing:
                 X_train_parts, y_train_parts = zip(*[preprocessing(X, y, n) for X, y in zip(X_train_parts, y_train_parts)])
-                X_val_part, y_val_part = preprocessing(X_val_part, y_val_part, n)
+                X_val_parts, y_val_parts = zip(*[preprocessing(X, y, n) for X, y in zip(X_val_parts, y_val_parts)])
 
             all_X_train.extend(X_train_parts)
             all_y_train.extend(y_train_parts)
-            all_X_val.append(X_val_part)
-            all_y_val.append(y_val_part)
+            all_X_val.extend(X_val_parts)
+            all_y_val.extend(y_val_parts)
+
+        toggle = not toggle  # Umschalten für nächste Datei
 
     if keep_separate:
         return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
@@ -662,3 +676,23 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
         y_test = pd.concat(y_test).reset_index(drop=True)
 
         return X_train, X_val, X_test, y_train, y_val, y_test
+
+# Berechne MSE und Standardabweichung pro Modell und Methode
+def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, center_data = false):
+    mse_values = []
+
+    for pred in predictions_list:
+        # Werte kürzen
+        pred_trimmed = pred[:-n_drop_values]
+        true_trimmed = true_values[:-n_drop_values]
+
+        if center_data:
+            # Zentrierung
+            mean = np.mean(true_trimmed)
+            pred_centered = pred_trimmed - mean
+            true_centered = true_trimmed - mean
+
+        mse = np.mean((pred_centered - true_centered) ** 2)
+        mse_values.append(mse)
+
+    return np.mean(mse_values), np.std(mse_values)

@@ -67,32 +67,51 @@ def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, wi
     all_X_train, all_y_train = [], []
     all_X_val, all_y_val = [], []
 
+    toggle = True  # Start mit gerade = Train
+
     for name in data_params.training_validation_datas:
         pattern = f"{name}_*.csv"
         files = glob.glob(os.path.join(data_params.folder, pattern))
         files = [f for f in files if os.path.basename(f) not in test_files]
 
         file_datas = hdata.read_fulldata(files, data_params.folder)
-        file_datas_x =  hdata.apply_action(file_datas, lambda data: data[hdata.HEADER_x].rolling(window=window_size, min_periods=1).mean())
-        file_datas_y =  hdata.apply_action(file_datas, lambda data: data[data_params.target_channels].rolling(window=window_size, min_periods=1).mean())
+        file_datas_x = hdata.apply_action(file_datas, lambda data: data[hdata.HEADER_x].rolling(window=window_size,
+                                                                                                min_periods=1).mean())
+        file_datas_y = hdata.apply_action(file_datas,
+                                          lambda data: data[data_params.target_channels].rolling(window=window_size,
+                                                                                                 min_periods=1).mean())
 
-        X_files =  hdata.apply_action(file_datas_x, lambda data: hdata.create_full_ml_vector_optimized(past_values, future_values, data))
-        y_files =  hdata.apply_action(file_datas_y, lambda target: target.iloc[past_values:-future_values] if past_values + future_values != 0 else target)
+        X_files = hdata.apply_action(file_datas_x,
+                                     lambda data: hdata.create_full_ml_vector_optimized(past_values, future_values,
+                                                                                        data))
+        y_files = hdata.apply_action(file_datas_y, lambda target: target.iloc[
+                                                                  past_values:-future_values] if past_values + future_values != 0 else target)
 
         for X_df, y_df in zip(X_files, y_files):
             X_split = np.array_split(X_df, N)
             y_split = np.array_split(y_df, N)
-            # einfache Regel: mittleres Paket = val, Rest = train
-            mid = N // 2
-            X_val_part = X_split[mid]
-            y_val_part = y_split[mid]
-            X_train_parts = X_split[:mid] + X_split[mid+1:]
-            y_train_parts = y_split[:mid] + y_split[mid+1:]
+
+            if toggle:
+                train_indices = [i for i in range(N) if i % 2 == 0]
+                val_indices = [i for i in range(N) if i % 2 != 0]
+            else:
+                train_indices = [i for i in range(N) if i % 2 != 0]
+                val_indices = [i for i in range(N) if i % 2 == 0]
+
+            X_train_parts = [X_split[i].reset_index(drop=True) for i in train_indices]
+            y_train_parts = [y_split[i].reset_index(drop=True) for i in train_indices]
+            X_val_parts = [X_split[i].reset_index(drop=True) for i in val_indices]
+            y_val_parts = [y_split[i].reset_index(drop=True) for i in val_indices]
+
+            X_train_parts, y_train_parts = zip(*[hdata.preprocessing(X, y, 12) for X, y in zip(X_train_parts, y_train_parts)])
+            X_val_parts, y_val_parts = zip(*[hdata.preprocessing(X, y, 12) for X, y in zip(X_val_parts, y_val_parts)])
 
             all_X_train.extend(X_train_parts)
             all_y_train.extend(y_train_parts)
-            all_X_val.append(X_val_part)
-            all_y_val.append(y_val_part)
+            all_X_val.extend(X_val_parts)
+            all_y_val.extend(y_val_parts)
+
+        toggle = not toggle  # Umschalten für nächste Datei
 
     if keep_separate:
         return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
@@ -103,6 +122,7 @@ def load_data_new(data_params: DataClass_new, past_values=2, future_values=2, wi
         y_val = pd.concat(all_y_val).reset_index(drop=True)
         X_test = pd.concat(X_test).reset_index(drop=True)
         y_test = pd.concat(y_test).reset_index(drop=True)
+
         return X_train, X_val, X_test, y_train, y_val, y_test
 
 class DataClass:
@@ -209,6 +229,8 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
                 X_test = pd.concat(X_test, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
                 y_test = pd.concat(y_test, axis=0).reset_index(drop=True).mean(axis=0).to_frame().T
 
+    X_train, y_train = hdata.preprocessing(X_train, y_train, 12)
+    X_val, y_val = hdata.preprocessing(X_val, y_val, 12)
     return X_train, X_val, X_test, y_train, y_val, y_test
 
 def hyperparameter_optimization_ml(folder_path, X_train, X_val, y_train, y_val):
@@ -273,11 +295,6 @@ def hyperparameter_optimization_rf(folder_path, X_train, X_val, y_train, y_val):
     print("Random Forest Hyperparameters:", model_params)
     return model_params
 
-# Berechne MSE und Standardabweichung pro Modell und Methode
-def calculate_mse_and_std(predictions_list, true_values):
-    errors = [(pred - true_values) ** 2 for pred in predictions_list]
-    mse_values = [np.mean(err) for err in errors]
-    return np.mean(mse_values), np.std(mse_values)
 """ Data Sets """
 folder_data = '..\\..\\DataSets\DataFiltered'
 dataSet_same_material_diff_workpiece_new = DataClass_new('Al_Al_Gear_Plate', folder_data,
@@ -325,17 +342,12 @@ if __name__ == "__main__":
 
     """Daten für Hyperparameter Optimierung laden"""
     # Load data with old method
-    X_train_old, X_val_old, X_test_old, y_train_old, y_val_old, y_test_old = hdata.load_data(dataSets_list[0], past_values=past_values,
+    X_train_old, X_val_old, X_test_old, y_train_old, y_val_old, y_test_old = load_data(dataSets_list[0], past_values=past_values,
                                                                      future_values=future_values,
                                                                      window_size=window_size)
 
-    """ Hyperparameter """
-    folder_path_nn = '../../Models/Hyperparameter/NeuralNet_curr_x'
-    model_params_nn = hyperparameter_optimization_ml(folder_path_nn, X_train_old, X_val_old, y_train_old, y_val_old)
-
-    folder_path_rf = '../../Models/Hyperparameter/RandomForest_mini'
-    model_params_rf = hyperparameter_optimization_rf(folder_path_rf, X_train_old, X_val_old, y_train_old, y_val_old)
-
+    model_nn = mnn.get_reference_net(X_train_old.shape[1])
+    model_rf = mrf.rf_reference
     """Save Meta information"""
     # Define the meta information structure
     meta_information = {
@@ -344,17 +356,17 @@ if __name__ == "__main__":
             "Neural_Net_Ensemble": {
                 "NUMBEROFMODELS": NUMBEROFMODELS,
                 "hyperparameters": {
-                    "learning_rate": model_params_nn['learning_rate'],
-                    "n_neurons": model_params_nn['n_neurons'],
-                    "n_layers": model_params_nn['n_layers']
+                    "learning_rate": model_nn.learning_rate,
+                    "n_hidden_size": model_nn.n_hidden_size,
+                    "n_hidden_layers": model_nn.n_hidden_layers,
                 }
             },
             "Random_Forest": {
                 "hyperparameters": {
-                    "n_estimators": model_params_rf['n_estimators'],
-                    "max_features": model_params_rf['max_features'],
-                    "min_samples_split": model_params_rf['min_samples_split'],
-                    "min_samples_leaf": model_params_rf['min_samples_leaf']
+                    "n_estimators": model_rf.n_estimators,
+                    "max_features": model_rf.max_features,
+                    "min_samples_split": model_rf.min_samples_split,
+                    "min_samples_leaf": model_rf.min_samples_leaf
                 }
             }
         },
@@ -396,17 +408,10 @@ if __name__ == "__main__":
         # Modellvergleich auf alten Daten
         nn_preds_old, rf_preds_old = [], []
         for _ in range(NUMBEROFMODELS):
-            model_nn = mnn.Net(X_train_old.shape[1], 1, model_params_nn['n_neurons'],
-                               model_params_nn['n_layers'], nn.ReLU)
-            model_nn.train_model(X_train_old, y_train_old["curr_x"], X_val_old, y_val_old["curr_x"],
-                                 model_params_nn['learning_rate'], NUMBEROFEPOCHS, patience=5)
+            model_nn.train_model(X_train_old, y_train_old["curr_x"], X_val_old, y_val_old["curr_x"], NUMBEROFEPOCHS, patience=5)
             _, pred_nn = model_nn.test_model(X_test_old, y_test_old["curr_x"])
             nn_preds_old.append(pred_nn.flatten())
 
-            model_rf = mrf.RandomForestModel(n_estimators=model_params_rf['n_estimators'],
-                                             max_features=model_params_rf['max_features'],
-                                             min_samples_leaf=model_params_rf['min_samples_leaf'],
-                                             min_samples_split=model_params_rf['min_samples_split'])
             model_rf.train_model(X_train_old, y_train_old["curr_x"], X_val_old, y_val_old["curr_x"])
             _, pred_rf = model_rf.test_model(X_test_old, y_test_old["curr_x"])
             rf_preds_old.append(pred_rf.flatten())
@@ -414,26 +419,20 @@ if __name__ == "__main__":
         # Modellvergleich auf neuen Daten
         nn_preds_new, rf_preds_new = [], []
         for _ in range(NUMBEROFMODELS):
-            model_nn = mnn.Net(X_train_new.shape[1], 1, model_params_nn['n_neurons'],
-                               model_params_nn['n_layers'], nn.ReLU)
-            model_nn.train_model(X_train_new, y_train_new["curr_x"], X_val_new, y_val_new["curr_x"],
-                                 model_params_nn['learning_rate'], NUMBEROFEPOCHS, patience=5)
+            model_nn.train_model(X_train_new, y_train_new["curr_x"], X_val_new, y_val_new["curr_x"], NUMBEROFEPOCHS, patience=5)
             _, pred_nn = model_nn.test_model(X_test_new, y_test_new["curr_x"])
             nn_preds_new.append(pred_nn.flatten())
 
-            model_rf = mrf.RandomForestModel(n_estimators=model_params_rf['n_estimators'],
-                                             max_features=model_params_rf['max_features'],
-                                             min_samples_leaf=model_params_rf['min_samples_leaf'],
-                                             min_samples_split=model_params_rf['min_samples_split'])
             model_rf.train_model(X_train_new, y_train_new["curr_x"], X_val_new, y_val_new["curr_x"])
             _, pred_rf = model_rf.test_model(X_test_new, y_test_new["curr_x"])
             rf_preds_new.append(pred_rf.flatten())
 
+        n_drop_values = 10
         # Fehlerberechnung
-        mse_old_nn, std_old_nn = calculate_mse_and_std(nn_preds_old, y_test_old["curr_x"])
-        mse_old_rf, std_old_rf = calculate_mse_and_std(rf_preds_old, y_test_old["curr_x"])
-        mse_new_nn, std_new_nn = calculate_mse_and_std(nn_preds_new, y_test_new["curr_x"])
-        mse_new_rf, std_new_rf = calculate_mse_and_std(rf_preds_new, y_test_new["curr_x"])
+        mse_old_nn, std_old_nn = hdata.calculate_mse_and_std(nn_preds_old, y_test_old["curr_x"], n_drop_values)
+        mse_old_rf, std_old_rf = hdata.calculate_mse_and_std(rf_preds_old, y_test_old["curr_x"], n_drop_values)
+        mse_new_nn, std_new_nn = hdata.calculate_mse_and_std(nn_preds_new, y_test_new["curr_x"], n_drop_values)
+        mse_new_rf, std_new_rf = hdata.calculate_mse_and_std(rf_preds_new, y_test_new["curr_x"], n_drop_values)
 
         # Ergebnisse speichern
         results.extend([
@@ -452,10 +451,10 @@ if __name__ == "__main__":
         hdata.add_pd_to_csv(file_path, data, header)
 
         plt.figure(figsize=(12, 6))
-        plt.plot(data['y_ground_truth'], label='Ground Truth', color='black', linewidth=2)
+        plt.plot(data['y_ground_truth'][:-n_drop_values], label='Ground Truth', color='black', linewidth=2)
 
         for col in header:
-            plt.plot(data[col], linestyle='--', label=f'{col}', alpha=0.6)
+            plt.plot(data[col][:-n_drop_values], linestyle='--', label=f'{col}', alpha=0.6)
 
         plt.title(f'{data_old.name}: Modellvergleich alt vs. neu')
         plt.xlabel('Zeit')

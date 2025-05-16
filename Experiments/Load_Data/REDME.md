@@ -37,7 +37,6 @@ The code is structured into several key components:
 
 ### Main Execution
 
-- **Hyperparameter Optimization**: Optimizes hyperparameters for both Neural Network and Random Forest models.
 - **Model Training and Evaluation**: Trains and evaluates models using both data loading methods.
 - **Results Calculation and Visualization**: Calculates MSE and standard deviation for model predictions and visualizes the results.
 
