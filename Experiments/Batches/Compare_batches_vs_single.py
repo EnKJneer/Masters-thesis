@@ -18,7 +18,7 @@ import seaborn as sns
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
-    NUMBEROFEPOCHS = 800
+    NUMBEROFEPOCHS = 150
     NUMBEROFMODELS = 10
 
     window_size = 10
@@ -30,13 +30,12 @@ if __name__ == "__main__":
     # torch.cuda.is_available()
     # Load data with gear method --> Needed to get input size
     X_train, X_val, X_test, y_train, y_val, y_test = hdata.load_data(dataSets[0],
-                                                                                       past_values=past_values,
-                                                                                       future_values=future_values,
-                                                                                       window_size=window_size)
+                                                                     past_values=past_values,
+                                                                     future_values=future_values,
+                                                                     window_size=window_size)
 
     input_size = X_train.shape[1]
     model_nn = mnn.get_reference_net(input_size)
-    model_rnn = mnn.RNN(input_size, 1, input_size, 1)
     """Save Meta information"""
     # Define the meta information structure
     meta_information = {
@@ -50,14 +49,6 @@ if __name__ == "__main__":
                     "n_hidden_layers": model_nn.n_hidden_layers,
                 }
             },
-            "Recurrent_Neural_Net_Ensemble": {
-                "NUMBEROFMODELS": NUMBEROFMODELS,
-                "hyperparameters": {
-                    "learning_rate": model_rnn.learning_rate,
-                    "n_hidden_size": model_rnn.n_hidden_size,
-                    "n_hidden_layers": model_rnn.n_hidden_layers,
-                }
-            }
         },
         "Data_Preprocessing": {
             "window_size": window_size,
@@ -77,66 +68,69 @@ if __name__ == "__main__":
         }
         meta_information["DataSets"].append(data_info)
 
-
     # Save the meta information to a JSON file
     with open('Data/info.json', 'w') as json_file:
         json.dump(meta_information, json_file, indent=4)
 
     """ Prediction """
     results = []
-    for i,data in enumerate(dataSets):
+    for i, data in enumerate(dataSets):
         df, name = hdata.get_test_data_as_pd(data, past_values=past_values, future_values=future_values,
-                                               window_size=window_size)
+                                             window_size=window_size)
         file_path = f'Data/{data.name}.csv'
         hdata.save_data(df, file_path)
         df, name = hdata.get_test_data_as_pd(data, past_values=past_values, future_values=future_values,
-                                               window_size=window_size)
+                                             window_size=window_size)
         file_path = f'Data/{data.name}.csv'
         hdata.save_data(df, file_path)
 
         print(f"\n===== Verarbeitung: {data.name} =====")
         # Daten laden
-        X_train, X_val, X_test, y_train, y_val, y_test = hdata.load_data(
+        X_train_batch, X_val_batch, X_test_batch, y_train_batch, y_val_batch, y_test = hdata.load_data(
             data, past_values, future_values, window_size, keep_separate=True)
+
+        X_train, X_val, X_test, y_train, y_val, y_test = hdata.load_data(
+            data, past_values, future_values, window_size, keep_separate=False)
 
         # Modellvergleich auf neuen Daten
         nn_preds, rnn_preds = [], []
         for _ in range(NUMBEROFMODELS):
-            model_rnn.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS)
-            _, pred_rnn = model_rnn.test_model(X_test, y_test)
-            rnn_preds.append(pred_rnn.flatten())
-
             model_nn.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS)
             _, pred_nn = model_nn.test_model(X_test, y_test)
             nn_preds.append(pred_nn.flatten())
 
+            # Reset model
+            model_nn = mnn.get_reference_net(input_size)
+            model_nn.train_model(X_train_batch, y_train_batch, X_val_batch, y_val_batch, NUMBEROFEPOCHS)
+            _, pred_nn = model_nn.test_model(X_test, y_test)
+            rnn_preds.append(pred_nn.flatten())
 
         # Fehlerberechnung
         n_drop_values = 10
-        mse_nn, std_nn = hdata.calculate_mse_and_std(nn_preds, y_test, n_drop_values, center_data=True)
-        mse_rnn, std_rnn = hdata.calculate_mse_and_std(rnn_preds, y_test, n_drop_values, center_data=True)
+        mse_nn, std_nn = hdata.calculate_mse_and_std(nn_preds, y_test.values, n_drop_values, center_data=True)
+        mse_rnn, std_rnn = hdata.calculate_mse_and_std(rnn_preds, y_test.values, n_drop_values, center_data=True)
 
         # Ergebnisse speichern
         results.extend([
-            [data.name, model_nn.name, mse_nn, std_nn],
-            [data.name, model_rnn.name, mse_rnn, std_rnn],
+            [data.name, 'Normal', mse_nn, std_nn],
+            [data.name, 'Batched', mse_rnn, std_rnn],
         ])
         # Save Results in csv
-        header = [model_nn.name, model_rnn.name]
+        header = ['Normal', 'Batch']
         data_list = [nn_preds, rnn_preds]
-        data = pd.DataFrame()
-        data['y_ground_truth'] = y_test["curr_x"]
+        df = pd.DataFrame()
+        df['y_ground_truth'] = y_test["curr_x"]
         for i, col in enumerate(header):
-            data[col] = np.mean(data_list[i], axis=0)
-        hdata.add_pd_to_csv(file_path, data, header)
+            df[col] = np.mean(data_list[i], axis=0)
+        hdata.add_pd_to_csv(file_path, df, header)
 
         plt.figure(figsize=(12, 6))
-        plt.plot(data['y_ground_truth'], label='Ground Truth', color='black', linewidth=2)
+        plt.plot(df['y_ground_truth'], label='Ground Truth', color='black', linewidth=2)
 
         for col in header:
-            plt.plot(data[col], linestyle='--', label=f'{col}', alpha=0.6)
+            plt.plot(df[col], linestyle='--', label=f'{col}', alpha=0.6)
 
-        plt.title(f'{data.name}: Modellvergleich NN vs. RNN')
+        plt.title(f'{data.name}: Modellvergleich Normal vs. Batch')
         plt.xlabel('Zeit')
         plt.ylabel('Strom in A')
         plt.legend(loc='best')
@@ -178,7 +172,7 @@ if __name__ == "__main__":
                 ha='center', va='bottom', fontsize=8
             )
 
-    ax.set_title(f"NN vs RNN")
+    ax.set_title(f"Normal vs Batch")
     ax.set_xlabel("DataSets")
     ax.set_ylabel("MSE")
     ax.set_xticks(x + bar_width * (n_models - 1) / 2)
@@ -202,7 +196,7 @@ if __name__ == "__main__":
         f.write("DataSet                 | Model          | MSE        | StdDev\n")
         f.write("-" * 75 + "\n")
         for row in results:
-            print(f"{row[0]:<25} | {row[1]:<15} | {row[2]:<5} | MSE: {row[3]:.6f} | StdDev: {row[4]:.6f}")
+            print(f"{row[0]:<25} | {row[1]:<15} | | MSE: {row[2]:.6f} | StdDev: {row[3]:.6f}")
             f.write(f"{row[0]:<25} | {row[1]:<15} | {row[2]:<6} | {row[3]:.6f}\n")
 
         f.write("\nProzentuale Verbesserung:\n")

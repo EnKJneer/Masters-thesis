@@ -1,0 +1,12 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Al_Al_Plate_Gear          | Normal          | 0.6948842518890652 | 0.011121
+Al_Al_Plate_Gear          | Batched         | 0.692272306670733 | 0.007026
+Al_St_Plate_Plate         | Normal          | 1.660127697816126 | 0.185564
+Al_St_Plate_Plate         | Batched         | 1.6705599432814382 | 0.179229
+Al_St_Plate_Gear          | Normal          | 2.5221066805665893 | 0.264652
+Al_St_Plate_Gear          | Batched         | 2.5103794994637183 | 0.279847
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------

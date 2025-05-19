@@ -1,0 +1,15 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Al_Al_Plate_Gear          | Neural_Net      | 0.710347691923978 | 0.011987
+Al_Al_Plate_Gear          | Sequential_Neural_Net | 0.6785147220980526 | 0.076622
+Al_St_Plate_Plate         | Neural_Net      | 1.6400889118734496 | 0.067528
+Al_St_Plate_Plate         | Sequential_Neural_Net | 1.436101221759872 | 0.518975
+Al_St_Plate_Gear          | Neural_Net      | 2.4472915503009958 | 0.226120
+Al_St_Plate_Gear          | Sequential_Neural_Net | 1.9909162072777629 | 0.638234
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Al_Al_Plate_Gear          | Sequential_Neural_Net | 4.48
+Al_St_Plate_Gear          | Sequential_Neural_Net | 18.65
+Al_St_Plate_Plate         | Sequential_Neural_Net | 12.44

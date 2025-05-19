@@ -1,0 +1,27 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Al_Al_Plate_Gear          | Neural_Net      | 0.7072602747920289 | 0.013832
+Al_Al_Plate_Gear          | NN_ELU          | 0.7074563475008638 | 0.010510
+Al_Al_Plate_Gear          | NN_PReLU        | 0.7022042074401249 | 0.010762
+Al_Al_Plate_Gear          | NN_Tanh         | 0.7051007569974507 | 0.008227
+Al_St_Plate_Plate         | Neural_Net      | 1.6463667297291082 | 0.110421
+Al_St_Plate_Plate         | NN_ELU          | 1.5484207307053388 | 0.136974
+Al_St_Plate_Plate         | NN_PReLU        | 1.5882315251385588 | 0.108417
+Al_St_Plate_Plate         | NN_Tanh         | 1.7434519620083235 | 0.134088
+Al_St_Plate_Gear          | Neural_Net      | 2.4301708904287826 | 0.285003
+Al_St_Plate_Gear          | NN_ELU          | 2.4625645199081547 | 0.263018
+Al_St_Plate_Gear          | NN_PReLU        | 2.593878071515867 | 0.169085
+Al_St_Plate_Gear          | NN_Tanh         | 2.618101108271657 | 0.398905
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Al_Al_Plate_Gear          | NN_ELU          | -0.03
+Al_Al_Plate_Gear          | NN_ELU          | 0.71
+Al_Al_Plate_Gear          | NN_ELU          | 0.31
+Al_St_Plate_Gear          | NN_ELU          | -1.33
+Al_St_Plate_Gear          | NN_ELU          | -6.74
+Al_St_Plate_Gear          | NN_ELU          | -7.73
+Al_St_Plate_Plate         | NN_ELU          | 5.95
+Al_St_Plate_Plate         | NN_ELU          | 3.53
+Al_St_Plate_Plate         | NN_ELU          | -5.90

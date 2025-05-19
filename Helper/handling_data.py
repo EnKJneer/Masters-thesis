@@ -666,6 +666,8 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
         toggle = not toggle  # Umschalten für nächste Datei
 
     if keep_separate:
+        X_test = pd.concat(X_test).reset_index(drop=True)
+        y_test = pd.concat(y_test).reset_index(drop=True)
         return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
     else:
         X_train = pd.concat(all_X_train).reset_index(drop=True)
@@ -678,7 +680,7 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
         return X_train, X_val, X_test, y_train, y_val, y_test
 
 # Berechne MSE und Standardabweichung pro Modell und Methode
-def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, center_data = false):
+def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, center_data = False):
     mse_values = []
 
     for pred in predictions_list:
@@ -691,6 +693,9 @@ def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, cente
             mean = np.mean(true_trimmed)
             pred_centered = pred_trimmed - mean
             true_centered = true_trimmed - mean
+        else:
+            pred_centered = pred_trimmed
+            true_centered = true_trimmed
 
         mse = np.mean((pred_centered - true_centered) ** 2)
         mse_values.append(mse)
