@@ -1,0 +1,24 @@
+DataSet                 | Model           | Method | MSE        | StdDev
+---------------------------------------------------------------------------
+Al_Al_Gear_Plate          | Neural_Net      | Old    | 0.136952 | 0.010082
+Al_Al_Gear_Plate          | Neural_Net      | New    | 0.036058 | 0.000310
+Al_Al_Gear_Plate          | Random_Forest   | Old    | 0.062190 | 0.001494
+Al_Al_Gear_Plate          | Random_Forest   | New    | 0.058473 | 0.007422
+Al_St_Gear_Gear           | Neural_Net      | Old    | 1.527368 | 0.006245
+Al_St_Gear_Gear           | Neural_Net      | New    | 1.453282 | 0.009890
+Al_St_Gear_Gear           | Random_Forest   | Old    | 0.823329 | 0.115878
+Al_St_Gear_Gear           | Random_Forest   | New    | 0.570707 | 0.066368
+Al_St_Gear_Plate          | Neural_Net      | Old    | 1.212818 | 0.012622
+Al_St_Gear_Plate          | Neural_Net      | New    | 1.176396 | 0.025446
+Al_St_Gear_Plate          | Random_Forest   | Old    | 1.230652 | 0.172358
+Al_St_Gear_Plate          | Random_Forest   | New    | 0.469989 | 0.098487
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Al_Al_Gear_Plate          | Neural_Net      | 73.67
+Al_Al_Gear_Plate          | Random_Forest   | 5.98
+Al_St_Gear_Gear           | Neural_Net      | 4.85
+Al_St_Gear_Gear           | Random_Forest   | 30.68
+Al_St_Gear_Plate          | Neural_Net      | 3.00
+Al_St_Gear_Plate          | Random_Forest   | 61.81

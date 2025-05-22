@@ -27,10 +27,16 @@ class BaseModel(ABC):
     @abstractmethod
     def test_model(self, X, y_target):
         pass
+    @abstractmethod
+    def get_documentation(self):
+        pass
 
 class BaseNetModel(BaseModel, nn.Module):
     @abstractmethod
     def forward(self, x):
+        pass
+    @abstractmethod
+    def _initialize_layers(self, x):
         pass
 
     def criterion(self, y_target, y_pred):
@@ -99,6 +105,22 @@ class BaseNetModel(BaseModel, nn.Module):
 
         print(f"Device: {self.device} | Batched: {is_batched_train}")
 
+        """Needed for initialization of the layer."""
+        flag_initialization = False
+        if self.input_size is None:
+            # Define input size and set flag for initialization
+            if is_batched_train:
+                self.input_size = X_train[0].shape[1]
+            else:
+                self.input_size = X_train.shape[1]
+            flag_initialization = True
+        if self.n_hidden_size is None:
+            # Define hidden size and set flag for initialization
+            self.n_hidden_size = self.input_size
+            flag_initialization = True
+        if flag_initialization:
+            self._initialize_layers()
+
         optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
 
@@ -118,6 +140,7 @@ class BaseNetModel(BaseModel, nn.Module):
             train_losses = []
 
             if is_batched_train:
+                # ToDo: Shuffel einbauen
                 for batch_x, batch_y in zip(X_train, y_train):
                     optimizer.zero_grad()
                     batch_x_tensor = scaled_to_tensor(batch_x)
@@ -200,212 +223,12 @@ class BaseNetModel(BaseModel, nn.Module):
 
         self.load_state_dict(best_model_state)
         return best_val_error
-    """
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=20,
-                    draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
-        print(self.device)
-
-        def scale_padded_list(X_list):
-            # Alle Einträge (DataFrames) zu einem großen DataFrame stapeln
-            X_all = pd.concat(X_list, ignore_index=True)
-            X_scaled = self.scale_data(X_all)  # Skaliert per StandardScaler
-            # Jetzt wieder zurück in Einzelteile aufteilen
-            split_sizes = [len(X) for X in X_list]
-            arrays = np.split(X_scaled, np.cumsum(split_sizes)[:-1])
-            return arrays
-
-        def prepare_padded_batch(X_list, y_list):
-            X_tensors = [torch.tensor(self.scale_data(X) , dtype=torch.float32) for X in X_list]
-            y_tensors = [torch.tensor(y.to_numpy() if not isinstance(y, np.ndarray) else y, dtype=torch.float32) for y
-                         in y_list]
-
-            lengths = torch.tensor([x.shape[0] for x in X_tensors])
-            X_padded = pad_sequence(X_tensors, batch_first=True)
-            y_padded = pad_sequence(y_tensors, batch_first=True)
-
-            mask = torch.arange(X_padded.size(1))[None, :] < lengths[:, None]
-            return X_padded.to(self.device), y_padded.to(self.device), mask.to(self.device)
-
-        def prepare_batch(X, y):
-            X_scaled = self.scale_data(X)
-            X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
-            y_tensor = torch.tensor(y.to_numpy() if not isinstance(y, np.ndarray) else y, dtype=torch.float32).to(
-                self.device)
-            return X_tensor, y_tensor
-
-        is_batched_train = isinstance(X_train, list)
-        is_batched_val = isinstance(X_val, list)
-        print(f"Training data batched: {is_batched_train}")
-        print(f"Validation data batched: {is_batched_val}")
-        optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
-
-        if draw_loss:
-            loss_vals, epochs, loss_train = [], [], []
-            fig, ax = plt.subplots()
-            line_val, = ax.plot(epochs, loss_vals, 'r-', label='validation')
-            line_train, = ax.plot(epochs, loss_train, 'b-', label='training')
-            ax.legend()
-
-        best_val_error = float('inf')
-        patience_counter = 0
-
-        for epoch in range(n_epochs):
-            self.train()
-            optimizer.zero_grad()
-
-            if is_batched_train:
-                X_tensor, y_tensor, mask = prepare_padded_batch(X_train, y_train)
-                y_pred = self(X_tensor)
-                loss_matrix = self.criterion(y_pred, y_tensor)
-                if loss_matrix.dim() > 1:
-                    loss_matrix = loss_matrix.mean(dim=-1)
-                loss = (loss_matrix * mask).sum() / mask.sum()
-                loss.backward()
-                optimizer.step()
-                avg_train_loss = loss.item()
-            else:
-                X_tensor, y_tensor = prepare_batch(X_train, y_train)
-                y_pred = self(X_tensor)
-                loss = self.criterion(y_pred, y_tensor)
-                loss.backward()
-                optimizer.step()
-                avg_train_loss = loss.item()
-
-            self.eval()
-            with torch.no_grad():
-                if is_batched_val:
-                    X_tensor, y_tensor, mask = prepare_padded_batch(X_val, y_val)
-                    y_val_pred = self(X_tensor)
-                    val_loss_matrix = self.criterion(y_val_pred, y_tensor)
-                    if val_loss_matrix.dim() > 1:
-                        val_loss_matrix = val_loss_matrix.mean(dim=-1)
-                    val_error = (val_loss_matrix * mask).sum().item() / mask.sum().item()
-                else:
-                    X_tensor, y_tensor = prepare_batch(X_val, y_val)
-                    y_val_pred = self(X_tensor)
-                    val_error = self.criterion(y_val_pred, y_tensor).item()
-
-                if val_error < best_val_error - epsilon:
-                    best_val_error = val_error
-                    best_model_state = self.state_dict()
-                    patience_counter = 0
-                elif epoch > (n_epochs / 10) and epoch > 10:
-                    patience_counter += 1
-
-                scheduler.step(val_error)
-
-                if patience_counter >= patience:
-                    print(f"Early stopping at epoch {epoch + 1}")
-                    break
-
-                if trial is not None:
-                    trial.report(val_error, step=epoch)
-                    if trial.should_prune():
-                        raise optuna.exceptions.TrialPruned()
-
-                if draw_loss:
-                    epochs.append(epoch)
-                    loss_vals.append(val_error)
-                    loss_train.append(avg_train_loss)
-                    line_val.set_xdata(epochs)
-                    line_val.set_ydata(loss_vals)
-                    line_train.set_xdata(epochs)
-                    line_train.set_ydata(loss_train)
-                    ax.relim()
-                    ax.autoscale_view()
-                    plt.draw()
-                    plt.pause(0.001)
-
-            print(
-                f'Epoch {epoch + 1}/{n_epochs}, Val Error: {val_error:.4f}, Train Loss: {avg_train_loss:.4f}, LR: {optimizer.param_groups[0]["lr"]:.6f}')
-
-        if draw_loss:
-            plt.ioff()
-            plt.show()
-
-        self.load_state_dict(best_model_state)
-        return best_val_error
-
-
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=20, draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
-        print(self.device)
-
-        X_train_scaled = self.scale_data(X_train)
-        X_val_scaled = self.scale_data(X_val)
-
-        X_train = torch.tensor(X_train_scaled, dtype=torch.float32).to(self.device)
-        if not isinstance(y_train, np.ndarray):
-            y_train = y_train.to_numpy()
-        y_train = torch.tensor(y_train, dtype=torch.float32).to(self.device)
-        X_val = torch.tensor(X_val_scaled, dtype=torch.float32).to(self.device)
-        if not isinstance(y_val, np.ndarray):
-            y_val = y_val.to_numpy()
-        y_val = torch.tensor(y_val, dtype=torch.float32).to(self.device)
-
-        optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
-
-        if draw_loss:
-            loss_vals, epochs, loss_train = [], [], []
-            fig, ax = plt.subplots()
-            line_val, = ax.plot(epochs, loss_vals, 'r-', label='validation')
-            line_train, = ax.plot(epochs, loss_train, 'b-', label='training')
-            ax.legend()
-
-        best_val_error = float('inf')
-        patience_counter = 0
-
-        for epoch in range(n_epochs):
-            self.train()
-            optimizer.zero_grad()
-            y_pred = self(X_train)
-            loss = self.criterion(y_train, y_pred)
-            loss.backward()
-            optimizer.step()
-
-            self.eval()
-            with torch.no_grad():
-                y_val_pred = self(X_val)
-                val_error = self.criterion(y_val_pred, y_val).item()
-
-                if val_error < best_val_error - epsilon:
-                    best_val_error = val_error
-                    best_model_state = self.state_dict()
-                    patience_counter = 0
-                elif epoch > (n_epochs / 10) and epoch > 10:
-                    patience_counter += 1
-
-                scheduler.step(val_error)
-
-                if patience_counter >= patience:
-                    print(f"Early stopping at epoch {epoch+1}")
-                    break
-
-                if trial is not None:
-                    trial.report(val_error, step=epoch)
-                    if trial.should_prune():
-                        raise optuna.exceptions.TrialPruned()
-
-                if draw_loss:
-                    epochs.append(epoch)
-                    loss_vals.append(val_error)
-                    loss_train.append(loss.item())
-                    line_val.set_xdata(epochs)
-                    line_val.set_ydata(loss_vals)
-                    line_train.set_xdata(epochs)
-                    line_train.set_ydata(loss_train)
-                    ax.relim()
-                    ax.autoscale_view()
-                    plt.draw()
-                    plt.pause(0.001)
-
-            print(f'Epoch {epoch+1}/{n_epochs}, Val Error: {val_error:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
-
-        if draw_loss:
-            plt.ioff()
-            plt.show()
-
-        self.load_state_dict(best_model_state)
-        return best_val_error"""
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+        }}
+        return documentation

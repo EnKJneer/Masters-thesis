@@ -63,7 +63,7 @@ if __name__ == "__main__":
                                                                                        window_size=window_size)
 
     model_nn = mnn.get_reference_net(X_train_gear.shape[1])
-    model_rf = mrf.rf_reference
+    model_rf = mrf.get_reference_model()
     """Save Meta information"""
     # Define the meta information structure
     meta_information = {
@@ -115,11 +115,11 @@ if __name__ == "__main__":
         df_gear, name = hdata.get_test_data_as_pd(data_gear, past_values=past_values, future_values=future_values,
                                                window_size=window_size)
         file_path = f'Data/{data_gear.name}.csv'
-        hdata.save_data(df_gear, file_path)
+        hdata.save_data([df_gear], [file_path])
         df_plate, name = hdata.get_test_data_as_pd(data_plate, past_values=past_values, future_values=future_values,
                                                window_size=window_size)
         file_path = f'Data/{data_gear.name}.csv'
-        hdata.save_data(df_plate, file_path)
+        hdata.save_data([df_plate], [file_path])
 
         print(f"\n===== Verarbeitung: {data_gear.name} =====")
         # Daten laden

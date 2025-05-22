@@ -18,43 +18,71 @@ from sklearn.preprocessing import QuantileTransformer
 
 import Models.model_base as mb
 
+def get_reference_net(input_size=None):
+    """
+    Get a reference neural network with specified input size.
 
+    This function initializes and returns a neural network model with the given input size.
+    The output size and hidden size are set to 1 and the input size, respectively.
+
+    Parameters
+    ----------
+    input_size : int
+        The number of input features for the neural network.
+        Default is None. -> Input will be set at runtime.
+    Returns
+    -------
+    Net
+        An instance of the Net class configured with the specified input size.
+    """
+    return Net(input_size, 1, input_size)
 # Defines a configurable neural network
 class Net(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, activation=nn.ReLU, learning_rate=0.0001, name = "Neural_Net"):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="Neural_Net"):
         """
         Initializes a configurable neural network.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features.
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
         output_size : int
             The number of output features.
-        hidden_size : int
-            The number of features in each hidden layer.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
             The activation function to be used in the hidden layers. The default is nn.ReLU.
-
-        Returns
-        -------
-        None
+        learning_rate : float
+            The learning rate for the optimizer.
+        name : str
+            The name of the model.
         """
         super(Net, self).__init__()
-        self.fc1 = nn.Linear(input_size, n_hidden_size)
-        self.activation = activation()  # instantiate the activation function
-        self.fcs = nn.ModuleList([nn.Linear(n_hidden_size, n_hidden_size) for _ in range(n_hidden_layers)])
-        self.fc3 = nn.Linear(n_hidden_size, output_size)
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
+        self.activation = activation()
+        self.learning_rate = learning_rate
+        self.name = name
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-        # Save parameter for documentation
-        self.learning_rate = learning_rate
-        self.n_hidden_size = n_hidden_size
-        self.n_hidden_layers = n_hidden_layers
-        self.name = name
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+        self.fcs = nn.ModuleList([nn.Linear(self.n_hidden_size, self.n_hidden_size) for _ in range(self.n_hidden_layers)])
+        self.fc3 = nn.Linear(self.n_hidden_size, self.output_size)
+        self.to(self.device)
 
     def forward(self, x):
         """
@@ -70,40 +98,31 @@ class Net(mb.BaseNetModel):
         x : torch.Tensor
             The output tensor from the neural network.
         """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+
         x = self.activation(self.fc1(x))  # apply the activation function
         for fc in self.fcs:
             x = self.activation(fc(x))  # apply the activation function
         x = self.fc3(x)
         return x
 
-def get_reference_net(input_size):
-    """
-    Get the reference neural network
-
-    Parameters
-    ----------
-    input_size : int
-        The number of input features.
-
-    Returns
-    -------
-    Net(input_size, 1, input_size, n_hidden_layers=1, nn.ReLU, 0.001)
-    """
-    return Net(input_size, 1, input_size, 1, learning_rate=0.001)
-
 class RNN(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, activation=nn.ReLU, learning_rate=0.0001, name = "Recurrent_Neural_Net", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="Recurrent_Neural_Net", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features.
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
         output_size : int
             The number of output features.
-        n_hidden_size : int
-            The number of features in each hidden layer.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
@@ -117,17 +136,29 @@ class RNN(mb.BaseNetModel):
         None
         """
         super(RNN, self).__init__()
-        self.rnn = nn.RNN(input_size, n_hidden_size, n_hidden_layers, batch_first=batched_input)
-        self.fc = nn.Linear(n_hidden_size, output_size)
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
         self.activation = activation()
+        self.learning_rate = learning_rate
+        self.name = name
+        self.batched_input = batched_input
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-        # Save parameter for documentation
-        self.learning_rate = learning_rate
-        self.n_hidden_size = n_hidden_size
-        self.n_hidden_layers = n_hidden_layers
-        self.name = name
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.rnn = nn.RNN(self.input_size, self.n_hidden_size, self.n_hidden_layers, batch_first=self.batched_input)
+        self.fc = nn.Linear(self.n_hidden_size, self.output_size)
+        self.to(self.device)
 
     def forward(self, x):
         """
@@ -143,10 +174,16 @@ class RNN(mb.BaseNetModel):
         x : torch.Tensor
             The output tensor from the neural network.
         """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+            self.to(self.device)
+
         if x.dim() == 2:
             # Non batched input
             h0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-
         elif x.dim() == 3:
             # batched input
             h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
@@ -160,18 +197,18 @@ class RNN(mb.BaseNetModel):
         return out
 
 class LSTM(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, activation=nn.ReLU, learning_rate=0.0001, name = "LSTM", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="LSTM", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features.
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
         output_size : int
             The number of output features.
-        n_hidden_size : int
-            The number of features in each hidden layer.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
@@ -185,17 +222,29 @@ class LSTM(mb.BaseNetModel):
         None
         """
         super(LSTM, self).__init__()
-        self.rnn = nn.LSTM(input_size, n_hidden_size, n_hidden_layers, batch_first=batched_input)
-        self.fc = nn.Linear(n_hidden_size, output_size)
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
         self.activation = activation()
+        self.learning_rate = learning_rate
+        self.name = name
+        self.batched_input = batched_input
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-        # Save parameter for documentation
-        self.learning_rate = learning_rate
-        self.n_hidden_size = n_hidden_size
-        self.n_hidden_layers = n_hidden_layers
-        self.name = name
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.rnn = nn.LSTM(self.input_size, self.n_hidden_size, self.n_hidden_layers, batch_first=self.batched_input)
+        self.fc = nn.Linear(self.n_hidden_size, self.output_size)
+        self.to(self.device)
 
     def forward(self, x):
         """
@@ -211,16 +260,24 @@ class LSTM(mb.BaseNetModel):
         x : torch.Tensor
             The output tensor from the neural network.
         """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+            self.to(self.device)
+
         if x.dim() == 2:
             # Non batched input
             h0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-
+            c0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
         elif x.dim() == 3:
             # batched input
             h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
+            c0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
 
-        # Forward pass through RNN layer
-        out, _ = self.rnn(x, h0)
+        # Forward pass through LSTM
+        out, _ = self.rnn(x, (h0, c0))
 
         # Decode the hidden state of the last time step
         out = self.fc(out)
@@ -228,18 +285,18 @@ class LSTM(mb.BaseNetModel):
         return out
 
 class GRU(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, activation=nn.ReLU, learning_rate=0.0001, name = "GRU", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="GRU", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features.
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
         output_size : int
             The number of output features.
-        n_hidden_size : int
-            The number of features in each hidden layer.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
@@ -253,17 +310,29 @@ class GRU(mb.BaseNetModel):
         None
         """
         super(GRU, self).__init__()
-        self.rnn = nn.GRU(input_size, n_hidden_size, n_hidden_layers, batch_first=batched_input)
-        self.fc = nn.Linear(n_hidden_size, output_size)
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
         self.activation = activation()
+        self.learning_rate = learning_rate
+        self.name = name
+        self.batched_input = batched_input
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-        # Save parameter for documentation
-        self.learning_rate = learning_rate
-        self.n_hidden_size = n_hidden_size
-        self.n_hidden_layers = n_hidden_layers
-        self.name = name
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.rnn = nn.GRU(self.input_size, self.n_hidden_size, self.n_hidden_layers, batch_first=self.batched_input)
+        self.fc = nn.Linear(self.n_hidden_size, self.output_size)
+        self.to(self.device)
 
     def forward(self, x):
         """
@@ -279,10 +348,16 @@ class GRU(mb.BaseNetModel):
         x : torch.Tensor
             The output tensor from the neural network.
         """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+            self.to(self.device)
+
         if x.dim() == 2:
             # Non batched input
             h0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-
         elif x.dim() == 3:
             # batched input
             h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
@@ -295,20 +370,19 @@ class GRU(mb.BaseNetModel):
 
         return out
 
-# Defines a configurable neural network
-class SequentialNet(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, n_rnn_layer = 1, activation=nn.PReLU, learning_rate=0.01, name = "Sequential_Neural_Net"):
+class PartialRnn(mb.BaseNetModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, n_rnn_layer=1, activation=nn.PReLU, learning_rate=0.01, name="Partial_Recurrent_Neural_Net"):
         """
         Initializes a configurable neural network.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features.
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
         output_size : int
             The number of output features.
-        hidden_size : int
-            The number of features in each hidden layer.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
@@ -318,24 +392,35 @@ class SequentialNet(mb.BaseNetModel):
         -------
         None
         """
-        super(SequentialNet, self).__init__()
-        self.fc_in = nn.Linear(input_size, n_hidden_size)
-        self.activation = activation()  # instantiate the activation function
-        self.fcs = nn.ModuleList([nn.Linear(n_hidden_size, n_hidden_size) for _ in range(n_hidden_layers)])
-        self.n_rnn_size = 2*output_size
-        self.fc_connection = nn.Linear(n_hidden_size,  self.n_rnn_size)
-        self.rnn = nn.RNN(self.n_rnn_size, self.n_rnn_size, n_rnn_layer) # TODO: Parametrisierbar gestalten
-        self.fc_end_connection = nn.Linear(self.n_rnn_size, self.n_rnn_size)
-        self.fc_out = nn.Linear(self.n_rnn_size, output_size)
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
-        self.scaler = None
-        # Save parameter for documentation
-        self.learning_rate = learning_rate
+        super(PartialRnn, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
         self.n_rnn_layer = n_rnn_layer
+        self.activation = activation()
+        self.learning_rate = learning_rate
         self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.fc_in = nn.Linear(self.input_size, self.n_hidden_size)
+        self.fcs = nn.ModuleList([nn.Linear(self.n_hidden_size, self.n_hidden_size) for _ in range(self.n_hidden_layers)])
+        self.n_rnn_size = 2 * self.output_size
+        self.fc_connection = nn.Linear(self.n_hidden_size, self.n_rnn_size)
+        self.rnn = nn.RNN(self.n_rnn_size, self.n_rnn_size, self.n_rnn_layer)
+        self.fc_end_connection = nn.Linear(self.n_rnn_size, self.n_rnn_size)
+        self.fc_out = nn.Linear(self.n_rnn_size, self.output_size)
+        self.to(self.device)
 
     def forward(self, x):
         """
@@ -351,6 +436,13 @@ class SequentialNet(mb.BaseNetModel):
         x : torch.Tensor
             The output tensor from the neural network.
         """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+            self.to(self.device)
+
         x = self.activation(self.fc_in(x))  # apply the activation function
         for fc in self.fcs:
             x = self.activation(fc(x))  # apply the activation function
@@ -358,7 +450,6 @@ class SequentialNet(mb.BaseNetModel):
         if x.dim() == 2:
             # Non batched input
             h0 = torch.zeros(self.n_rnn_layer, self.n_rnn_size).to(self.device)
-
         elif x.dim() == 3:
             # batched input
             h0 = torch.zeros(self.n_rnn_layer, x.size(0), 1).to(self.device)
@@ -369,19 +460,20 @@ class SequentialNet(mb.BaseNetModel):
         x = self.fc_out(x)
 
         return x
-class GruNet(mb.BaseNetModel):
-    def __init__(self, input_size, output_size, n_hidden_size, n_hidden_layers, n_rnn_layer = 1, activation=nn.PReLU, learning_rate=0.01, name = "GruNet"):
+
+class PartialGRU(mb.BaseNetModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, n_rnn_layer=1, activation=nn.PReLU, learning_rate=0.01, name="Partial_GRU_Neural_Net"):
         """
         Initializes a configurable neural network.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features.
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
         output_size : int
             The number of output features.
-        hidden_size : int
-            The number of features in each hidden layer.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
         activation : torch.nn.Module, optional
@@ -391,24 +483,35 @@ class GruNet(mb.BaseNetModel):
         -------
         None
         """
-        super(SequentialNet, self).__init__()
-        self.fc_in = nn.Linear(input_size, n_hidden_size)
-        self.activation = activation()  # instantiate the activation function
-        self.fcs = nn.ModuleList([nn.Linear(n_hidden_size, n_hidden_size) for _ in range(n_hidden_layers)])
-        self.n_rnn_size = 2*output_size
-        self.fc_connection = nn.Linear(n_hidden_size,  self.n_rnn_size)
-        self.rnn = nn.GRU(self.n_rnn_size, self.n_rnn_size, n_rnn_layer) # TODO: Parametrisierbar gestalten
-        self.fc_end_connection = nn.Linear(self.n_rnn_size, self.n_rnn_size)
-        self.fc_out = nn.Linear(self.n_rnn_size, output_size)
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
-        self.scaler = None
-        # Save parameter for documentation
-        self.learning_rate = learning_rate
+        super(PartialGRU, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
         self.n_rnn_layer = n_rnn_layer
+        self.activation = activation()
+        self.learning_rate = learning_rate
         self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.fc_in = nn.Linear(self.input_size, self.n_hidden_size)
+        self.fcs = nn.ModuleList([nn.Linear(self.n_hidden_size, self.n_hidden_size) for _ in range(self.n_hidden_layers)])
+        self.n_rnn_size = 2 * self.output_size
+        self.fc_connection = nn.Linear(self.n_hidden_size, self.n_rnn_size)
+        self.rnn = nn.GRU(self.n_rnn_size, self.n_rnn_size, self.n_rnn_layer)
+        self.fc_end_connection = nn.Linear(self.n_rnn_size, self.n_rnn_size)
+        self.fc_out = nn.Linear(self.n_rnn_size, self.output_size)
+        self.to(self.device)
 
     def forward(self, x):
         """
@@ -424,6 +527,13 @@ class GruNet(mb.BaseNetModel):
         x : torch.Tensor
             The output tensor from the neural network.
         """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+            self.to(self.device)
+
         x = self.activation(self.fc_in(x))  # apply the activation function
         for fc in self.fcs:
             x = self.activation(fc(x))  # apply the activation function
@@ -431,7 +541,6 @@ class GruNet(mb.BaseNetModel):
         if x.dim() == 2:
             # Non batched input
             h0 = torch.zeros(self.n_rnn_layer, self.n_rnn_size).to(self.device)
-
         elif x.dim() == 3:
             # batched input
             h0 = torch.zeros(self.n_rnn_layer, x.size(0), 1).to(self.device)
@@ -442,6 +551,189 @@ class GruNet(mb.BaseNetModel):
         x = self.fc_out(x)
 
         return x
+
+class NetAttention(mb.BaseNetModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, activation=nn.ReLU, learning_rate=0.0001, name="Neural_Net_with_Attention"):
+        """
+        Initializes a neural network with a normal layer, an attention layer, and another normal layer.
+
+        Parameters
+        ----------
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
+        output_size : int
+            The number of output features.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
+        learning_rate : float
+            The learning rate for the optimizer.
+        name : str
+            The name of the model.
+        """
+        super(NetAttention, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.activation = activation()
+        self.n_hidden_layers = 1
+        self.learning_rate = learning_rate
+        self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+
+        # First normal layer
+        self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+
+        # Attention layer
+        self.attention = nn.MultiheadAttention(embed_dim=self.n_hidden_size, num_heads=1)
+
+        # Second normal layer
+        self.fc2 = nn.Linear(self.n_hidden_size, self.n_hidden_size)
+
+        # Output layer
+        self.fc3 = nn.Linear(self.n_hidden_size, self.output_size)
+
+        self.to(self.device)
+
+    def forward(self, x):
+        """
+        Defines the forward pass of the neural network.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor to the neural network.
+
+        Returns
+        -------
+        x : torch.Tensor
+            The output tensor from the neural network.
+        """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+
+        # First normal layer with ReLU activation
+        x = self.activation(self.fc1(x))
+
+        # Reshape for attention layer
+        x = x.unsqueeze(0)  # Add sequence length dimension
+        x, _ = self.attention(x, x, x)
+        x = x.squeeze(0)  # Remove sequence length dimension
+
+        # Second normal layer with ReLU activation
+        x = self.activation(self.fc2(x))
+
+        # Output layer
+        x = self.fc3(x)
+        return x
+
+class NetTransformer(mb.BaseNetModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, activation=nn.ReLU, learning_rate=0.0001, name="Neural_Net_Transformer"):
+        """
+        Initializes a neural network with a normal layer, a transformer layer, and another normal layer.
+
+        Parameters
+        ----------
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
+        output_size : int
+            The number of output features.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
+        learning_rate : float
+            The learning rate for the optimizer.
+        name : str
+            The name of the model.
+        """
+        super(NetTransformer, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = 1
+        self.activation = activation()
+        self.learning_rate = learning_rate
+        self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize_layers()
+
+    def _initialize_layers(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+
+        # First normal layer
+        self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+
+        # Transformer layer
+        self.transformer = nn.Transformer(
+            d_model=self.n_hidden_size,
+            nhead=1,
+            num_encoder_layers=1,
+            num_decoder_layers=1
+        )
+
+        # Second normal layer
+        self.fc2 = nn.Linear(self.n_hidden_size, self.n_hidden_size)
+
+        # Output layer
+        self.fc3 = nn.Linear(self.n_hidden_size, self.output_size)
+
+        self.to(self.device)
+
+    def forward(self, x):
+        """
+        Defines the forward pass of the neural network.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor to the neural network.
+
+        Returns
+        -------
+        x : torch.Tensor
+            The output tensor from the neural network.
+        """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize_layers()
+
+        # First normal layer with ReLU activation
+        x = self.activation(self.fc1(x))
+
+        # Reshape for transformer layer
+        x = x.unsqueeze(0)  # Add sequence length dimension
+        x = self.transformer(x, x)
+        x = x.squeeze(0)  # Remove sequence length dimension
+
+        # Second normal layer with ReLU activation
+        x = self.activation(self.fc2(x))
+
+        # Output layer
+        x = self.fc3(x)
+        return x
+
+
 class QuantileIdNetModel(Net):
     def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform'):
         """

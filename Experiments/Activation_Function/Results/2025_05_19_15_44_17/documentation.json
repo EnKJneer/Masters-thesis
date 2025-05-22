@@ -1,0 +1,226 @@
+{
+    "DataSets": [
+        {
+            "name": "Al_Al_Plate_Gear",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        },
+        {
+            "name": "Al_St_Plate_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        },
+        {
+            "name": "Al_St_Plate_Gear",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 65,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "Neural_Net"
+                }
+            }
+        },
+        {
+            "NN_ELU_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": 65,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "NN_ELU"
+                }
+            }
+        },
+        {
+            "NN_PReLU_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": 65,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "NN_PReLU"
+                }
+            }
+        },
+        {
+            "NN_Tanh_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": 65,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "NN_Tanh"
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 10,
+        "past_values": 2,
+        "future_values": 2
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Al_Al_Plate_Gear",
+                "Neural_Net",
+                0.7066911364829498,
+                0.01199367953331025
+            ],
+            [
+                "Al_Al_Plate_Gear",
+                "NN_ELU",
+                0.7089468581021914,
+                0.01281040447124589
+            ],
+            [
+                "Al_Al_Plate_Gear",
+                "NN_PReLU",
+                0.7039282666613954,
+                0.01170066056071368
+            ],
+            [
+                "Al_Al_Plate_Gear",
+                "NN_Tanh",
+                0.7055944962933445,
+                0.010754221421506619
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "Neural_Net",
+                1.642643493850788,
+                0.1301703732479177
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "NN_ELU",
+                1.6873445354231706,
+                0.15445264293380068
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "NN_PReLU",
+                1.667146769301312,
+                0.11522641949472098
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "NN_Tanh",
+                1.6365925040780858,
+                0.10745792410940165
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "Neural_Net",
+                2.463256834311509,
+                0.17746062689084396
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "NN_ELU",
+                2.4910660144476524,
+                0.1988554256321863
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "NN_PReLU",
+                2.254355339656355,
+                0.20014365546254903
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "NN_Tanh",
+                2.389617290960196,
+                0.11361214770145493
+            ]
+        ],
+        "Improvement": [
+            [
+                "Al_Al_Plate_Gear",
+                "NN_ELU",
+                -0.3191948367242631
+            ],
+            [
+                "Al_Al_Plate_Gear",
+                "NN_PReLU",
+                0.39095860679738986
+            ],
+            [
+                "Al_Al_Plate_Gear",
+                "NN_Tanh",
+                0.15517955907343858
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "NN_ELU",
+                -1.1289598286618008
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "NN_PReLU",
+                8.480702935451026
+            ],
+            [
+                "Al_St_Plate_Gear",
+                "NN_Tanh",
+                2.989519498152366
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "NN_ELU",
+                -2.721286861070004
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "NN_PReLU",
+                -1.4916977142180738
+            ],
+            [
+                "Al_St_Plate_Plate",
+                "NN_Tanh",
+                0.368369021966965
+            ]
+        ]
+    }
+}

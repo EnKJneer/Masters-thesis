@@ -1,0 +1,39 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.6905806009685941 | 0.007226
+Combined_Plate_S235JR_Plate_Normal_3 | Neural_Net      | 1.6081677699913606 | 0.154576
+Combined_Plate_S235JR_Gear_Normal_3 | Neural_Net      | 2.3414943284463936 | 0.264518
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.7171699493758827 | 0.013681
+Combined_Plate_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 1.02136937542956 | 0.076410
+Combined_Plate_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 1.4665452873334162 | 0.114656
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | LSTM            | 0.7076288987291541 | 0.028566
+Combined_Plate_S235JR_Plate_Normal_3 | LSTM            | 0.9573780041321214 | 0.040972
+Combined_Plate_S235JR_Gear_Normal_3 | LSTM            | 1.3064984645926283 | 0.039830
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | GRU             | 0.6987401705216412 | 0.024659
+Combined_Plate_S235JR_Plate_Normal_3 | GRU             | 1.006520824664571 | 0.066385
+Combined_Plate_S235JR_Gear_Normal_3 | GRU             | 1.4984750436188585 | 0.083511
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Partial_Recurrent_Neural_Net | 0.7519612554837836 | 0.010592
+Combined_Plate_S235JR_Plate_Normal_3 | Partial_Recurrent_Neural_Net | 1.3544437942713543 | 0.111689
+Combined_Plate_S235JR_Gear_Normal_3 | Partial_Recurrent_Neural_Net | 1.8985325959021 | 0.237968
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Partial_GRU_Neural_Net | 0.7720422912108713 | 0.029010
+Combined_Plate_S235JR_Plate_Normal_3 | Partial_GRU_Neural_Net | 1.333875404079447 | 0.201030
+Combined_Plate_S235JR_Gear_Normal_3 | Partial_GRU_Neural_Net | 1.8470091340263761 | 0.337388
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | -3.85
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | LSTM            | -2.47
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | GRU             | -1.18
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Partial_Recurrent_Neural_Net | -8.89
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Partial_GRU_Neural_Net | -11.80
+Combined_Plate_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 37.37
+Combined_Plate_S235JR_Gear_Normal_3 | LSTM            | 44.20
+Combined_Plate_S235JR_Gear_Normal_3 | GRU             | 36.00
+Combined_Plate_S235JR_Gear_Normal_3 | Partial_Recurrent_Neural_Net | 18.92
+Combined_Plate_S235JR_Gear_Normal_3 | Partial_GRU_Neural_Net | 21.12
+Combined_Plate_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 36.49
+Combined_Plate_S235JR_Plate_Normal_3 | LSTM            | 40.47
+Combined_Plate_S235JR_Plate_Normal_3 | GRU             | 37.41
+Combined_Plate_S235JR_Plate_Normal_3 | Partial_Recurrent_Neural_Net | 15.78
+Combined_Plate_S235JR_Plate_Normal_3 | Partial_GRU_Neural_Net | 17.06

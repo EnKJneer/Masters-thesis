@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import Models.model_base as mb
 
 class RandomForestModel(mb.BaseModel):
-    def __init__(self, n_estimators=100, max_features = 1, min_samples_split = 2, min_samples_leaf = 1, random_state=None):
+    def __init__(self, n_estimators=100, max_features = 1, min_samples_split = 2, min_samples_leaf = 1, random_state=None, name ="Random_Forest"):
         """
         Initializes a Random Forest regressor.
 
@@ -27,6 +27,7 @@ class RandomForestModel(mb.BaseModel):
         self.max_features = max_features
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
+        self.name = name
 
     def criterion(self, y_target, y_pred):
         """
@@ -138,5 +139,13 @@ class RandomForestModel(mb.BaseModel):
         loss = self.criterion(y_target, y_pred)
         return loss, y_pred
 
-rf_reference = RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)
-# ToDo: Graident Boosting hinzufügen
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "n_estimators": self.n_estimators,
+            "max_features": self.max_features,
+            "min_samples_split": self.min_samples_split,
+            "min_samples_leaf": self.min_samples_leaf
+        }}
+        return documentation
+def get_reference_model():
+    return RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)

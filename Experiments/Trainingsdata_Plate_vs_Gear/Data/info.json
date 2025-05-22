@@ -1,7 +1,7 @@
 {
     "DataSets": [
         {
-            "name": "Al_Al_Plate_Gear",
+            "name": "Combined_Plate",
             "folder": "..\\..\\DataSets\\DataFiltered",
             "training_validation_data": [
                 "AL_2007_T4_Plate",
@@ -9,38 +9,8 @@
                 "AL_2007_T4_Plate_SF"
             ],
             "testing_data_paths": [
-                "AL_2007_T4_Gear_Normal_3.csv"
-            ],
-            "target_channels": [
-                "curr_x"
-            ],
-            "percentage_used": 100
-        },
-        {
-            "name": "Al_St_Plate_Plate",
-            "folder": "..\\..\\DataSets\\DataFiltered",
-            "training_validation_data": [
-                "AL_2007_T4_Plate",
-                "AL_2007_T4_Plate_Depth",
-                "AL_2007_T4_Plate_SF"
-            ],
-            "testing_data_paths": [
-                "S235JR_Plate_Normal_3.csv"
-            ],
-            "target_channels": [
-                "curr_x"
-            ],
-            "percentage_used": 100
-        },
-        {
-            "name": "Al_St_Plate_Gear",
-            "folder": "..\\..\\DataSets\\DataFiltered",
-            "training_validation_data": [
-                "AL_2007_T4_Plate",
-                "AL_2007_T4_Plate_Depth",
-                "AL_2007_T4_Plate_SF"
-            ],
-            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv",
                 "S235JR_Gear_Normal_3.csv"
             ],
             "target_channels": [
@@ -49,7 +19,7 @@
             "percentage_used": 100
         },
         {
-            "name": "Al_Al_Gear_Plate",
+            "name": "Combined_Gear",
             "folder": "..\\..\\DataSets\\DataFiltered",
             "training_validation_data": [
                 "AL_2007_T4_Gear",
@@ -57,38 +27,8 @@
                 "AL_2007_T4_Gear_SF"
             ],
             "testing_data_paths": [
-                "AL_2007_T4_Plate_Normal_3.csv"
-            ],
-            "target_channels": [
-                "curr_x"
-            ],
-            "percentage_used": 100
-        },
-        {
-            "name": "Al_St_Gear_Gear",
-            "folder": "..\\..\\DataSets\\DataFiltered",
-            "training_validation_data": [
-                "AL_2007_T4_Gear",
-                "AL_2007_T4_Gear_Depth",
-                "AL_2007_T4_Gear_SF"
-            ],
-            "testing_data_paths": [
-                "S235JR_Gear_Normal_3.csv"
-            ],
-            "target_channels": [
-                "curr_x"
-            ],
-            "percentage_used": 100
-        },
-        {
-            "name": "Al_St_Gear_Plate",
-            "folder": "..\\..\\DataSets\\DataFiltered",
-            "training_validation_data": [
-                "AL_2007_T4_Gear",
-                "AL_2007_T4_Gear_Depth",
-                "AL_2007_T4_Gear_SF"
-            ],
-            "testing_data_paths": [
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
                 "S235JR_Plate_Normal_3.csv"
             ],
             "target_channels": [
@@ -101,7 +41,7 @@
         "Neural_Net_Ensemble": {
             "NUMBEROFMODELS": 10,
             "hyperparameters": {
-                "learning_rate": 0.001,
+                "learning_rate": 0.0001,
                 "n_hidden_size": 65,
                 "n_hidden_layers": 1
             }

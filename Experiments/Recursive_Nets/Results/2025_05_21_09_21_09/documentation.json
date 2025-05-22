@@ -1,0 +1,286 @@
+{
+    "DataSets": [
+        {
+            "name": "Combined_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        },
+        {
+            "Recurrent_Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "Recurrent_Neural_Net"
+                }
+            }
+        },
+        {
+            "LSTM_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "LSTM"
+                }
+            }
+        },
+        {
+            "GRU_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.0001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "GRU"
+                }
+            }
+        },
+        {
+            "Partial_Recurrent_Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.01,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "Partial_Recurrent_Neural_Net"
+                }
+            }
+        },
+        {
+            "Partial_GRU_Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.01,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "Partial_GRU_Neural_Net"
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 10,
+        "past_values": 2,
+        "future_values": 2,
+        "batched_data": false,
+        "n_drop_values": 10
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                0.6905806009685941,
+                0.007226186392910643
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Neural_Net",
+                1.6081677699913606,
+                0.15457590049686432
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Neural_Net",
+                2.3414943284463936,
+                0.264517571298535
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                0.7171699493758827,
+                0.013680605367758161
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                1.02136937542956,
+                0.0764095899788326
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                1.4665452873334162,
+                0.11465607015798253
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "LSTM",
+                0.7076288987291541,
+                0.028565841194730254
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "LSTM",
+                0.9573780041321214,
+                0.04097201695145957
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "LSTM",
+                1.3064984645926283,
+                0.03982977331304395
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "GRU",
+                0.6987401705216412,
+                0.024659385121392423
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "GRU",
+                1.006520824664571,
+                0.06638504239519345
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "GRU",
+                1.4984750436188585,
+                0.0835106841528574
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Partial_Recurrent_Neural_Net",
+                0.7519612554837836,
+                0.0105919117077122
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Partial_Recurrent_Neural_Net",
+                1.3544437942713543,
+                0.1116891995969551
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Partial_Recurrent_Neural_Net",
+                1.8985325959021,
+                0.2379684170630966
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Partial_GRU_Neural_Net",
+                0.7720422912108713,
+                0.029010234334014857
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Partial_GRU_Neural_Net",
+                1.333875404079447,
+                0.2010297320715244
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Partial_GRU_Neural_Net",
+                1.8470091340263761,
+                0.3373880874561162
+            ]
+        ],
+        "Improvement": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                -3.8502889264475413
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "LSTM",
+                -2.4686905100792664
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "GRU",
+                -1.181552094223707
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Partial_Recurrent_Neural_Net",
+                -8.888267992048755
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Partial_GRU_Neural_Net",
+                -11.796116214098795
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                37.36712194786803
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "LSTM",
+                44.20236475825658
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "GRU",
+                36.00347327712245
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Partial_Recurrent_Neural_Net",
+                18.91790755855486
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Partial_GRU_Neural_Net",
+                21.11835969075841
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                36.48863044711765
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "LSTM",
+                40.46777817607521
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "GRU",
+                37.411951448947505
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Partial_Recurrent_Neural_Net",
+                15.77720810319245
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Partial_GRU_Neural_Net",
+                17.0562034030434
+            ]
+        ]
+    }
+}

@@ -15,6 +15,7 @@ from collections import Counter
 
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.f2py.auxfuncs import throw_error
 from numpy.ma.core import anomalies
 from scipy import stats
 import re
@@ -58,6 +59,10 @@ Al_St_Gear_Plate = DataClass('Al_St_Gear_Plate', folder_data,
                                     ['S235JR_Plate_Normal_3.csv'],
                                   ["curr_x"],100,)
 dataSets_list_Gear = [Al_Al_Gear_Plate,Al_St_Gear_Gear,Al_St_Gear_Plate]
+Combined_Gear = DataClass('Combined_Gear', folder_data,
+                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                    ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv' ],
+                                  ["curr_x"],100,)
 
 Al_Al_Plate_Gear = DataClass('Al_Al_Plate_Gear', folder_data,
                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
@@ -72,6 +77,11 @@ Al_St_Plate_Gear = DataClass('Al_St_Plate_Gear', folder_data,
                                     ['S235JR_Gear_Normal_3.csv'],
                                   ["curr_x"],100,)
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
+
+Combined_Plate = DataClass('Combined_Plate', folder_data,
+                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                    ['AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
+                                  ["curr_x"],100,)
 
 def create_full_ml_vector_optimized_old(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """
@@ -375,7 +385,7 @@ def get_test_data_as_pd(data_params: DataClass, past_values=2, future_values=2, 
         name_without_extension = os.path.splitext(file_name)[0]
         # Split the name by underscore and remove the last part (the index)
         base_names.append('_'.join(name_without_extension.split('_')[:-1]))
-    return pd.concat(test_datas, axis=0).reset_index(drop=True), base_names
+    return test_datas, base_names
 
 def extract_base_names(file_names):
     """
@@ -491,53 +501,76 @@ def create_DataClasses_from_base_names(folder_path, training_base_names, validat
 
     return DataClass(name, folder_path, training_name, validation_name, test_name)
 
-def save_data(data, file_path):
+def save_data(data_list, file_paths):
     """
     Saves the data to a CSV file. If the file already exists, existing columns
     are overwritten and new columns are added.
 
     Parameters:
-        data (pd.DataFrame): The new data to be saved.
-        file_path (string): String containing the file path.
+        data_list (list of pd.DataFrame): The new data to be saved.
+        file_paths (list of string): Strings containing the file path.
 
     Returns:
         None
     """
-    # Check if the file already exists
-    if os.path.exists(file_path):
-        # Read the existing file
-        existing_data = pd.read_csv(file_path)
+    if type(data_list) == list or type(file_paths) == list:
+        assert len(data_list) == len(file_paths)
 
-        # Update existing columns and add new columns
-        for col in data.columns:
-            existing_data[col] = data[col]
+    for data, file_path in zip(data_list, file_paths):
+        # Check if the file already exists
+        if os.path.exists(file_path):
+            # Read the existing file
+            existing_data = pd.read_csv(file_path)
 
-        # Save the updated data back to the file
-        existing_data.to_csv(file_path, index=False, header=True)
-    else:
-        # If the file does not exist, create a new file
-        data.to_csv(file_path, index=False, header=True)
+            # Update existing columns and add new columns
+            for col in data.columns:
+                existing_data[col] = data[col]
 
-def add_pd_to_csv(file_path, data, header):
-    if os.path.exists(file_path):
-        # Read the existing file
-        existing_data = pd.read_csv(file_path)
-
-        # Check if header columns already exist
-        if all(col in existing_data.columns for col in header):
-            # Update the existing columns with new data
-            existing_data.update(data)
+            # Save the updated data back to the file
+            existing_data.to_csv(file_path, index=False, header=True)
         else:
-            # Concatenate new columns to the existing data
-            existing_data = pd.concat([existing_data, data], axis=1)
+            # If the file does not exist, create a new file
+            data.to_csv(file_path, index=False, header=True)
 
-        # Save the combined data
-        existing_data.to_csv(file_path, index=False)
-        print(f"{file_path} updated")
-    else:
-        # Create the file with the new data
-        data.to_csv(file_path, index=False)
-        print(f"{file_path} created")
+def add_pd_to_csv(data_list, file_paths, headers):
+    """
+    Saves the data to a CSV file. If the file already exists, existing columns
+    are overwritten and new columns are added.
+
+    Parameters:
+        data_list (list of pd.DataFrame): The new data to be saved.
+        file_paths (list of string): Strings containing the file path.
+        headers (list of list of string): Headers for each data.
+
+    Returns:
+        None
+    """
+    assert len(data_list) == len(file_paths)
+    assert len(data_list) == len(headers)
+
+    for data, file_path, header in zip(data_list, file_paths, headers):
+        # Convert input data and header to DataFrame
+        data_df = pd.DataFrame(data, columns=header)
+
+        if os.path.exists(file_path):
+            # Read the existing file
+            existing_data = pd.read_csv(file_path)
+
+            # Check if header columns already exist
+            if all(col in existing_data.columns for col in header):
+                # Update the existing columns with new data
+                existing_data.update(data_df)
+            else:
+                # Concatenate new columns to the existing data
+                existing_data = pd.concat([existing_data, data_df], axis=1)
+
+            # Save the combined data
+            existing_data.to_csv(file_path, index=False)
+            print(f"{file_path} updated")
+        else:
+            # Create the file with the new data
+            data_df.to_csv(file_path, index=False)
+            print(f"{file_path} created")
 
 def preprocessing(X, y, n=12):
     """
@@ -665,17 +698,17 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
 
         toggle = not toggle  # Umschalten für nächste Datei
 
-    if keep_separate:
+    if len(X_test) <= 1:
         X_test = pd.concat(X_test).reset_index(drop=True)
         y_test = pd.concat(y_test).reset_index(drop=True)
+
+    if keep_separate:
         return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
     else:
         X_train = pd.concat(all_X_train).reset_index(drop=True)
         y_train = pd.concat(all_y_train).reset_index(drop=True)
         X_val = pd.concat(all_X_val).reset_index(drop=True)
         y_val = pd.concat(all_y_val).reset_index(drop=True)
-        X_test = pd.concat(X_test).reset_index(drop=True)
-        y_test = pd.concat(y_test).reset_index(drop=True)
 
         return X_train, X_val, X_test, y_train, y_val, y_test
 
@@ -701,3 +734,141 @@ def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, cente
         mse_values.append(mse)
 
     return np.mean(mse_values), np.std(mse_values)
+
+def load_data_with_material_check(data_params: DataClass, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
+    """
+    Loads and preprocesses data for training, validation, and testing, and checks for material parameters.
+
+    Parameters
+    ----------
+    data_params : DataClass_new
+        A DataClass_new containing the data parameters for loading the dataset.
+    past_values : int, optional
+        The number of past values to consider. The default is 2.
+    future_values : int, optional
+        The number of future values to predict. The default is 2.
+    window_size : int, optional
+        The size of the sliding window. The default is 1.
+    keep_separate : bool, optional
+        If True, return lists of DataFrames instead of concatenated ones.
+    N : int, optional
+        Number of packages per file (for train/val split). Default is 3.
+
+    Returns
+    -------
+    tuple
+        X_train, X_val, X_test, y_train, y_val, y_test with respective hardness values
+    """
+
+    material_parameters = {
+        "AL_2007_T4": {
+            "hardness": 320,
+            "tensile_strength": 370,
+            "yield_strength": 250,
+            "thermal_conductivity": 145,
+            "modulus_of_elasticity": 72.5,
+            "density": 2.85
+        },
+        "S235JR": {
+            "hardness": 120,
+            "tensile_strength": 570,
+            "yield_strength": 300,
+            "thermal_conductivity": 54,
+            "modulus_of_elasticity": 212,
+            "density": 7.85
+        }
+    }
+
+    def get_material_hardness(file_path):
+        for material in material_parameters.keys():
+            if material in file_path:
+                return material_parameters[material]["hardness"]
+        raise ValueError(f"No valid material found in the file path: {file_path}")
+
+    # Load test data
+    fulltestdatas = read_fulldata(data_params.testing_data_paths, data_params.folder)
+    test_datas = apply_action(fulltestdatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+    X_test = apply_action(test_datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+    test_targets = apply_action(fulltestdatas, lambda data: data[data_params.target_channels])
+    y_test = apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
+    if past_values + future_values != 0:
+        y_test = apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
+
+    # Get hardness for each test file
+    test_hardness = [get_material_hardness(path) for path in data_params.testing_data_paths]
+
+    # Namen der Testdateien zum Ausschluss
+    test_files = set(os.path.basename(p) for p in data_params.testing_data_paths)
+
+    # Trainings- und Validierungsdaten vorbereiten
+    all_X_train, all_y_train, all_hardness_train = [], [], []
+    all_X_val, all_y_val, all_hardness_val = [], [], []
+
+    toggle = True  # Start mit gerade = Train
+
+    for name in data_params.training_validation_datas:
+        pattern = f"{name}_*.csv"
+        files = glob.glob(os.path.join(data_params.folder, pattern))
+        files = [f for f in files if os.path.basename(f) not in test_files]
+
+        file_datas = read_fulldata(files, data_params.folder)
+        file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=window_size,
+                                                                                            min_periods=1).mean())
+        file_datas_y = apply_action(file_datas,
+                                          lambda data: data[data_params.target_channels].rolling(window=window_size,
+                                                                                             min_periods=1).mean())
+
+        X_files = apply_action(file_datas_x,
+                                     lambda data: create_full_ml_vector_optimized(past_values, future_values,
+                                                                                        data))
+        y_files = apply_action(file_datas_y, lambda target: target.iloc[
+                                                                  past_values:-future_values] if past_values + future_values != 0 else target)
+
+        for file_path, X_df, y_df in zip(files, X_files, y_files):
+            hardness = get_material_hardness(file_path)
+            X_split = np.array_split(X_df, N)
+            y_split = np.array_split(y_df, N)
+
+            if toggle:
+                train_indices = [i for i in range(N) if i % 2 == 0]
+                val_indices = [i for i in range(N) if i % 2 != 0]
+            else:
+                train_indices = [i for i in range(N) if i % 2 != 0]
+                val_indices = [i for i in range(N) if i % 2 == 0]
+
+            X_train_parts = [X_split[i].reset_index(drop=True) for i in train_indices]
+            y_train_parts = [y_split[i].reset_index(drop=True) for i in train_indices]
+            X_val_parts = [X_split[i].reset_index(drop=True) for i in val_indices]
+            y_val_parts = [y_split[i].reset_index(drop=True) for i in val_indices]
+
+            if do_preprocessing:
+                X_train_parts, y_train_parts = zip(*[preprocessing(X, y, n) for X, y in zip(X_train_parts, y_train_parts)])
+                X_val_parts, y_val_parts = zip(*[preprocessing(X, y, n) for X, y in zip(X_val_parts, y_val_parts)])
+
+            all_X_train.extend(X_train_parts)
+            all_y_train.extend(y_train_parts)
+            all_hardness_train.extend([hardness] * len(X_train_parts))
+            all_X_val.extend(X_val_parts)
+            all_y_val.extend(y_val_parts)
+            all_hardness_val.extend([hardness] * len(X_val_parts))
+
+        toggle = not toggle  # Umschalten für nächste Datei
+
+    if len(X_test) <= 1:
+        X_test = pd.concat(X_test).reset_index(drop=True)
+        y_test = pd.concat(y_test).reset_index(drop=True)
+
+    if keep_separate:
+        return (all_X_train, all_hardness_train), (all_X_val, all_hardness_val), (X_test, test_hardness), all_y_train, all_y_val, y_test
+    else:
+        X_train = pd.concat(all_X_train).reset_index(drop=True)
+        y_train = pd.concat(all_y_train).reset_index(drop=True)
+        counter = Counter(all_hardness_train)
+        hardness_train = counter.most_common(1)[0][0]
+
+        X_val = pd.concat(all_X_val).reset_index(drop=True)
+        y_val = pd.concat(all_y_val).reset_index(drop=True)
+        counter = Counter(all_hardness_val)
+        hardness_val = counter.most_common(1)[0][0]
+
+        return (X_train, hardness_train), (X_val, hardness_val), (X_test, test_hardness), y_train, y_val, y_test

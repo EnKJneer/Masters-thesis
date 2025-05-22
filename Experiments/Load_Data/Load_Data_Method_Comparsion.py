@@ -12,6 +12,7 @@ import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 import matplotlib.pyplot as plt
 import seaborn as sns
+from datetime import datetime
 
 """ Functions """
 class DataClass_new:
@@ -134,7 +135,7 @@ class DataClass:
         self.testing_data_paths = testing_data_paths
         self.target_channels = target_channels
         self.percentage_used = percentage_used
-        
+
 def load_data(data_params: DataClass, past_values=2, future_values=2, window_size=1, homogenous_data=False, keep_separate=False):
     """
     Loads and preprocesses data for training, validation, and testing.
@@ -328,9 +329,13 @@ dataSet_diff_material_diff_workpiece = DataClass('Al_St_Gear_Plate', folder_data
                                   ["curr_x"],100)
 dataSets_list = [dataSet_same_material_diff_workpiece,dataSet_diff_material_same_workpiece, dataSet_diff_material_diff_workpiece]
 
+Combined_Gear = DataClass('Combined_Gear', folder_data,
+                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                    ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv' ],
+                                  ["curr_x"],100,)
+#dataSets_list = [Combined_Gear]
 if __name__ == "__main__":
     """ Constants """
-    NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 800
     NUMBEROFMODELS = 10
 
@@ -347,7 +352,9 @@ if __name__ == "__main__":
                                                                      window_size=window_size)
 
     model_nn = mnn.get_reference_net(X_train_old.shape[1])
-    model_rf = mrf.rf_reference
+    model_rf = mrf.get_reference_model()
+
+
     """Save Meta information"""
     # Define the meta information structure
     meta_information = {
@@ -387,16 +394,22 @@ if __name__ == "__main__":
         }
         meta_information["DataSets"].append(data_info)
 
+    # Create directory for results
+    timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    results_dir = os.path.join("Results", timestamp)
+    os.makedirs(results_dir, exist_ok=True)
+
     # Save the meta information to a JSON file
-    with open('Data/info.json', 'w') as json_file:
-        json.dump(meta_information, json_file, indent=4)
+    documentation = meta_information
 
     """ Prediction """
     results = []
     for i, (data_old, data_new) in enumerate(zip(dataSets_list, dataSets_list_new)):
         data, name = hdata.get_test_data_as_pd(data_old, past_values=past_values, future_values=future_values, window_size=window_size)
-        file_path = f'Data/{data_old.name}.csv'
-        hdata.save_data(data, file_path)
+        data_dir = os.path.join(results_dir, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        file_path = os.path.join(data_dir, f'{data_old.name}.csv')
+        hdata.save_data(data, [file_path])
 
         print(f"\n===== Verarbeitung: {data_old.name} =====")
         # Daten laden
@@ -448,7 +461,11 @@ if __name__ == "__main__":
         data['y_ground_truth'] = y_test_old["curr_x"]
         for i, col in enumerate(header):
             data[col] = np.mean(data_list[i], axis=0)
-        hdata.add_pd_to_csv(file_path, data, header)
+        hdata.add_pd_to_csv([data], [file_path], [header])
+
+        # Plot speichern
+        plots_dir = os.path.join(results_dir, "plots")
+        os.makedirs(plots_dir, exist_ok=True)
 
         plt.figure(figsize=(12, 6))
         plt.plot(data['y_ground_truth'][:-n_drop_values], label='Ground Truth', color='black', linewidth=2)
@@ -462,9 +479,9 @@ if __name__ == "__main__":
         plt.legend(loc='best')
         plt.grid(True)
         plt.tight_layout()
-        plt.show()
-
-
+        plot_path = os.path.join(plots_dir, f'{data_old.name}_comparison.png')
+        plt.savefig(plot_path)
+        plt.close()
 
     # Export als CSV
     # Ordner anlegen
@@ -517,7 +534,9 @@ if __name__ == "__main__":
         ax.set_xticklabels(datasets)
         ax.legend()
         plt.tight_layout()
-        plt.show()
+        plot_path = os.path.join(plots_dir, f'{model}_comparison.png')
+        plt.savefig(plot_path)
+        plt.close()
 
     # Prozentuale Verbesserung berechnen und speichern
     improvement_results = []
@@ -529,7 +548,15 @@ if __name__ == "__main__":
                 improvement = (mse_values[0] - mse_values[1]) / mse_values[0] * 100
                 improvement_results.append((dataset, model, improvement))
 
-    with open('Data/model_comparison_results.txt', 'w') as f:
+    documentation["Results"] = {
+        "Model_Comparison": results,
+        "Improvement": improvement_results
+    }
+
+    with open(os.path.join(results_dir, 'documentation.json'), 'w') as json_file:
+        json.dump(documentation, json_file, indent=4)
+
+    with open(os.path.join(results_dir, 'Results.txt'), 'w') as f:
         f.write("DataSet                 | Model           | Method | MSE        | StdDev\n")
         f.write("-" * 75 + "\n")
         for row in results:
@@ -541,4 +568,4 @@ if __name__ == "__main__":
         for row in improvement_results:
             f.write(f"{row[0]:<25} | {row[1]:<15} | {row[2]:.2f}\n")
 
-    print("\n Ergebnisse wurden in 'Data/model_comparison_results.txt' gespeichert.")
+    print("\n Ergebnisse wurden in 'documentation.json' und 'Results.txt' gespeichert.")

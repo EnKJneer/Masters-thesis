@@ -1,0 +1,15 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.67866893442484 | 0.008195
+Combined_Plate_S235JR_Plate_Normal_3 | Neural_Net      | 1.8052110009618305 | 0.000514
+Combined_Plate_S235JR_Gear_Normal_3 | Neural_Net      | 2.701873758602371 | 0.001376
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Partial_Recurrent_Neural_Net | 0.7562684630291363 | 0.017378
+Combined_Plate_S235JR_Plate_Normal_3 | Partial_Recurrent_Neural_Net | 1.0654346348141757 | 0.057637
+Combined_Plate_S235JR_Gear_Normal_3 | Partial_Recurrent_Neural_Net | 1.4059664840728254 | 0.097916
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Partial_Recurrent_Neural_Net | -11.43
+Combined_Plate_S235JR_Gear_Normal_3 | Partial_Recurrent_Neural_Net | 47.96
+Combined_Plate_S235JR_Plate_Normal_3 | Partial_Recurrent_Neural_Net | 40.98
