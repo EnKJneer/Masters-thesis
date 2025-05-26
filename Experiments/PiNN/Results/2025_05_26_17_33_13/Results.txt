@@ -1,0 +1,21 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.7205312955692157 | 0.009731
+Combined_Plate_S235JR_Plate_Normal_3 | Neural_Net      | 1.7602401201317541 | 0.307862
+Combined_Plate_S235JR_Gear_Normal_3 | Neural_Net      | 2.51194450840499 | 0.415636
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | PiNN_Erd        | 0.6590879301437201 | 0.138135
+Combined_Plate_S235JR_Plate_Normal_3 | PiNN_Erd        | 1.441716782136297 | 0.491407
+Combined_Plate_S235JR_Gear_Normal_3 | PiNN_Erd        | 2.059839324461744 | 0.725991
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Physical_Model  | 0.40551283617046063 | 0.000000
+Combined_Plate_S235JR_Plate_Normal_3 | Physical_Model  | 1.2032418717953828 | 0.000000
+Combined_Plate_S235JR_Gear_Normal_3 | Physical_Model  | 1.5041140683027556 | 0.000000
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | PiNN_Erd        | 8.53
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Physical_Model  | 43.72
+Combined_Plate_S235JR_Gear_Normal_3 | PiNN_Erd        | 18.00
+Combined_Plate_S235JR_Gear_Normal_3 | Physical_Model  | 40.12
+Combined_Plate_S235JR_Plate_Normal_3 | PiNN_Erd        | 18.10
+Combined_Plate_S235JR_Plate_Normal_3 | Physical_Model  | 31.64

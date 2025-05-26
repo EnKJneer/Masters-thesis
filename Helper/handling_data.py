@@ -79,10 +79,13 @@ Al_St_Plate_Gear = DataClass('Al_St_Plate_Gear', folder_data,
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
 Combined_Plate = DataClass('Combined_Plate', folder_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                    ['AL_2007_T4_Plate_Normal', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
                                     ['AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
                                   ["curr_x"],100,)
-
+Combined_Plate_Normal = DataClass('Combined_Plate', folder_data,
+                                    ['AL_2007_T4_Plate_Normal'],
+                                    ['AL_2007_T4_Plate_Normal_3.csv','AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
+                                  ["curr_x"],100,)
 def create_full_ml_vector_optimized_old(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """
     Creates a full machine learning vector optimized for multiple channels.

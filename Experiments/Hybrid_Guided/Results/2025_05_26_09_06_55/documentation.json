@@ -1,0 +1,274 @@
+{
+    "DataSets": [
+        {
+            "name": "Combined_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        },
+        {
+            "Random_Forest_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        },
+        {
+            "Physical_Model_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 1,
+                    "optimizer_type": "quasi_newton",
+                    "c_1": 0.009999999776482582,
+                    "c_2": 0.009999999776482582,
+                    "c_3": 0.009999999776482582,
+                    "c_4": 0.009999999776482582,
+                    "c_5": 0.009999999776482582
+                }
+            }
+        },
+        {
+            "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "model": "HybridModel",
+                "physical_model": {
+                    "hyperparameters": {
+                        "learning_rate": 1,
+                        "optimizer_type": "quasi_newton",
+                        "c_1": 0.009999999776482582,
+                        "c_2": 0.009999999776482582,
+                        "c_3": 0.009999999776482582,
+                        "c_4": 0.009999999776482582,
+                        "c_5": 0.009999999776482582
+                    }
+                },
+                "net_model": {
+                    "hyperparameters": {
+                        "learning_rate": 0.001,
+                        "n_hidden_size": null,
+                        "n_hidden_layers": 1,
+                        "n_activation_function": "ReLU"
+                    }
+                }
+            }
+        },
+        {
+            "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "model": "HybridModel",
+                "physical_model": {
+                    "hyperparameters": {
+                        "learning_rate": 1,
+                        "optimizer_type": "quasi_newton",
+                        "c_1": 0.009999999776482582,
+                        "c_2": 0.009999999776482582,
+                        "c_3": 0.009999999776482582,
+                        "c_4": 0.009999999776482582,
+                        "c_5": 0.009999999776482582
+                    }
+                },
+                "net_model": {
+                    "hyperparameters": {
+                        "n_estimators": 10,
+                        "max_features": null,
+                        "min_samples_split": 2,
+                        "min_samples_leaf": 1
+                    }
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 10,
+        "past_values": 2,
+        "future_values": 2,
+        "batched_data": false,
+        "n_drop_values": 10,
+        "NUMBEROFEPOCHS": 100
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                0.6996736584792409,
+                0.01148495675050688
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Neural_Net",
+                1.7404063124134435,
+                0.38360444650292114
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Neural_Net",
+                2.564730016062485,
+                0.5225942093206529
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                0.7246690864438547,
+                0.006432525996900339
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Random_Forest",
+                1.294206053012293,
+                0.0112837584126583
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Random_Forest",
+                1.8571190496778889,
+                0.025160352570118966
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Physical_Model",
+                0.3844782215719563,
+                5.551115123125783e-17
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Physical_Model",
+                0.9693735826203366,
+                0.0
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Physical_Model",
+                1.2002772013606864,
+                0.0
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net",
+                0.6950450186091114,
+                0.012580364257496264
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net",
+                1.6387418032255945,
+                0.12137080726897384
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net",
+                2.4211116131889323,
+                0.18062335519001407
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest",
+                0.7180395952498649,
+                0.007490184209949362
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest",
+                1.259359442157146,
+                0.006005026559006285
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest",
+                1.8251954270828663,
+                0.01807823159712477
+            ]
+        ],
+        "Improvement": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                -3.5724409032265223
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Physical_Model",
+                45.04892146323904
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net",
+                0.66154267979589
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest",
+                -2.624929000549039
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Random_Forest",
+                27.59007622451269
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Physical_Model",
+                53.20064124318948
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net",
+                5.5997474187962935
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest",
+                28.83479291574686
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Random_Forest",
+                25.637706334355855
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Physical_Model",
+                44.30188079034866
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Neural_Net",
+                5.841423836648208
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Hybrid_Model_Phys_Physical_Model_ML_Random_Forest",
+                27.639917577018196
+            ]
+        ]
+    }
+}

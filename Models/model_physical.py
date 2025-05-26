@@ -1,3 +1,5 @@
+from typing import List
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,6 +8,9 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 import optuna
+from sympy.physics.units import acceleration, velocity
+from torch import Tensor
+
 import Models.model_base as mb
 
 material_parameters = {
@@ -290,4 +295,272 @@ class ModelZhou(mb.BaseModel, nn.Module):
         documentation = {"hyperparameters": {
             "optimizer": self.optimizer_class.__name__,
         }}
+        return documentation
+
+class PhysicalModelErd(nn.Module):
+    def __init__(self, c_1, c_2, c_3, c_4, c_5, learning_rate=0.0001, optimizer_type='quasi_newton', name="Physical_Model"):
+        super(PhysicalModelErd, self).__init__()
+        self.initial_params = {"c_1": c_1, "c_2": c_2, "c_3": c_3, "c_4": c_4, "c_5": c_5}
+        self.c_1 = nn.Parameter(torch.tensor(c_1, dtype=torch.float32))
+        self.c_2 = nn.Parameter(torch.tensor(c_2, dtype=torch.float32))
+        self.c_3 = nn.Parameter(torch.tensor(c_3, dtype=torch.float32))
+        self.c_4 = nn.Parameter(torch.tensor(c_4, dtype=torch.float32))
+        self.c_5 = nn.Parameter(torch.tensor(c_5, dtype=torch.float32))
+
+        # Kopplungsgewichte θ_{i,j}, wobei i ≠ j (Diagonale = 0)
+        #self.theta = nn.Parameter(torch.zeros(4, 4, dtype=torch.float32))  # 4 Achsen: x,y,z,sp
+        #self.initial_params["theta"] = self.theta.detach().cpu().numpy().copy()
+        self.learning_rate = learning_rate
+        self.optimizer_type = optimizer_type
+        self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+
+    def reset_parameters(self):
+        """Setzt die Parameter auf die initial übergebenen Werte zurück."""
+        with torch.no_grad():
+            self.c_1.copy_(torch.tensor(self.initial_params["c_1"], dtype=torch.float32))
+            self.c_2.copy_(torch.tensor(self.initial_params["c_2"], dtype=torch.float32))
+            self.c_3.copy_(torch.tensor(self.initial_params["c_3"], dtype=torch.float32))
+            self.c_4.copy_(torch.tensor(self.initial_params["c_4"], dtype=torch.float32))
+            self.c_5.copy_(torch.tensor(self.initial_params["c_5"], dtype=torch.float32))
+            #self.theta.copy_(torch.tensor(self.initial_params["theta"], dtype=torch.float32))
+
+    def criterion(self, y_target, y_pred):
+        criterion = nn.MSELoss()
+        return criterion(y_target.squeeze(), y_pred.squeeze())
+
+    def predict(self, X):
+        if type(X) is pd.DataFrame:
+            X = X.values
+        with torch.no_grad():
+            return self.model(X)
+
+    def get_input_vector(self, df):
+        prefix_current = '_1_current'
+        axes = ['x', 'y', 'z', 'sp']
+        acceleration = []
+        velocity = []
+        force = []
+        for axis in axes:
+            acceleration.append(df[['a_' + axis + prefix_current]].values)
+            velocity.append(df[['v_' + axis + prefix_current]].values)
+            force.append(df[['f_' + axis + '_sim' + prefix_current]].values)
+        MRR = df['materialremoved_sim' + prefix_current].values
+
+        acceleration = torch.tensor(np.array(acceleration), dtype=torch.float32).squeeze().to(self.device)
+        velocity = torch.tensor(np.array(velocity), dtype=torch.float32).squeeze().to(self.device)
+        force = torch.tensor(np.array(force), dtype=torch.float32).squeeze().to(self.device)
+        MRR = torch.tensor(MRR, dtype=torch.float32).squeeze().to(self.device)
+        return [acceleration, velocity, force, MRR]
+
+    def model(self, input_vector, axis=0):
+        [acceleration, velocity, force, MRR] = input_vector  # shape: [4, T] je Achse
+        movment = self.c_1 * acceleration * velocity + self.c_2 * velocity ** 2 * torch.sign(velocity)
+        material = self.c_3 * force * MRR
+        current = movment + material + self.c_4 * torch.sign(velocity) + self.c_5 # shape: [4, T]
+
+        # Kopplungseffekte berechnen
+        # current[i] += sum_j≠i (theta[i,j] * current_base[j])
+
+        """        
+        current = current_base.clone()
+        for i in range(4):  # 0=x, 1=y, 2=z, 3=sp
+            for j in range(4):
+                if i != j:
+                    current[i] = current[i] + self.theta[i, j] * current_base[j]
+        """
+        if axis is None:
+            return current  # shape: [4, T]
+        else:
+            return current[axis]  # shape: [T]
+
+    def test_model(self, X, y_target, criterion_test = None):
+        if criterion_test is None:
+            criterion_test = self.criterion
+        input_vector = self.get_input_vector(X)
+        if not isinstance(y_target, np.ndarray):
+            y_target = y_target.to_numpy()
+        y_target = torch.tensor(y_target, dtype=torch.float32).to(self.device)
+        y_pred = self.predict(input_vector)
+        loss = criterion_test(y_target, y_pred)
+        return loss.item(), y_pred.detach().cpu().numpy()
+
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=5, draw_loss=False, epsilon=0.0001, reset_parameters=True):
+        if reset_parameters:
+            print(f"{self.name}: Setze Parameter auf Initialwerte zurück.")
+            self.reset_parameters()
+
+        def to_tensor(data):
+            if isinstance(data, torch.Tensor):
+                return data.to(self.device)
+            elif hasattr(data, 'values'):
+                return torch.tensor(data.values, dtype=torch.float32).to(self.device)
+            else:
+                return torch.tensor(data, dtype=torch.float32).to(self.device)
+
+        is_batched_train = isinstance(X_train, list) and isinstance(y_train, list)
+        is_batched_val = isinstance(X_val, list) and isinstance(y_val, list)
+
+        assert (not is_batched_train) or (len(X_train) == len(y_train)), "Trainingslist must have the same length"
+        assert (not is_batched_val) or (len(X_val) == len(y_val)), "Validierungslisten must have the same length"
+
+        print(f"Device: {self.device} | Batched: {is_batched_train}")
+
+        if self.optimizer_type.lower() == 'adam':
+            optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
+        elif self.optimizer_type.lower() == 'quasi_newton':
+            optimizer = optim.LBFGS(self.parameters(), lr=self.learning_rate, max_iter=20, history_size=10)
+            patience = 4
+        else:
+            raise ValueError(f"Unknown optimizer_type: {self.optimizer_type}")
+
+        if patience < 4:
+            patience = 4
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5,
+                                                               patience=int(patience / 2))
+
+        if draw_loss:
+            loss_vals, epochs, loss_train = [], [], []
+            fig, ax = plt.subplots()
+            line_val, = ax.plot(epochs, loss_vals, 'r-', label='validation')
+            line_train, = ax.plot(epochs, loss_train, 'b-', label='training')
+            ax.legend()
+
+        best_val_error = float('inf')
+        patience_counter = 0
+
+        for epoch in range(n_epochs):
+            self.train()
+            train_losses = []
+
+            def closure():
+                optimizer.zero_grad()
+                if is_batched_train:
+                    loss_total = 0
+                    for batch_x, batch_y in zip(X_train, y_train):
+                        batch_x_tensor = self.get_input_vector(batch_x)
+                        batch_y_tensor = to_tensor(batch_y)
+                        output = self.model(batch_x_tensor)
+                        loss = self.criterion(output, batch_y_tensor)
+                        loss.backward()
+                        loss_total += loss
+                    return loss_total
+                else:
+                    x_tensor = self.get_input_vector(X_train)
+                    y_tensor = to_tensor(y_train)
+                    output = self.model(x_tensor)
+                    loss = self.criterion(output, y_tensor)
+                    loss.backward()
+                    return loss
+
+            if self.optimizer_type.lower() == 'quasi_newton':
+                loss = optimizer.step(closure)
+                train_losses.append(loss.item() if isinstance(loss, torch.Tensor) else loss)
+            else:
+                if is_batched_train:
+                    for batch_x, batch_y in zip(X_train, y_train):
+                        optimizer.zero_grad()
+                        batch_x_tensor = self.get_input_vector(batch_x)
+                        batch_y_tensor = to_tensor(batch_y)
+                        output = self.model(batch_x_tensor)
+                        loss = self.criterion(output, batch_y_tensor)
+                        loss.backward()
+                        optimizer.step()
+                        train_losses.append(loss.item())
+                else:
+                    optimizer.zero_grad()
+                    x_tensor = self.get_input_vector(X_train)
+                    y_tensor = to_tensor(y_train)
+                    output = self.model(x_tensor)
+                    loss = self.criterion(output, y_tensor)
+                    loss.backward()
+                    optimizer.step()
+                    train_losses.append(loss.item())
+
+            self.eval()
+            val_losses = []
+            with torch.no_grad():
+                if is_batched_val:
+                    for batch_x, batch_y in zip(X_val, y_val):
+                        batch_x_tensor = self.get_input_vector(batch_x)
+                        batch_y_tensor = to_tensor(batch_y)
+                        output = self.model(batch_x_tensor)
+                        val_loss = self.criterion(output, batch_y_tensor)
+                        val_losses.append(val_loss.item())
+                else:
+                    x_tensor = self.get_input_vector(X_val)
+                    y_tensor = to_tensor(y_val)
+                    output = self.model(x_tensor)
+                    val_loss = self.criterion(output, y_tensor)
+                    val_losses.append(val_loss.item())
+            del x_tensor, y_tensor, output, loss
+            torch.cuda.empty_cache()
+
+            avg_train_loss = sum(train_losses) / len(train_losses)
+            avg_val_loss = sum(val_losses) / len(val_losses)
+
+            if avg_val_loss < best_val_error - epsilon:
+                best_val_error = avg_val_loss
+                best_model_state = self.state_dict()
+                patience_counter = 0
+            elif epoch > (n_epochs / 10) or self.optimizer_type.lower() == 'quasi_newton':
+                patience_counter += 1
+
+            scheduler.step(avg_val_loss)
+
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch + 1}")
+                break
+
+            if draw_loss:
+                epochs.append(epoch)
+                loss_vals.append(avg_val_loss)
+                loss_train.append(avg_train_loss)
+                line_val.set_xdata(epochs)
+                line_val.set_ydata(loss_vals)
+                line_train.set_xdata(epochs)
+                line_train.set_ydata(loss_train)
+                ax.relim()
+                ax.autoscale_view()
+                plt.draw()
+                plt.pause(0.001)
+
+            print(
+                f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss: {avg_train_loss:.4f} Val Error: {avg_val_loss:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
+
+        if draw_loss:
+            plt.ioff()
+            plt.show()
+
+        self.load_state_dict(best_model_state)
+
+        print("Beste Parameter:")
+        for name, param in self.named_parameters():
+            print(f"{name}: {param.data.cpu().numpy()}")
+
+        return best_val_error
+
+    def get_documentation(self):
+        # θ-Matrix als Dictionary mit Schlüssel wie "theta_0_1": Wert
+        """
+        theta_dict = {
+            f"theta_{i}_{j}": self.theta[i, j].item()
+            for i in range(4)
+            for j in range(4)
+            if i != j  # Diagonale überspringen (optional)
+        }
+        """
+        documentation = {
+            "hyperparameters": {
+                "learning_rate": self.learning_rate,
+                "optimizer_type": self.optimizer_type,
+                "c_1": self.c_1.item(),
+                "c_2": self.c_2.item(),
+                "c_3": self.c_3.item(),
+                "c_4": self.c_4.item(),
+                "c_5": self.c_5.item(),
+                #**theta_dict  # Kopplungsparameter einfügen
+            }
+        }
         return documentation

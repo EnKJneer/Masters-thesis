@@ -38,7 +38,7 @@ def get_reference_net(input_size=None):
     return Net(input_size, 1, input_size)
 # Defines a configurable neural network
 class Net(mb.BaseNetModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="Neural_Net"):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.001, name="Neural_Net"):
         """
         Initializes a configurable neural network.
 
@@ -735,7 +735,7 @@ class NetTransformer(mb.BaseNetModel):
 
 
 class QuantileIdNetModel(Net):
-    def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform'):
+    def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform', name = 'Net_Q_Id'):
         """
         Initializes a configurable neural network with Quantile + Id scaling.
 
@@ -757,6 +757,7 @@ class QuantileIdNetModel(Net):
         # Adjust input size to account for doubled features due to Quantile + Id scaling
         super(QuantileIdNetModel, self).__init__(input_size * 2, output_size, n_neurons, n_layers, activation)
         self.output_distribution = output_distribution
+        self.name = name
 
     def scale_data(self, X):
         """
@@ -859,7 +860,10 @@ class RiemannQuantileClassifierNet(Net):
         self.load_state_dict(best_model_state)
         return best_val_error
 
-    def test_model(self, X, y_target):
+    def test_model(self, X, y_target, criterion_test = None):
+
+        if criterion_test is None:
+            criterion_test = self.criterion
         X_scaled = self.scale_data(X)
         X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
 
@@ -875,7 +879,7 @@ class RiemannQuantileClassifierNet(Net):
             y_pred = np.argmax(pred_probs, axis=1)
 
         y_target_discrete = self.discretize_targets(y_target)
-        loss = self.loss_fn(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
+        loss = self.criterion_test(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
 
         return loss.item(), y_pred
 
@@ -973,7 +977,9 @@ class QuantileIdRiemannClassifierNet(Net):
         self.load_state_dict(best_model_state)
         return best_val_error
 
-    def test_model(self, X, y_target):
+    def test_model(self, X, y_target, criterion_test=None):
+        if criterion_test is None:
+            criterion_test = self.criterion
         X_scaled = self.scale_data(X)
         X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
 
@@ -989,6 +995,105 @@ class QuantileIdRiemannClassifierNet(Net):
             y_pred = np.argmax(pred_probs, axis=1)
 
         y_target_discrete = self.discretize_targets(y_target)
-        loss = self.loss_fn(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
+        loss = criterion_test(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
 
         return loss.item(), y_pred
+
+class PiNN(Net):
+    def __init__(self, *args, name="PiNN_Erd", penalty_weight=1, c_1=-6.23e-6, c_2=2.27e-7, c_3=-2.7e-6, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.c_1 = c_1
+        self.c_2 = c_2
+        self.c_3 =c_3
+
+    def criterion(self, y_target, y_pred, x_input=None):
+        """
+        Loss-Funktion mit zusätzlichem physikalisch motivierten Strafterm.
+
+        Parameter:
+        - y_target: Zielwerte
+        - y_pred: Vorhersagen
+        - x_input: Eingabedaten (nur notwendig für den Strafterm)
+
+        Rückgabe:
+        - Gesamtverlust (MSE + Strafterm)
+        """
+        mse_loss = nn.MSELoss()(y_pred.squeeze(), y_target.squeeze())
+
+        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+            x_input = x_input.clone().detach().requires_grad_(True)
+            y_pred_physics = self(x_input)
+
+            # dy/dx1 (x1 = Feature mit Index 0)
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+            # ToDo: modular implementieren
+            v = x_input[:, 10]             # Feature v
+            a = x_input[:, 1]             # Feature a
+            mrr = x_input[:, 8]             # Feature mrr
+            f = x_input[:, 5]               # Feature F
+
+            dy_da = dy_dx[:, 1]  # Ableitung nach a
+            dy_dv = dy_dx[:, 10]
+            dy_df = dy_dx[:, 5]
+            dy_dmrr = dy_dx[:, 8]
+
+            constraint = (dy_da - self.c_1 * v) + (dy_dv - (self.c_1 * a + 2 * self.c_2 * torch.abs(v))) + (dy_df - self.c_3 * mrr) + (dy_dmrr - self.c_3 * f) #
+            penalty = torch.mean(constraint ** 2)  # L2-Strafterm
+
+            return mse_loss + self.penalty_weight * penalty
+
+        return mse_loss
+
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            # Falls numpy array oder anderes
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        """
+        Überschreibt das Training, um x_input an die Loss-Funktion zu übergeben.
+        """
+        original_criterion = self.criterion
+
+        # Patch `self.criterion` temporär für das Training
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiNN, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion  # Restore
+            return result
+
+        # Trick: train_model aus BaseNetModel verwendet `self.criterion`
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "penalty_weight": self.penalty_weight,
+        }}
+        return documentation

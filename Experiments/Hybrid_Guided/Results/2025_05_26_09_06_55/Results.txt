@@ -1,0 +1,33 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.6996736584792409 | 0.011485
+Combined_Plate_S235JR_Plate_Normal_3 | Neural_Net      | 1.7404063124134435 | 0.383604
+Combined_Plate_S235JR_Gear_Normal_3 | Neural_Net      | 2.564730016062485 | 0.522594
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.7246690864438547 | 0.006433
+Combined_Plate_S235JR_Plate_Normal_3 | Random_Forest   | 1.294206053012293 | 0.011284
+Combined_Plate_S235JR_Gear_Normal_3 | Random_Forest   | 1.8571190496778889 | 0.025160
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Physical_Model  | 0.3844782215719563 | 0.000000
+Combined_Plate_S235JR_Plate_Normal_3 | Physical_Model  | 0.9693735826203366 | 0.000000
+Combined_Plate_S235JR_Gear_Normal_3 | Physical_Model  | 1.2002772013606864 | 0.000000
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Neural_Net | 0.6950450186091114 | 0.012580
+Combined_Plate_S235JR_Plate_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Neural_Net | 1.6387418032255945 | 0.121371
+Combined_Plate_S235JR_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Neural_Net | 2.4211116131889323 | 0.180623
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Random_Forest | 0.7180395952498649 | 0.007490
+Combined_Plate_S235JR_Plate_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Random_Forest | 1.259359442157146 | 0.006005
+Combined_Plate_S235JR_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Random_Forest | 1.8251954270828663 | 0.018078
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Random_Forest   | -3.57
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Physical_Model  | 45.05
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Neural_Net | 0.66
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Random_Forest | -2.62
+Combined_Plate_S235JR_Gear_Normal_3 | Random_Forest   | 27.59
+Combined_Plate_S235JR_Gear_Normal_3 | Physical_Model  | 53.20
+Combined_Plate_S235JR_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Neural_Net | 5.60
+Combined_Plate_S235JR_Gear_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Random_Forest | 28.83
+Combined_Plate_S235JR_Plate_Normal_3 | Random_Forest   | 25.64
+Combined_Plate_S235JR_Plate_Normal_3 | Physical_Model  | 44.30
+Combined_Plate_S235JR_Plate_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Neural_Net | 5.84
+Combined_Plate_S235JR_Plate_Normal_3 | Hybrid_Model_Phys_Physical_Model_ML_Random_Forest | 27.64

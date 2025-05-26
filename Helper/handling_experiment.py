@@ -10,7 +10,7 @@ import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 
-def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10, past_values=2, future_values=2, batched_data=False, n_drop_values=10):
+def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10, past_values=2, future_values=2, batched_data=False, n_drop_values=100, patience=5):
     if type(dataSets) is not list:
         dataSets = [dataSets]
 
@@ -29,6 +29,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
             "future_values": future_values,
             "batched_data": batched_data,
             "n_drop_values": n_drop_values,
+            "NUMBEROFEPOCHS": NUMBEROFEPOCHS,
         }
     }
 
@@ -98,7 +99,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
             nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
 
             for _ in range(NUMBEROFMODELS):
-                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=5)
+                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=patience)
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
                         _, pred_nn = model.test_model(x, y)
@@ -121,19 +122,23 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
                 ])
                 header_list[i].append(name)
 
+        if len(reference_models) > 0:
+            criterion = reference_models[0].criterion
+        else:
+            criterion = None
         # Train and test models
         for model in models:
             # Modellvergleich auf neuen Daten
             nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
 
             for _ in range(NUMBEROFMODELS):
-                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=5)
+                model.train_model(X_train, y_train, X_val, y_val, n_epochs = NUMBEROFEPOCHS, patience=patience)
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
-                        _, pred_nn = model.test_model(x, y)
+                        _, pred_nn = model.test_model(x, y, criterion_test=criterion)
                         nn_preds[i].append(pred_nn.flatten())
                 else:
-                    _, pred_nn = model.test_model(X_test, y_test)
+                    _, pred_nn = model.test_model(X_test, y_test, criterion_test=criterion)
                     nn_preds.append(pred_nn.flatten())
 
             # Fehlerberechnung

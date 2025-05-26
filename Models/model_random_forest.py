@@ -28,6 +28,7 @@ class RandomForestModel(mb.BaseModel):
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
         self.name = name
+        self.device = "cpu"
 
     def criterion(self, y_target, y_pred):
         """
@@ -63,7 +64,7 @@ class RandomForestModel(mb.BaseModel):
         """
         return self.model.predict(X)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12):
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience=10):
         """
         Train the Random Forest model using the training data and validate it using the validation data.
 
@@ -93,6 +94,7 @@ class RandomForestModel(mb.BaseModel):
         best_val_error = float('inf')
 
         # Training loop (for compatibility, though Random Forest is not iterative)
+        n_epochs= 1
         for epoch in range(n_epochs):
             self.model.fit(X_train, y_train)
             y_val_pred = self.model.predict(X_val)
@@ -115,11 +117,12 @@ class RandomForestModel(mb.BaseModel):
                 plt.legend()
                 plt.show()
 
-            print(f'Epoch {epoch+1}/{n_epochs}, Val Error: {val_error:.4f}')
+            print(
+                f'{self.name}: Epoch {epoch + 1}/{n_epochs},  Val Error: {val_error:.4f}')
 
         return best_val_error
 
-    def test_model(self, X, y_target):
+    def test_model(self, X, y_target, criterion_test=None):
         """
         Test the model using the test data and compute the loss.
 
@@ -135,8 +138,10 @@ class RandomForestModel(mb.BaseModel):
         tuple
             A tuple containing the loss and the predicted values.
         """
+        if criterion_test is None:
+            criterion_test = self.criterion
         y_pred = self.predict(X)
-        loss = self.criterion(y_target, y_pred)
+        loss = criterion_test(y_target, y_pred)
         return loss, y_pred
 
     def get_documentation(self):

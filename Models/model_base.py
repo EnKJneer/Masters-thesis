@@ -21,11 +21,11 @@ class BaseModel(ABC):
         pass
 
     @abstractmethod
-    def train_model(self, X_train, y_train, X_val, y_val):
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
         pass
 
     @abstractmethod
-    def test_model(self, X, y_target):
+    def test_model(self, X, y_target, criterion_test = None):
         pass
     @abstractmethod
     def get_documentation(self):
@@ -44,6 +44,8 @@ class BaseNetModel(BaseModel, nn.Module):
         return criterion(y_target.squeeze(), y_pred.squeeze())
 
     def predict(self, X):
+        if type(X) is not torch.Tensor:
+            X = self.scaled_to_tensor(X)
         return self(X)
 
     def scale_data(self, X):
@@ -64,37 +66,40 @@ class BaseNetModel(BaseModel, nn.Module):
 
         return self.scaler.transform(X)
 
-    def test_model(self, X, y_target):
+    def test_model(self, X, y_target, criterion_test = None):
+        if criterion_test is None:
+            criterion_test = self.criterion
         X_scaled = self.scale_data(X)
         X = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
         if not isinstance(y_target, np.ndarray):
             y_target = y_target.to_numpy()
         y_target = torch.tensor(y_target, dtype=torch.float32).to(self.device)
         y_pred = self.predict(X)
-        loss = self.criterion(y_target, y_pred)
+        loss = criterion_test(y_target, y_pred)
         return loss.item(), y_pred.detach().cpu().numpy()
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=20, draw_loss=False, epsilon=0.0001,
-                    trial=None, n_outlier=12):
-        def scaled_to_tensor(data):
-            if isinstance(data, torch.Tensor):
-                return data.to(self.device)
-            elif hasattr(data, 'values'):
-                data_scaled = self.scale_data(data.values)
-                return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
-            else:
-                # Falls numpy array oder anderes
-                data_scaled = self.scale_data(data)
-                return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
-          
-        def to_tensor(data):
-                if isinstance(data, torch.Tensor):
-                    return data.to(self.device)
-                elif hasattr(data, 'values'):
-                    return torch.tensor(data.values, dtype=torch.float32).to(self.device)
-                else:
-                    # Falls numpy array oder anderes
-                    return torch.tensor(data, dtype=torch.float32).to(self.device)
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            # Falls numpy array oder anderes
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            return torch.tensor(data.values, dtype=torch.float32).to(self.device)
+        else:
+            # Falls numpy array oder anderes
+            return torch.tensor(data, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=10, draw_loss=False, epsilon=0.0001,
+                    trial=None, n_outlier=12, reset_parameters=True):
 
         # Prüfen, ob Inputs Listen sind
         is_batched_train = isinstance(X_train, list) and isinstance(y_train, list)
@@ -118,11 +123,14 @@ class BaseNetModel(BaseModel, nn.Module):
             # Define hidden size and set flag for initialization
             self.n_hidden_size = self.input_size
             flag_initialization = True
-        if flag_initialization:
+        if flag_initialization or reset_parameters:
             self._initialize_layers()
 
         optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
+        if patience < 4:
+            patience = 4
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+
 
         if draw_loss:
             loss_vals, epochs, loss_train = [], [], []
@@ -143,8 +151,8 @@ class BaseNetModel(BaseModel, nn.Module):
                 # ToDo: Shuffel einbauen
                 for batch_x, batch_y in zip(X_train, y_train):
                     optimizer.zero_grad()
-                    batch_x_tensor = scaled_to_tensor(batch_x)
-                    batch_y_tensor = to_tensor(batch_y)
+                    batch_x_tensor = self.scaled_to_tensor(batch_x)
+                    batch_y_tensor = self.to_tensor(batch_y)
 
                     output = self(batch_x_tensor)
                     loss = self.criterion(output, batch_y_tensor)
@@ -153,8 +161,8 @@ class BaseNetModel(BaseModel, nn.Module):
                     train_losses.append(loss.item())
             else:
                 optimizer.zero_grad()
-                x_tensor = scaled_to_tensor(X_train)
-                y_tensor = to_tensor(y_train)
+                x_tensor = self.scaled_to_tensor(X_train)
+                y_tensor = self.to_tensor(y_train)
 
                 output = self(x_tensor)
                 loss = self.criterion(output, y_tensor)
@@ -167,15 +175,15 @@ class BaseNetModel(BaseModel, nn.Module):
             with torch.no_grad():
                 if is_batched_val:
                     for batch_x, batch_y in zip(X_val, y_val):
-                        batch_x_tensor = scaled_to_tensor(batch_x)
-                        batch_y_tensor = to_tensor(batch_y)
+                        batch_x_tensor = self.scaled_to_tensor(batch_x)
+                        batch_y_tensor = self.to_tensor(batch_y)
 
                         output = self(batch_x_tensor)
                         val_loss = self.criterion(output, batch_y_tensor)
                         val_losses.append(val_loss.item())
                 else:
-                    x_tensor = scaled_to_tensor(X_val)
-                    y_tensor = to_tensor(y_val)
+                    x_tensor = self.scaled_to_tensor(X_val)
+                    y_tensor = self.to_tensor(y_val)
 
                     output = self(x_tensor)
                     val_loss = self.criterion(output, y_tensor)

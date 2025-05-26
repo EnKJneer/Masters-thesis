@@ -1,0 +1,195 @@
+{
+    "DataSets": [
+        {
+            "name": "Al_Al_Gear_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Gear",
+                "AL_2007_T4_Gear_Depth",
+                "AL_2007_T4_Gear_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        },
+        {
+            "name": "Al_St_Gear_Gear",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Gear",
+                "AL_2007_T4_Gear_Depth",
+                "AL_2007_T4_Gear_SF"
+            ],
+            "testing_data_paths": [
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        },
+        {
+            "name": "Al_St_Gear_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Gear",
+                "AL_2007_T4_Gear_Depth",
+                "AL_2007_T4_Gear_SF"
+            ],
+            "testing_data_paths": [
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": {
+        "Neural_Net_Ensemble": {
+            "NUMBEROFMODELS": 10,
+            "hyperparameters": {
+                "learning_rate": 0.001,
+                "n_hidden_size": 65,
+                "n_hidden_layers": 1
+            }
+        },
+        "Random_Forest": {
+            "hyperparameters": {
+                "n_estimators": 10,
+                "max_features": null,
+                "min_samples_split": 2,
+                "min_samples_leaf": 1
+            }
+        }
+    },
+    "Data_Preprocessing": {
+        "window_size": 10,
+        "past_values": 2,
+        "future_values": 2
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Al_Al_Gear_Plate",
+                "Neural_Net",
+                "Old",
+                0.1699536341606672,
+                0.06242706585678592
+            ],
+            [
+                "Al_Al_Gear_Plate",
+                "Neural_Net",
+                "New",
+                0.032574305869481526,
+                0.0016053148061859525
+            ],
+            [
+                "Al_Al_Gear_Plate",
+                "Random_Forest",
+                "Old",
+                0.057442348939993816,
+                0.006034335305130573
+            ],
+            [
+                "Al_Al_Gear_Plate",
+                "Random_Forest",
+                "New",
+                0.05733469555539215,
+                0.004039682477566174
+            ],
+            [
+                "Al_St_Gear_Gear",
+                "Neural_Net",
+                "Old",
+                2.040741002153409,
+                0.3203021764734006
+            ],
+            [
+                "Al_St_Gear_Gear",
+                "Neural_Net",
+                "New",
+                1.3240952826626637,
+                0.192927366970433
+            ],
+            [
+                "Al_St_Gear_Gear",
+                "Random_Forest",
+                "Old",
+                0.598131813348427,
+                0.09647686039836845
+            ],
+            [
+                "Al_St_Gear_Gear",
+                "Random_Forest",
+                "New",
+                0.7296600468702238,
+                0.26586352751778203
+            ],
+            [
+                "Al_St_Gear_Plate",
+                "Neural_Net",
+                "Old",
+                1.7154178535304063,
+                0.3579339833944132
+            ],
+            [
+                "Al_St_Gear_Plate",
+                "Neural_Net",
+                "New",
+                1.109028954901232,
+                0.16653209352447482
+            ],
+            [
+                "Al_St_Gear_Plate",
+                "Random_Forest",
+                "Old",
+                1.0536775919787231,
+                0.24401106944902118
+            ],
+            [
+                "Al_St_Gear_Plate",
+                "Random_Forest",
+                "New",
+                0.7168922596769978,
+                0.2340359241309483
+            ]
+        ],
+        "Improvement": [
+            [
+                "Al_Al_Gear_Plate",
+                "Neural_Net",
+                80.83341610766198
+            ],
+            [
+                "Al_Al_Gear_Plate",
+                "Random_Forest",
+                0.18741118110286104
+            ],
+            [
+                "Al_St_Gear_Gear",
+                "Neural_Net",
+                35.116936384114105
+            ],
+            [
+                "Al_St_Gear_Gear",
+                "Random_Forest",
+                -21.989840798716756
+            ],
+            [
+                "Al_St_Gear_Plate",
+                "Neural_Net",
+                35.34934053421439
+            ],
+            [
+                "Al_St_Gear_Plate",
+                "Random_Forest",
+                31.96284469419808
+            ]
+        ]
+    }
+}
