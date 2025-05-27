@@ -1,0 +1,111 @@
+{
+    "DataSets": [
+        {
+            "name": "Combined_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate_Normal",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 2,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        },
+        {
+            "Net_Q_Id_Ensemble": {
+                "NUMBEROFMODELS": 2,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 103,
+                    "n_hidden_layers": 5,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 1,
+        "past_values": 2,
+        "future_values": 2,
+        "batched_data": false,
+        "n_drop_values": 20,
+        "NUMBEROFEPOCHS": 500
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                0.6809177588295392,
+                0.011386764719716058
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Neural_Net",
+                1.0949981793742904,
+                0.010448855727761441
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Neural_Net",
+                1.3732568577979363,
+                0.0005697157930349972
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Net_Q_Id",
+                0.645894964198616,
+                0.013121914386890643
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Net_Q_Id",
+                0.9769356064425458,
+                0.05576264924838187
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Net_Q_Id",
+                1.1978080989082747,
+                0.06339663611173219
+            ]
+        ],
+        "Improvement": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Net_Q_Id",
+                5.143469116024447
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Net_Q_Id",
+                12.776106515936108
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Net_Q_Id",
+                10.781988057661295
+            ]
+        ]
+    }
+}

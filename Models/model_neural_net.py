@@ -735,7 +735,7 @@ class NetTransformer(mb.BaseNetModel):
 
 
 class QuantileIdNetModel(Net):
-    def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform', name = 'Net_Q_Id'):
+    def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform', learning_rate=0.0001, name = 'Net_Q_Id'):
         """
         Initializes a configurable neural network with Quantile + Id scaling.
 
@@ -755,9 +755,8 @@ class QuantileIdNetModel(Net):
             The output distribution for the QuantileTransformer. Default is 'uniform'.
         """
         # Adjust input size to account for doubled features due to Quantile + Id scaling
-        super(QuantileIdNetModel, self).__init__(input_size * 2, output_size, n_neurons, n_layers, activation)
+        super(QuantileIdNetModel, self).__init__(input_size * 2, output_size, n_neurons, n_layers, activation, learning_rate, name)
         self.output_distribution = output_distribution
-        self.name = name
 
     def scale_data(self, X):
         """
@@ -778,13 +777,13 @@ class QuantileIdNetModel(Net):
 
 class RiemannQuantileClassifierNet(Net):
     def __init__(self, input_size, output_size=1, n_neurons=64, n_layers=3, activation=nn.ReLU, min_bins=8,
-                 max_bins=64):
+                 max_bins=64, learning_rate=0.0001, name = 'RiemannQuantileClassifierNet'):
         super().__init__(input_size, max_bins, n_neurons, n_layers, activation)
         self.min_bins = min_bins
         self.max_bins = max_bins
         self.bins = None
         self.loss_fn = nn.CrossEntropyLoss()
-
+        self.name = name
     def discretize_targets(self, y):
         if self.bins is None:
             n_unique = len(np.unique(y))
@@ -797,9 +796,10 @@ class RiemannQuantileClassifierNet(Net):
         return y_digitized
 
     def criterion(self, y_target, y_pred_logits):
-        return self.loss_fn(y_pred_logits, y_target.long().squeeze())
+        y_target = y_target.long().squeeze()
+        return self.loss_fn(y_pred_logits, y_target)
 
-    def train_model(self, X_train, y_train, X_val, y_val, learning_rate=0.0001, n_epochs=100, patience=20,
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=20,
                     draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
         print(self.device)
 
@@ -814,7 +814,7 @@ class RiemannQuantileClassifierNet(Net):
         y_train_tensor = torch.tensor(y_train_discrete, dtype=torch.long).to(self.device)
         y_val_tensor = torch.tensor(y_val_discrete, dtype=torch.long).to(self.device)
 
-        optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
 
         best_val_error = float('inf')
@@ -851,7 +851,7 @@ class RiemannQuantileClassifierNet(Net):
                         raise optuna.exceptions.TrialPruned()
 
             print(
-                f'Epoch {epoch + 1}/{n_epochs}, Val Error: {val_error:.4f}, LR: {optimizer.param_groups[0]["lr"]:.6f}')
+                f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss; {loss:.4f} Val Error: {val_error:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
 
             if patience_counter >= patience:
                 print(f"Early stopping at epoch {epoch + 1}")
@@ -860,10 +860,9 @@ class RiemannQuantileClassifierNet(Net):
         self.load_state_dict(best_model_state)
         return best_val_error
 
-    def test_model(self, X, y_target, criterion_test = None):
-
+    def test_model(self, X, y_target, criterion_test=None):
         if criterion_test is None:
-            criterion_test = self.criterion
+            criterion_test = nn.MSELoss()
         X_scaled = self.scale_data(X)
         X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
 
@@ -879,7 +878,7 @@ class RiemannQuantileClassifierNet(Net):
             y_pred = np.argmax(pred_probs, axis=1)
 
         y_target_discrete = self.discretize_targets(y_target)
-        loss = self.criterion_test(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
+        loss = criterion_test(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
 
         return loss.item(), y_pred
 

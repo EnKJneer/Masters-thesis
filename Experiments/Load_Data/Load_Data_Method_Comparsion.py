@@ -312,6 +312,15 @@ dataSet_diff_material_diff_workpiece_new = DataClass_new('Al_St_Gear_Plate', fol
                                   ["curr_x"],100,)
 dataSets_list_new = [dataSet_same_material_diff_workpiece_new,dataSet_diff_material_same_workpiece_new,dataSet_diff_material_diff_workpiece_new]
 
+
+dataPaths_Val = ['AL_2007_T4_Gear_SF_1.csv', 'AL_2007_T4_Gear_Depth_1.csv','AL_2007_T4_Gear_Normal_1.csv',
+                  'AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Depth_2.csv','AL_2007_T4_Gear_Normal_2.csv',
+                  'AL_2007_T4_Gear_SF_3.csv', 'AL_2007_T4_Gear_Depth_3.csv','AL_2007_T4_Gear_Normal_3.csv', ]
+
+dataPaths_Train = ['Kühlgrill_Mat_S2800_1.csv', 'Kühlgrill_Mat_S3800_1.csv','Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_1', 'Laufrad_Durchlauf_2_1'
+                  'Kühlgrill_Mat_S2800_2.csv', 'Kühlgrill_Mat_S3800_2.csv','Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_2',  'Laufrad_Durchlauf_2_2'
+                  'Kühlgrill_Mat_S2800_3.csv', 'Kühlgrill_Mat_S3800_3.csv','Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_3', 'Laufrad_Durchlauf_2_3']
+
 dataSet_same_material_diff_workpiece = DataClass('Al_Al_Gear_Plate', folder_data,
                                     ['AL_2007_T4_Gear_Depth_3.csv','AL_2007_T4_Gear_Normal_1.csv'],
                                     ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
@@ -327,13 +336,19 @@ dataSet_diff_material_diff_workpiece = DataClass('Al_St_Gear_Plate', folder_data
                                     ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
                                     ['S235JR_Plate_Normal_3.csv'],
                                   ["curr_x"],100)
+Combined_Gear = DataClass('Combined_Gear', folder_data,
+                                    dataPaths_Train,
+                                    dataPaths_Val,
+                                    ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv'],
+                                  ["curr_x"],100)
 dataSets_list = [dataSet_same_material_diff_workpiece,dataSet_diff_material_same_workpiece, dataSet_diff_material_diff_workpiece]
 
-Combined_Gear = DataClass('Combined_Gear', folder_data,
+Combined_Gear_new = DataClass_new('Combined_Gear', folder_data,
                                     ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                     ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv' ],
                                   ["curr_x"],100,)
-#dataSets_list = [Combined_Gear]
+dataSets_list = [Combined_Gear]
+dataSets_list_new = [Combined_Gear_new]
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFEPOCHS = 800
@@ -352,7 +367,7 @@ if __name__ == "__main__":
                                                                      window_size=window_size)
 
     model_nn = mnn.get_reference(X_train_old.shape[1])
-    model_rf = mrf.get_reference_model()
+    model_rf = mrf.get_reference()
 
 
     """Save Meta information"""

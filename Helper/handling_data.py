@@ -24,7 +24,7 @@ import pandas as pd
 import numpy as np
 import pickle
 
-from sympy import false
+from abc import ABC, abstractmethod
 
 # konstanten
 WINDOWSIZE = 1
@@ -33,59 +33,442 @@ HEADER = ["pos_x", "pos_y", "pos_z", "v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", 
 HEADER_x = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
 HEADER_y = ["curr_x", "curr_y", "curr_z", "curr_sp"]
 
+class BaseDataClass(ABC):
+    @abstractmethod
+    def __init__(self, name, folder, target_channels=HEADER_y, do_preprocessing=True, n=12):
+        self.name = name
+        self.folder = folder
+        self.target_channels = target_channels
+        self.do_preprocessing = do_preprocessing
+        self.n = n
+
+    def prepare_output(self, all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test, keep_separate):
+        """
+        Returns
+        -------
+        tuple
+            X_train, X_val, X_test, y_train, y_val, y_test
+        """
+        if keep_separate:
+            return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
+        else:
+            X_train = pd.concat(all_X_train).reset_index(drop=True)
+            y_train = pd.concat(all_y_train).reset_index(drop=True)
+            X_val = pd.concat(all_X_val).reset_index(drop=True)
+            y_val = pd.concat(all_y_val).reset_index(drop=True)
+
+            return X_train, X_val, X_test, y_train, y_val, y_test
+
+    def preprocessing(self, X, y):
+        """
+        Preprocesses the data.
+
+        Parameters
+        ----------
+        X : DataFrame or list of DataFrames
+            Input data.
+        y : DataFrame or list of DataFrames
+            Target data.
+
+        Returns
+        -------
+        tuple
+            Preprocessed X and y.
+        """
+        if isinstance(X, list):
+            # Initialize lists to store preprocessed X and y
+            X_preprocessed = []
+            y_preprocessed = []
+
+            # Iterate over each pair of X and y, preprocess them, and store the results
+            for x, y in zip(X, y):
+                x_cleaned, y_cleaned = self._preprocess_single(x, y)
+                X_preprocessed.append(x_cleaned)
+                y_preprocessed.append(y_cleaned)
+
+            return X_preprocessed, y_preprocessed
+        else:
+            return self._preprocess_single(X, y)
+
+    def _preprocess_single(self, X, y):
+        """
+        Remove outliers from the input data and adjust the corresponding y values.
+
+        Parameters:
+        X (DataFrame or Series): The input data.
+        y (Series or DataFrame): The corresponding target values.
+        n (int): The number of standard deviations to consider for outlier removal. Default is 12.
+
+        Returns:
+        Tuple: The cleaned input data and the adjusted target values.
+        """
+        y.index = X.index
+
+        if isinstance(y, pd.Series):
+            # Calculate the mean and standard deviation for the target values
+            mean = y.mean()
+            std = y.std()
+
+            # Identify outliers in the target values
+            outliers = np.abs(y - mean) > self.n * std
+        elif isinstance(y, pd.DataFrame):
+            # Calculate the mean and standard deviation for each feature
+            mean = y.mean(axis=0)
+            std = y.std(axis=0)
+
+            # Identify outliers
+            outliers = np.abs(y - mean) > self.n * std
+            outliers = outliers.any(axis=1)
+        else:
+            raise ValueError("y must be a pandas Series or DataFrame")
+
+        # Remove rows that contain outliers
+        x_cleaned = X[~outliers]
+        y_cleaned = y[~outliers]
+
+        return x_cleaned, y_cleaned
+
+    @abstractmethod
+    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False):
+        pass
+
+    @abstractmethod
+    def get_documentation(self):
+        pass
+
+    def get_test_data_as_pd(self, past_values=2, future_values=2, window_size=1):
+        """
+        Loads and preprocesses test data for evaluation purposes.
+        Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
+
+        Parameters
+        ----------
+        data_params : DataClass_CombinedTrainVal
+            A DataClass containing the data parameters for loading the dataset.
+        past_values : int, optional
+            The number of past values to consider for each sample. The default is 2.
+        future_values : int, optional
+            The number of future values to predict for each sample. The default is 2.
+        window_size : int, optional
+            The size of the sliding window for calculating the rolling mean. The default is 1.
+            If 0 or negative, it is adjusted to a positive value.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the preprocessed test data and base names of the test files:
+            - test_datas : list of pd.DataFrame
+                Preprocessed test data with rolling mean applied.
+            - base_names : list of str
+                Base names of the test files without the index part.
+        """
+        if window_size == 0:
+            window_size = 1
+        elif window_size < 0:
+            window_size = abs(window_size)
+
+        # Getting validation data to right format:
+        fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
+
+        # Apply rolling mean to each DataFrame in the lists
+        test_datas = apply_action(fulltestdatas,
+                                  lambda data: data[HEADER].rolling(window=window_size, min_periods=1).mean())
+
+        if past_values + future_values != 0:
+            test_datas = apply_action(test_datas, lambda target: target.iloc[past_values:-future_values])
+
+        base_names = []
+        for path in self.testing_data_paths:
+            file_name = os.path.basename(path)
+            name_without_extension = os.path.splitext(file_name)[0]
+            # Split the name by underscore and remove the last part (the index)
+            base_names.append('_'.join(name_without_extension.split('_')[:-1]))
+        return test_datas, base_names
+
 # Datenklassen
-class DataClass:
-    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, percentage_used=100, load_all_geometrie_variations=True):
+class DataClass(BaseDataClass):
+    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, do_preprocessing=True, n=12):
+        self.name = name
+        self.folder = folder
+        self.training_data_paths = training_data_paths
+        self.validation_data_paths = validation_data_paths
+        self.testing_data_paths = testing_data_paths
+        self.target_channels = target_channels
+        self.do_preprocessing = do_preprocessing
+        self.n = n
+
+    def check_data_overlap(self):
+        """
+        Checks if test data is included in training or validation data.
+
+        Returns
+        -------
+        tuple
+            (bool, bool): A tuple indicating whether test data is included in training data and whether test data is included in validation data.
+        """
+        # Names of test files
+        test_files = set(os.path.basename(p) for p in self.testing_data_paths)
+
+        # Names of training files
+        training_files = set(os.path.basename(p) for p in self.training_data_paths)
+
+        # Names of validation files
+        validation_files = set(os.path.basename(p) for p in self.validation_data_paths)
+
+        # Check for overlaps
+        overlap_with_training = not test_files.isdisjoint(training_files)
+        overlap_with_validation = not test_files.isdisjoint(validation_files)
+
+        return overlap_with_training, overlap_with_validation
+
+    def load_data_from_path(self, data_paths, past_values=2, future_values=2, window_size=1):
+        """
+        Loads and preprocesses data from given paths.
+
+        Parameters
+        ----------
+        data_paths : list
+            List of paths to the data files.
+        past_values : int, optional
+            The number of past values to consider. The default is 2.
+        future_values : int, optional
+            The number of future values to predict. The default is 2.
+        window_size : int, optional
+            The size of the sliding window. The default is 1.
+
+        Returns
+        -------
+        tuple
+            X, Y: Preprocessed data and targets.
+        """
+        if window_size <= 0:
+            window_size = 1
+
+        # Load data
+        fulldatas = read_fulldata(data_paths, self.folder)
+        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+        X = apply_action(datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+        targets = apply_action(fulldatas, lambda data: data[self.target_channels])
+        Y = apply_action(targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
+        if past_values + future_values != 0:
+            Y = apply_action(Y, lambda target: target.iloc[past_values:-future_values])
+
+        if len(data_paths) <= 1:
+            X = pd.concat(X).reset_index(drop=True)
+            Y = pd.concat(Y).reset_index(drop=True)
+
+        return X, Y
+
+    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False):
+        """
+        Loads and preprocesses data for training, validation, and testing.
+
+        Parameters
+        ----------
+        past_values : int, optional
+            The number of past values to consider. The default is 2.
+        future_values : int, optional
+            The number of future values to predict. The default is 2.
+        window_size : int, optional
+            The size of the sliding window. The default is 1.
+        keep_separate : bool, optional
+            If True, return lists of DataFrames instead of concatenated ones.
+
+        Returns
+        -------
+        tuple
+            X_train, X_val, X_test, y_train, y_val, y_test
+            :param
+        """
+        # Load test data
+        X_test, y_test = self.load_data_from_path(self.testing_data_paths, past_values, future_values, window_size)
+
+        # Check for overlaps with assert
+        overlap_with_training, overlap_with_validation = self.check_data_overlap()
+        assert not overlap_with_training, "Warning: Test data is included in the training data."
+        assert not overlap_with_validation, "Warning: Test data is included in the validation data."
+
+        # Load training and validation data
+        X_train, y_train = self.load_data_from_path(self.training_data_paths, past_values, future_values, window_size)
+        X_val, y_val = self.load_data_from_path(self.validation_data_paths, past_values, future_values, window_size)
+
+        if self.do_preprocessing:
+            X_train, y_train = self.preprocessing(X_train, y_train)
+            X_val, y_val = self.preprocessing(X_val, y_val)
+
+        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test, keep_separate)
+
+    def get_documentation(self):
+        documentation = {
+            "name": self.name,
+            "folder": self.folder,
+            "training_data_paths": self.training_data_paths,
+            "validation_data_paths": self.validation_data_paths,
+            "testing_data_paths": self.testing_data_paths,
+            "target_channels": self.target_channels,
+        }
+        return documentation
+
+class DataClass_CombinedTrainVal(BaseDataClass):
+    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, load_all_geometrie_variations=True):
         self.name = name
         self.folder = folder
         self.training_validation_datas = training_validation_datas
         self.testing_data_paths = testing_data_paths
         self.target_channels = target_channels
-        self.percentage_used = percentage_used
         self.load_all_geometrie_variations = load_all_geometrie_variations
+        self.do_preprocessing = do_preprocessing
+        self.n = n
+
+    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3):
+        """
+        Loads and preprocesses data for training, validation, and testing.
+
+        Parameters
+        ----------
+        past_values : int, optional
+            The number of past values to consider. The default is 2.
+        future_values : int, optional
+            The number of future values to predict. The default is 2.
+        window_size : int, optional
+            The size of the sliding window. The default is 1.
+        keep_separate : bool, optional
+            If True, return lists of DataFrames instead of concatenated ones.
+        N : int, optional
+            Number of packages per file (for train/val split). Default is 3.
+
+        Returns
+        -------
+        tuple
+            X_train, X_val, X_test, y_train, y_val, y_test
+        """
+        if window_size <= 0:
+            window_size = 1
+
+        # Load test data
+        fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
+        test_datas = apply_action(fulltestdatas,
+                                  lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+        X_test = apply_action(test_datas,
+                              lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+        test_targets = apply_action(fulltestdatas, lambda data: data[self.target_channels])
+        y_test = apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
+        if past_values + future_values != 0:
+            y_test = apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
+
+        # Namen der Testdateien zum Ausschluss
+        test_files = set(os.path.basename(p) for p in self.testing_data_paths)
+
+        # Trainings- und Validierungsdaten vorbereiten
+        all_X_train, all_y_train = [], []
+        all_X_val, all_y_val = [], []
+
+        toggle = True  # Start mit gerade = Train
+
+        for name in self.training_validation_datas:
+            pattern = f"{name}_*.csv"
+            files = glob.glob(os.path.join(self.folder, pattern))
+            files = [f for f in files if os.path.basename(f) not in test_files]
+
+            file_datas = read_fulldata(files, self.folder)
+            file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=window_size,
+                                                                                        min_periods=1).mean())
+            file_datas_y = apply_action(file_datas,
+                                        lambda data: data[self.target_channels].rolling(window=window_size,
+                                                                                               min_periods=1).mean())
+
+            X_files = apply_action(file_datas_x,
+                                   lambda data: create_full_ml_vector_optimized(past_values, future_values,
+                                                                                data))
+            y_files = apply_action(file_datas_y, lambda target: target.iloc[
+                                                                past_values:-future_values] if past_values + future_values != 0 else target)
+
+            for X_df, y_df in zip(X_files, y_files):
+                X_split = np.array_split(X_df, N)
+                y_split = np.array_split(y_df, N)
+
+                if toggle:
+                    train_indices = [i for i in range(N) if i % 2 == 0]
+                    val_indices = [i for i in range(N) if i % 2 != 0]
+                else:
+                    train_indices = [i for i in range(N) if i % 2 != 0]
+                    val_indices = [i for i in range(N) if i % 2 == 0]
+
+                X_train_parts = [X_split[i].reset_index(drop=True) for i in train_indices]
+                y_train_parts = [y_split[i].reset_index(drop=True) for i in train_indices]
+                X_val_parts = [X_split[i].reset_index(drop=True) for i in val_indices]
+                y_val_parts = [y_split[i].reset_index(drop=True) for i in val_indices]
+
+                if self.do_preprocessing:
+                    X_train_parts, y_train_parts = zip(*[self.preprocessing(X, y) for X, y in zip(X_train_parts, y_train_parts)])
+                    X_val_parts, y_val_parts = zip(*[self.preprocessing(X, y) for X, y in zip(X_val_parts, y_val_parts)])
+
+                all_X_train.extend(X_train_parts)
+                all_y_train.extend(y_train_parts)
+                all_X_val.extend(X_val_parts)
+                all_y_val.extend(y_val_parts)
+
+            toggle = not toggle  # Umschalten für nächste Datei
+
+        if len(X_test) <= 1:
+            X_test = pd.concat(X_test).reset_index(drop=True)
+            y_test = pd.concat(y_test).reset_index(drop=True)
+
+        return self.prepare_output(all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test, keep_separate)
+
+    def get_documentation(self):
+        documentation = {
+            "name": self.name,
+            "folder": self.folder,
+            "training_validation_data": self.training_validation_datas,
+            "testing_data_paths": self.testing_data_paths,
+            "target_channels": self.target_channels,
+        }
+        return documentation
 
 
 folder_data = '..\\..\\DataSets\DataFiltered'
-Al_Al_Gear_Plate = DataClass('Al_Al_Gear_Plate', folder_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['AL_2007_T4_Plate_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Gear_Gear = DataClass('Al_St_Gear_Gear', folder_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['S235JR_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Gear_Plate = DataClass('Al_St_Gear_Plate', folder_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['S235JR_Plate_Normal_3.csv'],
-                                  ["curr_x"],100,)
+Al_Al_Gear_Plate = DataClass_CombinedTrainVal('Al_Al_Gear_Plate', folder_data,
+                                              ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                              ['AL_2007_T4_Plate_Normal_3.csv'],
+                                              ["curr_x"], 100, )
+Al_St_Gear_Gear = DataClass_CombinedTrainVal('Al_St_Gear_Gear', folder_data,
+                                             ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                             ['S235JR_Gear_Normal_3.csv'],
+                                             ["curr_x"], 100, )
+Al_St_Gear_Plate = DataClass_CombinedTrainVal('Al_St_Gear_Plate', folder_data,
+                                              ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                              ['S235JR_Plate_Normal_3.csv'],
+                                              ["curr_x"], 100, )
 dataSets_list_Gear = [Al_Al_Gear_Plate,Al_St_Gear_Gear,Al_St_Gear_Plate]
-Combined_Gear = DataClass('Combined_Gear', folder_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv' ],
-                                  ["curr_x"],100,)
+Combined_Gear = DataClass_CombinedTrainVal('Combined_Gear', folder_data,
+                                           ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                           ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv' ],
+                                           ["curr_x"], 100, )
 
-Al_Al_Plate_Gear = DataClass('Al_Al_Plate_Gear', folder_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['AL_2007_T4_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Plate_Plate = DataClass('Al_St_Plate_Plate', folder_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['S235JR_Plate_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Plate_Gear = DataClass('Al_St_Plate_Gear', folder_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['S235JR_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
+Al_Al_Plate_Gear = DataClass_CombinedTrainVal('Al_Al_Plate_Gear', folder_data,
+                                              ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                              ['AL_2007_T4_Gear_Normal_3.csv'],
+                                              ["curr_x"], 100, )
+Al_St_Plate_Plate = DataClass_CombinedTrainVal('Al_St_Plate_Plate', folder_data,
+                                               ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                               ['S235JR_Plate_Normal_3.csv'],
+                                               ["curr_x"], 100, )
+Al_St_Plate_Gear = DataClass_CombinedTrainVal('Al_St_Plate_Gear', folder_data,
+                                              ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                              ['S235JR_Gear_Normal_3.csv'],
+                                              ["curr_x"], 100, )
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
-Combined_Plate = DataClass('Combined_Plate', folder_data,
-                                    ['AL_2007_T4_Plate_Normal', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Combined_Plate_Normal = DataClass('Combined_Plate', folder_data,
-                                    ['AL_2007_T4_Plate_Normal'],
-                                    ['AL_2007_T4_Plate_Normal_3.csv','AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
+Combined_Plate = DataClass_CombinedTrainVal('Combined_Plate', folder_data,
+                                            ['AL_2007_T4_Plate_Normal', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                            ['AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
+                                            ["curr_x"], 100, )
+Combined_Plate_Normal = DataClass_CombinedTrainVal('Combined_Plate', folder_data,
+                                                   ['AL_2007_T4_Plate_Normal'],
+                                                   ['AL_2007_T4_Plate_Normal_3.csv','AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
+                                                   ["curr_x"], 100, )
+
 def create_full_ml_vector_optimized_old(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """
     Creates a full machine learning vector optimized for multiple channels.
@@ -286,7 +669,7 @@ def replace_outliners(data, threshold=10):
     data_copy[z_scores > threshold] = 0
     return data_copy
 
-def load_filtered_data(data_params: DataClass, past_values=2, future_values=2, window_size=1):
+def load_filtered_data(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1):
     """
     Loads and preprocesses data for training, validation, and testing.
     Does not create ml vector.
@@ -294,7 +677,7 @@ def load_filtered_data(data_params: DataClass, past_values=2, future_values=2, w
 
     Parameters
     ----------
-    data_params : DataClass
+    data_params : DataClass_CombinedTrainVal
         A DataClass containing the data parameters for loading the dataset.
     past_values : int, optional
         The number of past values to consider. The default is 2.
@@ -342,14 +725,14 @@ def load_filtered_data(data_params: DataClass, past_values=2, future_values=2, w
         base_names.append('_'.join(name_without_extension.split('_')[:-1]))
     return training_datas, val_datas, test_datas, base_names
 
-def get_test_data_as_pd(data_params: DataClass, past_values=2, future_values=2, window_size=1):
+def get_test_data_as_pd(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1):
     """
     Loads and preprocesses test data for evaluation purposes.
     Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
 
     Parameters
     ----------
-    data_params : DataClass
+    data_params : DataClass_CombinedTrainVal
         A DataClass containing the data parameters for loading the dataset.
     past_values : int, optional
         The number of past values to consider for each sample. The default is 2.
@@ -417,6 +800,7 @@ def extract_base_names(file_names):
         base_names.add(base_name)
 
     return list(base_names)
+
 def get_csv_files(folder_path):
     """
     Retrieves the names of all .csv files in the specified folder.
@@ -473,7 +857,7 @@ def get_DataClasses_material_spereated(folder_path, materials = ['AL_2007_T4', '
             training_name = filtered_file_names[0::2]
             validation_name = filtered_file_names[1::2]
             test_name = [base_name + '_2.csv']
-            data_classes.append(DataClass(base_name, folder_path, training_name, validation_name, test_name))
+            data_classes.append(DataClass_CombinedTrainVal(base_name, folder_path, training_name, validation_name, test_name))
 
     return data_classes
 
@@ -491,7 +875,7 @@ def get_DataClasses(folder_path, anomalies = ['Blowhole', 'Ano', 'Fehler']):
         training_name = filtered_file_names[0::2]
         validation_name = filtered_file_names[1::2]
         test_name = [base_name + '_2.csv']
-        data_classes.append(DataClass(base_name, folder_path, training_name, validation_name, test_name))
+        data_classes.append(DataClass_CombinedTrainVal(base_name, folder_path, training_name, validation_name, test_name))
 
     return data_classes
 
@@ -502,7 +886,7 @@ def create_DataClasses_from_base_names(folder_path, training_base_names, validat
     validation_name = [file_name for file_name in file_names if any(name in file_name for name in validation_base_names)]
     test_name = [file_name for file_name in file_names if any(name in file_name for name in test_base_names)]
 
-    return DataClass(name, folder_path, training_name, validation_name, test_name)
+    return DataClass_CombinedTrainVal(name, folder_path, training_name, validation_name, test_name)
 
 def save_data(data_list, file_paths):
     """
@@ -575,7 +959,7 @@ def add_pd_to_csv(data_list, file_paths, headers):
             data_df.to_csv(file_path, index=False)
             print(f"{file_path} created")
 
-def preprocessing(X, y, n=12):
+def preprocessing(self, X, y, n=12):
     """
     Remove outliers from the input data and adjust the corresponding y values.
 
@@ -611,7 +995,7 @@ def preprocessing(X, y, n=12):
 
     return x_cleaned, y_cleaned
 
-def load_data(data_params: DataClass, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
+def load_data(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """
     Loads and preprocesses data for training, validation, and testing.
 
@@ -738,7 +1122,7 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
 
     return np.mean(mse_values), np.std(mse_values)
 
-def load_data_with_material_check(data_params: DataClass, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
+def load_data_with_material_check(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """
     Loads and preprocesses data for training, validation, and testing, and checks for material parameters.
 

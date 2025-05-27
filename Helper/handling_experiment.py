@@ -13,6 +13,8 @@ import Models.model_random_forest as mrf
 def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10, past_values=2, future_values=2, batched_data=False, n_drop_values=20, patience=5):
     if type(dataSets) is not list:
         dataSets = [dataSets]
+    if type(models) is not list:
+        models = [models]
 
     # Create directory for results
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
@@ -65,12 +67,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
     # Add datasets to meta information
     for data_params in dataSets:
         data_info = {
-            "name": data_params.name,
-            "folder": data_params.folder,
-            "training_validation_data": data_params.training_validation_datas,
-            "testing_data_paths": data_params.testing_data_paths,
-            "target_channels": data_params.target_channels,
-            "percentage_used": data_params.percentage_used
+            **data_params.get_documentation()
         }
         meta_information["DataSets"].append(data_info)
 
@@ -84,8 +81,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
     for i, data in enumerate(dataSets):
         print(f"\n===== Verarbeitung: {data.name} =====")
         # Daten laden
-        X_train, X_val, X_test, y_train, y_val, y_test = hdata.load_data(
-            data, past_values, future_values, window_size, keep_separate=batched_data)
+        X_train, X_val, X_test, y_train, y_val, y_test = data.load_data(
+            past_values, future_values, window_size, keep_separate=batched_data)
         if isinstance(X_test, list):
             df_list_results = [pd.DataFrame() for x in range(len(X_test))]
             header_list = [[] for x in range(len(X_test))]
@@ -151,11 +148,12 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
                 mse_nn, std_nn = hdata.calculate_mae_and_std(nn_preds[i], y_test[i].values if isinstance(y_test[i],
                                                                                                    pd.DataFrame) else y_test[i],
                                                              n_drop_values)
+                # TODO: DataSet und DataPath getrennt speichern. Bar Plot für jedes DataPath erstellen
                 # Ergebnisse speichern
                 df_list_results[i][name] = np.mean(nn_preds[i], axis=0)
                 results.extend([
-                    [data.name + "_" + path.replace('.csv', ''), model.name, mse_nn, std_nn],
-                ])
+                    [data.name, model.name, mse_nn, std_nn],
+                ]) # + "_" + path.replace('.csv', '')
                 header_list[i].append(name)
 
         """ Dokumentation """
@@ -197,9 +195,51 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
         hdata.add_pd_to_csv(df_list_data, file_paths, header_list)
 
     # Export als CSV
-    # Ordner anlegen
-    os.makedirs("Data", exist_ok=True)
 
+    df = pd.DataFrame(results, columns=["DataSet", "Model", "MSE", "StdDev"])
+    models = df['Model'].unique()
+    datasets = sorted(df['DataSet'].unique())
+    plots_dir = os.path.join(results_dir, "plots")
+    os.makedirs(plots_dir, exist_ok=True)
+
+    for dataset in datasets:
+        fig, ax = plt.subplots(figsize=(10, 5))
+        df_dataset = df[df['DataSet'] == dataset]
+
+        num_models = len(models)
+        bar_width = 0.15
+        x = np.arange(num_models)
+
+        for i, model in enumerate(models):
+            df_model = df_dataset[df_dataset['Model'] == model]
+            y = df_model["MSE"].values
+            yerr = df_model["StdDev"].values
+
+            x_pos = x[i]
+            bars = ax.bar(x_pos, y, width=bar_width, label=model, yerr=yerr, capsize=4)
+
+            # Text über jedem Balken
+            for k, bar in enumerate(bars):
+                height = bar.get_height()
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,  # x-Position: Mitte des Balkens
+                    height + 0.01 * max(y),  # y-Position: etwas über Balken
+                    f"{height:.2f}",  # Formatierter MSE-Wert
+                    ha='center', va='bottom', fontsize=8
+                )
+
+        ax.set_title(f"Vergleich Modelle für {dataset}")
+        ax.set_xlabel("Modelle")
+        ax.set_ylabel("MAE")
+        ax.set_xticks(x)
+        ax.set_xticklabels(models)
+        ax.legend()
+        plt.tight_layout()
+        plot_path = os.path.join(plots_dir, f'model_comparison_{dataset}.png')
+        plt.savefig(plot_path)
+        plt.close()
+
+    """ 
     df = pd.DataFrame(results, columns=["DataSet", "Model", "MSE", "StdDev"])
     models = df['Model'].unique()
     n_models = len(models)
@@ -239,7 +279,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models, NUMBERO
     plt.tight_layout()
     plot_path = os.path.join(plots_dir, 'model_comparison.png')
     plt.savefig(plot_path)
-    plt.close()
+    plt.close()"""
 
     # Prozentuale Verbesserung berechnen und speichern
     improvement_results = []

@@ -17,32 +17,32 @@ import seaborn as sns
 
 """ Data Sets """
 fgearer_data = '..\\..\\DataSets\DataFiltered'
-Al_Al_Gear_Plate = hdata.DataClass('Al_Al_Gear_Plate', fgearer_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['AL_2007_T4_Plate_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Gear_Gear = hdata.DataClass('Al_St_Gear_Gear', fgearer_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['S235JR_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Gear_Plate = hdata.DataClass('Al_St_Gear_Plate', fgearer_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    ['S235JR_Plate_Normal_3.csv'],
-                                  ["curr_x"],100,)
+Al_Al_Gear_Plate = hdata.DataClass_CombinedTrainVal('Al_Al_Gear_Plate', fgearer_data,
+                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                                    ['AL_2007_T4_Plate_Normal_3.csv'],
+                                                    ["curr_x"], 100, )
+Al_St_Gear_Gear = hdata.DataClass_CombinedTrainVal('Al_St_Gear_Gear', fgearer_data,
+                                                   ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                                   ['S235JR_Gear_Normal_3.csv'],
+                                                   ["curr_x"], 100, )
+Al_St_Gear_Plate = hdata.DataClass_CombinedTrainVal('Al_St_Gear_Plate', fgearer_data,
+                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                                    ['S235JR_Plate_Normal_3.csv'],
+                                                    ["curr_x"], 100, )
 dataSets_list_Gear = [Al_Al_Gear_Plate,Al_St_Gear_Gear,Al_St_Gear_Plate]
 
-Al_Al_Plate_Gear = hdata.DataClass('Al_Al_Plate_Gear', fgearer_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['AL_2007_T4_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Plate_Plate = hdata.DataClass('Al_St_Plate_Plate', fgearer_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['S235JR_Plate_Normal_3.csv'],
-                                  ["curr_x"],100,)
-Al_St_Plate_Gear = hdata.DataClass('Al_St_Plate_Gear', fgearer_data,
-                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                    ['S235JR_Gear_Normal_3.csv'],
-                                  ["curr_x"],100,)
+Al_Al_Plate_Gear = hdata.DataClass_CombinedTrainVal('Al_Al_Plate_Gear', fgearer_data,
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                    ['AL_2007_T4_Gear_Normal_3.csv'],
+                                                    ["curr_x"], 100, )
+Al_St_Plate_Plate = hdata.DataClass_CombinedTrainVal('Al_St_Plate_Plate', fgearer_data,
+                                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                     ['S235JR_Plate_Normal_3.csv'],
+                                                     ["curr_x"], 100, )
+Al_St_Plate_Gear = hdata.DataClass_CombinedTrainVal('Al_St_Plate_Gear', fgearer_data,
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                    ['S235JR_Gear_Normal_3.csv'],
+                                                    ["curr_x"], 100, )
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
 if __name__ == "__main__":
