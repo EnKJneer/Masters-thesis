@@ -1,0 +1,199 @@
+{
+    "DataSets": [
+        {
+            "name": "Combined_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate_Normal",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 2,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        },
+        {
+            "Random_Forest_Ensemble": {
+                "NUMBEROFMODELS": 2,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        },
+        {
+            "NN_rmse_Ensemble": {
+                "NUMBEROFMODELS": 2,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        },
+        {
+            "RF_rmse_Ensemble": {
+                "NUMBEROFMODELS": 2,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 1,
+        "past_values": 2,
+        "future_values": 2,
+        "batched_data": false,
+        "n_drop_values": 20,
+        "NUMBEROFEPOCHS": 500
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                0.6817724752461012,
+                0.00315697096578621
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Neural_Net",
+                1.1009109877856686,
+                0.04409160844530702
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Neural_Net",
+                1.3622640403637734,
+                0.04783255131233721
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                0.677927326878182,
+                0.00850275526765576
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Random_Forest",
+                0.940972178270798,
+                0.005470074736807717
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Random_Forest",
+                1.1257771105664456,
+                0.005946285909989357
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "NN_rmse",
+                0.6694893699233475,
+                0.00240210406150676
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "NN_rmse",
+                1.1222518719380261,
+                0.018256230708687204
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "NN_rmse",
+                1.3649456445622756,
+                0.052191106062356885
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "RF_rmse",
+                0.6717040628534106,
+                0.005220053893978616
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "RF_rmse",
+                0.9515573749557195,
+                0.010477586161527497
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "RF_rmse",
+                1.1592701649950214,
+                0.005400280494565868
+            ]
+        ],
+        "Improvement": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                0.5639929019620756
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "NN_rmse",
+                1.8016428894874068
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "RF_rmse",
+                1.4767994834429488
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Random_Forest",
+                17.35984528624695
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "NN_rmse",
+                -0.1968490776418197
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "RF_rmse",
+                14.901213667399254
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Random_Forest",
+                14.527860225699587
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "NN_rmse",
+                -1.9384749892706332
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "RF_rmse",
+                13.566365899422394
+            ]
+        ]
+    }
+}

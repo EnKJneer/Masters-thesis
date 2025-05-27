@@ -351,7 +351,7 @@ if __name__ == "__main__":
                                                                      future_values=future_values,
                                                                      window_size=window_size)
 
-    model_nn = mnn.get_reference_net(X_train_old.shape[1])
+    model_nn = mnn.get_reference(X_train_old.shape[1])
     model_rf = mrf.get_reference_model()
 
 

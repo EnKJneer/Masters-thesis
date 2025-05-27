@@ -1,0 +1,27 @@
+DataSet                 | Model          | MSE        | StdDev
+---------------------------------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.6817724752461012 | 0.003157
+Combined_Plate_S235JR_Plate_Normal_3 | Neural_Net      | 1.1009109877856686 | 0.044092
+Combined_Plate_S235JR_Gear_Normal_3 | Neural_Net      | 1.3622640403637734 | 0.047833
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.677927326878182 | 0.008503
+Combined_Plate_S235JR_Plate_Normal_3 | Random_Forest   | 0.940972178270798 | 0.005470
+Combined_Plate_S235JR_Gear_Normal_3 | Random_Forest   | 1.1257771105664456 | 0.005946
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | NN_rmse         | 0.6694893699233475 | 0.002402
+Combined_Plate_S235JR_Plate_Normal_3 | NN_rmse         | 1.1222518719380261 | 0.018256
+Combined_Plate_S235JR_Gear_Normal_3 | NN_rmse         | 1.3649456445622756 | 0.052191
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | RF_rmse         | 0.6717040628534106 | 0.005220
+Combined_Plate_S235JR_Plate_Normal_3 | RF_rmse         | 0.9515573749557195 | 0.010478
+Combined_Plate_S235JR_Gear_Normal_3 | RF_rmse         | 1.1592701649950214 | 0.005400
+
+Prozentuale Verbesserung:
+DataSet                 | Model           | Improvement(%) 
+--------------------------------------------------
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.56
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | NN_rmse         | 1.80
+Combined_Plate_AL_2007_T4_Gear_Normal_3 | RF_rmse         | 1.48
+Combined_Plate_S235JR_Gear_Normal_3 | Random_Forest   | 17.36
+Combined_Plate_S235JR_Gear_Normal_3 | NN_rmse         | -0.20
+Combined_Plate_S235JR_Gear_Normal_3 | RF_rmse         | 14.90
+Combined_Plate_S235JR_Plate_Normal_3 | Random_Forest   | 14.53
+Combined_Plate_S235JR_Plate_Normal_3 | NN_rmse         | -1.94
+Combined_Plate_S235JR_Plate_Normal_3 | RF_rmse         | 13.57

@@ -106,7 +106,7 @@ if __name__ == "__main__":
     # Define reference models
     reference_models = []
     if use_nn_reference:
-        model_nn = mnn.get_reference_net()
+        model_nn = mnn.get_reference()
         reference_models.append(model_nn)
     if use_rf_reference:
         model_rf = mrf.get_reference_model()

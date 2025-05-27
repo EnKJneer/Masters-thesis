@@ -35,13 +35,13 @@ if __name__ == "__main__":
         return 10000*criterion(dy_target, dy_pred) + criterion(y_target, y_pred)
 
     dataSets = [hdata.Combined_Plate]
-    model_dy = mnn.get_reference_net()
+    model_dy = mnn.get_reference()
     model_dy.criterion = criterion_only_delta
     model_dy.name = 'Net_dy'
-    model_net = mnn.get_reference_net()
+    model_net = mnn.get_reference()
     model_net.criterion = criterion_with_delta
     model_net.name = 'Net_y_dy'
-    model_small = mnn.get_reference_net()
+    model_small = mnn.get_reference()
     model_small.n_hidden_size = 5
     model_small.name = 'Net_small'
     models = [model_net, model_dy, model_small]

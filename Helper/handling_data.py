@@ -716,7 +716,7 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
         return X_train, X_val, X_test, y_train, y_val, y_test
 
 # Berechne MSE und Standardabweichung pro Modell und Methode
-def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, center_data = False):
+def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, center_data = False):
     mse_values = []
 
     for pred in predictions_list:
@@ -733,7 +733,7 @@ def calculate_mse_and_std(predictions_list, true_values, n_drop_values=10, cente
             pred_centered = pred_trimmed
             true_centered = true_trimmed
 
-        mse = np.mean((pred_centered - true_centered) ** 2)
+        mse = np.mean(np.abs(pred_centered - true_centered))
         mse_values.append(mse)
 
     return np.mean(mse_values), np.std(mse_values)

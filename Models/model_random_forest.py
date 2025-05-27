@@ -1,7 +1,7 @@
 import numpy as np
 import optuna
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, root_mean_squared_error
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import Models.model_base as mb
@@ -46,7 +46,7 @@ class RandomForestModel(mb.BaseModel):
         float
             The computed MSE loss.
         """
-        return mean_squared_error(y_target, y_pred)
+        return root_mean_squared_error(y_target, y_pred)
 
     def predict(self, X):
         """
@@ -152,5 +152,5 @@ class RandomForestModel(mb.BaseModel):
             "min_samples_leaf": self.min_samples_leaf
         }}
         return documentation
-def get_reference_model():
+def get_reference():
     return RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)

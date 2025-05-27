@@ -14,7 +14,7 @@ import Models.model_hyprid as mhy
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
-    NUMBEROFEPOCHS = 500
+    NUMBEROFEPOCHS = 800
     NUMBEROFMODELS = 10
 
     window_size = 1
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     future_values = 0
 
     dataSets = [hdata.Combined_Plate]
-    model_pinn = mnn.PiNN(penalty_weight=80)
+    model_pinn = mnn.PiNN(penalty_weight=100)
     model_pinn.name = 'PiNN_Erd'
     model_erd = mphys.PhysicalModelErd(0.01, 0.01, 0.01, 0, 0, learning_rate=1)
     models = [model_pinn, model_erd]

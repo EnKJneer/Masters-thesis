@@ -1,0 +1,159 @@
+{
+    "DataSets": [
+        {
+            "name": "Combined_Plate",
+            "folder": "..\\..\\DataSets\\DataFiltered",
+            "training_validation_data": [
+                "AL_2007_T4_Plate_Normal",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "percentage_used": 100
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU"
+                }
+            }
+        },
+        {
+            "PiNN_Erd_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": null,
+                    "n_hidden_layers": 1,
+                    "n_activation_function": "ReLU",
+                    "penalty_weight": 100
+                }
+            }
+        },
+        {
+            "Physical_Model_Ensemble": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 1,
+                    "optimizer_type": "quasi_newton",
+                    "c_1": 0.009999999776482582,
+                    "c_2": 0.009999999776482582,
+                    "c_3": 0.009999999776482582,
+                    "c_4": 0.0,
+                    "c_5": 0.0
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 1,
+        "past_values": 0,
+        "future_values": 0,
+        "batched_data": false,
+        "n_drop_values": 20,
+        "NUMBEROFEPOCHS": 800
+    },
+    "Results": {
+        "Model_Comparison": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                0.6772421150075739,
+                0.0038901480395218645
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Neural_Net",
+                1.0711022721441132,
+                0.12934466696145197
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Neural_Net",
+                1.2923953106141268,
+                0.1418896498162814
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "PiNN_Erd",
+                0.6835178578875977,
+                0.008595075835019774
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "PiNN_Erd",
+                1.0016937089773263,
+                0.08954666673885135
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "PiNN_Erd",
+                1.2239955518790366,
+                0.13797641989534107
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Physical_Model",
+                0.5957681698814443,
+                1.1102230246251565e-16
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Physical_Model",
+                0.884461104366997,
+                1.1102230246251565e-16
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Physical_Model",
+                0.980714547164597,
+                0.0
+            ]
+        ],
+        "Improvement": [
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "PiNN_Erd",
+                -0.9266616385712464
+            ],
+            [
+                "Combined_Plate_AL_2007_T4_Gear_Normal_3",
+                "Physical_Model",
+                12.030253777885394
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "PiNN_Erd",
+                5.292479644063986
+            ],
+            [
+                "Combined_Plate_S235JR_Gear_Normal_3",
+                "Physical_Model",
+                24.116519217438494
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "PiNN_Erd",
+                6.480106052603743
+            ],
+            [
+                "Combined_Plate_S235JR_Plate_Normal_3",
+                "Physical_Model",
+                17.425149085297086
+            ]
+        ]
+    }
+}

@@ -41,7 +41,7 @@ class BaseNetModel(BaseModel, nn.Module):
 
     def criterion(self, y_target, y_pred):
         criterion = nn.MSELoss()
-        return criterion(y_target.squeeze(), y_pred.squeeze())
+        return torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
 
     def predict(self, X):
         if type(X) is not torch.Tensor:

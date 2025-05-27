@@ -24,7 +24,7 @@ if __name__ == "__main__":
     dataSets = hdata.Combined_Plate
 
     # Define models to test]
-    model_nn = mnn.get_reference_net()
+    model_nn = mnn.get_reference()
     model_rnn = mnn.PartialRnn(None, 1, None, 1)
     models = [model_rnn]
 

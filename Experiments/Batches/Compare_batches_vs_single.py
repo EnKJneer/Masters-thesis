@@ -35,7 +35,7 @@ if __name__ == "__main__":
                                                                      window_size=window_size)
 
     input_size = X_train.shape[1]
-    model_nn = mnn.get_reference_net(input_size)
+    model_nn = mnn.get_reference(input_size)
     """Save Meta information"""
     # Define the meta information structure
     meta_information = {
@@ -100,7 +100,7 @@ if __name__ == "__main__":
             nn_preds.append(pred_nn.flatten())
 
             # Reset model
-            model_nn = mnn.get_reference_net(input_size)
+            model_nn = mnn.get_reference(input_size)
             model_nn.train_model(X_train_batch, y_train_batch, X_val_batch, y_val_batch, NUMBEROFEPOCHS)
             _, pred_nn = model_nn.test_model(X_test, y_test)
             rnn_preds.append(pred_nn.flatten())

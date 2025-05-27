@@ -18,7 +18,7 @@ from sklearn.preprocessing import QuantileTransformer
 
 import Models.model_base as mb
 
-def get_reference_net(input_size=None):
+def get_reference(input_size=None):
     """
     Get a reference neural network with specified input size.
 
@@ -1036,8 +1036,8 @@ class PiNN(Net):
                 only_inputs=True
             )[0]
             # ToDo: modular implementieren
-            v = x_input[:, 10]             # Feature v
-            a = x_input[:, 1]             # Feature a
+            v = x_input[:, 10]              # Feature v
+            a = x_input[:, 1]               # Feature a
             mrr = x_input[:, 8]             # Feature mrr
             f = x_input[:, 5]               # Feature F
 
