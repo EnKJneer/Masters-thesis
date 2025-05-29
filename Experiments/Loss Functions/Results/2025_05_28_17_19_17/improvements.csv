@@ -1,0 +1,10 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+Combined_Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,Random_Forest,33.730571872066285
+Combined_Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,NN_mse,-40.986567815559674
+Combined_Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,RF_mse,33.46161699348061
+Combined_Plate,S235JR_Plate_Normal_3,Neural_Net,Random_Forest,56.091527087459816
+Combined_Plate,S235JR_Plate_Normal_3,Neural_Net,NN_mse,-10.739778675824212
+Combined_Plate,S235JR_Plate_Normal_3,Neural_Net,RF_mse,57.465395738012425
+Combined_Plate,S235JR_Gear_Normal_3,Neural_Net,Random_Forest,52.482649152894325
+Combined_Plate,S235JR_Gear_Normal_3,Neural_Net,NN_mse,-6.824321741024693
+Combined_Plate,S235JR_Gear_Normal_3,Neural_Net,RF_mse,58.106595613775134

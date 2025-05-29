@@ -309,6 +309,183 @@ class DataClass(BaseDataClass):
         }
         return documentation
 
+class DataClassSingleAxis(BaseDataClass):
+    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, axis='x', do_preprocessing=True, n=12):
+        self.name = name
+        self.folder = folder
+        self.training_data_paths = training_data_paths
+        self.validation_data_paths = validation_data_paths
+        self.testing_data_paths = testing_data_paths
+        self.target_channels = target_channels
+        self.do_preprocessing = do_preprocessing
+        self.n = n
+        self.axis = axis
+
+    def create_full_ml_vector_optimized(self, past_values, future_values, channels_in: pd.DataFrame) -> np.array:
+        """
+        Creates a full machine learning vector optimized for multiple channels.
+
+        Parameters
+        ----------
+        past_values : int
+            The number of past values to consider.
+        future_values : int
+            The number of future values to predict.
+        channels_in : pd.DataFrame
+            A DataFrame of input channel data.
+
+        Returns
+        -------
+        pd.DataFrame
+            The optimized machine learning vector for all channels.
+        """
+        if not isinstance(channels_in, pd.DataFrame):
+            channels_in = pd.DataFrame(channels_in).T
+        df_filtered = channels_in.filter(regex=self.axis)
+        df_filtered['materialremoved_sim'] = channels_in['materialremoved_sim']
+        n = len(df_filtered)
+
+        # Remove past_values from the beginning and future_values from the end
+        # channels_in = channels_in.iloc[past_values:n - future_values]
+
+        full_vector = pd.DataFrame(index=range(n - (past_values + future_values)))
+
+        # Determine the maximum length of the numbers in the column names
+        max_digits = len(str(len(df_filtered.columns)))
+
+        for i in range(past_values + future_values + 1):
+            if i < past_values:
+                shifted = df_filtered.shift(-i)
+                shifted.columns = [f'{str(col).zfill(max_digits)}_0_past_{i}' for col in df_filtered.columns]
+            elif i == past_values:
+                shifted = df_filtered.shift(-past_values)
+                shifted.columns = [f'{str(col).zfill(max_digits)}_1_current' for col in df_filtered.columns]
+            else:
+                shifted = df_filtered.shift(-i)
+                shifted.columns = [f'{str(col).zfill(max_digits)}_2_future_{i - past_values - 1}' for col in
+                                   df_filtered.columns]
+
+            full_vector = pd.concat([full_vector, shifted], axis=1).dropna()
+
+        # Sort column names
+        sorted_columns = sorted(full_vector.columns)
+
+        # Create DataFrame with sorted column names
+        full_vector = full_vector[sorted_columns]
+        return full_vector
+
+    def check_data_overlap(self):
+        """
+        Checks if test data is included in training or validation data.
+
+        Returns
+        -------
+        tuple
+            (bool, bool): A tuple indicating whether test data is included in training data and whether test data is included in validation data.
+        """
+        # Names of test files
+        test_files = set(os.path.basename(p) for p in self.testing_data_paths)
+
+        # Names of training files
+        training_files = set(os.path.basename(p) for p in self.training_data_paths)
+
+        # Names of validation files
+        validation_files = set(os.path.basename(p) for p in self.validation_data_paths)
+
+        # Check for overlaps
+        overlap_with_training = not test_files.isdisjoint(training_files)
+        overlap_with_validation = not test_files.isdisjoint(validation_files)
+
+        return overlap_with_training, overlap_with_validation
+
+    def load_data_from_path(self, data_paths, past_values=2, future_values=2, window_size=1):
+        """
+        Loads and preprocesses data from given paths.
+
+        Parameters
+        ----------
+        data_paths : list
+            List of paths to the data files.
+        past_values : int, optional
+            The number of past values to consider. The default is 2.
+        future_values : int, optional
+            The number of future values to predict. The default is 2.
+        window_size : int, optional
+            The size of the sliding window. The default is 1.
+
+        Returns
+        -------
+        tuple
+            X, Y: Preprocessed data and targets.
+        """
+        if window_size <= 0:
+            window_size = 1
+
+        # Load data
+        fulldatas = read_fulldata(data_paths, self.folder)
+        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+        X = apply_action(datas, lambda data: self.create_full_ml_vector_optimized(past_values, future_values, data))
+        targets = apply_action(fulldatas, lambda data: data[self.target_channels])
+        Y = apply_action(targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
+        if past_values + future_values != 0:
+            Y = apply_action(Y, lambda target: target.iloc[past_values:-future_values])
+
+        if len(data_paths) <= 1:
+            X = pd.concat(X).reset_index(drop=True)
+            Y = pd.concat(Y).reset_index(drop=True)
+
+        return X, Y
+
+    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False):
+        """
+        Loads and preprocesses data for training, validation, and testing.
+
+        Parameters
+        ----------
+        past_values : int, optional
+            The number of past values to consider. The default is 2.
+        future_values : int, optional
+            The number of future values to predict. The default is 2.
+        window_size : int, optional
+            The size of the sliding window. The default is 1.
+        keep_separate : bool, optional
+            If True, return lists of DataFrames instead of concatenated ones.
+
+        Returns
+        -------
+        tuple
+            X_train, X_val, X_test, y_train, y_val, y_test
+            :param
+        """
+        # Load test data
+        X_test, y_test = self.load_data_from_path(self.testing_data_paths, past_values, future_values, window_size)
+
+        # Check for overlaps with assert
+        overlap_with_training, overlap_with_validation = self.check_data_overlap()
+        assert not overlap_with_training, "Warning: Test data is included in the training data."
+        assert not overlap_with_validation, "Warning: Test data is included in the validation data."
+
+        # Load training and validation data
+        X_train, y_train = self.load_data_from_path(self.training_data_paths, past_values, future_values, window_size)
+        X_val, y_val = self.load_data_from_path(self.validation_data_paths, past_values, future_values, window_size)
+
+        if self.do_preprocessing:
+            X_train, y_train = self.preprocessing(X_train, y_train)
+            X_val, y_val = self.preprocessing(X_val, y_val)
+
+        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test, keep_separate)
+
+    def get_documentation(self):
+        documentation = {
+            "name": self.name,
+            "folder": self.folder,
+            "training_data_paths": self.training_data_paths,
+            "validation_data_paths": self.validation_data_paths,
+            "testing_data_paths": self.testing_data_paths,
+            "target_channels": self.target_channels,
+        }
+        return documentation
+
 class DataClass_CombinedTrainVal(BaseDataClass):
     def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, load_all_geometrie_variations=True):
         self.name = name
@@ -431,43 +608,119 @@ folder_data = '..\\..\\DataSets\DataFiltered'
 Al_Al_Gear_Plate = DataClass_CombinedTrainVal('Al_Al_Gear_Plate', folder_data,
                                               ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                               ['AL_2007_T4_Plate_Normal_3.csv'],
-                                              ["curr_x"], 100, )
+                                              ["curr_x"])
 Al_St_Gear_Gear = DataClass_CombinedTrainVal('Al_St_Gear_Gear', folder_data,
                                              ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                              ['S235JR_Gear_Normal_3.csv'],
-                                             ["curr_x"], 100, )
+                                             ["curr_x"])
 Al_St_Gear_Plate = DataClass_CombinedTrainVal('Al_St_Gear_Plate', folder_data,
                                               ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                               ['S235JR_Plate_Normal_3.csv'],
-                                              ["curr_x"], 100, )
+                                              ["curr_x"])
 dataSets_list_Gear = [Al_Al_Gear_Plate,Al_St_Gear_Gear,Al_St_Gear_Plate]
-Combined_Gear = DataClass_CombinedTrainVal('Combined_Gear', folder_data,
-                                           ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                           ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv' ],
-                                           ["curr_x"], 100, )
 
 Al_Al_Plate_Gear = DataClass_CombinedTrainVal('Al_Al_Plate_Gear', folder_data,
                                               ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
                                               ['AL_2007_T4_Gear_Normal_3.csv'],
-                                              ["curr_x"], 100, )
+                                              ["curr_x"])
 Al_St_Plate_Plate = DataClass_CombinedTrainVal('Al_St_Plate_Plate', folder_data,
                                                ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
                                                ['S235JR_Plate_Normal_3.csv'],
-                                               ["curr_x"], 100, )
+                                               ["curr_x"])
 Al_St_Plate_Gear = DataClass_CombinedTrainVal('Al_St_Plate_Gear', folder_data,
                                               ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
                                               ['S235JR_Gear_Normal_3.csv'],
-                                              ["curr_x"], 100, )
+                                              ["curr_x"])
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
-Combined_Plate = DataClass_CombinedTrainVal('Combined_Plate', folder_data,
-                                            ['AL_2007_T4_Plate_Normal', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                            ['AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
-                                            ["curr_x"], 100, )
-Combined_Plate_Normal = DataClass_CombinedTrainVal('Combined_Plate', folder_data,
-                                                   ['AL_2007_T4_Plate_Normal'],
-                                                   ['AL_2007_T4_Plate_Normal_3.csv','AL_2007_T4_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv'],
-                                                   ["curr_x"], 100, )
+dataPaths_Test = [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
+
+dataPaths_Val_KL = ['Kühlgrill_Mat_S2800_1.csv', 'Kühlgrill_Mat_S3800_1.csv', 'Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_1.csv', 'Laufrad_Durchlauf_2_1.csv',
+                    'Kühlgrill_Mat_S2800_2.csv', 'Kühlgrill_Mat_S3800_2.csv','Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_2.csv',  'Laufrad_Durchlauf_2_2.csv',
+                    'Kühlgrill_Mat_S2800_3.csv', 'Kühlgrill_Mat_S3800_3.csv','Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_3.csv', 'Laufrad_Durchlauf_2_3.csv']
+
+dataPaths_Train_Gear = ['AL_2007_T4_Gear_SF_1.csv', 'AL_2007_T4_Gear_Depth_1.csv', 'AL_2007_T4_Gear_Normal_1.csv',
+                    'AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Depth_2.csv','AL_2007_T4_Gear_Normal_2.csv', ]
+
+dataPaths_Train_Gear_sort = ['AL_2007_T4_Gear_SF_1.csv', 'AL_2007_T4_Gear_Depth_1.csv', 'AL_2007_T4_Gear_Normal_1.csv']
+
+dataPaths_Val_Gear = ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Depth_2.csv', 'AL_2007_T4_Gear_Normal_2.csv', ]
+
+dataPaths_Train_Plate = ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv', 'AL_2007_T4_Plate_Normal_1.csv',
+                    'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv','AL_2007_T4_Plate_Normal_2.csv', ]
+
+dataPaths_Train_Plate_sort = ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv', 'AL_2007_T4_Plate_Normal_1.csv']
+
+dataPaths_Val_Plate = ['AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv', 'AL_2007_T4_Plate_Normal_2.csv', ]
+
+Combined_Gear = DataClass('Gear', folder_data,
+                          dataPaths_Train_Gear,
+                          dataPaths_Val_KL,
+                          dataPaths_Test,
+                          ["curr_x"], )
+Combined_Gear_2 = DataClass('Gear_2', folder_data,
+                            dataPaths_Train_Gear_sort,
+                            dataPaths_Val_Gear,
+                            dataPaths_Test,
+                            ["curr_x"], )
+Combined_Gear_Single = DataClassSingleAxis('Gear_Single_Axis', folder_data,
+                                           dataPaths_Train_Gear,
+                                           dataPaths_Val_KL,
+                                           dataPaths_Test,
+                                           ["curr_x"], )
+
+Combined_Gear_Single_2 = DataClassSingleAxis('Gear_Single_Axis_2', folder_data,
+                                             dataPaths_Train_Gear_sort,
+                                             dataPaths_Val_Gear,
+                                             dataPaths_Test,
+                                             ["curr_x"], )
+
+Combined_Gear_TrainVal = DataClass_CombinedTrainVal('Gear_TrainVal', folder_data,
+                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], )
+
+Combined_Plate = DataClass('Plate', folder_data,
+                          dataPaths_Train_Plate,
+                          dataPaths_Val_KL,
+                          dataPaths_Test,
+                          ["curr_x"], )
+Combined_Plate_2 = DataClass('Plate_2', folder_data,
+                            dataPaths_Train_Plate_sort,
+                            dataPaths_Val_Plate,
+                            dataPaths_Test,
+                            ["curr_x"], )
+Combined_Plate_Single = DataClassSingleAxis('Plate_Single_Axis', folder_data,
+                                           dataPaths_Train_Plate,
+                                           dataPaths_Val_KL,
+                                           dataPaths_Test,
+                                           ["curr_x"], )
+
+Combined_Plate_Single_2 = DataClassSingleAxis('Plate_Single_Axis_2', folder_data,
+                                             dataPaths_Train_Plate_sort,
+                                             dataPaths_Val_Plate,
+                                             dataPaths_Test,
+                                             ["curr_x"], )
+
+Combined_Plate_TrainVal = DataClass_CombinedTrainVal('Plate_TrainVal', folder_data,
+                                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                     dataPaths_Test,
+                                                     ["curr_x"], )
+
+Combined_PKL_TrainVal = DataClass_CombinedTrainVal('PKL_TrainVal', folder_data,
+                                [   'AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
+                                                        'Kühlgrill_Mat_S2800', 'Kühlgrill_Mat_S3800', 'Kühlgrill_Mat_S4700',
+                                                        'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'],
+                                                     dataPaths_Test,
+                                                     ["curr_x"], )
+
+Combined_KL = DataClass('KL', folder_data,
+                        dataPaths_Val_KL,
+                        dataPaths_Train_Plate,
+                        dataPaths_Test,
+                        ["curr_x"], )
+
+
 
 def create_full_ml_vector_optimized_old(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """
@@ -1101,7 +1354,7 @@ def load_data(data_params: DataClass_CombinedTrainVal, past_values=2, future_val
 
 # Berechne MSE und Standardabweichung pro Modell und Methode
 def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, center_data = False):
-    mse_values = []
+    mae_values = []
 
     for pred in predictions_list:
         # Werte kürzen
@@ -1117,10 +1370,12 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
             pred_centered = pred_trimmed
             true_centered = true_trimmed
 
-        mse = np.mean(np.abs(pred_centered - true_centered))
-        mse_values.append(mse)
+        mae = np.mean(np.abs(pred_centered.squeeze() - true_centered.squeeze()))
+        mae_values.append(mae)
+    pred_mean = np.mean(predictions_list, axis=0)
+    mae_ensemble = np.mean(np.abs(pred_mean.squeeze() - true_values.squeeze()))
 
-    return np.mean(mse_values), np.std(mse_values)
+    return np.mean(mae_values), np.std(mae_values), mae_ensemble
 
 def load_data_with_material_check(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """

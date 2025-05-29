@@ -46,7 +46,7 @@ class RandomForestModel(mb.BaseModel):
         float
             The computed MSE loss.
         """
-        return root_mean_squared_error(y_target, y_pred)
+        return mean_squared_error(y_target, y_pred)
 
     def predict(self, X):
         """

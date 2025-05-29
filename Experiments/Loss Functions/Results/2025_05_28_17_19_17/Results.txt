@@ -1,0 +1,44 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.144610 | 0.001181
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net      | 0.677534 | 0.127300
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net      | 0.744047 | 0.141278
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.095832 | 0.008768
+Combined_Plate       | S235JR_Plate_Normal_3 | Random_Forest   | 0.297495 | 0.003450
+Combined_Plate       | S235JR_Gear_Normal_3 | Random_Forest   | 0.353551 | 0.000641
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | NN_mse          | 0.203880 | 0.002099
+Combined_Plate       | S235JR_Plate_Normal_3 | NN_mse          | 0.750300 | 0.083658
+Combined_Plate       | S235JR_Gear_Normal_3 | NN_mse          | 0.794823 | 0.066051
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | RF_mse          | 0.096221 | 0.003504
+Combined_Plate       | S235JR_Plate_Normal_3 | RF_mse          | 0.288186 | 0.000810
+Combined_Plate       | S235JR_Gear_Normal_3 | RF_mse          | 0.311707 | 0.003897
+
+
+MODEL IMPROVEMENTS (vs Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Random_Forest | +33.73%     
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | NN_mse       | -40.99%     
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | RF_mse       | +33.46%     
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net   | Random_Forest | +56.09%     
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net   | NN_mse       | -10.74%     
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net   | RF_mse       | +57.47%     
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net   | Random_Forest | +52.48%     
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net   | NN_mse       | -6.82%      
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net   | RF_mse       | +58.11%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - mae_heatmap.png
+Overview: 1 plots
+  - complete_model_comparison.png
+Prediction_Overview: 3 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png

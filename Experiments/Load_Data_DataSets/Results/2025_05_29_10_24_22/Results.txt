@@ -1,0 +1,79 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Plate_2              | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.165490 | 0.012238
+Plate_2              | AL_2007_T4_Plate_Normal_3 | Neural_Net      | 0.124533 | 0.015718
+Plate_2              | S235JR_Gear_Normal_3 | Neural_Net      | 1.289309 | 0.062770
+Plate_2              | S235JR_Plate_Normal_3 | Neural_Net      | 1.187072 | 0.060432
+Plate_2              | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.090658 | 0.007952
+Plate_2              | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.115271 | 0.005858
+Plate_2              | S235JR_Gear_Normal_3 | Random_Forest   | 0.387542 | 0.013961
+Plate_2              | S235JR_Plate_Normal_3 | Random_Forest   | 0.368863 | 0.020824
+Plate_2              | AL_2007_T4_Gear_Normal_3 | Neural_Net_large | 0.149949 | 0.004047
+Plate_2              | AL_2007_T4_Plate_Normal_3 | Neural_Net_large | 0.118408 | 0.004713
+Plate_2              | S235JR_Gear_Normal_3 | Neural_Net_large | 1.131253 | 0.044334
+Plate_2              | S235JR_Plate_Normal_3 | Neural_Net_large | 1.044663 | 0.029279
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.142691 | 0.000644
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net      | 0.103010 | 0.000768
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net      | 0.557216 | 0.002621
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net      | 0.494212 | 0.005321
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.077668 | 0.003021
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.084278 | 0.001589
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Random_Forest   | 0.316534 | 0.017972
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Random_Forest   | 0.302783 | 0.009879
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net_large | 0.133515 | 0.003819
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net_large | 0.100771 | 0.002257
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net_large | 0.580305 | 0.020630
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net_large | 0.580466 | 0.018386
+
+
+MODEL IMPROVEMENTS (vs Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Plate_2              | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Random_Forest | +45.22%     
+Plate_2              | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Neural_Net_large | +9.39%      
+Plate_2              | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Random_Forest | +7.44%      
+Plate_2              | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Neural_Net_large | +4.92%      
+Plate_2              | S235JR_Gear_Normal_3 | Neural_Net   | Random_Forest | +69.94%     
+Plate_2              | S235JR_Gear_Normal_3 | Neural_Net   | Neural_Net_large | +12.26%     
+Plate_2              | S235JR_Plate_Normal_3 | Neural_Net   | Random_Forest | +68.93%     
+Plate_2              | S235JR_Plate_Normal_3 | Neural_Net   | Neural_Net_large | +12.00%     
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Random_Forest | +45.57%     
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Neural_Net_large | +6.43%      
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Random_Forest | +18.18%     
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Neural_Net_large | +2.17%      
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net   | Random_Forest | +43.19%     
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net   | Neural_Net_large | -4.14%      
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net   | Random_Forest | +38.73%     
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net   | Neural_Net_large | -17.45%     
+
+
+GENERATED PLOTS
+========================================
+Datapath: 4 plots
+  - datapath_comparison_AL_2007_T4_Gear_Normal_3.png
+  - datapath_comparison_AL_2007_T4_Plate_Normal_3.png
+  - datapath_comparison_S235JR_Gear_Normal_3.png
+  - datapath_comparison_S235JR_Plate_Normal_3.png
+Heatmap: 1 plots
+  - mae_heatmap.png
+Heatmap_Ensemble: 1 plots
+  - mae_ensemble_heatmap.png
+Overview: 1 plots
+  - complete_model_comparison.png
+Prediction_Model: 12 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net.png
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Random_Forest.png
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net_large.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Random_Forest.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net_large.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3_Random_Forest.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net_large.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3_Random_Forest.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net_large.png

@@ -5,15 +5,179 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataSets/handling_read_data_from_json.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Load_Single_Axis/Load_Single_Axis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data/Load_Data_Method_Comparsion.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Load_Data/Load_Data_Method_Comparsion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/ML_Model_Improvmend/Setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/ML_Model_Improvmend/Setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Normierung.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Normierung/Normierung.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Trainingsdata_Plate_vs_Gear/Compare_different_trainingsdata.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Trainingsdata_Plate_vs_Gear/Compare_different_trainingsdata.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/FilterData.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/FilterData.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Blowhole_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Blowhole_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Blowhole_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Blowhole_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Blowhole_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Blowhole_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Depth_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Depth_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Depth_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Normal_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Normal_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_Normal_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_SF_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_SF_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Gear_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Gear_SF_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Blowhole_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Blowhole_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Blowhole_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Blowhole_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Blowhole_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Blowhole_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Depth_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Depth_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Depth_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Normal_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Normal_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_Normal_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_SF_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_SF_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/AL_2007_T4_Plate_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/AL_2007_T4_Plate_SF_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S2800_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S2800_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S2800_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S2800_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S2800_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S2800_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S3800_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S3800_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S3800_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S3800_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S3800_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S3800_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S3800_Ano_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S3800_Ano_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S3800_Ano_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S3800_Ano_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S3800_Ano_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S3800_Ano_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S4700_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S4700_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S4700_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S4700_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Kühlgrill_Mat_S4700_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Kühlgrill_Mat_S4700_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_1_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_1_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_1_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_1_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_1_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_1_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_1_Ano_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_1_Ano_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_1_Ano_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_1_Ano_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_1_Ano_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_1_Ano_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_2_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_2_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_2_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_2_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_2_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_2_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_3_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_3_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_3_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_3_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_3_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_3_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_3_Fehler_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_3_Fehler_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_3_Fehler_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_3_Fehler_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/Laufrad_Durchlauf_3_Fehler_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/Laufrad_Durchlauf_3_Fehler_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Blowhole_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Blowhole_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Blowhole_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Blowhole_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Blowhole_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Blowhole_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Depth_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Depth_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Depth_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Normal_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Normal_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_Normal_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_SF_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_SF_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Gear_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Gear_SF_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Blowhole_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Blowhole_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Blowhole_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Blowhole_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Blowhole_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Blowhole_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Depth_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Depth_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Depth_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Normal_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Normal_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_Normal_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_SF_1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_SF_2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/RawData/S235JR_Plate_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Data/S235JR_Plate_SF_3.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_AL_2007_T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_TrainVal_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_TrainVal_AL_2007_T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_TrainVal_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/Gear_TrainVal_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/KL_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/KL_AL_2007_T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/KL_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/data/KL_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_AL_2007_T4_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_TrainVal_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_TrainVal_AL_2007_T4_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_TrainVal_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/Gear_TrainVal_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/KL_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/KL_AL_2007_T4_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/KL_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_04_15/plots/KL_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_AL_2007_T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_TrainVal_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_TrainVal_AL_2007_T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_TrainVal_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/Gear_TrainVal_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/KL_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/KL_AL_2007_T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/KL_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/data/KL_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_AL_2007_T4_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_TrainVal_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_TrainVal_AL_2007_T4_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_TrainVal_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/Gear_TrainVal_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/KL_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/KL_AL_2007_T4_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/KL_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/KL_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_TrainVal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_TrainVal_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_TrainVal_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_TrainVal_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_Gear_TrainVal_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_KL.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_KL_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_KL_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_KL_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_27_18_07_19/plots/model_comparison_KL_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Loss_Functions_Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Loss Functions/Loss_Functions_Test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/data/Combined_Plate_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/data/Combined_Plate_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/data/Combined_Plate_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/plots/Combined_Plate_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/plots/Combined_Plate_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/plots/Combined_Plate_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Results/2025_05_27_10_52_44/plots/model_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/data/Combined_Plate_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/data/Combined_Plate_S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/data/Combined_Plate_S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/plots/Combined_Plate_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/plots/Combined_Plate_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/plots/Combined_Plate_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Normierung/Results/2025_05_27_11_22_19/plots/model_comparison.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Model_Erd.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Model_Erd.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Helper/handling_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Helper/handling_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/model_neural_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_physical.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_physical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_random_forest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_random_forest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +231,7 @@
     "Python.Hyprid_Models_Guided.executor": "Run",
     "Python.Hyprid_Models_Residual.executor": "Run",
     "Python.Load_Data_Method_Comparsion.executor": "Debug",
+    "Python.Load_Single_Axis.executor": "Run",
     "Python.Loss_Functions_Test.executor": "Run",
     "Python.Loss_functions.executor": "Run",
     "Python.Model_Erd.executor": "Run",
@@ -82,7 +247,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/Experiments/Activation_Function/Plots",
+    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/DataSets",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -93,6 +258,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets\RawData" />
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Models\Hyperparameter" />
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Models" />
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code" />
@@ -139,6 +306,8 @@
       <workItem from="1748327710732" duration="7975000" />
       <workItem from="1748336887392" duration="10810000" />
       <workItem from="1748357151990" duration="5009000" />
+      <workItem from="1748413597198" duration="21071000" />
+      <workItem from="1748497657006" duration="13751000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -187,25 +356,15 @@
           <line>208</line>
           <option name="timeStamp" value="109" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Helper/handling_experiment.py</url>
-          <line>238</line>
-          <option name="timeStamp" value="125" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Helper/handling_experiment.py</url>
-          <line>239</line>
-          <option name="timeStamp" value="126" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Master_thesis$handling_data.coverage" NAME="handling_data Coverage Results" MODIFIED="1747920449234" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Loss_Functions_Test.coverage" NAME="Loss_Functions_Test Coverage Results" MODIFIED="1748335961460" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss Functions" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Normierung.coverage" NAME="Normierung Coverage Results" MODIFIED="1748338985507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Normierung" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Loss_Functions_Test.coverage" NAME="Loss_Functions_Test Coverage Results" MODIFIED="1748445554010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss Functions" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Normierung.coverage" NAME="Normierung Coverage Results" MODIFIED="1748448063073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Normierung" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_batches_vs_single.coverage" NAME="Compare_batches_vs_single Coverage Results" MODIFIED="1747393429118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Batches" />
-    <SUITE FILE_PATH="coverage/Master_thesis$handling_experiment.coverage" NAME="handling_experiment Coverage Results" MODIFIED="1748361607494" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
+    <SUITE FILE_PATH="coverage/Master_thesis$handling_experiment.coverage" NAME="handling_experiment Coverage Results" MODIFIED="1748424164170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
     <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Guided.coverage" NAME="Hyprid_Models_Guided Coverage Results" MODIFIED="1748243212134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Hybrid_Guided" />
     <SUITE FILE_PATH="coverage/Master_thesis$Loss_functions.coverage" NAME="Loss_functions Coverage Results" MODIFIED="1748263304107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss_with_delta_y" />
     <SUITE FILE_PATH="coverage/Master_thesis$Comparson_of_physical_model.coverage" NAME="Comparson_of_physical_model Coverage Results" MODIFIED="1747926851923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Physical_Models" />
@@ -213,13 +372,14 @@
     <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_Sequential_potential.coverage" NAME="Evaluate_Sequential_potential Coverage Results" MODIFIED="1747755304239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/SequentialNet" />
     <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_RNN_potential.coverage" NAME="Evaluate_RNN_potential Coverage Results" MODIFIED="1747812059409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Recursive_Nets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_different_trainingsdata.coverage" NAME="Compare_different_trainingsdata Coverage Results" MODIFIED="1747814942326" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Trainingsdata_Plate_vs_Gear" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Model_Erd.coverage" NAME="Model_Erd Coverage Results" MODIFIED="1748333176037" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Physical_Model_Erd" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Model_Erd.coverage" NAME="Model_Erd Coverage Results" MODIFIED="1748501238211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Physical_Model_Erd" />
     <SUITE FILE_PATH="coverage/Master_thesis$handling_plots.coverage" NAME="handling_plots Coverage Results" MODIFIED="1744631419667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
     <SUITE FILE_PATH="coverage/Master_thesis$Potential_Transformer.coverage" NAME="Potential_Transformer Coverage Results" MODIFIED="1747754528108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Transformer" />
     <SUITE FILE_PATH="coverage/Master_thesis$Load_Data_Method_Comparsion.coverage" NAME="Load_Data_Method_Comparsion Coverage Results" MODIFIED="1748351002470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Load_Single_Axis.coverage" NAME="Load_Single_Axis Coverage Results" MODIFIED="1748505689186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Single_Axis" />
     <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1747232909733" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_Activation_Functions.coverage" NAME="Compare Activation Functions Coverage Results" MODIFIED="1747662253865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Activation_Function" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Different_DataSets.coverage" NAME="Different_DataSets Coverage Results" MODIFIED="1748362036277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Different_DataSets.coverage" NAME="Different_DataSets Coverage Results" MODIFIED="1748509518370" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Residual.coverage" NAME="Hyprid_Models_Residual Coverage Results" MODIFIED="1748241304887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Hyprid_Resudial" />
     <SUITE FILE_PATH="coverage/Master_thesis$experiment_material_dependency.coverage" NAME="experiment_material_dependency Coverage Results" MODIFIED="1744641603565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments" />
     <SUITE FILE_PATH="coverage/Master_thesis$PiNNs.coverage" NAME="PiNNs Coverage Results" MODIFIED="1748332974407" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/PiNN" />

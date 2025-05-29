@@ -236,7 +236,6 @@ def load_data(data_params: DataClass, past_values=2, future_values=2, window_siz
     return X_train, X_val, X_test, y_train, y_val, y_test
 
 
-
 """ Data Sets """
 folder_data = '..\\..\\DataSets\DataFiltered'
 
@@ -253,31 +252,36 @@ Combined_Gear = hdata.DataClass('Gear', folder_data,
                                     dataPaths_Train,
                                     dataPaths_Val,
                                     dataPaths_Test,
-                                  ["curr_x"],100)
+                                  ["curr_x"],)
 Combined_KL = hdata.DataClass('KL', folder_data,
                                     dataPaths_Val,
                                     dataPaths_Train,
                                     dataPaths_Test,
-                                  ["curr_x"],100)
+                                  ["curr_x"],)
 
 Combined_Gear_new = hdata.DataClass_CombinedTrainVal('Gear_TrainVal', folder_data,
                                     ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                     dataPaths_Test,
-                                  ["curr_x"],100,)
+                                  ["curr_x"],)
 dataSets_list = [Combined_Gear]
 dataSets_list_new = [Combined_Gear_new]
 if __name__ == "__main__":
     """ Constants """
-    NUMBEROFEPOCHS = 500
-    NUMBEROFMODELS = 2
+    NUMBEROFEPOCHS = 800
+    NUMBEROFMODELS = 10
 
-    window_size = 10
+    window_size = 1
     past_values = 2
     future_values = 2
 
-    model_rf = mrf.get_reference()
+    model_rf = mnn.Net(None, 1, 200, 2, learning_rate=0.001, name='Neural_Net_large') #mrf.get_reference()
+    #Combined_Gear,Combined_KL
+    dataSets_list = [ hdata.Combined_Plate_TrainVal, hdata.Combined_Gear_TrainVal, hdata.Combined_PKL_TrainVal]
 
-    dataSets_list = [Combined_Gear, Combined_Gear_new, Combined_KL]
+    experiment_results = hexp.run_experiment(dataSets_list, True, True, [model_rf],
+                        NUMBEROFEPOCHS, NUMBEROFMODELS, past_values, future_values,n_drop_values=25,
+                        plot_types=['datapath', 'heatmap', 'prediction_model'])
 
-    hexp.run_experiment(dataSets_list, True, False, [model_rf], NUMBEROFEPOCHS, NUMBEROFMODELS, past_values, future_values)
-
+    # Zugriff auf Ergebnisse
+    print(f"Experiment gespeichert in: {experiment_results['results_dir']}")
+    print(f"Anzahl Plots erstellt: {sum(len(paths) for paths in experiment_results['plot_paths'].values())}")

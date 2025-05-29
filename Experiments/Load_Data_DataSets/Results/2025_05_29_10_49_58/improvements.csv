@@ -1,0 +1,17 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,Random_Forest,45.46014067268518
+Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,Neural_Net_large,7.269905635561791
+Plate,AL_2007_T4_Plate_Normal_3,Neural_Net,Random_Forest,46.23719594182329
+Plate,AL_2007_T4_Plate_Normal_3,Neural_Net,Neural_Net_large,10.271290472419462
+Plate,S235JR_Gear_Normal_3,Neural_Net,Random_Forest,65.81911139357827
+Plate,S235JR_Gear_Normal_3,Neural_Net,Neural_Net_large,-27.22019465667013
+Plate,S235JR_Plate_Normal_3,Neural_Net,Random_Forest,64.43393761849245
+Plate,S235JR_Plate_Normal_3,Neural_Net,Neural_Net_large,-22.120999366357374
+Plate_2,AL_2007_T4_Gear_Normal_3,Neural_Net,Random_Forest,39.6590188221709
+Plate_2,AL_2007_T4_Gear_Normal_3,Neural_Net,Neural_Net_large,-1.731918822897538
+Plate_2,AL_2007_T4_Plate_Normal_3,Neural_Net,Random_Forest,-0.5712000209273147
+Plate_2,AL_2007_T4_Plate_Normal_3,Neural_Net,Neural_Net_large,2.2132395003057486
+Plate_2,S235JR_Gear_Normal_3,Neural_Net,Random_Forest,62.43597570934838
+Plate_2,S235JR_Gear_Normal_3,Neural_Net,Neural_Net_large,-9.784121083935016
+Plate_2,S235JR_Plate_Normal_3,Neural_Net,Random_Forest,60.765439043880285
+Plate_2,S235JR_Plate_Normal_3,Neural_Net,Neural_Net_large,-20.95552074781421

@@ -1,0 +1,38 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.159827 | 0.023771
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net      | 0.641853 | 0.083927
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net      | 0.718229 | 0.064824
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | RiemannQuantileClassifierNet | 0.239214 | 0.019919
+Combined_Plate       | S235JR_Plate_Normal_3 | RiemannQuantileClassifierNet | 1.760657 | 0.105048
+Combined_Plate       | S235JR_Gear_Normal_3 | RiemannQuantileClassifierNet | 2.438784 | 0.200359
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Net_Q_Id        | 0.475526 | 0.178942
+Combined_Plate       | S235JR_Plate_Normal_3 | Net_Q_Id        | 0.745012 | 0.140410
+Combined_Plate       | S235JR_Gear_Normal_3 | Net_Q_Id        | 0.800160 | 0.042593
+
+
+MODEL IMPROVEMENTS (vs Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | RiemannQuantileClassifierNet | -49.67%     
+Combined_Plate       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Net_Q_Id     | -197.52%    
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net   | RiemannQuantileClassifierNet | -174.31%    
+Combined_Plate       | S235JR_Plate_Normal_3 | Neural_Net   | Net_Q_Id     | -16.07%     
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net   | RiemannQuantileClassifierNet | -239.56%    
+Combined_Plate       | S235JR_Gear_Normal_3 | Neural_Net   | Net_Q_Id     | -11.41%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - mae_heatmap.png
+Overview: 1 plots
+  - complete_model_comparison.png
+Prediction_Overview: 3 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png

@@ -1,0 +1,7 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+Combined_Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,RiemannQuantileClassifierNet,-49.670209553298065
+Combined_Plate,AL_2007_T4_Gear_Normal_3,Neural_Net,Net_Q_Id,-197.5246756931973
+Combined_Plate,S235JR_Plate_Normal_3,Neural_Net,RiemannQuantileClassifierNet,-174.30860225501482
+Combined_Plate,S235JR_Plate_Normal_3,Neural_Net,Net_Q_Id,-16.072122004830657
+Combined_Plate,S235JR_Gear_Normal_3,Neural_Net,RiemannQuantileClassifierNet,-239.55529188264433
+Combined_Plate,S235JR_Gear_Normal_3,Neural_Net,Net_Q_Id,-11.407355526315683

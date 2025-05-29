@@ -77,6 +77,7 @@ class Net(mb.BaseNetModel):
 
     def _initialize_layers(self):
         """Initialize the layers of the neural network."""
+        self.scaler = None
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
         self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)

@@ -42,7 +42,7 @@ if __name__ == "__main__":
         float
             The computed MSE loss.
         """
-        return mean_squared_error(y_target, y_pred)
+        return root_mean_squared_error(y_target, y_pred)
 
     dataSets = [hdata.Combined_Plate]
     model_rmse = mnn.get_reference()
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     model_rf_rmse = mrf.get_reference()
     model_rf_rmse.criterion = criterion_rf
-    model_rf_rmse.name = "RF_mse"
+    model_rf_rmse.name = "RF_rmse"
 
     models = [model_rmse, model_rf_rmse]
 

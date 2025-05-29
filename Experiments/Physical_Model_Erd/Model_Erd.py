@@ -13,7 +13,7 @@ if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 800
-    NUMBEROFMODELS = 10
+    NUMBEROFMODELS = 2
 
     window_size = 1
     past_values = 2
@@ -21,8 +21,9 @@ if __name__ == "__main__":
 
     dataSets = [hdata.Combined_Plate]
 
-    model_erd = mphys.PhysicalModelErd(0.01, 0.01, 0.01, 0, 0, learning_rate=1)
-    models = [model_erd]
+    model_erd = mphys.PhysicalModelErd(learning_rate=1)
+    model_erd_one_axis = mphys.PhysicalModelErdSingleAxis(0.01, 0.01, 0.01, 0, 0, learning_rate=1)
+    models = [model_erd, model_erd_one_axis]
 
     # Run the experiment
     hexp.run_experiment(dataSets, use_nn_reference=True, use_rf_reference=True, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)

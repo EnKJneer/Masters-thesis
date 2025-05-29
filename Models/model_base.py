@@ -41,7 +41,8 @@ class BaseNetModel(BaseModel, nn.Module):
 
     def criterion(self, y_target, y_pred):
         criterion = nn.MSELoss()
-        return torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
+        #torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
+        return torch.sqrt(criterion(y_target, y_pred))
 
     def predict(self, X):
         if type(X) is not torch.Tensor:
@@ -123,7 +124,7 @@ class BaseNetModel(BaseModel, nn.Module):
             # Define hidden size and set flag for initialization
             self.n_hidden_size = self.input_size
             flag_initialization = True
-        if flag_initialization or reset_parameters:
+        if flag_initialization: #or reset_parameters
             self._initialize_layers()
 
         optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
@@ -155,7 +156,7 @@ class BaseNetModel(BaseModel, nn.Module):
                     batch_y_tensor = self.to_tensor(batch_y)
 
                     output = self(batch_x_tensor)
-                    loss = self.criterion(output, batch_y_tensor)
+                    loss = self.criterion(batch_y_tensor, output)
                     loss.backward()
                     optimizer.step()
                     train_losses.append(loss.item())
@@ -165,7 +166,7 @@ class BaseNetModel(BaseModel, nn.Module):
                 y_tensor = self.to_tensor(y_train)
 
                 output = self(x_tensor)
-                loss = self.criterion(output, y_tensor)
+                loss = self.criterion(y_tensor, output)
                 loss.backward()
                 optimizer.step()
                 train_losses.append(loss.item())
@@ -179,14 +180,14 @@ class BaseNetModel(BaseModel, nn.Module):
                         batch_y_tensor = self.to_tensor(batch_y)
 
                         output = self(batch_x_tensor)
-                        val_loss = self.criterion(output, batch_y_tensor)
+                        val_loss = self.criterion(batch_y_tensor, output)
                         val_losses.append(val_loss.item())
                 else:
                     x_tensor = self.scaled_to_tensor(X_val)
                     y_tensor = self.to_tensor(y_val)
 
                     output = self(x_tensor)
-                    val_loss = self.criterion(output, y_tensor)
+                    val_loss = self.criterion(y_tensor, output)
                     val_losses.append(val_loss.item())
 
             avg_train_loss = sum(train_losses) / len(train_losses)
