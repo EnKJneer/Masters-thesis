@@ -32,6 +32,7 @@ class BaseModel(ABC):
         pass
 
 class BaseNetModel(BaseModel, nn.Module):
+    #ToDo: init
     @abstractmethod
     def forward(self, x):
         pass
@@ -123,10 +124,6 @@ class BaseNetModel(BaseModel, nn.Module):
                 self.input_size = X_train[0].shape[1]
             else:
                 self.input_size = X_train.shape[1]
-            flag_initialization = True
-        if self.n_hidden_size is None:
-            # Define hidden size and set flag for initialization
-            self.n_hidden_size = self.input_size
             flag_initialization = True
         if flag_initialization or reset_parameters: #
             self._initialize()

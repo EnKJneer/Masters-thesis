@@ -5,128 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/DataSets/data_visualisation_3D.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/model_mixture_of_experts.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/MoE_Gating/MoE_Gating.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/handling_read_data_from_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/handling_read_data_from_json.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/merge_additional_information.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/merge_additional_information.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Hyperparameteroptimization/Hyperparameteroptimization_Methods_Comparsion.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Hyperparameteroptimization/Hyperparameteroptimization_Methods_Comparsion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Analyse_Errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/data_visualisation_2D.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/complete_model_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/datapath_comparison_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/datapath_comparison_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/datapath_comparison_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/datapath_comparison_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/mae_ensemble_heatmap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/mae_heatmap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_24_22/results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/datapath_comparison_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/datapath_comparison_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/datapath_comparison_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/datapath_comparison_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/mae_heatmap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_10_49_58/results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/datapath_comparison_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/datapath_comparison_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/datapath_comparison_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/datapath_comparison_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/mae_heatmap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Neural_Net_large.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3_Random_Forest.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Results/2025_05_29_11_05_21/results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Load_Single_Axis/Load_Single_Axis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Load_Single_Axis/Load_Single_Axis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Loss Functions/Loss_Functions_Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Loss Functions/Loss_Functions_Test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/ML_Model_Improvmend/Setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/ML_Model_Improvmend/Setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Model_Erd.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Model_Erd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/data/Combined_Plate_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/data/Combined_Plate_S235JR_Gear_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/data/Combined_Plate_S235JR_Plate_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/plots/Combined_Plate_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/plots/Combined_Plate_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/plots/Combined_Plate_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_27_10_06_19/plots/model_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/plots/complete_model_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/plots/mae_heatmap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Physical_Model_Erd/Results/2025_05_29_08_47_21/results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/PiNNs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/PiNN/PiNNs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/data/Combined_Plate_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/data/Combined_Plate_S235JR_Gear_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/data/Combined_Plate_S235JR_Plate_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/plots/Combined_Plate_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/plots/Combined_Plate_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/plots/Combined_Plate_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_26_17_33_13/plots/model_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/data/Combined_Plate_AL_2007_T4_Gear_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/data/Combined_Plate_S235JR_Gear_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/data/Combined_Plate_S235JR_Plate_Normal.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/plots/Combined_Plate_AL_2007_T4_Gear_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/plots/Combined_Plate_S235JR_Gear_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/plots/Combined_Plate_S235JR_Plate_Normal_3_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/PiNN/Results/2025_05_27_10_02_58/plots/model_comparison.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Trainingsdata_Plate_vs_Gear/Compare_different_trainingsdata.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Trainingsdata_Plate_vs_Gear/Compare_different_trainingsdata.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Helper/handling_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Helper/handling_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Helper/handling_hyperopt.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_hyperopt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/model_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/model_hyprid.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_hyprid.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/model_neural_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/model_physical.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_physical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_mixture_of_experts.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_mixture_of_experts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,52 +50,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.Analyse_Errors.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Compare Activation Functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_batches_vs_single.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_different_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Comparson_of_physical_model.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Different_DataSets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Evaluate_RNN_potential.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Evaluate_Sequential_potential.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experiment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.FilterData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyperparameteroptimization_Methods_Comparsion.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid_Models_Guided.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid_Models_Residual.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Load_Data_Method_Comparsion.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Load_Single_Axis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_Functions_Test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Model_Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Normierung.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNNs.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Potential_Transformer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_2D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_3D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.experiment_material_dependency.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_data.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.handling_experiment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_plots.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_read_data_from_json.executor&quot;: &quot;Run&quot;,
-    &quot;Python.merge_additional_information.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_base.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/DataSets&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Analyse_Errors.executor": "Debug",
+    "Python.Compare Activation Functions.executor": "Run",
+    "Python.Compare_batches_vs_single.executor": "Run",
+    "Python.Compare_different_trainingsdata.executor": "Run",
+    "Python.Comparson_of_physical_model.executor": "Debug",
+    "Python.Different_DataSets.executor": "Run",
+    "Python.Evaluate_RNN_potential.executor": "Run",
+    "Python.Evaluate_Sequential_potential.executor": "Run",
+    "Python.Experiment.executor": "Run",
+    "Python.FilterData.executor": "Run",
+    "Python.Hyperparameteroptimization_Methods_Comparsion.executor": "Run",
+    "Python.Hyprid_Models_Guided.executor": "Run",
+    "Python.Hyprid_Models_Residual.executor": "Run",
+    "Python.Load_Data_Method_Comparsion.executor": "Debug",
+    "Python.Load_Single_Axis.executor": "Run",
+    "Python.Loss_Functions_Test.executor": "Run",
+    "Python.Loss_functions.executor": "Run",
+    "Python.MoE_Gating.executor": "Run",
+    "Python.Model_Erd.executor": "Run",
+    "Python.Normierung.executor": "Run",
+    "Python.PiNNs.executor": "Run",
+    "Python.Potential_Transformer.executor": "Run",
+    "Python.data_visualisation.executor": "Run",
+    "Python.data_visualisation_2D.executor": "Run",
+    "Python.data_visualisation_3D.executor": "Run",
+    "Python.experiment_material_dependency.executor": "Run",
+    "Python.handling_data.executor": "Debug",
+    "Python.handling_experiment.executor": "Run",
+    "Python.handling_plots.executor": "Run",
+    "Python.handling_read_data_from_json.executor": "Run",
+    "Python.merge_additional_information.executor": "Run",
+    "Python.model_base.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/DataSets",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets" />
@@ -270,7 +154,7 @@
       <workItem from="1748611750807" duration="1065000" />
       <workItem from="1748848438786" duration="21831000" />
       <workItem from="1748930760671" duration="9532000" />
-      <workItem from="1748940966798" duration="10733000" />
+      <workItem from="1748940966798" duration="15394000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -339,6 +223,11 @@
           <line>69</line>
           <option name="timeStamp" value="139" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Models/model_base.py</url>
+          <line>149</line>
+          <option name="timeStamp" value="155" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -356,6 +245,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$Normierung.coverage" NAME="Normierung Coverage Results" MODIFIED="1748448063073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Normierung" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_3D.coverage" NAME="data_visualisation_3D Coverage Results" MODIFIED="1748871066475" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$merge_additional_information.coverage" NAME="merge_additional_information Coverage Results" MODIFIED="1748612575333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$MoE_Gating.coverage" NAME="MoE_Gating Coverage Results" MODIFIED="1748962969451" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_Gating" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation.coverage" NAME="data_visualisation Coverage Results" MODIFIED="1748849505811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$model_base.coverage" NAME="model_base Coverage Results" MODIFIED="1747393009625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models" />
     <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_Sequential_potential.coverage" NAME="Evaluate_Sequential_potential Coverage Results" MODIFIED="1747755304239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/SequentialNet" />
