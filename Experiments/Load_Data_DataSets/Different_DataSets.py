@@ -259,28 +259,39 @@ Combined_KL = hdata.DataClass('KL', folder_data,
                                     dataPaths_Test,
                                   ["curr_x"],)
 
-Combined_Gear_new = hdata.DataClass_CombinedTrainVal('Gear_TrainVal', folder_data,
-                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                    dataPaths_Test,
-                                  ["curr_x"],)
+Combined_Gear_new = hdata.DataclassCombinedTrainVal('Gear_TrainVal', folder_data,
+                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], )
 dataSets_list = [Combined_Gear]
 dataSets_list_new = [Combined_Gear_new]
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFEPOCHS = 800
-    NUMBEROFMODELS = 10
+    NUMBEROFMODELS = 2
 
     window_size = 1
-    past_values = 2
-    future_values = 2
+    past_values = 0
+    future_values = 0
 
-    model_rf = mnn.Net(None, 1, 200, 2, learning_rate=0.001, name='Neural_Net_large') #mrf.get_reference()
+    model_rf = mrf.get_reference()  #mnn.Net(None, 1, 200, 2, learning_rate=0.001, name='Neural_Net_large') #
+
     #Combined_Gear,Combined_KL
-    dataSets_list = [ hdata.Combined_Plate_TrainVal, hdata.Combined_Gear_TrainVal, hdata.Combined_PKL_TrainVal]
+    dataClass_1 = hdata.Combined_Plate_TrainVal
+    dataClass_1.window_size = window_size
+    dataClass_1.past_values = past_values
+    dataClass_1.future_values = future_values
 
-    experiment_results = hexp.run_experiment(dataSets_list, True, True, [model_rf],
+    dataClass_2 = hdata.Combined_PKL_TrainVal
+    dataClass_2.window_size = window_size
+    dataClass_2.past_values = past_values
+    dataClass_2.future_values = future_values
+
+    dataSets_list = [dataClass_1, dataClass_2]
+
+    experiment_results = hexp.run_experiment(dataSets_list, True, False, [model_rf],
                         NUMBEROFEPOCHS, NUMBEROFMODELS, past_values, future_values,n_drop_values=25,
-                        plot_types=['datapath', 'heatmap', 'prediction_model'])
+                        plot_types=['heatmap', 'heatmap_std', 'prediction_overview', 'geometry_mae', 'force_mae', 'mrr_mae'])
 
     # Zugriff auf Ergebnisse
     print(f"Experiment gespeichert in: {experiment_results['results_dir']}")

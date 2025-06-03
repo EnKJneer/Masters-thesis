@@ -16,8 +16,16 @@ if __name__ == "__main__":
     NUMBEROFMODELS = 2
 
     window_size = 1
-    past_values = 2
-    future_values = 2
+    past_values = 0
+    future_values = 0
+
+    #Combined_Gear,Combined_KL
+    dataClass_1 = hdata.Combined_Plate_TrainVal
+    dataClass_1.window_size = window_size
+    dataClass_1.past_values = past_values
+    dataClass_1.future_values = future_values
+
+    dataSets_list = [dataClass_1]
 
     dataSets = [hdata.Combined_Plate]
 
@@ -26,4 +34,10 @@ if __name__ == "__main__":
     models = [model_erd, model_erd_one_axis]
 
     # Run the experiment
-    hexp.run_experiment(dataSets, use_nn_reference=True, use_rf_reference=True, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)
+    experiment_results = hexp.run_experiment(dataSets_list, True, False, [model_erd, model_erd_one_axis],
+                        NUMBEROFEPOCHS, NUMBEROFMODELS, past_values, future_values,n_drop_values=25,
+                        plot_types=['heatmap', 'prediction_overview', 'geometry_mae'])
+
+    # Zugriff auf Ergebnisse
+    print(f"Experiment gespeichert in: {experiment_results['results_dir']}")
+    print(f"Anzahl Plots erstellt: {sum(len(paths) for paths in experiment_results['plot_paths'].values())}")

@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import ast
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,7 +13,40 @@ import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 
-HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth"]
+HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
+
+def plot_2d_with_color(x_values, y_values, color_values, titel='|error|', label_colour = 'mae', dpi=300, xlabel = 'pos_x', ylabel = 'pos_y'):
+    """
+    Erstellt einen 2D-Plot mit Linien, deren Farbe basierend auf den color_values bestimmt wird.
+
+    :param x_values: Liste oder Array der x-Werte
+    :param y_values: Liste oder Array der y-Werte
+    :param color_values: Liste oder Array der Werte, die die Farbe bestimmen
+    :param name: Name der Farbskala (Standard: '|error|')
+    :param dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
+    """
+    # Erstellen des Plots mit höherer Auflösung
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=dpi)
+
+    # Normalisieren der color_values für den Farbverlauf
+    normalized_color_values = (color_values - np.min(color_values)) / (np.max(color_values) - np.min(color_values))
+
+    # Erstellen eines Farbverlaufs basierend auf den color_values
+    #for i in range(len(x_values) - 1):
+    #    ax.plot(x_values[i:i + 2], y_values[i:i + 2], c=plt.cm.viridis(normalized_color_values[i]))
+
+    # Erstellen eines Streudiagramms, um die Farbskala anzuzeigen
+    sc = ax.scatter(x_values, y_values, c=color_values, cmap='viridis', s=5)
+
+    # Hinzufügen einer Farbskala
+    plt.colorbar(sc, label=label_colour)
+
+    # Beschriftungen und Titel hinzufügen
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(f'{titel}')
+
+    return fig
 
 class BasePlotter(ABC):
     """Abstrakte Basisklasse für verschiedene Plot-Typen"""
@@ -234,7 +268,44 @@ class HeatmapPlotter(BasePlotter):
         fig.colorbar(im, ax=ax, label='MAE')
         plt.tight_layout()
 
-        filename = 'mae_heatmap.png'
+        filename = 'heatmap_mae.png'
+        plot_path = self.save_plot(fig, filename)
+
+        return [plot_path]
+class HeatmapStdPlotter(BasePlotter):
+    """Erstellt eine Heatmap der Std-Werte"""
+
+    def create_plots(self, df: pd.DataFrame, **kwargs):
+        # Pivot-Tabelle erstellen
+        df['Dataset_Path'] = df['DataSet'] + '_' + df['DataPath'].str.replace('.csv', '')
+        pivot_df = df.pivot_table(values='StdDev', index='Dataset_Path', columns='Model', aggfunc='mean')
+
+        fig, ax = plt.subplots(figsize=(10, max(6, len(pivot_df.index) * 0.5)))
+
+        im = ax.imshow(pivot_df.values, cmap='RdYlBu_r', aspect='auto')
+
+        # Achsenbeschriftungen
+        ax.set_xticks(np.arange(len(pivot_df.columns)))
+        ax.set_yticks(np.arange(len(pivot_df.index)))
+        ax.set_xticklabels(pivot_df.columns)
+        ax.set_yticklabels(pivot_df.index)
+
+        # Rotiere die x-Achsenbeschriftungen
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+        # Werte in die Zellen schreiben
+        for i in range(len(pivot_df.index)):
+            for j in range(len(pivot_df.columns)):
+                value = pivot_df.iloc[i, j]
+                if not np.isnan(value):
+                    text = ax.text(j, i, f'{value:.3f}', ha="center", va="center",
+                                   color="white" if value > pivot_df.values.mean() else "black")
+
+        ax.set_title("Std Heatmap: Models vs Dataset_DataPath")
+        fig.colorbar(im, ax=ax, label='StdDev')
+        plt.tight_layout()
+
+        filename = 'heatmap_std.png'
         plot_path = self.save_plot(fig, filename)
 
         return [plot_path]
@@ -438,6 +509,201 @@ class PredictionPlotterPerDataset(BasePlotter):
 
         return plot_paths
 
+class MAEPlotterGeometry(BasePlotter):
+    def create_plots(self, df: pd.DataFrame, **kwargs):
+        plot_paths = []
+        datapaths = df['DataPath'].unique()
+
+        for datapath in datapaths:
+            df_subset = df[df['DataPath'] == datapath]
+
+            datasets = df_subset['DataSet'].unique()
+            models = df_subset['Model'].unique()
+            ground_truth = np.array(df_subset['GroundTruth'].iloc[0])
+
+            # Plot Vorhersagen für das aktuelle Modell und jedes Dataset
+            for dataset in datasets:
+                for model in models:
+                    predictions_data = df_subset[(df_subset['Model'] == model) & (df_subset['DataSet'] == dataset)]
+                    if not predictions_data.empty:
+                        row = df_subset[
+                            (df_subset['Model'] == model) &
+                            (df_subset['DataSet'] == dataset)
+                            ].iloc[0]
+
+                        preds_list = np.array(row['Predictions'])
+                        raw_data_dict = row['RawData']
+                        data_geometry = reconstruct_raw_data(raw_data_dict)
+
+                        # Überprüfen, ob benötigte Spalten existieren
+                        if 'pos_x' not in data_geometry.columns or 'pos_y' not in data_geometry.columns:
+                            print(
+                                f"Required columns 'pos_x' or 'pos_y' not found in RawData for {datapath}, {dataset}, {model}")
+                            print(f"Available columns: {data_geometry.columns.tolist()}")
+                            continue
+
+                        # Mittelwert und Standardabweichung über die Runs
+                        mean_pred = preds_list.mean(axis=0)
+                        std_pred = preds_list.std(axis=0)
+                        mae = np.abs(mean_pred.squeeze() - ground_truth.squeeze())
+
+                        # Längen-Check für Sicherheit
+                        min_length = min(len(data_geometry), len(mae))
+                        if min_length < len(data_geometry):
+                            print(f"Warning: Truncating data to length {min_length} for {datapath}, {dataset}, {model}")
+                            data_geometry = data_geometry.iloc[:min_length]
+                            mae = mae[:min_length]
+
+                        # Plot mit Farbe
+                        fig = plot_2d_with_color(
+                            data_geometry['pos_x'].values,
+                            data_geometry['pos_y'].values,
+                            mae,
+                            f'{datapath} {dataset} {model} mae'
+                        )
+                        filename = f"MAE_Geometry_{datapath.replace('/', '_')}_{dataset}_{model}.png"
+                        plot_path = self.save_plot(fig, filename)
+                        plot_paths.append(plot_path)
+                    else:
+                        print(f"No predictions found for model {model} and dataset {dataset}")
+        return plot_paths
+
+class MAEPlotterForce(BasePlotter):
+    def create_plots(self, df: pd.DataFrame, **kwargs):
+        plot_paths = []
+        datapaths = df['DataPath'].unique()
+
+        for datapath in datapaths:
+            df_subset = df[df['DataPath'] == datapath]
+
+            datasets = df_subset['DataSet'].unique()
+            models = df_subset['Model'].unique()
+            ground_truth = np.array(df_subset['GroundTruth'].iloc[0])
+
+            # Plot Vorhersagen für das aktuelle Modell und jedes Dataset
+            for dataset in datasets:
+                for model in models:
+                    predictions_data = df_subset[(df_subset['Model'] == model) & (df_subset['DataSet'] == dataset)]
+                    if not predictions_data.empty:
+                        row = df_subset[
+                            (df_subset['Model'] == model) &
+                            (df_subset['DataSet'] == dataset)
+                            ].iloc[0]
+
+                        preds_list = np.array(row['Predictions'])
+                        raw_data_dict = row['RawData']
+                        data_geometry = reconstruct_raw_data(raw_data_dict)
+
+                        key_x_data = 'f_x_sim'
+                        key_y_data = 'f_y_sim'
+                        # Überprüfen, ob benötigte Spalten existieren
+                        if key_x_data not in data_geometry.columns or key_y_data not in data_geometry.columns:
+                            print(
+                                f"Required columns '{key_x_data}' or '{key_y_data}' not found in RawData for {datapath}, {dataset}, {model}")
+                            print(f"Available columns: {data_geometry.columns.tolist()}")
+                            continue
+
+                        # Mittelwert und Standardabweichung über die Runs
+                        mean_pred = preds_list.mean(axis=0)
+                        std_pred = preds_list.std(axis=0)
+                        mae = np.abs(mean_pred.squeeze() - ground_truth.squeeze())
+
+                        # Längen-Check für Sicherheit
+                        min_length = min(len(data_geometry), len(mae))
+                        if min_length < len(data_geometry):
+                            print(f"Warning: Truncating data to length {min_length} for {datapath}, {dataset}, {model}")
+                            data_geometry = data_geometry.iloc[:min_length]
+                            mae = mae[:min_length]
+
+                        # Plot mit Farbe
+                        fig = plot_2d_with_color(
+                            data_geometry[key_x_data].values,
+                            data_geometry[key_y_data].values,
+                            mae,
+                            f'{datapath} {dataset} {model} mae',
+                            xlabel=key_x_data,
+                            ylabel=key_y_data
+                        )
+                        filename = f"MAE_Force_{datapath.replace('/', '_')}_{dataset}_{model}.png"
+                        plot_path = self.save_plot(fig, filename)
+                        plot_paths.append(plot_path)
+                    else:
+                        print(f"No predictions found for model {model} and dataset {dataset}")
+        return plot_paths
+
+class MAEPlotterMRR(BasePlotter):
+    def create_plots(self, df: pd.DataFrame, **kwargs):
+        plot_paths = []
+        datapaths = df['DataPath'].unique()
+
+        for datapath in datapaths:
+            df_subset = df[df['DataPath'] == datapath]
+
+            datasets = df_subset['DataSet'].unique()
+            models = df_subset['Model'].unique()
+            ground_truth = np.array(df_subset['GroundTruth'].iloc[0])
+
+            # Plot Vorhersagen für das aktuelle Modell und jedes Dataset
+            for dataset in datasets:
+                for model in models:
+                    predictions_data = df_subset[(df_subset['Model'] == model) & (df_subset['DataSet'] == dataset)]
+                    if not predictions_data.empty:
+                        row = df_subset[
+                            (df_subset['Model'] == model) &
+                            (df_subset['DataSet'] == dataset)
+                            ].iloc[0]
+
+                        preds_list = np.array(row['Predictions'])
+                        raw_data_dict = row['RawData']
+                        data_geometry = reconstruct_raw_data(raw_data_dict)
+
+                        key_x_data = 'materialremoved_sim'
+                        # Überprüfen, ob benötigte Spalten existieren
+                        if key_x_data not in data_geometry.columns:
+                            print(
+                                f"Required columns '{key_x_data}' not found in RawData for {datapath}, {dataset}, {model}")
+                            print(f"Available columns: {data_geometry.columns.tolist()}")
+                            continue
+
+                        # Mittelwert und Standardabweichung über die Runs
+                        mean_pred = preds_list.mean(axis=0)
+                        std_pred = preds_list.std(axis=0)
+                        mae = np.abs(mean_pred.squeeze() - ground_truth.squeeze())
+
+                        # Längen-Check für Sicherheit
+                        min_length = min(len(data_geometry), len(mae))
+                        if min_length < len(data_geometry):
+                            print(f"Warning: Truncating data to length {min_length} for {datapath}, {dataset}, {model}")
+                            data_geometry = data_geometry.iloc[:min_length]
+                            mae = mae[:min_length]
+
+                        fig, ax = plt.subplots(figsize=(10, 6))
+
+                        mrr = data_geometry[key_x_data].values
+                        # Mittelwertkurve
+                        sc = ax.scatter(
+                            mrr,
+                            mae,
+                            label=f"{model} ({dataset})", s=5,
+                            c=ground_truth, cmap='viridis'
+                        )
+
+                        ax.set_title(f"MAE vs MRR for {datapath} and {model}")
+                        ax.set_xlabel("MRR")
+                        ax.set_ylabel("MAE")
+                        ax.legend()
+                        plt.tight_layout()
+
+                        # Hinzufügen einer Farbskala
+                        plt.colorbar(sc, label='ground truth')
+
+                        filename = f"MAE_MRR_{datapath.replace('/', '_')}_{dataset}_{model}.png"
+                        plot_path = self.save_plot(fig, filename)
+                        plot_paths.append(plot_path)
+                    else:
+                        print(f"No predictions found for model {model} and dataset {dataset}")
+        return plot_paths
+
 class PlotManager:
     """Manager-Klasse zum Verwalten verschiedener Plotter"""
 
@@ -468,7 +734,7 @@ class PlotManager:
         return all_plot_paths
 
 # Beispiel für die Integration in Ihre run_experiment Funktion:
-def create_plots_modular(results_dir: str, results: List, plot_types: List[str] = None):
+def create_plots_modular(results_dir: str, results: List, plot_types: List[str] = None, DEBUG = False):
     """
     Erstellt Plots basierend auf den Ergebnissen mit der modularen Plot-Architektur
 
@@ -481,22 +747,24 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
     if plot_types is None:
         plot_types = ['heatmap', 'overview', 'prediction_overview']
 
-    # DataFrame erstellen mit expliziter Validierung
-    print("DEBUG - Erstelle DataFrame aus results:")
-    print(f"Anzahl results: {len(results)}")
-    if len(results) > 0:
-        print(f"Beispiel result: {results[0]}")
-        print(f"Länge erstes Element: {len(results[0])}")
+    if DEBUG:
+        # DataFrame erstellen mit expliziter Validierung
+        print("DEBUG - Erstelle DataFrame aus results:")
+        print(f"Anzahl results: {len(results)}")
+        if len(results) > 0:
+            print(f"Beispiel result: {results[0]}")
+            print(f"Länge erstes Element: {len(results[0])}")
 
     df = pd.DataFrame(results, columns=HEADER)
 
-    # DataFrame validieren
-    print("\nDEBUG - DataFrame Info:")
-    print(f"Shape: {df.shape}")
-    print(f"Columns: {df.columns.tolist()}")
-    print(f"Dtypes:\n{df.dtypes}")
-    print(f"\nUnique Models: {df['Model'].unique()}")
-    print(f"Model types: {[type(x) for x in df['Model'].unique()]}")
+    if DEBUG:
+        # DataFrame validieren
+        print("\nDEBUG - DataFrame Info:")
+        print(f"Shape: {df.shape}")
+        print(f"Columns: {df.columns.tolist()}")
+        print(f"Dtypes:\n{df.dtypes}")
+        print(f"\nUnique Models: {df['Model'].unique()}")
+        print(f"Model types: {[type(x) for x in df['Model'].unique()]}")
 
     # Datentypen korrigieren falls nötig
     df['MAE'] = pd.to_numeric(df['MAE'], errors='coerce')
@@ -505,9 +773,10 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
     df['DataSet'] = df['DataSet'].astype(str)
     df['DataPath'] = df['DataPath'].astype(str)
 
-    print(f"\nNach Typkonvertierung:")
-    print(f"MAE NaN values: {df['MAE'].isna().sum()}")
-    print(f"StdDev NaN values: {df['StdDev'].isna().sum()}")
+    if DEBUG:
+        print(f"\nNach Typkonvertierung:")
+        print(f"MAE NaN values: {df['MAE'].isna().sum()}")
+        print(f"StdDev NaN values: {df['StdDev'].isna().sum()}")
 
     # Plot-Manager initialisieren
     plots_dir = os.path.join(results_dir, "plots")
@@ -519,10 +788,13 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
     plot_manager.register_plotter('overview', ModelComparisonPlotter(plots_dir))
     plot_manager.register_plotter('heatmap', HeatmapPlotter(plots_dir))
     plot_manager.register_plotter('heatmap_ensemble', HeatmapEnsemblePlotter(plots_dir))
+    plot_manager.register_plotter('heatmap_std', HeatmapStdPlotter(plots_dir))
     plot_manager.register_plotter('prediction_overview', PredictionPlotter(plots_dir))
     plot_manager.register_plotter('prediction_model', PredictionPlotterPerModel(plots_dir))
     plot_manager.register_plotter('prediction_dataset', PredictionPlotterPerDataset(plots_dir))
-
+    plot_manager.register_plotter('geometry_mae', MAEPlotterGeometry(plots_dir))
+    plot_manager.register_plotter('force_mae', MAEPlotterForce(plots_dir))
+    plot_manager.register_plotter('mrr_mae', MAEPlotterMRR(plots_dir))
     # Plots erstellen
     plot_paths = plot_manager.create_all_plots(df, plot_types)
 
@@ -569,45 +841,43 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10,
                    past_values=2, future_values=2, batched_data=False,
                    n_drop_values=20, patience=5, plot_types=None):
-
-    def calculate_and_store_results(model, data, nn_preds, y_test, df_list_results, results, header_list,
-                                    n_drop_values):
+    # In calculate_and_store_results Funktion:
+    def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
+                                    n_drop_values, raw_data):  # dataSets Parameter hinzufügen
         """
         Calculate MAE and standard deviation, and store the results.
-
-        Parameters:
-        - model: The model being evaluated.
-        - data: The data object containing testing data paths.
-        - nn_preds: Predictions from the model.
-        - y_test: True values.
-        - df_list_results: List to store the results DataFrames.
-        - results: List to store the results.
-        - header_list: List to store the headers.
-        - n_drop_values: Number of values to drop for calculation.
         """
-        for j, path in enumerate(data.testing_data_paths):
+        for j, path in enumerate(dataClass.testing_data_paths):
             name = model.name + "_" + path.replace('.csv', '')
 
             mse_nn, std_nn, mae_ensemble = hdata.calculate_mae_and_std(nn_preds[j],
-                                                         y_test[j].values if isinstance(y_test[j], pd.DataFrame) else
-                                                         y_test[j], n_drop_values)
+                                                                       y_test[j].values if isinstance(y_test[j],
+                                                                                                      pd.DataFrame) else
+                                                                       y_test[j], n_drop_values)
 
             predictions = []
             for pred in nn_preds[j]:
                 predictions.append(pred[:-n_drop_values].tolist())
 
-            # Ergebnisse speichern - FIXED: Correct order [DataSet, DataPath, Model, MAE, StdDev]
+            # Raw data als Dictionary speichern (JSON-serialisierbar)
+            raw_data_dict = {
+                'columns': raw_data[j].columns.tolist(),
+                'data': raw_data[j].iloc[:-n_drop_values].to_dict('records')  # Als Liste von Dictionaries
+            }
+
+            # Ergebnisse speichern mit raw_data
             df_list_results[j][name] = np.mean(nn_preds[j], axis=0)
             results.append([
-                data.name,  # DataSet
+                dataClass.name,  # dataClass
                 path.replace('.csv', ''),  # DataPath
                 model.name,  # Model
                 mse_nn,  # MAE
                 std_nn,  # StdDev
                 mae_ensemble,
                 predictions,
-                # np.mean(nn_preds[j], axis=0)[:-n_drop_values].tolist(), # mean prediction as list
-                y_test[j].iloc[:-n_drop_values].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j][:-n_drop_values].tolist()  # ground truth as list
+                y_test[j].iloc[:-n_drop_values].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j][
+                                                                                                            :-n_drop_values].tolist(),
+                raw_data_dict  # RawData als Dictionary
             ])
             header_list[j].append(name)
 
@@ -680,11 +950,11 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
     results = []
     models_copy = copy.deepcopy(models)
     reference_models_copy = copy.deepcopy(reference_models)
-    for i, data in enumerate(dataSets):
-        print(f"\n===== Verarbeitung: {data.name} =====")
+    for i, dataClass in enumerate(dataSets):
+        print(f"\n===== Verarbeitung: {dataClass.name} =====")
         # Daten laden
-        X_train, X_val, X_test, y_train, y_val, y_test = data.load_data(
-            past_values, future_values, window_size, keep_separate=batched_data)
+        X_train, X_val, X_test, y_train, y_val, y_test = dataClass.load_data()
+        raw_data = dataClass.load_raw_test_data()
         if isinstance(X_test, list):
             df_list_results = [pd.DataFrame() for x in range(len(X_test))]
             header_list = [[] for x in range(len(X_test))]
@@ -710,8 +980,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                     print(f"{model.name}: Test MAE: {mse}")
 
             # Fehlerberechnung
-            calculate_and_store_results(model, data, nn_preds, y_test, df_list_results, results, header_list,
-                                        n_drop_values)
+            calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
+                                        n_drop_values, raw_data)
 
         if len(reference_models) > 0:
             criterion = reference_models[0].criterion
@@ -735,8 +1005,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                     nn_preds.append(pred_nn.flatten())
 
             # Fehlerberechnung
-            calculate_and_store_results(model, data, nn_preds, y_test, df_list_results, results, header_list,
-                                        n_drop_values)
+            calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
+                                        n_drop_values, raw_data)
 
         reference_models = reference_models_copy
         models = models_copy
@@ -826,16 +1096,21 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
         "Summary_Statistics": {
             "Total_Experiments": len(results),
             "Datasets_Tested": len(datasets),
-            "DataPaths_per_Dataset": {dataset: len(df[df['DataSet'] == dataset]['DataPath'].unique())
-                                      for dataset in datasets},
+            "DataPaths_per_Dataset": {
+                dataset: len(df[df['DataSet'] == dataset]['DataPath'].unique())
+                for dataset in datasets
+            },
             "Models_Compared": df['Model'].unique().tolist(),
             "Best_Model_Overall": df.loc[df['MAE'].idxmin(), 'Model'],
             "Worst_Model_Overall": df.loc[df['MAE'].idxmax(), 'Model']
         },
         "Predictions": {
             datapath: {
-                "MeanPredictions": df[df['DataPath'] == datapath][['Model', 'Predictions']].set_index('Model').to_dict()['Predictions'],
-                "GroundTruth": df[df['DataPath'] == datapath]['GroundTruth'].iloc[0]
+                "MeanPredictions":
+                    df[df['DataPath'] == datapath][['Model', 'Predictions']].set_index('Model').to_dict()[
+                        'Predictions'],
+                "GroundTruth": df[df['DataPath'] == datapath]['GroundTruth'].iloc[0],
+                "RawData": df[df['DataPath'] == datapath]['RawData'].iloc[0]  # RawData hinzufügen
             }
             for datapath in datapaths
         }
@@ -846,9 +1121,12 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
     with open(documentation_file, 'w', encoding='utf-8') as json_file:
         json.dump(documentation, json_file, indent=4, ensure_ascii=False)
 
-    # CSV-Export für weitere Analysen
+    # CSV-Export der Ergebniss Übersicht
     csv_file = os.path.join(results_dir, 'results.csv')
-    df.to_csv(csv_file, index=False)
+    df_csv = df[["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble"]]
+    df_csv.to_csv(csv_file, index=False)
+    # CSV-Export der Daten
+    save_detailed_csv(df, results_dir)
 
     if improvement_results:
         improvement_df = pd.DataFrame(improvement_results,
@@ -871,25 +1149,95 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
         'plot_paths': plot_paths
     }
 
-def reconstruct_results_from_json(json_file_path):
+def save_detailed_csv(df, results_dir):
     """
-    Reconstruct the results from the JSON file.
+    Speichert detaillierte Daten für jeden DataPath in separaten CSV-Dateien.
+
+    Args:
+        df (pd.DataFrame): DataFrame mit den Ergebnissen.
+        results_dir (str): Verzeichnis, in dem die CSV-Dateien gespeichert werden sollen.
+    """
+    # Erstelle ein Unterverzeichnis für die detaillierten CSV-Dateien
+    detailed_csv_dir = os.path.join(results_dir, 'Predictions')
+    os.makedirs(detailed_csv_dir, exist_ok=True)
+
+    # Iteriere über jeden eindeutigen DataPath
+    for datapath in df['DataPath'].unique():
+        df_subset = df[df['DataPath'] == datapath]
+
+        # Erstelle einen DataFrame für die Rohdaten
+        raw_data = df_subset['RawData'].iloc[0]
+        raw_data_df = pd.DataFrame(raw_data['data'], columns=raw_data['columns'])
+
+        # Erstelle einen DataFrame für den Ground Truth
+        ground_truth = df_subset['GroundTruth'].iloc[0]
+        ground_truth_df = pd.DataFrame(ground_truth, columns=['GroundTruth'])
+
+        # Erstelle einen DataFrame für die mittleren Vorhersagen jeder DataSet-Modell-Kombination
+        predictions_dict = {}
+        for _, row in df_subset.iterrows():
+            predictions = row['Predictions']
+            mean_predictions = np.mean(predictions, axis=0)
+            predictions_dict[f'{row["DataSet"]}_{row["Model"]}'] = mean_predictions
+
+        # Erstelle einen DataFrame aus dem Wörterbuch der mittleren Vorhersagen
+        predictions_df = pd.DataFrame(predictions_dict)
+
+        # Kombiniere die DataFrames
+        combined_df = pd.concat([raw_data_df, ground_truth_df, predictions_df], axis=1)
+
+        # Speichere den kombinierten DataFrame in einer CSV-Datei
+        csv_file = os.path.join(detailed_csv_dir, f'{datapath.replace("/", "_")}.csv')
+        combined_df.to_csv(csv_file, index=False)
+
+    print(f"Detaillierte CSV-Dateien wurden in {detailed_csv_dir} gespeichert.")
+
+def reconstruct_results_dataframe(json_file_path):
+    """
+    Reconstruct the results DataFrame from the JSON file.
 
     Parameters:
-    - json_file_path: Path to the JSON file.
+    - json_file_path: Path to the JSON file containing the results.
 
     Returns:
-    - A dictionary containing the reconstructed results.
+    - df: Reconstructed DataFrame.
     """
+    # Load the JSON file
     with open(json_file_path, 'r', encoding='utf-8') as json_file:
         documentation = json.load(json_file)
 
-    results = documentation["Results"]["Model_Comparison"]
-    predictions = documentation["Results"]["Predictions"]
+    # Extract the results from the JSON file
+    results = documentation.get("Results", {}).get("Model_Comparison", [])
 
-    reconstructed_results = {
-        "Model_Comparison": results,
-        "Predictions": predictions
-    }
+    # Define the columns for the DataFrame
+    columns = HEADER
 
-    return reconstructed_results
+    # Create the DataFrame
+    df = pd.DataFrame(results, columns=columns)
+
+    return df
+
+# Alternative: Hilfsfunktion für RawData-Rekonstruktion
+def reconstruct_raw_data(raw_data_dict):
+    """
+    Hilfsfunktion zur Rekonstruktion von RawData aus verschiedenen Formaten.
+
+    Parameters:
+    - raw_data_dict: Dictionary mit RawData
+
+    Returns:
+    - pd.DataFrame: Rekonstruierte RawData oder None bei Fehler
+    """
+    if not isinstance(raw_data_dict, dict):
+        return None
+
+    try:
+        if 'columns' in raw_data_dict and 'data' in raw_data_dict:
+            # Format: {'columns': [...], 'data': [...]}
+            return pd.DataFrame(raw_data_dict['data'], columns=raw_data_dict['columns'])
+        else:
+            # Direktes DataFrame-Dictionary Format
+            return pd.DataFrame(raw_data_dict)
+    except Exception as e:
+        print(f"Error reconstructing RawData: {e}")
+        return None

@@ -1,0 +1,36 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.251539 | 0.172554
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net      | 0.177230 | 0.120729
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net      | 0.668537 | 0.138199
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net      | 0.606919 | 0.136366
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Net_optimized   | 0.141974 | 0.007652
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Net_optimized   | 0.100114 | 0.004300
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Net_optimized   | 0.591455 | 0.058368
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Net_optimized   | 0.585579 | 0.047248
+
+
+MODEL IMPROVEMENTS (vs Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Net_optimized | +43.56%     
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Net_optimized | +43.51%     
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net   | Net_optimized | +11.53%     
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net   | Net_optimized | +3.52%      
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae.png
+Heatmap_Std: 1 plots
+  - heatmap_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

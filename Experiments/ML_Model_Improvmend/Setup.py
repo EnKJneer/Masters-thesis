@@ -287,21 +287,21 @@ def rf_prediction(data_params, model_params, name='Random_forest_mini_en'):
 
 """ Data Sets """
 folder_data = '..\\DataSets\\DataFiltered'
-dataSet_same_material_diff_workpiece = hdata.DataClass_CombinedTrainVal('Al_Al_Gear_Plate', folder_data,
-                                                                        ['AL_2007_T4_Gear_Depth_3.csv','AL_2007_T4_Gear_Normal_1.csv'],
-                                                                        ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
-                                                                        ['AL_2007_T4_Plate_Normal_3.csv'],
-                                                                        ["curr_x"])
-dataSet_diff_material_same_workpiece = hdata.DataClass_CombinedTrainVal('Al_St_Gear_Gear', folder_data,
-                                                                        ['AL_2007_T4_Gear_Depth_3.csv','AL_2007_T4_Gear_Normal_1.csv'],
-                                                                        ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
-                                                                        ['S235JR_Gear_Normal_3.csv'],
-                                                                        ["curr_x"])
-dataSet_diff_material_diff_workpiece = hdata.DataClass_CombinedTrainVal('Al_St_Gear_Plate', folder_data,
-                                                                        ['AL_2007_T4_Gear_Depth_3.csv', 'AL_2007_T4_Gear_Normal_1.csv'],
-                                                                        ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
-                                                                        ['S235JR_Plate_Normal_3.csv'],
-                                                                        ["curr_x"])
+dataSet_same_material_diff_workpiece = hdata.DataclassCombinedTrainVal('Al_Al_Gear_Plate', folder_data,
+                                                                       ['AL_2007_T4_Gear_Depth_3.csv','AL_2007_T4_Gear_Normal_1.csv'],
+                                                                       ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
+                                                                       ['AL_2007_T4_Plate_Normal_3.csv'],
+                                                                       ["curr_x"])
+dataSet_diff_material_same_workpiece = hdata.DataclassCombinedTrainVal('Al_St_Gear_Gear', folder_data,
+                                                                       ['AL_2007_T4_Gear_Depth_3.csv','AL_2007_T4_Gear_Normal_1.csv'],
+                                                                       ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
+                                                                       ['S235JR_Gear_Normal_3.csv'],
+                                                                       ["curr_x"])
+dataSet_diff_material_diff_workpiece = hdata.DataclassCombinedTrainVal('Al_St_Gear_Plate', folder_data,
+                                                                       ['AL_2007_T4_Gear_Depth_3.csv', 'AL_2007_T4_Gear_Normal_1.csv'],
+                                                                       ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Normal_2.csv'],
+                                                                       ['S235JR_Plate_Normal_3.csv'],
+                                                                       ["curr_x"])
 
 dataSets_list = [dataSet_same_material_diff_workpiece,
                  dataSet_diff_material_same_workpiece,

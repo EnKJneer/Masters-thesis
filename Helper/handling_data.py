@@ -35,21 +35,31 @@ HEADER_y = ["curr_x", "curr_y", "curr_z", "curr_sp"]
 
 class BaseDataClass(ABC):
     @abstractmethod
-    def __init__(self, name, folder, target_channels=HEADER_y, do_preprocessing=True, n=12):
+    def __init__(self, name, folder, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
         self.name = name
         self.folder = folder
         self.target_channels = target_channels
         self.do_preprocessing = do_preprocessing
         self.n = n
+        self.past_values = past_values
+        self.future_values = future_values
+        if window_size == 0:
+            self.window_size = 1
+        elif window_size < 0:
+            self.window_size = abs(self.window_size)
+        else:
+            self.window_size = window_size
+        self.keep_separate = keep_separate
+        self.testing_data_paths = testing_data_paths
 
-    def prepare_output(self, all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test, keep_separate):
+    def prepare_output(self, all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test):
         """
         Returns
         -------
         tuple
             X_train, X_val, X_test, y_train, y_val, y_test
         """
-        if keep_separate:
+        if self.keep_separate:
             return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
         else:
             X_train = pd.concat(all_X_train).reset_index(drop=True)
@@ -129,29 +139,17 @@ class BaseDataClass(ABC):
         return x_cleaned, y_cleaned
 
     @abstractmethod
-    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False):
+    def load_data(self):
         pass
 
     @abstractmethod
     def get_documentation(self):
         pass
 
-    def get_test_data_as_pd(self, past_values=2, future_values=2, window_size=1):
+    def get_test_data_as_pd(self):
         """
         Loads and preprocesses test data for evaluation purposes.
         Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
-
-        Parameters
-        ----------
-        data_params : DataClass_CombinedTrainVal
-            A DataClass containing the data parameters for loading the dataset.
-        past_values : int, optional
-            The number of past values to consider for each sample. The default is 2.
-        future_values : int, optional
-            The number of future values to predict for each sample. The default is 2.
-        window_size : int, optional
-            The size of the sliding window for calculating the rolling mean. The default is 1.
-            If 0 or negative, it is adjusted to a positive value.
 
         Returns
         -------
@@ -162,20 +160,16 @@ class BaseDataClass(ABC):
             - base_names : list of str
                 Base names of the test files without the index part.
         """
-        if window_size == 0:
-            window_size = 1
-        elif window_size < 0:
-            window_size = abs(window_size)
 
         # Getting validation data to right format:
         fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
 
         # Apply rolling mean to each DataFrame in the lists
         test_datas = apply_action(fulltestdatas,
-                                  lambda data: data[HEADER].rolling(window=window_size, min_periods=1).mean())
+                                  lambda data: data[HEADER].rolling(window=self.window_size, min_periods=1).mean())
 
-        if past_values + future_values != 0:
-            test_datas = apply_action(test_datas, lambda target: target.iloc[past_values:-future_values])
+        if self.past_values + self.future_values != 0:
+            test_datas = apply_action(test_datas, lambda target: target.iloc[self.past_values:-self.future_values])
 
         base_names = []
         for path in self.testing_data_paths:
@@ -185,17 +179,55 @@ class BaseDataClass(ABC):
             base_names.append('_'.join(name_without_extension.split('_')[:-1]))
         return test_datas, base_names
 
+    def load_raw_test_data(self):
+        """
+        Loads and preprocesses the full dataframe.
+        Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
+
+        Parameters
+        ----------
+        paths: list of str
+            A list of paths to the data files.
+
+        Returns
+        -------
+        tuple
+            A list containing the raw data:
+            - datas : list of pd.DataFrame
+                Preprocessed test data with rolling mean applied.
+        """
+        # Getting validation data to right format:
+        fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
+
+        # Apply rolling mean to each DataFrame in the lists
+        test_datas = apply_action(fulltestdatas,
+                                  lambda data: data.rolling(window=self.window_size, min_periods=1).mean())
+
+        if self.past_values + self.future_values != 0:
+            test_datas = apply_action(test_datas, lambda target: target.iloc[self.past_values:-self.future_values])
+
+        return test_datas
+
 # Datenklassen
 class DataClass(BaseDataClass):
-    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, do_preprocessing=True, n=12):
+    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
         self.name = name
         self.folder = folder
-        self.training_data_paths = training_data_paths
-        self.validation_data_paths = validation_data_paths
-        self.testing_data_paths = testing_data_paths
         self.target_channels = target_channels
         self.do_preprocessing = do_preprocessing
         self.n = n
+        self.past_values = past_values
+        self.future_values = future_values
+        if window_size == 0:
+            self.window_size = 1
+        elif window_size < 0:
+            self.window_size = abs(self.window_size)
+        else:
+            self.window_size = window_size
+        self.keep_separate = keep_separate
+        self.training_data_paths = training_data_paths
+        self.validation_data_paths = validation_data_paths
+        self.testing_data_paths = testing_data_paths
 
     def check_data_overlap(self):
         """
@@ -221,7 +253,7 @@ class DataClass(BaseDataClass):
 
         return overlap_with_training, overlap_with_validation
 
-    def load_data_from_path(self, data_paths, past_values=2, future_values=2, window_size=1):
+    def load_data_from_path(self, data_paths):
         """
         Loads and preprocesses data from given paths.
 
@@ -229,29 +261,21 @@ class DataClass(BaseDataClass):
         ----------
         data_paths : list
             List of paths to the data files.
-        past_values : int, optional
-            The number of past values to consider. The default is 2.
-        future_values : int, optional
-            The number of future values to predict. The default is 2.
-        window_size : int, optional
-            The size of the sliding window. The default is 1.
 
         Returns
         -------
         tuple
             X, Y: Preprocessed data and targets.
         """
-        if window_size <= 0:
-            window_size = 1
 
         # Load data
         fulldatas = read_fulldata(data_paths, self.folder)
-        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-        X = apply_action(datas, lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
+        X = apply_action(datas, lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         targets = apply_action(fulldatas, lambda data: data[self.target_channels])
-        Y = apply_action(targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
-        if past_values + future_values != 0:
-            Y = apply_action(Y, lambda target: target.iloc[past_values:-future_values])
+        Y = apply_action(targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
+        if self.past_values + self.future_values != 0:
+            Y = apply_action(Y, lambda target: target.iloc[self.past_values:-self.future_values])
 
         if len(data_paths) <= 1:
             X = pd.concat(X).reset_index(drop=True)
@@ -259,20 +283,9 @@ class DataClass(BaseDataClass):
 
         return X, Y
 
-    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False):
+    def load_data(self):
         """
         Loads and preprocesses data for training, validation, and testing.
-
-        Parameters
-        ----------
-        past_values : int, optional
-            The number of past values to consider. The default is 2.
-        future_values : int, optional
-            The number of future values to predict. The default is 2.
-        window_size : int, optional
-            The size of the sliding window. The default is 1.
-        keep_separate : bool, optional
-            If True, return lists of DataFrames instead of concatenated ones.
 
         Returns
         -------
@@ -281,7 +294,7 @@ class DataClass(BaseDataClass):
             :param
         """
         # Load test data
-        X_test, y_test = self.load_data_from_path(self.testing_data_paths, past_values, future_values, window_size)
+        X_test, y_test = self.load_data_from_path(self.testing_data_paths)
 
         # Check for overlaps with assert
         overlap_with_training, overlap_with_validation = self.check_data_overlap()
@@ -289,14 +302,14 @@ class DataClass(BaseDataClass):
         assert not overlap_with_validation, "Warning: Test data is included in the validation data."
 
         # Load training and validation data
-        X_train, y_train = self.load_data_from_path(self.training_data_paths, past_values, future_values, window_size)
-        X_val, y_val = self.load_data_from_path(self.validation_data_paths, past_values, future_values, window_size)
+        X_train, y_train = self.load_data_from_path(self.training_data_paths)
+        X_val, y_val = self.load_data_from_path(self.validation_data_paths)
 
         if self.do_preprocessing:
             X_train, y_train = self.preprocessing(X_train, y_train)
             X_val, y_val = self.preprocessing(X_val, y_val)
 
-        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test, keep_separate)
+        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test)
 
     def get_documentation(self):
         documentation = {
@@ -310,16 +323,25 @@ class DataClass(BaseDataClass):
         return documentation
 
 class DataClassSingleAxis(BaseDataClass):
-    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, axis='x', do_preprocessing=True, n=12):
+    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, axis='x', do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
         self.name = name
         self.folder = folder
-        self.training_data_paths = training_data_paths
-        self.validation_data_paths = validation_data_paths
-        self.testing_data_paths = testing_data_paths
         self.target_channels = target_channels
         self.do_preprocessing = do_preprocessing
         self.n = n
+        self.past_values = past_values
+        self.future_values = future_values
+        if window_size == 0:
+            self.window_size = 1
+        elif window_size < 0:
+            self.window_size = abs(self.window_size)
+        else:
+            self.window_size = window_size
+        self.keep_separate = keep_separate
         self.axis = axis
+        self.training_data_paths = training_data_paths
+        self.validation_data_paths = validation_data_paths
+        self.testing_data_paths = testing_data_paths
 
     def create_full_ml_vector_optimized(self, past_values, future_values, channels_in: pd.DataFrame) -> np.array:
         """
@@ -398,7 +420,7 @@ class DataClassSingleAxis(BaseDataClass):
 
         return overlap_with_training, overlap_with_validation
 
-    def load_data_from_path(self, data_paths, past_values=2, future_values=2, window_size=1):
+    def load_data_from_path(self, data_paths):
         """
         Loads and preprocesses data from given paths.
 
@@ -406,29 +428,20 @@ class DataClassSingleAxis(BaseDataClass):
         ----------
         data_paths : list
             List of paths to the data files.
-        past_values : int, optional
-            The number of past values to consider. The default is 2.
-        future_values : int, optional
-            The number of future values to predict. The default is 2.
-        window_size : int, optional
-            The size of the sliding window. The default is 1.
 
         Returns
         -------
         tuple
             X, Y: Preprocessed data and targets.
         """
-        if window_size <= 0:
-            window_size = 1
-
         # Load data
         fulldatas = read_fulldata(data_paths, self.folder)
-        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
-        X = apply_action(datas, lambda data: self.create_full_ml_vector_optimized(past_values, future_values, data))
+        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
+        X = apply_action(datas, lambda data: self.create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         targets = apply_action(fulldatas, lambda data: data[self.target_channels])
-        Y = apply_action(targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
-        if past_values + future_values != 0:
-            Y = apply_action(Y, lambda target: target.iloc[past_values:-future_values])
+        Y = apply_action(targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
+        if self.past_values + self.future_values != 0:
+            Y = apply_action(Y, lambda target: target.iloc[self.past_values:-self.future_values])
 
         if len(data_paths) <= 1:
             X = pd.concat(X).reset_index(drop=True)
@@ -436,20 +449,14 @@ class DataClassSingleAxis(BaseDataClass):
 
         return X, Y
 
-    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False):
+    def load_data(self):
         """
         Loads and preprocesses data for training, validation, and testing.
 
         Parameters
         ----------
-        past_values : int, optional
+        self.past_values : int, optional
             The number of past values to consider. The default is 2.
-        future_values : int, optional
-            The number of future values to predict. The default is 2.
-        window_size : int, optional
-            The size of the sliding window. The default is 1.
-        keep_separate : bool, optional
-            If True, return lists of DataFrames instead of concatenated ones.
 
         Returns
         -------
@@ -458,7 +465,7 @@ class DataClassSingleAxis(BaseDataClass):
             :param
         """
         # Load test data
-        X_test, y_test = self.load_data_from_path(self.testing_data_paths, past_values, future_values, window_size)
+        X_test, y_test = self.load_data_from_path(self.testing_data_paths)
 
         # Check for overlaps with assert
         overlap_with_training, overlap_with_validation = self.check_data_overlap()
@@ -466,14 +473,14 @@ class DataClassSingleAxis(BaseDataClass):
         assert not overlap_with_validation, "Warning: Test data is included in the validation data."
 
         # Load training and validation data
-        X_train, y_train = self.load_data_from_path(self.training_data_paths, past_values, future_values, window_size)
-        X_val, y_val = self.load_data_from_path(self.validation_data_paths, past_values, future_values, window_size)
+        X_train, y_train = self.load_data_from_path(self.training_data_paths)
+        X_val, y_val = self.load_data_from_path(self.validation_data_paths)
 
         if self.do_preprocessing:
             X_train, y_train = self.preprocessing(X_train, y_train)
             X_val, y_val = self.preprocessing(X_val, y_val)
 
-        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test, keep_separate)
+        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test)
 
     def get_documentation(self):
         documentation = {
@@ -486,52 +493,46 @@ class DataClassSingleAxis(BaseDataClass):
         }
         return documentation
 
-class DataClass_CombinedTrainVal(BaseDataClass):
-    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, load_all_geometrie_variations=True):
+class DataclassCombinedTrainVal(BaseDataClass):
+    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False, N = 3, load_all_geometrie_variations=True):
         self.name = name
         self.folder = folder
-        self.training_validation_datas = training_validation_datas
-        self.testing_data_paths = testing_data_paths
         self.target_channels = target_channels
-        self.load_all_geometrie_variations = load_all_geometrie_variations
         self.do_preprocessing = do_preprocessing
         self.n = n
+        self.past_values = past_values
+        self.future_values = future_values
+        if window_size == 0:
+            self.window_size = 1
+        elif window_size < 0:
+            self.window_size = abs(self.window_size)
+        else:
+            self.window_size = window_size
+        self.keep_separate = keep_separate
+        self.N = N
+        self.training_validation_datas = training_validation_datas
+        self.testing_data_paths = testing_data_paths
 
-    def load_data(self, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3):
+    def load_data(self):
         """
         Loads and preprocesses data for training, validation, and testing.
-
-        Parameters
-        ----------
-        past_values : int, optional
-            The number of past values to consider. The default is 2.
-        future_values : int, optional
-            The number of future values to predict. The default is 2.
-        window_size : int, optional
-            The size of the sliding window. The default is 1.
-        keep_separate : bool, optional
-            If True, return lists of DataFrames instead of concatenated ones.
-        N : int, optional
-            Number of packages per file (for train/val split). Default is 3.
 
         Returns
         -------
         tuple
             X_train, X_val, X_test, y_train, y_val, y_test
         """
-        if window_size <= 0:
-            window_size = 1
 
         # Load test data
         fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
         test_datas = apply_action(fulltestdatas,
-                                  lambda data: data[HEADER_x].rolling(window=window_size, min_periods=1).mean())
+                                  lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
         X_test = apply_action(test_datas,
-                              lambda data: create_full_ml_vector_optimized(past_values, future_values, data))
+                              lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         test_targets = apply_action(fulltestdatas, lambda data: data[self.target_channels])
-        y_test = apply_action(test_targets, lambda target: target.rolling(window=window_size, min_periods=1).mean())
-        if past_values + future_values != 0:
-            y_test = apply_action(y_test, lambda target: target.iloc[past_values:-future_values])
+        y_test = apply_action(test_targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
+        if self.past_values + self.future_values != 0:
+            y_test = apply_action(y_test, lambda target: target.iloc[self.past_values:-self.future_values])
 
         # Namen der Testdateien zum Ausschluss
         test_files = set(os.path.basename(p) for p in self.testing_data_paths)
@@ -548,28 +549,28 @@ class DataClass_CombinedTrainVal(BaseDataClass):
             files = [f for f in files if os.path.basename(f) not in test_files]
 
             file_datas = read_fulldata(files, self.folder)
-            file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=window_size,
+            file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=self.window_size,
                                                                                         min_periods=1).mean())
             file_datas_y = apply_action(file_datas,
-                                        lambda data: data[self.target_channels].rolling(window=window_size,
+                                        lambda data: data[self.target_channels].rolling(window=self.window_size,
                                                                                                min_periods=1).mean())
 
             X_files = apply_action(file_datas_x,
-                                   lambda data: create_full_ml_vector_optimized(past_values, future_values,
+                                   lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values,
                                                                                 data))
             y_files = apply_action(file_datas_y, lambda target: target.iloc[
-                                                                past_values:-future_values] if past_values + future_values != 0 else target)
+                                                                self.past_values:-self.future_values] if self.past_values + self.future_values != 0 else target)
 
             for X_df, y_df in zip(X_files, y_files):
-                X_split = np.array_split(X_df, N)
-                y_split = np.array_split(y_df, N)
+                X_split = np.array_split(X_df, self.N)
+                y_split = np.array_split(y_df, self.N)
 
                 if toggle:
-                    train_indices = [i for i in range(N) if i % 2 == 0]
-                    val_indices = [i for i in range(N) if i % 2 != 0]
+                    train_indices = [i for i in range(self.N) if i % 2 == 0]
+                    val_indices = [i for i in range(self.N) if i % 2 != 0]
                 else:
-                    train_indices = [i for i in range(N) if i % 2 != 0]
-                    val_indices = [i for i in range(N) if i % 2 == 0]
+                    train_indices = [i for i in range(self.N) if i % 2 != 0]
+                    val_indices = [i for i in range(self.N) if i % 2 == 0]
 
                 X_train_parts = [X_split[i].reset_index(drop=True) for i in train_indices]
                 y_train_parts = [y_split[i].reset_index(drop=True) for i in train_indices]
@@ -591,7 +592,7 @@ class DataClass_CombinedTrainVal(BaseDataClass):
             X_test = pd.concat(X_test).reset_index(drop=True)
             y_test = pd.concat(y_test).reset_index(drop=True)
 
-        return self.prepare_output(all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test, keep_separate)
+        return self.prepare_output(all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test)
 
     def get_documentation(self):
         documentation = {
@@ -603,34 +604,198 @@ class DataClass_CombinedTrainVal(BaseDataClass):
         }
         return documentation
 
+class DataclassCombinedTrainValSingleAxis(BaseDataClass):
+    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False, N = 3, axis = 'x', load_all_geometrie_variations=True):
+        self.name = name+'_SingleAxis'
+        self.folder = folder
+        self.target_channels = target_channels
+        self.do_preprocessing = do_preprocessing
+        self.n = n
+        self.past_values = past_values
+        self.future_values = future_values
+        if window_size == 0:
+            self.window_size = 1
+        elif window_size < 0:
+            self.window_size = abs(self.window_size)
+        else:
+            self.window_size = window_size
+        self.keep_separate = keep_separate
+        self.N = N
+        self.training_validation_datas = training_validation_datas
+        self.testing_data_paths = testing_data_paths
+        self.axis = axis
+
+    def create_full_ml_vector_optimized(self, past_values, future_values, channels_in: pd.DataFrame) -> np.array:
+        """
+        Creates a full machine learning vector optimized for multiple channels.
+
+        Parameters
+        ----------
+        past_values : int
+            The number of past values to consider.
+        future_values : int
+            The number of future values to predict.
+        channels_in : pd.DataFrame
+            A DataFrame of input channel data.
+
+        Returns
+        -------
+        pd.DataFrame
+            The optimized machine learning vector for all channels.
+        """
+        if not isinstance(channels_in, pd.DataFrame):
+            channels_in = pd.DataFrame(channels_in).T
+        df_filtered = channels_in.filter(regex=self.axis)
+        df_filtered['materialremoved_sim'] = channels_in['materialremoved_sim']
+        n = len(df_filtered)
+
+        # Remove past_values from the beginning and future_values from the end
+        # channels_in = channels_in.iloc[past_values:n - future_values]
+
+        full_vector = pd.DataFrame(index=range(n - (past_values + future_values)))
+
+        # Determine the maximum length of the numbers in the column names
+        max_digits = len(str(len(df_filtered.columns)))
+
+        for i in range(past_values + future_values + 1):
+            if i < past_values:
+                shifted = df_filtered.shift(-i)
+                shifted.columns = [f'{str(col).zfill(max_digits)}_0_past_{i}' for col in df_filtered.columns]
+            elif i == past_values:
+                shifted = df_filtered.shift(-past_values)
+                shifted.columns = [f'{str(col).zfill(max_digits)}_1_current' for col in df_filtered.columns]
+            else:
+                shifted = df_filtered.shift(-i)
+                shifted.columns = [f'{str(col).zfill(max_digits)}_2_future_{i - past_values - 1}' for col in
+                                   df_filtered.columns]
+
+            full_vector = pd.concat([full_vector, shifted], axis=1).dropna()
+
+        # Sort column names
+        sorted_columns = sorted(full_vector.columns)
+
+        # Create DataFrame with sorted column names
+        full_vector = full_vector[sorted_columns]
+        return full_vector
+
+    def load_data(self):
+        """
+        Loads and preprocesses data for training, validation, and testing.
+
+        Returns
+        -------
+        tuple
+            X_train, X_val, X_test, y_train, y_val, y_test
+        """
+
+        # Load test data
+        fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
+        test_datas = apply_action(fulltestdatas,
+                                  lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
+        X_test = apply_action(test_datas,
+                              lambda data: self.create_full_ml_vector_optimized(self.past_values, self.future_values, data))
+        test_targets = apply_action(fulltestdatas, lambda data: data[self.target_channels])
+        y_test = apply_action(test_targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
+        if self.past_values + self.future_values != 0:
+            y_test = apply_action(y_test, lambda target: target.iloc[self.past_values:-self.future_values])
+
+        # Namen der Testdateien zum Ausschluss
+        test_files = set(os.path.basename(p) for p in self.testing_data_paths)
+
+        # Trainings- und Validierungsdaten vorbereiten
+        all_X_train, all_y_train = [], []
+        all_X_val, all_y_val = [], []
+
+        toggle = True  # Start mit gerade = Train
+
+        for name in self.training_validation_datas:
+            pattern = f"{name}_*.csv"
+            files = glob.glob(os.path.join(self.folder, pattern))
+            files = [f for f in files if os.path.basename(f) not in test_files]
+
+            file_datas = read_fulldata(files, self.folder)
+            file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=self.window_size,
+                                                                                        min_periods=1).mean())
+            file_datas_y = apply_action(file_datas,
+                                        lambda data: data[self.target_channels].rolling(window=self.window_size,
+                                                                                               min_periods=1).mean())
+
+            X_files = apply_action(file_datas_x,
+                                   lambda data: self.create_full_ml_vector_optimized(self.past_values, self.future_values,
+                                                                                data))
+            y_files = apply_action(file_datas_y, lambda target: target.iloc[
+                                                                self.past_values:-self.future_values] if self.past_values + self.future_values != 0 else target)
+
+            for X_df, y_df in zip(X_files, y_files):
+                X_split = np.array_split(X_df, self.N)
+                y_split = np.array_split(y_df, self.N)
+
+                if toggle:
+                    train_indices = [i for i in range(self.N) if i % 2 == 0]
+                    val_indices = [i for i in range(self.N) if i % 2 != 0]
+                else:
+                    train_indices = [i for i in range(self.N) if i % 2 != 0]
+                    val_indices = [i for i in range(self.N) if i % 2 == 0]
+
+                X_train_parts = [X_split[i].reset_index(drop=True) for i in train_indices]
+                y_train_parts = [y_split[i].reset_index(drop=True) for i in train_indices]
+                X_val_parts = [X_split[i].reset_index(drop=True) for i in val_indices]
+                y_val_parts = [y_split[i].reset_index(drop=True) for i in val_indices]
+
+                if self.do_preprocessing:
+                    X_train_parts, y_train_parts = zip(*[self.preprocessing(X, y) for X, y in zip(X_train_parts, y_train_parts)])
+                    X_val_parts, y_val_parts = zip(*[self.preprocessing(X, y) for X, y in zip(X_val_parts, y_val_parts)])
+
+                all_X_train.extend(X_train_parts)
+                all_y_train.extend(y_train_parts)
+                all_X_val.extend(X_val_parts)
+                all_y_val.extend(y_val_parts)
+
+            toggle = not toggle  # Umschalten für nächste Datei
+
+        if len(X_test) <= 1:
+            X_test = pd.concat(X_test).reset_index(drop=True)
+            y_test = pd.concat(y_test).reset_index(drop=True)
+
+        return self.prepare_output(all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test)
+
+    def get_documentation(self):
+        documentation = {
+            "name": self.name,
+            "folder": self.folder,
+            "training_validation_data": self.training_validation_datas,
+            "testing_data_paths": self.testing_data_paths,
+            "target_channels": self.target_channels,
+        }
+        return documentation
 
 folder_data = '..\\..\\DataSets\DataFiltered'
-Al_Al_Gear_Plate = DataClass_CombinedTrainVal('Al_Al_Gear_Plate', folder_data,
-                                              ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                              ['AL_2007_T4_Plate_Normal_3.csv'],
-                                              ["curr_x"])
-Al_St_Gear_Gear = DataClass_CombinedTrainVal('Al_St_Gear_Gear', folder_data,
+Al_Al_Gear_Plate = DataclassCombinedTrainVal('Al_Al_Gear_Plate', folder_data,
                                              ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                             ['S235JR_Gear_Normal_3.csv'],
+                                             ['AL_2007_T4_Plate_Normal_3.csv'],
                                              ["curr_x"])
-Al_St_Gear_Plate = DataClass_CombinedTrainVal('Al_St_Gear_Plate', folder_data,
-                                              ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                              ['S235JR_Plate_Normal_3.csv'],
-                                              ["curr_x"])
+Al_St_Gear_Gear = DataclassCombinedTrainVal('Al_St_Gear_Gear', folder_data,
+                                            ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                            ['S235JR_Gear_Normal_3.csv'],
+                                            ["curr_x"])
+Al_St_Gear_Plate = DataclassCombinedTrainVal('Al_St_Gear_Plate', folder_data,
+                                             ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                             ['S235JR_Plate_Normal_3.csv'],
+                                             ["curr_x"])
 dataSets_list_Gear = [Al_Al_Gear_Plate,Al_St_Gear_Gear,Al_St_Gear_Plate]
 
-Al_Al_Plate_Gear = DataClass_CombinedTrainVal('Al_Al_Plate_Gear', folder_data,
+Al_Al_Plate_Gear = DataclassCombinedTrainVal('Al_Al_Plate_Gear', folder_data,
+                                             ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                             ['AL_2007_T4_Gear_Normal_3.csv'],
+                                             ["curr_x"])
+Al_St_Plate_Plate = DataclassCombinedTrainVal('Al_St_Plate_Plate', folder_data,
                                               ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                              ['AL_2007_T4_Gear_Normal_3.csv'],
+                                              ['S235JR_Plate_Normal_3.csv'],
                                               ["curr_x"])
-Al_St_Plate_Plate = DataClass_CombinedTrainVal('Al_St_Plate_Plate', folder_data,
-                                               ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                               ['S235JR_Plate_Normal_3.csv'],
-                                               ["curr_x"])
-Al_St_Plate_Gear = DataClass_CombinedTrainVal('Al_St_Plate_Gear', folder_data,
-                                              ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                              ['S235JR_Gear_Normal_3.csv'],
-                                              ["curr_x"])
+Al_St_Plate_Gear = DataclassCombinedTrainVal('Al_St_Plate_Gear', folder_data,
+                                             ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                             ['S235JR_Gear_Normal_3.csv'],
+                                             ["curr_x"])
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
 dataPaths_Test = [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
@@ -675,10 +840,10 @@ Combined_Gear_Single_2 = DataClassSingleAxis('Gear_Single_Axis_2', folder_data,
                                              dataPaths_Test,
                                              ["curr_x"], )
 
-Combined_Gear_TrainVal = DataClass_CombinedTrainVal('Gear_TrainVal', folder_data,
-                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
-                                                    dataPaths_Test,
-                                                    ["curr_x"], )
+Combined_Gear_TrainVal = DataclassCombinedTrainVal('Gear_TrainVal', folder_data,
+                                                   ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
+                                                   dataPaths_Test,
+                                                   ["curr_x"], )
 
 Combined_Plate = DataClass('Plate', folder_data,
                           dataPaths_Train_Plate,
@@ -702,71 +867,28 @@ Combined_Plate_Single_2 = DataClassSingleAxis('Plate_Single_Axis_2', folder_data
                                              dataPaths_Test,
                                              ["curr_x"], )
 
-Combined_Plate_TrainVal = DataClass_CombinedTrainVal('Plate_TrainVal', folder_data,
-                                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                                     dataPaths_Test,
-                                                     ["curr_x"], )
+Combined_Plate_TrainVal = DataclassCombinedTrainVal('Plate_TrainVal', folder_data,
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], )
 
-Combined_PKL_TrainVal = DataClass_CombinedTrainVal('PKL_TrainVal', folder_data,
-                                [   'AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
+Combined_Plate_TrainVal_Single = DataclassCombinedTrainValSingleAxis('Plate_TrainVal', folder_data,
+                                                           ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                           dataPaths_Test,
+                                                           ["curr_x"], )
+
+Combined_PK_TrainVal = DataclassCombinedTrainVal('PKL_TrainVal', folder_data,
+                                                  [   'AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
                                                         'Kühlgrill_Mat_S2800', 'Kühlgrill_Mat_S3800', 'Kühlgrill_Mat_S4700',
-                                                        'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'],
-                                                     dataPaths_Test,
-                                                     ["curr_x"], )
+                                                        ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
+                                                  dataPaths_Test,
+                                                  ["curr_x"], )
 
 Combined_KL = DataClass('KL', folder_data,
                         dataPaths_Val_KL,
                         dataPaths_Train_Plate,
                         dataPaths_Test,
                         ["curr_x"], )
-
-
-
-def create_full_ml_vector_optimized_old(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
-    """
-    Creates a full machine learning vector optimized for multiple channels.
-
-    Parameters
-    ----------
-    past_values : int
-        The number of past values to consider.
-    future_values : int
-        The number of future values to predict.
-    channels_in : pd.DataFrame
-        A DataFrame of input channel data.
-
-    Returns
-    -------
-    pd.DataFrame
-        The optimized machine learning vector for all channels.
-    """
-    if not isinstance(channels_in, pd.DataFrame):
-        channels_in = pd.DataFrame(channels_in).T
-    n = len(channels_in)
-    full_vector = pd.DataFrame(index=range(n - (past_values + future_values)))
-
-    # Bestimmen der maximalen Länge der Zahlen in den Spaltennamen
-    max_digits = len(channels_in.columns)
-
-    for i in range(past_values + future_values + 1):
-        if i < past_values:
-            shifted = channels_in.shift(-i).iloc[:n - (past_values + future_values), :]
-            shifted.columns = [f'{str(col).zfill(max_digits)}_0_past_{i}' for col in channels_in.columns]
-        elif i == past_values:
-            shifted = channels_in.shift(-past_values).iloc[:n - (past_values + future_values), :]
-            shifted.columns = [f'{str(col).zfill(max_digits)}_1_current' for col in channels_in.columns]
-        else:
-            shifted = channels_in.shift(-i).iloc[:n - (past_values + future_values), :]
-            shifted.columns = [f'{str(col).zfill(max_digits)}_2_future_{i - past_values - 1}' for col in channels_in.columns]
-
-        full_vector = pd.concat([full_vector, shifted], axis=1).dropna()
-
-    # Spaltennamen sortieren
-    sorted_columns = sorted(full_vector.columns)
-
-    # DataFrame mit sortierten Spaltennamen erstellen
-    full_vector = full_vector[sorted_columns]
-    return full_vector.to_numpy()
 
 def create_full_ml_vector_optimized(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """
@@ -922,7 +1044,7 @@ def replace_outliners(data, threshold=10):
     data_copy[z_scores > threshold] = 0
     return data_copy
 
-def load_filtered_data(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1):
+def load_filtered_data(data_params: BaseDataClass, past_values=2, future_values=2, window_size=1):
     """
     Loads and preprocesses data for training, validation, and testing.
     Does not create ml vector.
@@ -930,7 +1052,7 @@ def load_filtered_data(data_params: DataClass_CombinedTrainVal, past_values=2, f
 
     Parameters
     ----------
-    data_params : DataClass_CombinedTrainVal
+    data_params : BaseDataClass
         A DataClass containing the data parameters for loading the dataset.
     past_values : int, optional
         The number of past values to consider. The default is 2.
@@ -978,14 +1100,14 @@ def load_filtered_data(data_params: DataClass_CombinedTrainVal, past_values=2, f
         base_names.append('_'.join(name_without_extension.split('_')[:-1]))
     return training_datas, val_datas, test_datas, base_names
 
-def get_test_data_as_pd(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1):
+def get_test_data_as_pd(data_params: BaseDataClass, past_values=2, future_values=2, window_size=1):
     """
     Loads and preprocesses test data for evaluation purposes.
     Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
 
     Parameters
     ----------
-    data_params : DataClass_CombinedTrainVal
+    data_params : BaseDataClass
         A DataClass containing the data parameters for loading the dataset.
     past_values : int, optional
         The number of past values to consider for each sample. The default is 2.
@@ -1110,7 +1232,7 @@ def get_DataClasses_material_spereated(folder_path, materials = ['AL_2007_T4', '
             training_name = filtered_file_names[0::2]
             validation_name = filtered_file_names[1::2]
             test_name = [base_name + '_2.csv']
-            data_classes.append(DataClass_CombinedTrainVal(base_name, folder_path, training_name, validation_name, test_name))
+            data_classes.append(DataclassCombinedTrainVal(base_name, folder_path, training_name, validation_name, test_name))
 
     return data_classes
 
@@ -1128,7 +1250,7 @@ def get_DataClasses(folder_path, anomalies = ['Blowhole', 'Ano', 'Fehler']):
         training_name = filtered_file_names[0::2]
         validation_name = filtered_file_names[1::2]
         test_name = [base_name + '_2.csv']
-        data_classes.append(DataClass_CombinedTrainVal(base_name, folder_path, training_name, validation_name, test_name))
+        data_classes.append(DataclassCombinedTrainVal(base_name, folder_path, training_name, validation_name, test_name))
 
     return data_classes
 
@@ -1139,7 +1261,7 @@ def create_DataClasses_from_base_names(folder_path, training_base_names, validat
     validation_name = [file_name for file_name in file_names if any(name in file_name for name in validation_base_names)]
     test_name = [file_name for file_name in file_names if any(name in file_name for name in test_base_names)]
 
-    return DataClass_CombinedTrainVal(name, folder_path, training_name, validation_name, test_name)
+    return DataclassCombinedTrainVal(name, folder_path, training_name, validation_name, test_name)
 
 def save_data(data_list, file_paths):
     """
@@ -1248,7 +1370,7 @@ def preprocessing(self, X, y, n=12):
 
     return x_cleaned, y_cleaned
 
-def load_data(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
+def load_data(data_params: DataclassCombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """
     Loads and preprocesses data for training, validation, and testing.
 
@@ -1377,7 +1499,7 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
 
     return np.mean(mae_values), np.std(mae_values), mae_ensemble
 
-def load_data_with_material_check(data_params: DataClass_CombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
+def load_data_with_material_check(data_params: DataclassCombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """
     Loads and preprocesses data for training, validation, and testing, and checks for material parameters.
 

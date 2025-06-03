@@ -25,7 +25,7 @@ if __name__ == "__main__":
     future_values = 2
 
 
-    dataSets_list = [hdata.Combined_Gear_2, hdata.Combined_Gear_Single_2]
+    dataSets_list = [hdata.Combined_Plate, hdata.Combined_Plate_Single]
     model_rf = mrf.get_reference()
     experiment_results = hexp.run_experiment(dataSets_list, True, False, [model_rf],
                         NUMBEROFEPOCHS, NUMBEROFMODELS, past_values, future_values,n_drop_values=20,

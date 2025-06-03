@@ -22,6 +22,7 @@ import Models.model_base as mb
 import Models.model_neural_net as mnn
 # function import
 from datetime import datetime
+import plotly
 
 WINDOWSIZE = 1
 CUTOFF = 4
@@ -312,7 +313,7 @@ def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search
             default_parameter = json.load(f)
             
                 
-    optimal_search_space = MergeSearchSpace(optimal_trial.params, default_parameter)
+    optimal_search_space = optimal_trial.params #MergeSearchSpace(optimal_trial.params, default_parameter)
             
     print('Optimal Hyperparameters:')
     for name, value in optimal_search_space.items():

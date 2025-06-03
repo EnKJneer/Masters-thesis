@@ -297,7 +297,7 @@ class ModelZhou(mb.BaseModel, nn.Module):
         }}
         return documentation
 
-class PhysicalModelErd(nn.Module):
+class PhysicalModelErd(mb.BaseModel, nn.Module):
     def __init__(self, learning_rate=0.0001, optimizer_type='quasi_newton', name="Physical_Model"):
         super(PhysicalModelErd, self).__init__()
         self.initial_params = {}
@@ -537,7 +537,7 @@ class PhysicalModelErd(nn.Module):
         }
         return documentation
 
-class PhysicalModelErdSingleAxis(nn.Module):
+class PhysicalModelErdSingleAxis(mb.BaseModel, nn.Module):
     def __init__(self, c_1, c_2, c_3, c_4, c_5, learning_rate=0.0001, optimizer_type='quasi_newton',
                  name="Physical_Model_Single_Axis"):
         super(PhysicalModelErdSingleAxis, self).__init__()
@@ -618,8 +618,8 @@ class PhysicalModelErdSingleAxis(nn.Module):
         loss = criterion_test(y_target, y_pred)
         return loss.item(), y_pred.detach().cpu().numpy()
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=5, draw_loss=False, epsilon=0.0001,
-                    reset_parameters=True):
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=10, draw_loss=False, epsilon=0.00005,
+                    trial=None, n_outlier=12, reset_parameters=True):
         if reset_parameters:
             print(f"{self.name}: Setze Parameter auf Initialwerte zurück.")
             self.reset_parameters()

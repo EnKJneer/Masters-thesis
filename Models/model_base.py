@@ -36,13 +36,17 @@ class BaseNetModel(BaseModel, nn.Module):
     def forward(self, x):
         pass
     @abstractmethod
-    def _initialize_layers(self, x):
+    def _initialize(self):
         pass
 
-    def criterion(self, y_target, y_pred):
-        criterion = nn.MSELoss()
-        #torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
-        return torch.sqrt(criterion(y_target, y_pred))
+    #def criterion_validation(self, y_target, y_pred):
+    #    criterion = nn.MSELoss()
+    #    #torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
+    #    return torch.sqrt(criterion(y_target, y_pred))
+
+    def criterion(self, y_target, y_pred, delta = 0.22):
+        criterion = nn.HuberLoss(delta=delta)
+        return criterion(y_target.squeeze(), y_pred.squeeze())
 
     def predict(self, X):
         if type(X) is not torch.Tensor:
@@ -99,7 +103,7 @@ class BaseNetModel(BaseModel, nn.Module):
             # Falls numpy array oder anderes
             return torch.tensor(data, dtype=torch.float32).to(self.device)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=10, draw_loss=False, epsilon=0.0001,
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=10, draw_loss=False, epsilon=0.00005,
                     trial=None, n_outlier=12, reset_parameters=True):
 
         # Prüfen, ob Inputs Listen sind
@@ -124,14 +128,20 @@ class BaseNetModel(BaseModel, nn.Module):
             # Define hidden size and set flag for initialization
             self.n_hidden_size = self.input_size
             flag_initialization = True
-        if flag_initialization: #or reset_parameters
-            self._initialize_layers()
+        if flag_initialization or reset_parameters: #
+            self._initialize()
 
-        optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
+        if self.optimizer_type.lower() == 'adam':
+            optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
+        elif self.optimizer_type.lower() == 'quasi_newton':
+            optimizer = optim.LBFGS(self.parameters(), lr=self.learning_rate, max_iter=20, history_size=10)
+            patience = 4
+        else:
+            raise ValueError(f"Unknown optimizer_type: {self.optimizer_type}")
+
         if patience < 4:
             patience = 4
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
-
 
         if draw_loss:
             loss_vals, epochs, loss_train = [], [], []
@@ -148,28 +158,64 @@ class BaseNetModel(BaseModel, nn.Module):
 
             train_losses = []
 
-            if is_batched_train:
-                # ToDo: Shuffel einbauen
-                for batch_x, batch_y in zip(X_train, y_train):
-                    optimizer.zero_grad()
-                    batch_x_tensor = self.scaled_to_tensor(batch_x)
-                    batch_y_tensor = self.to_tensor(batch_y)
+            def closure():
+                optimizer.zero_grad()
+                if is_batched_train:
+                    loss_total = 0
+                    for batch_x, batch_y in zip(X_train, y_train):
+                        batch_x_tensor = self.scaled_to_tensor(batch_x)
+                        batch_y_tensor = self.to_tensor(batch_y)
+                        output = self(batch_x_tensor)
+                        loss = self.criterion(batch_y_tensor, output)
+                        loss.backward()
+                        loss_total += loss
+                    return loss_total
+                else:
+                    x_tensor = self.scaled_to_tensor(X_train)
+                    y_tensor = self.to_tensor(y_train)
+                    output = self(x_tensor)
+                    loss = self.criterion(y_tensor, output)
+                    loss.backward()
+                    return loss
 
-                    output = self(batch_x_tensor)
-                    loss = self.criterion(batch_y_tensor, output)
+            if self.optimizer_type.lower() == 'quasi_newton':
+                loss = optimizer.step(closure)
+                train_losses.append(loss.item() if isinstance(loss, torch.Tensor) else loss)
+            else:
+                if not is_batched_train:
+                    loss = closure()
+                    optimizer.step()
+                    train_losses.append(loss.item() if isinstance(loss, torch.Tensor) else loss)
+                else:
+                    for batch_x, batch_y in zip(X_train, y_train):
+                        optimizer.zero_grad()
+                        batch_x_tensor = self.scaled_to_tensor(batch_x)
+                        batch_y_tensor = self.to_tensor(batch_y)
+                        output = self(batch_x_tensor)
+                        loss = self.criterion(output, batch_y_tensor)
+                        loss.backward()
+                        optimizer.step()
+                        train_losses.append(loss.item())
+                """if is_batched_train:
+                    for batch_x, batch_y in zip(X_train, y_train):
+                        optimizer.zero_grad()
+                        batch_x_tensor = self.scaled_to_tensor(batch_x)
+                        batch_y_tensor = self.to_tensor(batch_y)
+                        output = self(x_tensor)
+                        loss = self.criterion(output, batch_y_tensor)
+                        loss.backward()
+                        optimizer.step()
+                        train_losses.append(loss.item())
+                else:
+                    optimizer.zero_grad()
+                    x_tensor = self.scaled_to_tensor(X_train)
+                    y_tensor = self.to_tensor(y_train)
+                    output = self(x_tensor)
+                    loss = self.criterion(output, y_tensor)
                     loss.backward()
                     optimizer.step()
-                    train_losses.append(loss.item())
-            else:
-                optimizer.zero_grad()
-                x_tensor = self.scaled_to_tensor(X_train)
-                y_tensor = self.to_tensor(y_train)
+                    train_losses.append(loss.item())"""
 
-                output = self(x_tensor)
-                loss = self.criterion(y_tensor, output)
-                loss.backward()
-                optimizer.step()
-                train_losses.append(loss.item())
 
             self.eval()
             val_losses = []
@@ -224,7 +270,7 @@ class BaseNetModel(BaseModel, nn.Module):
                 plt.draw()
                 plt.pause(0.001)
 
-            print(f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss; {avg_train_loss:.4f} Val Error: {avg_val_loss:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
+            print(f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss: {avg_train_loss:.4f} Val Error: {avg_val_loss:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
 
         if draw_loss:
             plt.ioff()

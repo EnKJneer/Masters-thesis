@@ -14,6 +14,7 @@ import pandas as pd
 import torch
 import torch.jit
 import torch.nn as nn
+from numpy.f2py.auxfuncs import throw_error
 from sklearn.preprocessing import QuantileTransformer
 
 import Models.model_base as mb
@@ -38,7 +39,7 @@ def get_reference(input_size=None):
     return Net(input_size, 1, input_size)
 # Defines a configurable neural network
 class Net(mb.BaseNetModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.001, name="Neural_Net"):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.001, name="Neural_Net", optimizer_type='adam'):
         """
         Initializes a configurable neural network.
 
@@ -70,12 +71,12 @@ class Net(mb.BaseNetModel):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-
+        self.optimizer_type = optimizer_type
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         self.scaler = None
         if self.n_hidden_size is None:
@@ -103,7 +104,7 @@ class Net(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
 
         x = self.activation(self.fc1(x))  # apply the activation function
         for fc in self.fcs:
@@ -151,9 +152,9 @@ class RNN(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -179,7 +180,7 @@ class RNN(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
             self.to(self.device)
 
         if x.dim() == 2:
@@ -237,9 +238,9 @@ class LSTM(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -265,7 +266,7 @@ class LSTM(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
             self.to(self.device)
 
         if x.dim() == 2:
@@ -325,9 +326,9 @@ class GRU(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -353,7 +354,7 @@ class GRU(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
             self.to(self.device)
 
         if x.dim() == 2:
@@ -408,9 +409,9 @@ class PartialRnn(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -441,7 +442,7 @@ class PartialRnn(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
             self.to(self.device)
 
         x = self.activation(self.fc_in(x))  # apply the activation function
@@ -499,9 +500,9 @@ class PartialGRU(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -532,7 +533,7 @@ class PartialGRU(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
             self.to(self.device)
 
         x = self.activation(self.fc_in(x))  # apply the activation function
@@ -585,9 +586,9 @@ class NetAttention(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -624,7 +625,7 @@ class NetAttention(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
 
         # First normal layer with ReLU activation
         x = self.activation(self.fc1(x))
@@ -673,9 +674,9 @@ class NetTransformer(mb.BaseNetModel):
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
-            self._initialize_layers()
+            self._initialize()
 
-    def _initialize_layers(self):
+    def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -717,7 +718,7 @@ class NetTransformer(mb.BaseNetModel):
             self.input_size = x.shape[1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
-            self._initialize_layers()
+            self._initialize()
 
         # First normal layer with ReLU activation
         x = self.activation(self.fc1(x))
@@ -733,7 +734,6 @@ class NetTransformer(mb.BaseNetModel):
         # Output layer
         x = self.fc3(x)
         return x
-
 
 class QuantileIdNetModel(Net):
     def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform', learning_rate=0.0001, name = 'Net_Q_Id'):
@@ -1000,10 +1000,11 @@ class QuantileIdRiemannClassifierNet(Net):
         return loss.item(), y_pred
 
 class PiNN(Net):
-    def __init__(self, *args, name="PiNN_Erd", penalty_weight=1, c_1=-6.23e-6, c_2=2.27e-7, c_3=-2.7e-6, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, name="PiNN_Erd", penalty_weight=1, optimizer_type='adam', c_1=-6.23e-6, c_2=2.27e-7, c_3=-2.7e-6, **kwargs):
+        super(PiNN, self).__init__(*args, **kwargs)
         self.name = name
         self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
         self.c_1 = c_1
         self.c_2 = c_2
         self.c_3 =c_3
@@ -1020,7 +1021,8 @@ class PiNN(Net):
         Rückgabe:
         - Gesamtverlust (MSE + Strafterm)
         """
-        mse_loss = nn.MSELoss()(y_pred.squeeze(), y_target.squeeze())
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
 
         if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
             x_input = x_input.clone().detach().requires_grad_(True)
@@ -1036,15 +1038,28 @@ class PiNN(Net):
                 only_inputs=True
             )[0]
             # ToDo: modular implementieren
-            v = x_input[:, 10]              # Feature v
-            a = x_input[:, 1]               # Feature a
-            mrr = x_input[:, 8]             # Feature mrr
-            f = x_input[:, 5]               # Feature F
+            if x_input.size()[1]== 13:
+                v = x_input[:, 10]              # Feature v
+                a = x_input[:, 1]               # Feature a
+                mrr = x_input[:, 8]             # Feature mrr
+                f = x_input[:, 5]               # Feature F
 
-            dy_da = dy_dx[:, 1]  # Ableitung nach a
-            dy_dv = dy_dx[:, 10]
-            dy_df = dy_dx[:, 5]
-            dy_dmrr = dy_dx[:, 8]
+                dy_da = dy_dx[:, 1]  # Ableitung nach a
+                dy_dv = dy_dx[:, 10]
+                dy_df = dy_dx[:, 5]
+                dy_dmrr = dy_dx[:, 8]
+            elif x_input.size()[1] == 4:
+                v = x_input[:, 3]  # Feature v
+                a = x_input[:, 0]  # Feature a
+                mrr = x_input[:, 2]  # Feature mrr
+                f = x_input[:, 1]  # Feature F
+
+                dy_da = dy_dx[:, 0]  # Ableitung nach a
+                dy_dv = dy_dx[:, 3]
+                dy_df = dy_dx[:, 1]
+                dy_dmrr = dy_dx[:, 2]
+            else:
+                throw_error(self, 'x_input hast the wrong size')
 
             constraint = (dy_da - self.c_1 * v) + (dy_dv - (self.c_1 * a + 2 * self.c_2 * torch.abs(v))) + (dy_df - self.c_3 * mrr) + (dy_dmrr - self.c_3 * f) #
             penalty = torch.mean(constraint ** 2)  # L2-Strafterm
@@ -1094,6 +1109,249 @@ class PiNN(Net):
             "n_hidden_size": self.n_hidden_size,
             "n_hidden_layers": self.n_hidden_layers,
             "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
             "penalty_weight": self.penalty_weight,
+        }}
+        return documentation
+
+class PiNNAdaptiv(Net):
+    def __init__(self, *args, name="PiNN_Erd_adaptive", penalty_weight=1, optimizer_type='adam', c_1=-6.23e-6, c_2=2.27e-7, c_3=-2.7e-6,**kwargs):
+        super(PiNNAdaptiv, self).__init__(*args, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
+        self.c_1 = nn.Parameter(torch.tensor(c_1))
+        self.c_2 = nn.Parameter(torch.tensor(c_2))
+        self.c_3 = nn.Parameter(torch.tensor(c_3))
+
+    def criterion(self, y_target, y_pred, x_input=None):
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
+
+        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+            x_input = x_input.clone().detach().requires_grad_(True)
+            y_pred_physics = self(x_input)
+
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+
+            if x_input.size()[1] == 13:
+                v = x_input[:, 10]
+                a = x_input[:, 1]
+                mrr = x_input[:, 8]
+                f = x_input[:, 5]
+
+                dy_da = dy_dx[:, 1]
+                dy_dv = dy_dx[:, 10]
+                dy_df = dy_dx[:, 5]
+                dy_dmrr = dy_dx[:, 8]
+            elif x_input.size()[1] == 4:
+                v = x_input[:, 3]
+                a = x_input[:, 0]
+                mrr = x_input[:, 2]
+                f = x_input[:, 1]
+
+                dy_da = dy_dx[:, 0]
+                dy_dv = dy_dx[:, 3]
+                dy_df = dy_dx[:, 1]
+                dy_dmrr = dy_dx[:, 2]
+            else:
+                raise ValueError('x_input has the wrong size')
+
+            constraint = (dy_da - self.c_1 * v) + (dy_dv - (self.c_1 * a + 2 * self.c_2 * torch.abs(v))) + (dy_df - self.c_3 * mrr) + (dy_dmrr - self.c_3 * f)
+            penalty = torch.mean(constraint ** 2)
+
+            return mse_loss + self.penalty_weight * penalty
+
+        return mse_loss
+
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        original_criterion = self.criterion
+
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiNNAdaptiv, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion
+            return result
+
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
+            "penalty_weight": self.penalty_weight,
+        }}
+        return documentation
+
+class PiNNMatrix(Net):
+    def __init__(self, *args, name="PiNN_Matrix", penalty_weight=1, optimizer_type='adam', theta_init=None, **kwargs):
+        super(PiNNMatrix, self).__init__(*args, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
+        self.theta_init = theta_init
+        # Neue Parameter-Matrix für alle Achsen
+        if theta_init is not None:
+            if theta_init.shape != (4, 5):
+                raise ValueError("theta_init must have shape (4, 5)")
+            self.theta = nn.Parameter(torch.tensor(theta_init, dtype=torch.float32))
+        else:
+            self.theta = nn.Parameter(torch.zeros(4, 5, dtype=torch.float32))  # Achsen: x, y, z, sp
+
+    def _initialize(self):
+        """Initialize the layers of the neural network."""
+        self.scaler = None
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+        self.fcs = nn.ModuleList([nn.Linear(self.n_hidden_size, self.n_hidden_size) for _ in range(self.n_hidden_layers)])
+        self.fc3 = nn.Linear(self.n_hidden_size, self.output_size)
+        self.to(self.device)
+
+        if self.theta_init is not None:
+            self.theta = nn.Parameter(torch.tensor(self.theta_init, dtype=torch.float32))
+        else:
+            self.theta = nn.Parameter(torch.zeros(4, 5, dtype=torch.float32))  # Achsen: x, y, z, sp
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        """
+        Überschreibt das Training, um x_input an die Loss-Funktion zu übergeben.
+        """
+        original_criterion = self.criterion
+
+        # Patch `self.criterion` temporär für das Training
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiNNMatrix, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion  # Restore
+            return result
+
+        # Trick: train_model aus BaseNetModel verwendet `self.criterion`
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def criterion(self, y_target, y_pred, x_input=None):
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
+
+        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+            x_input = x_input.clone().detach().requires_grad_(True)
+            y_pred_physics = self(x_input)
+
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+
+            if x_input.size(1) == 13:
+                # Features extrahieren
+                a = x_input[:, 0:4]  # [a_sp, a_x, a_y, a_z]
+                f = x_input[:, 4:8]  # [f_sp, f_x, f_y, f_z]
+                mrr = x_input[:, 8].unsqueeze(1)  # (N, 1)
+                v = x_input[:, 9:13]  # [v_sp, v_x, v_y, v_z]
+
+                ones = torch.ones_like(mrr)  # bias-term
+                input_features = torch.cat([a, v, f, mrr, ones], dim=1)  # (N, 13)
+
+                # Ableitungen extrahieren: d/d[a_sp, a_x, a_y, a_z, ..., v_z]
+                dy_da = dy_dx[:, 0:4]
+                dy_dv = dy_dx[:, 9:13]
+                dy_df = dy_dx[:, 4:8]
+                dy_dmrr = dy_dx[:, 8].unsqueeze(1)  # (N, 1)
+
+                # Constraint-Berechnung für jede Achse separat
+                constraint = []
+                for i in range(4):  # 4 Achsen: sp, x, y, z
+                    deriv = dy_da[:, i] + dy_dv[:, i] + dy_df[:, i] + dy_dmrr.squeeze(1)
+                    influences = (
+                            a[:, i] * self.theta[i, 0] +
+                            v[:, i] * self.theta[i, 1] +
+                            f[:, i] * self.theta[i, 2] +
+                            mrr.squeeze(1) * self.theta[i, 3] +
+                            self.theta[i, 4]  # bias
+                    )
+                    constraint_i = deriv - influences
+                    constraint.append(constraint_i.unsqueeze(1))
+
+                constraint = torch.cat(constraint, dim=1)  # (N, 4)
+                penalty = torch.mean(constraint ** 2)
+                return mse_loss + self.penalty_weight * penalty
+
+            elif x_input.size(1) == 4:
+                # Alte Minimalform (x-Komponenten only)
+                a = x_input[:, 0]
+                f = x_input[:, 1]
+                mrr = x_input[:, 2]
+                v = x_input[:, 3]
+
+                dy_da = dy_dx[:, 0]
+                dy_df = dy_dx[:, 1]
+                dy_dmrr = dy_dx[:, 2]
+                dy_dv = dy_dx[:, 3]
+
+                deriv = dy_da + dy_dv + dy_df + dy_dmrr
+                influences = (
+                        a * self.theta[1, 0] +
+                        v * self.theta[1, 1] +
+                        f * self.theta[1, 2] +
+                        mrr * self.theta[1, 3] +
+                        self.theta[1, 4]
+                )
+                penalty = torch.mean((deriv - influences) ** 2)
+                return mse_loss + self.penalty_weight * penalty
+
+            else:
+                throw_error(self, 'x_input hat die falsche Größe')
+
+        return mse_loss
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
+            "penalty_weight": self.penalty_weight,
+            "theta_init": self.theta_init.tolist(),
         }}
         return documentation

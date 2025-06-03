@@ -1,0 +1,99 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.172626 | 0.029511
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net      | 0.134716 | 0.027648
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net      | 0.662549 | 0.090156
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net      | 0.626269 | 0.077748
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.100791 | 0.007844
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.096681 | 0.001733
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Random_Forest   | 0.365372 | 0.029565
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Random_Forest   | 0.338156 | 0.027762
+PKL_TrainVal         | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.133310 | 0.011596
+PKL_TrainVal         | AL_2007_T4_Plate_Normal_3 | Neural_Net      | 0.144499 | 0.014008
+PKL_TrainVal         | S235JR_Gear_Normal_3 | Neural_Net      | 0.305541 | 0.021634
+PKL_TrainVal         | S235JR_Plate_Normal_3 | Neural_Net      | 0.317756 | 0.029976
+PKL_TrainVal         | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.098686 | 0.005536
+PKL_TrainVal         | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.104089 | 0.002127
+PKL_TrainVal         | S235JR_Gear_Normal_3 | Random_Forest   | 0.323520 | 0.027420
+PKL_TrainVal         | S235JR_Plate_Normal_3 | Random_Forest   | 0.287970 | 0.012339
+
+
+MODEL IMPROVEMENTS (vs Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Plate_TrainVal       | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Random_Forest | +41.61%     
+Plate_TrainVal       | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Random_Forest | +28.23%     
+Plate_TrainVal       | S235JR_Gear_Normal_3 | Neural_Net   | Random_Forest | +44.85%     
+Plate_TrainVal       | S235JR_Plate_Normal_3 | Neural_Net   | Random_Forest | +46.00%     
+PKL_TrainVal         | AL_2007_T4_Gear_Normal_3 | Neural_Net   | Random_Forest | +25.97%     
+PKL_TrainVal         | AL_2007_T4_Plate_Normal_3 | Neural_Net   | Random_Forest | +27.97%     
+PKL_TrainVal         | S235JR_Gear_Normal_3 | Neural_Net   | Random_Forest | -5.88%      
+PKL_TrainVal         | S235JR_Plate_Normal_3 | Neural_Net   | Random_Forest | +9.37%      
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae.png
+Heatmap_Std: 1 plots
+  - heatmap_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png
+Geometry_Mae: 16 plots
+  - MAE_Geometry_AL_2007_T4_Gear_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Geometry_AL_2007_T4_Gear_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Geometry_AL_2007_T4_Gear_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Geometry_AL_2007_T4_Gear_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_Geometry_AL_2007_T4_Plate_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Geometry_AL_2007_T4_Plate_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Geometry_AL_2007_T4_Plate_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Geometry_AL_2007_T4_Plate_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_Geometry_S235JR_Gear_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Geometry_S235JR_Gear_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Geometry_S235JR_Gear_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Geometry_S235JR_Gear_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_Geometry_S235JR_Plate_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Geometry_S235JR_Plate_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Geometry_S235JR_Plate_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Geometry_S235JR_Plate_Normal_3_PKL_TrainVal_Random_Forest.png
+Force_Mae: 16 plots
+  - MAE_Force_AL_2007_T4_Gear_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Force_AL_2007_T4_Gear_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Force_AL_2007_T4_Gear_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Force_AL_2007_T4_Gear_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_Force_AL_2007_T4_Plate_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Force_AL_2007_T4_Plate_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Force_AL_2007_T4_Plate_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Force_AL_2007_T4_Plate_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_Force_S235JR_Gear_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Force_S235JR_Gear_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Force_S235JR_Gear_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Force_S235JR_Gear_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_Force_S235JR_Plate_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_Force_S235JR_Plate_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_Force_S235JR_Plate_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_Force_S235JR_Plate_Normal_3_PKL_TrainVal_Random_Forest.png
+Mrr_Mae: 16 plots
+  - MAE_MRR_AL_2007_T4_Gear_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_MRR_AL_2007_T4_Gear_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_MRR_AL_2007_T4_Gear_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_MRR_AL_2007_T4_Gear_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_MRR_AL_2007_T4_Plate_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_MRR_AL_2007_T4_Plate_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_MRR_AL_2007_T4_Plate_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_MRR_AL_2007_T4_Plate_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_MRR_S235JR_Gear_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_MRR_S235JR_Gear_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_MRR_S235JR_Gear_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_MRR_S235JR_Gear_Normal_3_PKL_TrainVal_Random_Forest.png
+  - MAE_MRR_S235JR_Plate_Normal_3_Plate_TrainVal_Neural_Net.png
+  - MAE_MRR_S235JR_Plate_Normal_3_Plate_TrainVal_Random_Forest.png
+  - MAE_MRR_S235JR_Plate_Normal_3_PKL_TrainVal_Neural_Net.png
+  - MAE_MRR_S235JR_Plate_Normal_3_PKL_TrainVal_Random_Forest.png

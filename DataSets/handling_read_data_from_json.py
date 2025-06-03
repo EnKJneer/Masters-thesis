@@ -4,7 +4,21 @@ import json
 
 # file to read json-files in an foulder and export data as csv-file
 
-path_list = ['RawData/AL_2007_T4/Training/AL_2007_T4_Plate_SF']
+
+path_list = [   'RawData/AL_2007_T4/Training/AL_2007_T4_Plate_Normal',
+                'RawData/AL_2007_T4/Training/AL_2007_T4_Plate_SF',
+                'RawData/AL_2007_T4/Training/AL_2007_T4_Plate_Depth',
+                'RawData/AL_2007_T4/Training/AL_2007_T4_Gear_Normal',
+                'RawData/AL_2007_T4/Training/AL_2007_T4_Gear_SF',
+                'RawData/AL_2007_T4/Training/AL_2007_T4_Gear_Depth',
+
+                'RawData/S235JR/Training/S235JR_Plate_Normal',
+                'RawData/S235JR/Training/S235JR_Plate_SF',
+                'RawData/S235JR/Training/S235JR_Plate_Depth',
+                'RawData/S235JR/Training/S235JR_Gear_Normal',
+                'RawData/S235JR/Training/S235JR_Gear_SF',
+                'RawData/S235JR/Training/S235JR_Gear_Depth',
+             ]
 
 path_target = 'AdditionalData'
 for path in path_list:

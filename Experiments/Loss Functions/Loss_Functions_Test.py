@@ -43,7 +43,16 @@ if __name__ == "__main__":
             The computed MSE loss.
         """
         return root_mean_squared_error(y_target, y_pred)
+    def criterion_huber(y_target, y_pred):
+        criterion = nn.HuberLoss(delta=0.22)
+        return criterion(y_target.squeeze(), y_pred.squeeze())
 
+    def criterion_rmse(y_target, y_pred):
+        criterion = nn.MSELoss()
+        #torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
+        return torch.sqrt(criterion(y_target, y_pred))
+
+    # ToDo: Quantil loss implementieren
     dataSets = [hdata.Combined_Plate]
     model_rmse = mnn.get_reference()
     model_rmse.criterion = criterion
@@ -53,7 +62,19 @@ if __name__ == "__main__":
     model_rf_rmse.criterion = criterion_rf
     model_rf_rmse.name = "RF_rmse"
 
-    models = [model_rmse, model_rf_rmse]
+    model_huber = mnn.get_reference()
+    model_huber.criterion = criterion_rmse
+    model_huber.name = "NN_rmse"
+
+    models = [model_rmse, model_rf_rmse, model_huber]
+
+    #Combined_Gear,Combined_KL
+    dataClass_1 = hdata.Combined_Plate_TrainVal
+    dataClass_1.window_size = window_size
+    dataClass_1.past_values = past_values
+    dataClass_1.future_values = future_values
+
+    dataSets_list = [dataClass_1]
 
     # Run the experiment
-    hexp.run_experiment(dataSets, use_nn_reference=True, use_rf_reference=True, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)
+    hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=True, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)

@@ -11,7 +11,7 @@ import Models.model_neural_net as mnn
 import Models.model_physical as mphys
 
 class HybridModelResidual(mb.BaseNetModel):
-    def __init__(self, physical_model=mphys.PhysicalModelErd(0.01, 0.01, 0.01, 0.01, 0.01, learning_rate=1), net_model=mnn.Net(), name="Hybrid_Model"):
+    def __init__(self, physical_model=mphys.PhysicalModelErdSingleAxis(0.01, 0.01, 0.01, 0.01, 0.01, learning_rate=1), net_model=mnn.Net(), name="Hybrid_Model"):
         super(HybridModelResidual, self).__init__()
         self.physical_model = physical_model
         self.net_model = net_model
@@ -45,8 +45,8 @@ class HybridModelResidual(mb.BaseNetModel):
             y_corr = y_phys.cpu().squeeze() + self.net_model.predict(x).squeeze()
         return y_corr
 
-    def _initialize_layers(self):
-        self.net_model._initialize_layers()
+    def _initialize(self):
+        self.net_model._initialize()
         self.physical_model.reset_parameters()
 
     def scale_data(self, X):
@@ -111,9 +111,8 @@ class HybridModelResidual(mb.BaseNetModel):
             "net_model": self.net_model.get_documentation(),
         }
 
-
 class HybridModelGuidedML(mb.BaseNetModel):
-    def __init__(self, physical_model=mphys.PhysicalModelErd(0.01, 0.01, 0.01, 0.01, 0.01, learning_rate=1), net_model=mnn.Net(), name="Hybrid_Model"):
+    def __init__(self, physical_model=mphys.PhysicalModelErdSingleAxis(0.01, 0.01, 0.01, 0.01, 0.01, learning_rate=1), net_model=mnn.Net(), name="Hybrid_Model"):
         super(HybridModelGuidedML, self).__init__()
         self.physical_model = physical_model
         self.net_model = net_model
@@ -145,8 +144,8 @@ class HybridModelGuidedML(mb.BaseNetModel):
         y_corr = self.net_model.predict(combined_input)
         return y_corr
 
-    def _initialize_layers(self):
-        self.net_model._initialize_layers()
+    def _initialize(self):
+        self.net_model._initialize()
         self.physical_model.reset_parameters()
 
     def scale_data(self, X):
