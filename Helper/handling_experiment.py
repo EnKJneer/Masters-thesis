@@ -545,7 +545,7 @@ class MAEPlotterGeometry(BasePlotter):
                         # Mittelwert und Standardabweichung über die Runs
                         mean_pred = preds_list.mean(axis=0)
                         std_pred = preds_list.std(axis=0)
-                        mae = np.abs(mean_pred.squeeze() - ground_truth.squeeze())
+                        mae = (mean_pred.squeeze() - ground_truth.squeeze())
 
                         # Längen-Check für Sicherheit
                         min_length = min(len(data_geometry), len(mae))

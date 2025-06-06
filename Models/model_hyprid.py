@@ -35,8 +35,8 @@ class HybridModelResidual(mb.BaseNetModel):
         # Vorhersage des physikalischen Modells
         with torch.no_grad():
             #x_df = pd.DataFrame(self.scaler.inverse_transform(x.cpu().numpy()), columns=self.original_columns)
-            phys_input = self.physical_model.get_input_vector(x) # x_df
-            y_phys = self.physical_model.model(phys_input)
+            phys_input = self.physical_model.get_input_vector_from_df(x) # x_df
+            y_phys = self.physical_model.forward(phys_input)
 
         if self.physical_model.device == self.net_model.device and type(y_phys) == torch.Tensor:
             # Korrigierte Vorhersage = physikalisch + residuum
@@ -47,7 +47,7 @@ class HybridModelResidual(mb.BaseNetModel):
 
     def _initialize(self):
         self.net_model._initialize()
-        self.physical_model.reset_parameters()
+        self.physical_model._initialize()
 
     def scale_data(self, X):
         # Skaliere wie üblich über das neuronale Netz
@@ -77,8 +77,8 @@ class HybridModelResidual(mb.BaseNetModel):
             residuals = []
             for x_batch, y_batch in zip(X, y) if isinstance(X, list) else [(X, y)]:
                 with torch.no_grad():
-                    input_vector = self.physical_model.get_input_vector(x_batch)
-                    y_phys = self.physical_model.model(input_vector)
+                    input_vector = self.physical_model.get_input_vector_from_df(x_batch)
+                    y_phys = self.physical_model.forward(input_vector)
                     if not isinstance(y_batch, torch.Tensor):
                         y_batch = torch.tensor(y_batch.values if hasattr(y_batch, 'values') else y_batch,
                                                dtype=torch.float32).to(self.physical_model.device)
@@ -135,8 +135,8 @@ class HybridModelGuidedML(mb.BaseNetModel):
     def forward(self, x):
         # Vorhersage des physikalischen Modells
         with torch.no_grad():
-            phys_input = self.physical_model.get_input_vector(x)
-            y_phys = self.physical_model.model(phys_input)
+            phys_input = self.physical_model.get_input_vector_from_df(x)
+            y_phys = self.physical_model.forward(phys_input)
 
         # Kombiniere die Eingabe mit der Vorhersage des physikalischen Modells
         x['phy_model'] = y_phys.cpu().squeeze()
@@ -146,7 +146,7 @@ class HybridModelGuidedML(mb.BaseNetModel):
 
     def _initialize(self):
         self.net_model._initialize()
-        self.physical_model.reset_parameters()
+        self.physical_model._initialize()
 
     def scale_data(self, X):
         # Skaliere wie üblich über das neuronale Netz
@@ -174,8 +174,8 @@ class HybridModelGuidedML(mb.BaseNetModel):
             predictions = []
             for x_batch in X if isinstance(X, list) else [X]:
                 with torch.no_grad():
-                    input_vector = self.physical_model.get_input_vector(x_batch)
-                    y_phys = self.physical_model.model(input_vector)
+                    input_vector = self.physical_model.get_input_vector_from_df(x_batch)
+                    y_phys = self.physical_model.forward(input_vector)
                     predictions.append(y_phys.detach().cpu().numpy())
             return predictions if isinstance(X, list) else predictions[0]
 

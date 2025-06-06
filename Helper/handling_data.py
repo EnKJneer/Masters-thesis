@@ -877,7 +877,7 @@ Combined_Plate_TrainVal_Single = DataclassCombinedTrainValSingleAxis('Plate_Trai
                                                            dataPaths_Test,
                                                            ["curr_x"], )
 
-Combined_PK_TrainVal = DataclassCombinedTrainVal('PKL_TrainVal', folder_data,
+Combined_PK_TrainVal = DataclassCombinedTrainVal('PK_TrainVal', folder_data,
                                                   [   'AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
                                                         'Kühlgrill_Mat_S2800', 'Kühlgrill_Mat_S3800', 'Kühlgrill_Mat_S4700',
                                                         ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'

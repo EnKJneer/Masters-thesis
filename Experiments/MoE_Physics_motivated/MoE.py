@@ -16,8 +16,8 @@ import Models.model_mixture_of_experts as mmix
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
-    NUMBEROFEPOCHS = 800
-    NUMBEROFMODELS = 10
+    NUMBEROFEPOCHS = 500
+    NUMBEROFMODELS = 2
 
     window_size = 1
     past_values = 0
@@ -31,14 +31,8 @@ if __name__ == "__main__":
 
     dataSets_list = [dataClass_1]
 
-    model = mmix.MoEGatingBased()
-
-    model_physics = mphys.PhysicalModelErdSingleAxis()
-    model_pinn = mnn.PiNNErdMatrix()
-    model_mixed = mmix.MoEGatingBased(name='MoE_mixed_experts')
-    model_mixed.experts = nn.ModuleList([model_physics, mnn.get_reference(), model_pinn]) # ToDo: random forest da rein bekommen
-
-    models = [model_mixed, model]
+    model = mmix.NaiveMoE()
+    models = [model]
 
     # Run the experiment
     hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=False, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)

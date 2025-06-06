@@ -72,17 +72,17 @@ if __name__ == "__main__":
 
     #model_erd = mphys.PhysicalModelErd(learning_rate=1)
 
-    model_pinn = mnn.PiNN(c_1 = 1.415e-05, c_2= -2.42e-06, c_3= -4.79e-06, penalty_weight=50)
-    model_pinn.name = 'PiNN_Erd'
+    model_pinn = mnn.PiNNNaiveLinear(penalty_weight=50)
+    model_pinn_naive = mnn.PiNNNaive()
 
-    model_pinn_adaptive = mnn.PiNNAdaptiv(c_1 = 1.415e-05, c_2= -2.42e-06, c_3= -4.79e-06, penalty_weight=50)
+    model_pinn_adaptive = mnn.PiNNAdaptiv(penalty_weight=50)
     #model_pinn_adaptive_newton = mnn.PiNNAdaptiv(name='Pinn_adaptive_newton', c_1=1.415e-05, c_2=-2.42e-06, c_3=-4.79e-06, penalty_weight=50, learning_rate=1, optimizer_type='quasi_newton')
 
-    model_pinn_matrix = mnn.PiNNMatrix(theta_init=np.array([[ 1.52348093e-05, -6.92416393e-07, -3.38071050e-06, -1.44576282e-10, -1.06608064e-11],
- [-3.34966649e-06, -9.13457313e-07,  3.79570906e-06, -1.32213537e-11, -1.06608064e-11],
- [ 2.84573389e-07, -5.36836637e-08,  9.28007239e-07, -1.75489189e-11, -1.06608064e-11],
- [-8.91113905e-10, -7.01598113e-10,  2.98052828e-06, -1.00204480e-11, -1.06608064e-11]]))
-    models = [model_pinn_matrix, model_pinn_adaptive, model_pinn]
+    model_pinn_matrix = mnn.PiNNErdMatrix(theta_init=np.array([[1.52348093e-05, -6.92416393e-07, -3.38071050e-06, -1.44576282e-10, -1.06608064e-11],
+                                                               [-3.34966649e-06, -9.13457313e-07,  3.79570906e-06, -1.32213537e-11, -1.06608064e-11],
+                                                               [ 2.84573389e-07, -5.36836637e-08,  9.28007239e-07, -1.75489189e-11, -1.06608064e-11],
+                                                               [-8.91113905e-10, -7.01598113e-10,  2.98052828e-06, -1.00204480e-11, -1.06608064e-11]]))
+    models = [model_pinn_naive, model_pinn, model_pinn_matrix] # model_pinn_adaptive,
 
     # Run the experiment
     hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=False, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)

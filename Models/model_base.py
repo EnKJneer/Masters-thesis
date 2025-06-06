@@ -32,18 +32,40 @@ class BaseModel(ABC):
         pass
 
 class BaseNetModel(BaseModel, nn.Module):
-    #ToDo: init
-    @abstractmethod
-    def forward(self, x):
-        pass
+    def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=0.001, optimizer_type='adam'):
+        """
+        Initializes the base neural network model with common attributes.
+
+        Parameters
+        ----------
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
+        output_size : int
+            The number of output features.
+        name : str
+            The name of the model.
+        learning_rate : float
+            The learning rate for the optimizer.
+        optimizer_type : str
+            The type of optimizer to use.
+        """
+        super(BaseNetModel, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.name = name
+        self.learning_rate = learning_rate
+        self.optimizer_type = optimizer_type
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
     @abstractmethod
     def _initialize(self):
         pass
 
-    #def criterion_validation(self, y_target, y_pred):
-    #    criterion = nn.MSELoss()
-    #    #torch.sqrt(criterion(y_target.squeeze(), y_pred.squeeze()))
-    #    return torch.sqrt(criterion(y_target, y_pred))
+    @abstractmethod
+    def forward(self, x):
+        pass
 
     def criterion(self, y_target, y_pred, delta = 0.22):
         criterion = nn.HuberLoss(delta=delta)

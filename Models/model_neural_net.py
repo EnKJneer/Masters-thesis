@@ -60,18 +60,10 @@ class Net(mb.BaseNetModel):
         name : str
             The name of the model.
         """
-        super(Net, self).__init__()
-        self.input_size = input_size
-        self.output_size = output_size
+        super(Net, self).__init__(input_size=input_size, output_size=output_size, name=name, learning_rate=learning_rate, optimizer_type=optimizer_type)
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
         self.activation = activation()
-        self.learning_rate = learning_rate
-        self.name = name
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
-        self.scaler = None
-        self.optimizer_type = optimizer_type
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
             self._initialize()
@@ -1211,9 +1203,9 @@ class PiNNAdaptiv(Net):
         }}
         return documentation
 
-class PiNNMatrix(Net):
-    def __init__(self, *args, name="PiNN_Matrix", penalty_weight=1, optimizer_type='adam', theta_init=None, **kwargs):
-        super(PiNNMatrix, self).__init__(*args, **kwargs)
+class PiNNErdMatrix(Net):
+    def __init__(self, *args, name="PiNN_Erd_Matrix", penalty_weight=1, optimizer_type='adam', theta_init=None, **kwargs):
+        super(PiNNErdMatrix, self).__init__(*args, **kwargs)
         self.name = name
         self.penalty_weight = penalty_weight
         self.optimizer_type = optimizer_type
@@ -1252,7 +1244,7 @@ class PiNNMatrix(Net):
 
         def custom_train_model(*args, **kwargs):
             nonlocal current_input
-            original_train_model = super(PiNNMatrix, self).train_model
+            original_train_model = super(PiNNErdMatrix, self).train_model
 
             def patched_criterion(y_target, y_pred):
                 return original_criterion(y_target, y_pred, x_input=current_input)
@@ -1353,5 +1345,282 @@ class PiNNMatrix(Net):
             "optimizer_type": self.optimizer_type,
             "penalty_weight": self.penalty_weight,
             "theta_init": self.theta_init.tolist(),
+        }}
+        return documentation
+
+class PiNNNaiveLinear(Net):
+    def __init__(self, *args, name="PiNN_Naive_Linear", penalty_weight=1, optimizer_type='adam', learning_rate=0.001, theta_init=None,**kwargs):
+        super(PiNNNaiveLinear, self).__init__(*args, learning_rate=learning_rate, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
+        self.theta_init = theta_init
+        # Neue Parameter-Matrix für alle Achsen
+        if theta_init is not None:
+            if theta_init.shape != (4, 2):
+                raise ValueError("theta_init must have shape (4, 3)")
+            self.theta = nn.Parameter(torch.tensor(theta_init, dtype=torch.float32))
+        else:
+            self.theta = nn.Parameter(torch.zeros(4, 2, dtype=torch.float32))  # Achsen: x, y, z, sp
+
+    def criterion(self, y_target, y_pred, x_input=None):
+        #ToDo: Modularer gestalten
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
+
+        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+            x_input = x_input.clone().detach().requires_grad_(True)
+            y_pred_physics = self(x_input)
+
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+
+            if x_input.size(1) == 13:
+                # Features extrahieren
+                a = x_input[:, 0:4]  # [a_sp, a_x, a_y, a_z]
+                f = x_input[:, 4:8]  # [f_sp, f_x, f_y, f_z]
+                mrr = x_input[:, 8].unsqueeze(1)  # (N, 1)
+                v = x_input[:, 9:13]  # [v_sp, v_x, v_y, v_z]
+
+                ones = torch.ones_like(mrr)  # bias-term
+                input_features = torch.cat([a, v, f, mrr, ones], dim=1)  # (N, 13)
+
+                # Ableitungen extrahieren: d/d[a_sp, a_x, a_y, a_z, ..., v_z]
+                dy_da = dy_dx[:, 0:4]
+                dy_dv = dy_dx[:, 9:13]
+                dy_df = dy_dx[:, 4:8]
+                dy_dmrr = dy_dx[:, 8].unsqueeze(1)  # (N, 1)
+
+                # Constraint-Berechnung für jede Achse separat
+                constraint = []
+                deriv =  dy_dv + dy_df
+                influences = (
+                        self.theta[:, 0] +
+                        v * self.theta[:, 1]
+                )
+                constraint_i = deriv - influences
+                constraint.append(constraint_i.unsqueeze(1))
+
+                constraint = torch.cat(constraint, dim=1)  # (N, 4)
+                penalty = torch.mean(constraint ** 2)
+                return mse_loss + self.penalty_weight * penalty
+
+            elif x_input.size(1) == 4:
+                # Alte Minimalform (x-Komponenten only)
+                a = x_input[:, 0]
+                f = x_input[:, 1]
+                mrr = x_input[:, 2]
+                v = x_input[:, 3]
+
+                dy_da = dy_dx[:, 0]
+                dy_df = dy_dx[:, 1]
+                dy_dmrr = dy_dx[:, 2]
+                dy_dv = dy_dx[:, 3]
+
+                deriv = dy_dv + dy_df
+                influences = (
+                        self.theta[1, 0] +
+                        v * self.theta[1, 1]# ToDo; auf abs ändern
+                )
+                penalty = torch.mean((deriv - influences) ** 2)
+                return mse_loss + self.penalty_weight * penalty
+
+            else:
+                throw_error(self, 'x_input hat die falsche Größe')
+
+        return mse_loss
+
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        original_criterion = self.criterion
+
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiNNNaiveLinear, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion
+            return result
+
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
+            "penalty_weight": self.penalty_weight,
+        }}
+        return documentation
+
+class PiNNNaive(Net):
+    def __init__(self, *args, name="PiNN_Naive", penalty_weight=1, optimizer_type='adam', learning_rate=0.001,  theta_init=None, **kwargs):
+        super(PiNNNaive, self).__init__(*args,learning_rate=learning_rate, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
+        self.theta_init = theta_init
+        # Neue Parameter-Matrix für alle Achsen
+        if theta_init is not None:
+            if theta_init.shape != (4, 3):
+                raise ValueError("theta_init must have shape (4, 3)")
+            self.theta = nn.Parameter(torch.tensor(theta_init, dtype=torch.float32))
+        else:
+            self.theta = nn.Parameter(torch.zeros(4, 3, dtype=torch.float32))  # Achsen: x, y, z, sp
+
+    def sigmoid_stable(self, x):
+        """Verwendet die eingebaute, numerisch stabile Sigmoid-Funktion von PyTorch."""
+        # Sicherstellen, dass x ein Tensor ist
+        if isinstance(x, list):
+            x = torch.stack(x) if len(x) > 1 else x[0]
+
+        # Verschieben und Clipping
+        x_shifted = x + self.theta[:, 2]
+        x_clipped = torch.clamp(x_shifted, min=-50, max=50)
+
+        # PyTorch's eingebaute Sigmoid-Funktion verwenden
+        sigmoid_part = torch.sigmoid(x_clipped)
+
+        # Finales Clipping
+        result = torch.clamp(sigmoid_part, min=-1e6, max=1e6)
+
+        return result
+
+    def criterion(self, y_target, y_pred, x_input=None):
+        #ToDo: Modularer gestalten
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
+
+        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+            x_input = x_input.clone().detach().requires_grad_(True)
+            y_pred_physics = self(x_input)
+
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+
+            if x_input.size(1) == 13:
+                # Features extrahieren
+                a = x_input[:, 0:4]  # [a_sp, a_x, a_y, a_z]
+                f = x_input[:, 4:8]  # [f_sp, f_x, f_y, f_z]
+                mrr = x_input[:, 8].unsqueeze(1)  # (N, 1)
+                v = x_input[:, 9:13]  # [v_sp, v_x, v_y, v_z]
+
+                ones = torch.ones_like(mrr)  # bias-term
+                input_features = torch.cat([a, v, f, mrr, ones], dim=1)  # (N, 13)
+
+                # Ableitungen extrahieren: d/d[a_sp, a_x, a_y, a_z, ..., v_z]
+                dy_da = dy_dx[:, 0:4]
+                dy_dv = dy_dx[:, 9:13]
+                dy_df = dy_dx[:, 4:8]
+                dy_dmrr = dy_dx[:, 8].unsqueeze(1)  # (N, 1)
+
+                # Constraint-Berechnung für jede Achse separat
+                constraint = []
+                deriv = dy_da + dy_dv+ dy_df
+                influences = (
+                        self.theta[:, 0] +
+                        self.sigmoid_stable(v) * self.theta[:, 1]
+                )
+                constraint_i = deriv - influences
+                constraint.append(constraint_i.unsqueeze(1))
+
+
+
+                constraint = torch.cat(constraint, dim=1)  # (N, 4)
+                penalty = torch.mean(constraint ** 2)
+                return mse_loss + self.penalty_weight * penalty
+
+            elif x_input.size(1) == 4:
+                # Alte Minimalform (x-Komponenten only)
+                a = x_input[:, 0]
+                f = x_input[:, 1]
+                mrr = x_input[:, 2]
+                v = x_input[:, 3]
+
+                dy_da = dy_dx[:, 0]
+                dy_df = dy_dx[:, 1]
+                dy_dmrr = dy_dx[:, 2]
+                dy_dv = dy_dx[:, 3]
+
+                deriv = dy_dv + dy_df
+                influences = (
+                        self.theta[1, 0] +
+                        v * self.theta[1, 1] + # ToDo; auf abs ändern
+                        self.theta[1, 2]
+                )
+                penalty = torch.mean((deriv - influences) ** 2)
+                return mse_loss + self.penalty_weight * penalty
+
+            else:
+                throw_error(self, 'x_input hat die falsche Größe')
+
+        return mse_loss
+
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        original_criterion = self.criterion
+
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiNNNaive, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion
+            return result
+
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
+            "penalty_weight": self.penalty_weight,
         }}
         return documentation

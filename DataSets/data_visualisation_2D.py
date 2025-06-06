@@ -34,14 +34,14 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(f'{title}')
-    plt.savefig(filename + '.png')
+    #plt.savefig(filename + '.png')
     # Anzeigen des Plots
-    #plt.show()
+    plt.show()
 
 path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
-files = ['AL_2007_T4_Gear_Normal_3.csv']
+files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
 for file in files:
     if '_3' in file:
         #file = file.replace('.csv', '')
@@ -52,14 +52,14 @@ for file in files:
 
         xlabel = 'pos_x'
         ylabel = 'pos_y'
-        label = 'curr_x'
-        n = 400
-        x_values = data[xlabel].iloc[:n]
-        y_values = data[ylabel].iloc[:n]
-        color_values = data[label].iloc[:n]
+        label = 'f_y_sim'
+        n = 25
+        x_values = data[xlabel].iloc[:-n]
+        y_values = data[ylabel].iloc[:-n]
+        color_values = data[label].iloc[:-n] * (data['v_y'].iloc[:-n]) / (np.abs(data['v_x'].iloc[:-n]) + np.abs(data['v_y'].iloc[:-n]))
         max_value = 2#-3 for curr_y # 2 for curr_x
         min_value = -2#-7 for curr_y # -2 for curr_x
-        color_values = np.clip(color_values, min_value, max_value)
+        #color_values = np.clip(color_values, min_value, max_value)
 
         name = file.replace('.csv', '')
-        plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}_halb', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
+        plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)

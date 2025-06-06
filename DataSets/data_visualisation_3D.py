@@ -101,9 +101,10 @@ for filename in files:
                 plt.figure(figsize=(12, 8))
                 ax = plt.axes(projection='3d')  # Create a 3D axis
 
-                max_value = 0.1  # -3 for curr_y # 2 for curr_x
-                min_value = -0.1  # -7 for curr_y # -2 for curr_x
-                color_values = np.clip(data[axis], min_value, max_value)
+                label = 'curr_y'
+                max_value = -4  # -3 for curr_y # 2 for curr_x
+                min_value = -7  # -7 for curr_y # -2 for curr_x
+                color_values = np.clip(data[label], min_value, max_value)
 
                 # Scatter plot with three axes
                 sc = ax.scatter(
@@ -122,7 +123,7 @@ for filename in files:
                 # Set axis labels
                 ax.set_xlabel('Pos_X')
                 ax.set_ylabel('Pos_Y')
-                ax.set_zlabel(axis)
+                ax.set_zlabel(label)
 
                 # Title and legend
                 plt.title(filename.replace('.csv', ': ') + 'Positions and ' + axis)
