@@ -39,7 +39,8 @@ def get_reference(input_size=None):
     return Net(input_size, 1, input_size)
 # Defines a configurable neural network
 class Net(mb.BaseNetModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.001, name="Neural_Net", optimizer_type='adam'):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
+                 learning_rate=0.001, name="Neural_Net", optimizer_type='adam'):
         """
         Initializes a configurable neural network.
 
@@ -105,7 +106,8 @@ class Net(mb.BaseNetModel):
         return x
 
 class RNN(mb.BaseNetModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="Recurrent_Neural_Net", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
+                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
@@ -155,43 +157,29 @@ class RNN(mb.BaseNetModel):
         self.to(self.device)
 
     def forward(self, x):
-        """
-        Defines the forward pass of the recurrent neural network.
-
-        Parameters
-        ----------
-        x : torch.Tensor
-            The input tensor to the neural network.
-
-        Returns
-        -------
-        x : torch.Tensor
-            The output tensor from the neural network.
-        """
         if self.input_size is None:
-            self.input_size = x.shape[1]
+            self.input_size = x.shape[-1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
             self._initialize()
             self.to(self.device)
 
         if x.dim() == 2:
-            # Non batched input
-            h0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-        elif x.dim() == 3:
-            # batched input
-            h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
+            x = x.unsqueeze(0)  # Add batch dimension
+        x = x.to(self.device)
+        if not x.is_contiguous():
+            x = x.contiguous()
 
-        # Forward pass through RNN layer
+        batch_size = x.size(1)
+        h0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
+
         out, _ = self.rnn(x, h0)
-
-        # Decode the hidden state of the last time step
         out = self.fc(out)
-
         return out
 
 class LSTM(mb.BaseNetModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="LSTM", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
+                 learning_rate=0.001, name="LSTM", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
@@ -242,33 +230,37 @@ class LSTM(mb.BaseNetModel):
 
     def forward(self, x):
         """
-        Defines the forward pass of the recurrent neural network.
+        Defines the forward pass of the recurrent neural network (e.g. LSTM).
 
         Parameters
         ----------
         x : torch.Tensor
-            The input tensor to the neural network.
+            Input tensor with shape [batch_size, seq_len, input_size] or [seq_len, input_size].
 
         Returns
         -------
-        x : torch.Tensor
-            The output tensor from the neural network.
+        torch.Tensor
+            Output tensor from the neural network.
         """
+        # Initialize model parameters if not yet initialized
         if self.input_size is None:
-            self.input_size = x.shape[1]
+            self.input_size = x.shape[-1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
             self._initialize()
             self.to(self.device)
 
-        if x.dim() == 2:
-            # Non batched input
-            h0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-            c0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-        elif x.dim() == 3:
-            # batched input
-            h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
-            c0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
+        # If input is 2D (single sample), add batch dimension
+        if x.dim() == 2:  # [seq_len, input_size]
+            x = x.unsqueeze(0)  # → [1, seq_len, input_size]
+
+        x = x.to(self.device)
+        x = x.contiguous()  # Important for cuDNN
+
+        batch_size = x.size(1)
+
+        h0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
+        c0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
 
         # Forward pass through LSTM
         out, _ = self.rnn(x, (h0, c0))
@@ -279,7 +271,8 @@ class LSTM(mb.BaseNetModel):
         return out
 
 class GRU(mb.BaseNetModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU, learning_rate=0.0001, name="GRU", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
+                 learning_rate=0.001, name="GRU", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
@@ -330,36 +323,41 @@ class GRU(mb.BaseNetModel):
 
     def forward(self, x):
         """
-        Defines the forward pass of the recurrent neural network.
+        Defines the forward pass of the recurrent neural network (vanilla RNN).
 
         Parameters
         ----------
         x : torch.Tensor
-            The input tensor to the neural network.
+            Input tensor with shape [batch_size, seq_len, input_size] or [seq_len, input_size].
 
         Returns
         -------
-        x : torch.Tensor
-            The output tensor from the neural network.
+        torch.Tensor
+            Output tensor from the neural network.
         """
+        # Initialize model parameters if not yet initialized
         if self.input_size is None:
-            self.input_size = x.shape[1]
+            self.input_size = x.shape[-1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
             self._initialize()
             self.to(self.device)
 
-        if x.dim() == 2:
-            # Non batched input
-            h0 = torch.zeros(self.n_hidden_layers, self.n_hidden_size).to(self.device)
-        elif x.dim() == 3:
-            # batched input
-            h0 = torch.zeros(self.n_hidden_layers, x.size(0), self.n_hidden_size).to(self.device)
+        # Handle non-batched input
+        if x.dim() == 2:  # [seq_len, input_size]
+            x = x.unsqueeze(0)  # → [1, seq_len, input_size]
 
-        # Forward pass through RNN layer
+        x = x.to(self.device).contiguous()
+
+        batch_size = x.size(1)
+
+        # Initialize hidden state: [n_layers, batch_size, hidden_size]
+        h0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
+
+        # Forward pass through RNN
         out, _ = self.rnn(x, h0)
 
-        # Decode the hidden state of the last time step
+        # Fully connected layer on all time steps
         out = self.fc(out)
 
         return out

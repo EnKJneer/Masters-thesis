@@ -978,6 +978,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                     mse, pred_nn = model.test_model(X_test, y_test)
                     nn_preds.append(pred_nn.flatten())
                     print(f"{model.name}: Test MAE: {mse}")
+                reference_models = reference_models_copy
 
             # Fehlerberechnung
             calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
@@ -1003,13 +1004,12 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                     mse, pred_nn = model.test_model(X_test, y_test)
                     print(f"{model.name}: Test RMAE: {mse}")
                     nn_preds.append(pred_nn.flatten())
+                models = models_copy
 
             # Fehlerberechnung
             calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
                                         n_drop_values, raw_data)
 
-        reference_models = reference_models_copy
-        models = models_copy
     #debug_results_structure(results)
 
     # ========== NEUE MODULARE PLOT-ERSTELLUNG ==========

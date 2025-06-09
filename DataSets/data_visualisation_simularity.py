@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 # Pfad zu den Dateien
 path_data = 'DataFiltered'
@@ -9,9 +10,12 @@ path_data = 'DataFiltered'
 # Liste der Dateien
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv',
          'S235JR_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
-
+#files = ['AL_2007_T4_Plate_Normal_3.csv']
 # Anzahl der letzten Datenpunkte, die ausgeschlossen werden sollen
 n = 25
+
+def sigmoid(x, a, b, c):
+    return a / (1 + np.exp(-(x + b))) + c
 
 # Iteriere über die Dateien
 for file in files:
@@ -27,38 +31,44 @@ for file in files:
         # Berechne die Komponenten der Materialentfernung
         f_x = data['f_x_sim']
         f_y = data['f_y_sim']
+        f_z = data['f_z_sim']
         v_x = data['v_x']
         v_y = data['v_y']
+        v_z = data['v_z']
         data['mrr_x'] = data['materialremoved_sim'] * (np.abs(v_x) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
         data['mrr_y'] = data['materialremoved_sim'] * (np.abs(v_y) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
+        data['mrr_z'] = data['materialremoved_sim'] * (np.abs(v_z) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
         # Definiere die Achsen
         axes = ['x', 'y']
 
-        """        # Plotte die Zusammenhänge für jede Achse
-        plt.figure(figsize=(18, 12))
+        # Berechne die Korrelationsmatrix für curr_x
+        corr_matrix = data[['curr_x', 'v_x', 'f_x_sim', 'mrr_x', 'materialremoved_sim', 'curr_y', 'curr_z', 'curr_sp']].corr()
 
-        # Streudiagramm von v vs. curr
-        plt.subplot(2, 2, 1)
-        plt.scatter(data[f'curr_y'], data[f'curr_x'], alpha=0.5)
-        plt.xlabel(f'curr_y')
-        plt.ylabel(f'curr_x')
-        plt.title(f'{file}: curr_y vs. curr_x')
-
-        plt.subplot(2, 2, 2)
-        plt.scatter(data[f'curr_z'], data[f'curr_x'], alpha=0.5)
-        plt.xlabel(f'curr_z')
-        plt.ylabel(f'curr_x')
-        plt.title(f'{file}: curr_z vs. curr_x')
-
-        plt.subplot(2, 2, 3)
-        plt.scatter(data[f'curr_sp'], data[f'curr_x'], alpha=0.5)
-        plt.xlabel(f'curr_sp')
-        plt.ylabel(f'curr_x')
-        plt.title(f'{file}: curr_sp vs. curr_x')"""
-
+        # Plotte die Korrelationsmatrix
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+        plt.title(f'{file}: Korrelationsmatrix für curr_x und andere Komponenten')
+        plt.show()
 
         # Iteriere über die Achsen
         for axis in axes:
+            y = data[f'curr_{axis}']
+            data['t1'] = np.clip(data[f'a_{axis}'] * data[f'v_{axis}'], -25, 25)
+            data['t2'] = data[f'v_{axis}'] ** 2 * np.sign(data[f'v_{axis}'])
+            initial_params_sigmoid = [max(y) - min(y), np.median(data[f'v_{axis}']), min(y)]
+            data['t2_s'] = sigmoid(data[f'v_{axis}'], initial_params_sigmoid[0], initial_params_sigmoid[1], initial_params_sigmoid[2])
+            data[f't3_{axis}'] = data[f'f_{axis}_sim'] * data[f'mrr_{axis}']
+            data['t3'] = data[f'f_{axis}_sim'] * data['materialremoved_sim']
+
+            # Berechne die Korrelationsmatrix für curr_x
+            corr_matrix = data[[f'curr_{axis}', 't1', 't2', 't3', f't3_{axis}', f'v_{axis}', f'f_{axis}_sim', 't2_s']].corr()
+
+            # Plotte die Korrelationsmatrix
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+            plt.title(f'{file}: Korrelationsmatrix für curr_{axis} und andere Komponenten')
+            plt.show()
+
             # Plotte die Zusammenhänge für jede Achse
             plt.figure(figsize=(18, 12))
 
@@ -111,7 +121,7 @@ for file in files:
 
             # Streudiagramm von v vs. curr
             plt.subplot(2, 2, 1)
-            t1 = data[f'a_{axis}'] * data[f'v_{axis}']
+            t1 = np.clip(data[f'a_{axis}'] * data[f'v_{axis}'], -25, 25)
             plt.scatter(t1, data[f'curr_{axis}'], alpha=0.5)
             plt.xlabel(f'Term 1')
             plt.ylabel(f'curr_{axis}')

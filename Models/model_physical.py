@@ -364,7 +364,7 @@ class BasePhysicalModel(mb.BaseModel, nn.Module):
                 MRR = input_vector[8, :]
                 velocity = [input_vector[9,:], input_vector[10,:], input_vector[11,:], input_vector[12,:]]
             elif input_vector.shape[1] == 4:
-                [acceleration, velocity, force, MRR] = input_vector.T
+                [acceleration, force, MRR, velocity] = input_vector.T
             else:
                 throw_error(f'input_vector shape {input_vector.shape}, wrong shape')
         else:
@@ -569,172 +569,6 @@ class PhysicalModelErd(BasePhysicalModel):
         current = movment + material + self.theta[:, 3]  * torch.sign(velocity).T + self.theta[:, 4] # shape: [4, T]
 
         return torch.sum(current, axis=1).unsqueeze(-1)
-    """    def test_model(self, X, y_target, criterion_test = None):
-        if criterion_test is None:
-            criterion_test = self.criterion
-        input_vector = self.get_input_vector(X)
-        if not isinstance(y_target, np.ndarray):
-            y_target = y_target.to_numpy()
-        y_target = torch.tensor(y_target, dtype=torch.float32).to(self.device)
-        y_pred = self.predict(input_vector)
-        loss = criterion_test(y_target, y_pred)
-        return loss.item(), y_pred.detach().cpu().numpy()
-
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=5, draw_loss=False, epsilon=0.0001, reset_parameters=True):
-        if reset_parameters:
-            print(f"{self.name}: Setze Parameter auf Initialwerte zurück.")
-            self._initialize()
-
-        def to_tensor(data):
-            if isinstance(data, torch.Tensor):
-                return data.to(self.device)
-            elif hasattr(data, 'values'):
-                return torch.tensor(data.values, dtype=torch.float32).to(self.device)
-            else:
-                return torch.tensor(data, dtype=torch.float32).to(self.device)
-
-        is_batched_train = isinstance(X_train, list) and isinstance(y_train, list)
-        is_batched_val = isinstance(X_val, list) and isinstance(y_val, list)
-
-        assert (not is_batched_train) or (len(X_train) == len(y_train)), "Trainingslist must have the same length"
-        assert (not is_batched_val) or (len(X_val) == len(y_val)), "Validierungslisten must have the same length"
-
-        print(f"Device: {self.device} | Batched: {is_batched_train}")
-
-        if self.optimizer_type.lower() == 'adam':
-            optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
-        elif self.optimizer_type.lower() == 'quasi_newton':
-            optimizer = optim.LBFGS(self.parameters(), lr=self.learning_rate, max_iter=20, history_size=10)
-            patience = 4
-        else:
-            raise ValueError(f"Unknown optimizer_type: {self.optimizer_type}")
-
-        if patience < 4:
-            patience = 4
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5,
-                                                               patience=int(patience / 2))
-
-        if draw_loss:
-            loss_vals, epochs, loss_train = [], [], []
-            fig, ax = plt.subplots()
-            line_val, = ax.plot(epochs, loss_vals, 'r-', label='validation')
-            line_train, = ax.plot(epochs, loss_train, 'b-', label='training')
-            ax.legend()
-
-        best_val_error = float('inf')
-        patience_counter = 0
-
-        for epoch in range(n_epochs):
-            self.train()
-            train_losses = []
-
-            def closure():
-                optimizer.zero_grad()
-                if is_batched_train:
-                    loss_total = 0
-                    for batch_x, batch_y in zip(X_train, y_train):
-                        batch_x_tensor = self.get_input_vector(batch_x)
-                        batch_y_tensor = to_tensor(batch_y)
-                        output = self.forward(batch_x_tensor)
-                        loss = self.criterion(batch_y_tensor, output)
-                        loss.backward()
-                        loss_total += loss
-                    return loss_total
-                else:
-                    x_tensor = self.get_input_vector(X_train)
-                    y_tensor = to_tensor(y_train)
-                    output = self.forward(x_tensor)
-                    loss = self.criterion(y_tensor, output)
-                    loss.backward()
-                    return loss
-
-            if self.optimizer_type.lower() == 'quasi_newton':
-                loss = optimizer.step(closure)
-                train_losses.append(loss.item() if isinstance(loss, torch.Tensor) else loss)
-            else:
-                if is_batched_train:
-                    for batch_x, batch_y in zip(X_train, y_train):
-                        optimizer.zero_grad()
-                        batch_x_tensor = self.get_input_vector(batch_x)
-                        batch_y_tensor = to_tensor(batch_y)
-                        output = self.forward(batch_x_tensor)
-                        loss = self.criterion(output, batch_y_tensor)
-                        loss.backward()
-                        optimizer.step()
-                        train_losses.append(loss.item())
-                else:
-                    optimizer.zero_grad()
-                    x_tensor = self.get_input_vector(X_train)
-                    y_tensor = to_tensor(y_train)
-                    output = self.forward(x_tensor)
-                    loss = self.criterion(output, y_tensor)
-                    loss.backward()
-                    optimizer.step()
-                    train_losses.append(loss.item())
-
-            self.eval()
-            val_losses = []
-            with torch.no_grad():
-                if is_batched_val:
-                    for batch_x, batch_y in zip(X_val, y_val):
-                        batch_x_tensor = self.get_input_vector(batch_x)
-                        batch_y_tensor = to_tensor(batch_y)
-                        output = self.forward(batch_x_tensor)
-                        val_loss = self.criterion(output, batch_y_tensor)
-                        val_losses.append(val_loss.item())
-                else:
-                    x_tensor = self.get_input_vector(X_val)
-                    y_tensor = to_tensor(y_val)
-                    output = self.forward(x_tensor)
-                    val_loss = self.criterion(output, y_tensor)
-                    val_losses.append(val_loss.item())
-            del x_tensor, y_tensor, output, loss
-            torch.cuda.empty_cache()
-
-            avg_train_loss = sum(train_losses) / len(train_losses)
-            avg_val_loss = sum(val_losses) / len(val_losses)
-
-            if avg_val_loss < best_val_error - epsilon:
-                best_val_error = avg_val_loss
-                best_model_state = self.state_dict()
-                patience_counter = 0
-            elif epoch > (n_epochs / 10) or self.optimizer_type.lower() == 'quasi_newton':
-                patience_counter += 1
-
-            scheduler.step(avg_val_loss)
-
-            if patience_counter >= patience:
-                print(f"Early stopping at epoch {epoch + 1}")
-                break
-
-            if draw_loss:
-                epochs.append(epoch)
-                loss_vals.append(avg_val_loss)
-                loss_train.append(avg_train_loss)
-                line_val.set_xdata(epochs)
-                line_val.set_ydata(loss_vals)
-                line_train.set_xdata(epochs)
-                line_train.set_ydata(loss_train)
-                ax.relim()
-                ax.autoscale_view()
-                plt.draw()
-                plt.pause(0.001)
-
-            print(
-                f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss: {avg_train_loss:.4f} Val Error: {avg_val_loss:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
-
-        if draw_loss:
-            plt.ioff()
-            plt.show()
-
-        self.load_state_dict(best_model_state)
-
-        print("Beste Parameter:")
-        for name, param in self.named_parameters():
-            print(f"{name}: {param.data.cpu().numpy()}")
-
-        return best_val_error
-    """
     def get_documentation(self):
         # θ-Matrix als Dictionary mit Schlüssel wie "theta_0_1": Wert
 
@@ -755,7 +589,7 @@ class PhysicalModelErd(BasePhysicalModel):
         return documentation
 
 class PhysicalModelErdSingleAxis(BasePhysicalModel):
-    def __init__(self, c_1=0.01, c_2=0.01, c_3=0.01, c_4=0, c_5=0, learning_rate=1, optimizer_type='quasi_newton',
+    def __init__(self, c_1=1e-4, c_2=1e-3, c_3=1e-7, c_4=1e-1, c_5=1e-3, learning_rate=1, optimizer_type='quasi_newton',
                  name="Physical_Model_Single_Axis"):
         super(PhysicalModelErdSingleAxis, self).__init__()
         self.initial_params = {"c_1": c_1, "c_2": c_2, "c_3": c_3, "c_4": c_4, "c_5": c_5}
@@ -820,17 +654,18 @@ class PhysicalModelErdSingleAxis(BasePhysicalModel):
         return documentation
 
 
-class NaiveModel(BasePhysicalModel):
-    def __init__(self, input_size=None, output_size=1, name="CombinedModel", learning_rate=1,
-                 optimizer_type='quasi_newton', a1 = 0, b1 = 0, a2 = 0, b2 = 0, c2 = 0):
-        super(NaiveModel, self).__init__(input_size, output_size, name, learning_rate, optimizer_type)
+class NaiveModelSigmoid(BasePhysicalModel):
+    def __init__(self, input_size=None, output_size=1, name="Naive_Model_Sigmoid", learning_rate=1,
+                 optimizer_type='quasi_newton', a1 = -1, b1 = 0, a2 = -1, b2 = 0, c2 = 0, a3 = -1):
+        super(NaiveModelSigmoid, self).__init__(input_size, output_size, name, learning_rate, optimizer_type)
 
-        self.initial_params = {"a1": a1, "b1": b1, "a2": a2, "b2": b2, "c2": c2}
+        self.initial_params = {"a1": a1, "b1": b1, "a2": a2, "b2": b2, "c2": c2, "a3": a3}
         self.a1 = nn.Parameter(torch.tensor(a1, dtype=torch.float32))
         self.b1 = nn.Parameter(torch.tensor(b1, dtype=torch.float32))
         self.a2 =  nn.Parameter(torch.tensor(a2, dtype=torch.float32))
         self.b2 = nn.Parameter(torch.tensor(b2, dtype=torch.float32))
         self.c2 = nn.Parameter(torch.tensor(c2, dtype=torch.float32))
+        self.a3 = nn.Parameter(torch.tensor(a3, dtype=torch.float32))
 
         self.to(self.device)
 
@@ -842,42 +677,7 @@ class NaiveModel(BasePhysicalModel):
             self.a2.copy_(torch.tensor(self.initial_params["a2"], dtype=torch.float32))
             self.b2.copy_(torch.tensor(self.initial_params["b2"], dtype=torch.float32))
             self.c2.copy_(torch.tensor(self.initial_params["c2"], dtype=torch.float32))
-
-    def sigmoid_stable_old(self, x):
-        """Numerisch stabile Sigmoid-Funktion"""
-        # Sicherstellen, dass x ein Tensor ist
-        if isinstance(x, list):
-            x = torch.stack(x) if len(x) > 1 else x[0]
-
-        # Detailliertes Debugging für Sigmoid
-        #print(f"Sigmoid input range: [{x.min().item():.6f}, {x.max().item():.6f}]")
-
-        # Sehr konservatives Clipping für Sigmoid
-        x_shifted = x + self.b2
-        #print(f"After b2 shift: [{x_shifted.min().item():.6f}, {x_shifted.max().item():.6f}]")
-
-        # Extremes Clipping um Overflow zu vermeiden
-        x_clipped = torch.clamp(x_shifted, min=-50, max=50)  # Noch konservativer
-        #print(f"After clipping: [{x_clipped.min().item():.6f}, {x_clipped.max().item():.6f}]")
-
-        # Sigmoid berechnen
-        exp_term = torch.exp(-x_clipped)
-        #print(f"Exp term range: [{exp_term.min().item():.6f}, {exp_term.max().item():.6f}]")
-
-        denominator = 1 + exp_term
-        if torch.isinf(denominator).any() or (denominator == 0).any():
-            print("ERROR: Denominator overflow/underflow in sigmoid!")
-            denominator = torch.clamp(denominator, min=1e-10, max=1e10)
-
-        sigmoid_part = self.a2 / denominator
-        result = sigmoid_part + self.c2
-
-        # Finales Clipping
-        result = torch.clamp(result, min=-1e6, max=1e6)
-
-        #print(f"Sigmoid result range: [{result.min().item():.6f}, {result.max().item():.6f}]")
-
-        return result
+            self.a3.copy_(torch.tensor(self.initial_params["a3"], dtype=torch.float32))
 
     def sigmoid_stable(self, x):
         """Verwendet die eingebaute, numerisch stabile Sigmoid-Funktion von PyTorch."""
@@ -901,49 +701,25 @@ class NaiveModel(BasePhysicalModel):
         acceleration, velocity, force, MRR = self.get_input_vector_from_tensor(x)
 
         # Sicherstellen, dass die Eingaben Tensors sind
-        force_y = force[1] if isinstance(force[1], torch.Tensor) else torch.tensor(force[1], dtype=torch.float32,
+        force_x = force[1] if isinstance(force[1], torch.Tensor) else torch.tensor(force[1], dtype=torch.float32,
                                                                                    device=self.device)
-        velocity_y = velocity[1] if isinstance(velocity[1], torch.Tensor) else torch.tensor(velocity[1],
+        velocity_x = velocity[1] if isinstance(velocity[1], torch.Tensor) else torch.tensor(velocity[1],
                                                                                             dtype=torch.float32,
                                                                                             device=self.device)
 
-        # Detailliertes Debugging
-        #print(f"Input ranges - Force_y: [{force_y.min().item():.6f}, {force_y.max().item():.6f}]")
-        #print(f"Input ranges - Velocity_y: [{velocity_y.min().item():.6f}, {velocity_y.max().item():.6f}]")
-        #print(f"Parameters: a1={self.a1.item():.6f}, b1={self.b1.item():.6f}")
-        #print(f"Parameters: a2={self.a2.item():.6f}, b2={self.b2.item():.6f}, c2={self.c2.item():.6f}")
+        acceleration_x = acceleration[1] if isinstance(acceleration[1], torch.Tensor) else torch.tensor(acceleration[1],
+                                                                                                        dtype=torch.float32,
+                                                                                                        device=self.device)
 
-        # NaN-Checks für Inputs
-        if torch.isnan(force_y).any():
-            print("ERROR: NaN in force_y input!")
-            return torch.full_like(force_y, 0.0)
-        if torch.isnan(velocity_y).any():
-            print("ERROR: NaN in velocity_y input!")
-            return torch.full_like(velocity_y, 0.0)
 
-        # Parameter-Checks
-        if torch.isnan(self.a1) or torch.isnan(self.b1):
-            print("ERROR: NaN in linear parameters!")
-            return torch.full_like(force_y, 0.0)
-        if torch.isnan(self.a2) or torch.isnan(self.b2) or torch.isnan(self.c2):
-            print("ERROR: NaN in sigmoid parameters!")
-            return torch.full_like(force_y, 0.0)
-
-        # Linear Teil mit Schutz vor extremen Werten
-        linear_term = self.a1 * force_y
-        if torch.isinf(linear_term).any() or torch.isnan(linear_term).any():
-            print(f"ERROR: Linear term overflow! a1*force_y range: [{linear_term.min()}, {linear_term.max()}]")
-            linear_term = torch.clamp(linear_term, min=-1e6, max=1e6)
-
-        y_force = linear_term + self.b1
-        #print(f"y_force range: [{y_force.min().item():.6f}, {y_force.max().item():.6f}]")
+        y_force = self.a1 * force_x + self.b1
+        y_acceleration = self.a3 * acceleration_x
 
         # Sigmoid Teil mit noch mehr Schutz
-        y_v = self.sigmoid_stable(velocity_y)
-        #print(f"y_v range: [{y_v.min().item():.6f}, {y_v.max().item():.6f}]")
+        y_v = self.sigmoid_stable(velocity_x)
 
         # Finale Addition mit Schutz
-        result = y_force + y_v
+        result = y_force + y_acceleration + y_v
         if torch.isnan(result).any() or torch.isinf(result).any():
             print("ERROR: Final result has NaN/Inf!")
             result = torch.clamp(result, min=-1e6, max=1e6)
@@ -1000,16 +776,17 @@ class NaiveModel(BasePhysicalModel):
         }
         return documentation
 
-class NaiveModelSimple(BasePhysicalModel):
-    def __init__(self, input_size=None, output_size=1, name="NaiveModelSimple", learning_rate=1,
-                 optimizer_type='quasi_newton', a1 = -0.00115749, a2 = -0.03494507, b2 = -0.00672208):
-        super(NaiveModelSimple, self).__init__(input_size, output_size, name, learning_rate, optimizer_type)
+class NaiveModel(BasePhysicalModel):
+    def __init__(self, input_size=None, output_size=1, name="Naive_Model", learning_rate=1,
+                 optimizer_type='quasi_newton', a1 = -1e-3, a2 = -1e-3,  a3 = -1e-1, b = 1e-2):
+        super(NaiveModel, self).__init__(input_size, output_size, name, learning_rate, optimizer_type)
 
         # VIEL kleinere und sicherere Initialwerte
-        self.initial_params = {"a1": a1, "a2": a2, "b2": b2}
+        self.initial_params = {"a1": a1, "a2": a2, "a3": a3, "b": b}
         self.a1 = nn.Parameter(torch.tensor(a1, dtype=torch.float32))
         self.a2 = nn.Parameter(torch.tensor(a2, dtype=torch.float32))
-        self.b2 = nn.Parameter(torch.tensor(b2, dtype=torch.float32))
+        self.a3 = nn.Parameter(torch.tensor(a3, dtype=torch.float32))
+        self.b = nn.Parameter(torch.tensor(b, dtype=torch.float32))
 
         self.to(self.device)
 
@@ -1018,49 +795,44 @@ class NaiveModelSimple(BasePhysicalModel):
         with torch.no_grad():
             self.a1.copy_(torch.tensor(self.initial_params["a1"], dtype=torch.float32))
             self.a2.copy_(torch.tensor(self.initial_params["a2"], dtype=torch.float32))
-            self.b2.copy_(torch.tensor(self.initial_params["b2"], dtype=torch.float32))
+            self.a3.copy_(torch.tensor(self.initial_params["a3"], dtype=torch.float32))
+            self.b.copy_(torch.tensor(self.initial_params["b"], dtype=torch.float32))
 
     def forward(self, x):
         acceleration, velocity, force, MRR = self.get_input_vector_from_tensor(x)
 
         # Sicherstellen, dass die Eingaben Tensors sind
-        force_y = force[1] if isinstance(force[1], torch.Tensor) else torch.tensor(force[1], dtype=torch.float32,
+        force_x = force[1] if isinstance(force[1], torch.Tensor) else torch.tensor(force[1], dtype=torch.float32,
                                                                                    device=self.device)
-        velocity_y = velocity[1] if isinstance(velocity[1], torch.Tensor) else torch.tensor(velocity[1],
+        velocity_x = velocity[1] if isinstance(velocity[1], torch.Tensor) else torch.tensor(velocity[1],
                                                                                             dtype=torch.float32,
                                                                                             device=self.device)
-
+        acceleration_x = acceleration[1] if isinstance(acceleration[1], torch.Tensor) else torch.tensor(acceleration[1],
+                                                                                            dtype=torch.float32,
+                                                                                            device=self.device)
         # NaN-Checks für Inputs
-        if torch.isnan(force_y).any():
+        if torch.isnan(force_x).any():
             print("ERROR: NaN in force_y input!")
-            return torch.full_like(force_y, 0.0)
-        if torch.isnan(velocity_y).any():
+            return torch.full_like(force_x, 0.0)
+        if torch.isnan(velocity_x).any():
             print("ERROR: NaN in velocity_y input!")
-            return torch.full_like(velocity_y, 0.0)
+            return torch.full_like(velocity_x, 0.0)
 
         # Parameter-Checks
-        if torch.isnan(self.a1):
+        if torch.isnan(self.a1) or torch.isnan(self.a3):
             print("ERROR: NaN in linear parameters!")
-            return torch.full_like(force_y, 0.0)
-        if torch.isnan(self.a2) or torch.isnan(self.b2):
+            return torch.full_like(force_x, 0.0)
+
+        if torch.isnan(self.a2) or torch.isnan(self.b):
             print("ERROR: NaN in sigmoid parameters!")
-            return torch.full_like(force_y, 0.0)
+            return torch.full_like(force_x, 0.0)
 
-        # Linear Teil mit Schutz vor extremen Werten
-        linear_term = self.a1 * force_y
-        if torch.isinf(linear_term).any() or torch.isnan(linear_term).any():
-            print(f"ERROR: Linear term overflow! a1*force_y range: [{linear_term.min()}, {linear_term.max()}]")
-            linear_term = torch.clamp(linear_term, min=-1e6, max=1e6)
-
-        y_force = linear_term
-        #print(f"y_force range: [{y_force.min().item():.6f}, {y_force.max().item():.6f}]")
-
-        # Sigmoid Teil mit noch mehr Schutz
-        y_v = self.a2 * torch.sign(velocity_y) * velocity_y**2 + self.b2
-        #print(f"y_v range: [{y_v.min().item():.6f}, {y_v.max().item():.6f}]")
+        y_force = self.a1 * force_x
+        y_acceleration = self.a2 * acceleration_x
+        y_v = self.a3 * torch.sign(velocity_x)
 
         # Finale Addition mit Schutz
-        result = y_force + y_v
+        result = y_force + y_acceleration + y_v + self.b
         if torch.isnan(result).any() or torch.isinf(result).any():
             print("ERROR: Final result has NaN/Inf!")
             result = torch.clamp(result, min=-1e6, max=1e6)

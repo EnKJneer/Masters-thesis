@@ -23,6 +23,10 @@ def combined_model_y(x, a1, a2, b2, c2, a3, b3):
     #one = 1 if np.all(x[0] == 0) else 0
     return linear(x[0], a1, 0) + sigmoid(x[1], a2, b2, c2) + a3 * sigmoid(x[2], a3, b3, 0)
 
+def combined_model_linear_3(x, a, b, c, d):
+    x_1, x_2, x_3 = x
+    return a * x_1 + b * x_2 + c * x_3 + d
+
 path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
@@ -42,32 +46,12 @@ for file in files:
         f_y = data['f_y_sim'].iloc[:-n].values
         v_x = data['v_x'].iloc[:-n].values
         v_y = data['v_y'].iloc[:-n].values
+        a_x = data['a_x'].iloc[:-n].values
+        a_y = data['a_y'].iloc[:-n].values
         y = data['curr_x'].iloc[:-n].values
-        mrr_y = data['materialremoved_sim'].iloc[:-n].values * (v_y) / (np.abs(v_x) + np.abs(v_y))
-        mrr_y = np.nan_to_num(mrr_y)
-        print(np.isnan(mrr_y).any())
-        # Lineare Gleichung mit f_x_sim
-        params_linear_fx, _ = curve_fit(linear, f_x, y)
-        y_pred_linear_fx = linear(f_x, *params_linear_fx)
-        mse_linear_fx = calculate_mae(y, y_pred_linear_fx)
-
-        # Lineare Gleichung mit v_x
-        params_linear_vx, _ = curve_fit(linear, v_y, y)
-        y_pred_linear_vx = linear(v_y, *params_linear_vx)
-        mse_linear_vx = calculate_mae(y, y_pred_linear_vx)
-
-        # Lineare Gleichung mit v_x²*sign(v_x)
-        x = v_x**2 * np.sign(v_x)
-        params_linear_vx_s, _ = curve_fit(linear, x, y)
-        y_pred_linear_vx_s = linear(x, *params_linear_vx_s)
-        print(f'Parameter quadratic v_x: {params_linear_vx_s}')
-        mse_linear_vx_s = calculate_mae(y, y_pred_linear_vx_s)
-
-        # Sigmoidale Gleichung mit v_x
-        initial_params_sigmoid = [max(y) - min(y), np.median(v_x), min(y)]
-        params_sigmoid_vx, _ = curve_fit(sigmoid, v_x, y, p0=initial_params_sigmoid)
-        y_pred_sigmoid_vx = sigmoid(v_x, *params_sigmoid_vx)
-        mse_sigmoid_vx = calculate_mae(y, y_pred_sigmoid_vx)
+        mrr_x = data['materialremoved_sim'].iloc[:-n].values * np.abs(v_x) / (np.abs(v_x) + np.abs(v_y))
+        mrr_x = np.nan_to_num(mrr_x)
+        print(np.isnan(mrr_x).any())
 
         # Kombinierte Gleichung mit f_x_sim und sigmoidaler Gleichung mit v_x
         initial_params_combined = [1, 1, 1, 1, 1]
@@ -76,17 +60,9 @@ for file in files:
         print(f'Parameter Combined: {params_combined}')
         mse_combined = calculate_mae(y, y_pred_combined)
 
-        # Kombinierte Gleichung mit f_x_sim und sigmoidaler linear mit v_x
-        initial_params_combined_lin = [1, 1, 1]
-        v = v_x**2 * np.sign(v_x)
-        params_combined_lin, _ = curve_fit(combined_model_linear, (f_x, v), y, p0=initial_params_combined_lin)
-        y_pred_combined_lin = combined_model_linear((f_x, v), *params_combined_lin)
-        print(f'Parameter Combined linear: {params_combined_lin}')
-        mse_combined_lin = calculate_mae(y, y_pred_combined_lin)
-
         initial_params_combined_lin_2 = [1, 1, 1, 1, 1, 1]
-        params_combined_lin_2, _ = curve_fit(combined_model_y, (f_x, v_x, f_y), y, p0=initial_params_combined_lin_2)
-        y_pred_combined_lin_2 = combined_model_y((f_x, v_x, f_y), *params_combined_lin_2)
+        params_combined_lin_2, _ = curve_fit(combined_model_y, (f_x, np.sign(v_x), f_y), y, p0=initial_params_combined_lin_2)
+        y_pred_combined_lin_2 = combined_model_y((f_x, np.sign(v_x), a_x), *params_combined_lin_2)
         print(f'Parameter Combined 2: {params_combined_lin_2}')
         mse_combined_lin_2 = calculate_mae(y, y_pred_combined_lin_2)
 

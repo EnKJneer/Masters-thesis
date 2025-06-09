@@ -401,7 +401,7 @@ def save_detailed_csv(df, results_dir):
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
-    NUMBEROFEPOCHS = 250
+    NUMBEROFEPOCHS = 800
     NUMBEROFMODELS = 2
 
     window_size = 1
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     future_values = 0
 
     #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_PK_TrainVal
+    dataClass_1 = hdata.Combined_Plate_TrainVal
     dataClass_1.window_size = window_size
     dataClass_1.past_values = past_values
     dataClass_1.future_values = future_values
@@ -417,14 +417,15 @@ if __name__ == "__main__":
     dataSets_list = [dataClass_1]
 
     #model_simple = mphys.NaiveModelSimple()
-    model = mphys.NaiveModel()
+    model = mphys.NaiveModelSigmoid()
+    model_2 = mphys.NaiveModel()
     model_erd = mphys.PhysicalModelErdSingleAxis()
-    models = [model,model_erd]
+    models = [model_2, model] #model_erd
 
     # Run the experiment
     hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=False, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
-                        plot_types=['heatmap', 'prediction_overview', 'geometry_mae'])
+                        plot_types=['heatmap', 'prediction_overview'])
 
 

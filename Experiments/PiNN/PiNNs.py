@@ -49,7 +49,7 @@ if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 800
-    NUMBEROFMODELS = 10
+    NUMBEROFMODELS = 2
 
     window_size = 1
     past_values = 0
