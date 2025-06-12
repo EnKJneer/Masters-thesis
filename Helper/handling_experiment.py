@@ -994,16 +994,29 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
             nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
 
             for _ in range(NUMBEROFMODELS):
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs = NUMBEROFEPOCHS, patience=patience)
+                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
+                if hasattr(model, 'clear_active_experts_log'):
+                    model.clear_active_experts_log()  # Clear the log for the next test
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
                         mse, pred_nn = model.test_model(x, y)
                         print(f"{model.name}: Test RMAE: {mse}")
                         nn_preds[i].append(pred_nn.flatten())
+
+                        # Check if the model has the method to plot active experts and call it
+                        if hasattr(model, 'plot_active_experts'):
+                            model.plot_active_experts()
+                            model.clear_active_experts_log()  # Clear the log for the next test
                 else:
                     mse, pred_nn = model.test_model(X_test, y_test)
                     print(f"{model.name}: Test RMAE: {mse}")
                     nn_preds.append(pred_nn.flatten())
+
+                    # Check if the model has the method to plot active experts and call it
+                    if hasattr(model, 'plot_active_experts'):
+                        model.plot_active_experts()
+                        model.clear_active_experts_log()  # Clear the log for the next test
+
                 models = models_copy
 
             # Fehlerberechnung

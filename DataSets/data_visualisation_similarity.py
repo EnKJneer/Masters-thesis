@@ -38,6 +38,7 @@ for file in files:
         data['mrr_x'] = data['materialremoved_sim'] * (np.abs(v_x) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
         data['mrr_y'] = data['materialremoved_sim'] * (np.abs(v_y) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
         data['mrr_z'] = data['materialremoved_sim'] * (np.abs(v_z) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
+
         # Definiere die Achsen
         axes = ['x', 'y']
 

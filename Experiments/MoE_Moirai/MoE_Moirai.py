@@ -20,8 +20,8 @@ if __name__ == "__main__":
     NUMBEROFMODELS = 2
 
     window_size = 1
-    past_values = 2
-    future_values = 2
+    past_values = 0
+    future_values = 0
 
     #Combined_Gear,Combined_KL
     dataClass_1 = hdata.Combined_PK_TrainVal
@@ -31,9 +31,9 @@ if __name__ == "__main__":
 
     dataSets_list = [dataClass_1]
 
-    model = mmix.MoiraiMoEModel()
-    model_2 = mmix.ModularMoiraiMoE()
-    models = [model_2, model]
+    model = mmix.ModularMoiraiMoE()
+    model_2 = mmix.TrulyNaiveMoE(routing_strategy='fixed_init')
+    models = [model, model_2]
 
     # Run the experiment
     hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=False, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)

@@ -402,7 +402,7 @@ if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 800
-    NUMBEROFMODELS = 2
+    NUMBEROFMODELS = 10
 
     window_size = 1
     past_values = 0
@@ -413,19 +413,19 @@ if __name__ == "__main__":
     dataClass_1.window_size = window_size
     dataClass_1.past_values = past_values
     dataClass_1.future_values = future_values
-
+    dataClass_1.target_channels = ['curr_y']
     dataSets_list = [dataClass_1]
 
     #model_simple = mphys.NaiveModelSimple()
-    model = mphys.NaiveModelSigmoid()
-    model_2 = mphys.NaiveModel()
-    model_erd = mphys.PhysicalModelErdSingleAxis()
+    model = mphys.NaiveModelSigmoid(target_channel = dataClass_1.target_channels[0])
+    model_2 = mphys.NaiveModel(target_channel = dataClass_1.target_channels[0])
+    model_erd = mphys.PhysicalModelErdSingleAxis(target_channel = dataClass_1.target_channels[0])
     models = [model_2, model] #model_erd
 
     # Run the experiment
     hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=False, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
-                        plot_types=['heatmap', 'prediction_overview'])
+                        plot_types=['heatmap', 'prediction_overview', 'geometry_mae'])
 
 

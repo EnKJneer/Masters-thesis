@@ -52,9 +52,9 @@ def plot_2d_with_color(x_values, y_values, color_values, label='|v_x + v_y|', ti
 path_data = 'DataFiltered'
 
 # Liste der Dateien
-files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv',
-         'S235JR_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
-
+#files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv',
+         #'S235JR_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
+files = ['AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_2.csv', 'AL_2007_T4_Plate_Normal_3.csv']
 # Anzahl der letzten Datenpunkte, die ausgeschlossen werden sollen
 n = 25
 
@@ -63,124 +63,123 @@ mae_values = []
 
 # Iteriere über die Dateien
 for file in files:
-    if '_3' in file:
-        # Lade die Daten
-        data = pd.read_csv(os.path.join(path_data, file))
+    # Lade die Daten
+    data = pd.read_csv(os.path.join(path_data, file))
 
-        data = data.iloc[:-n]
+    data = data.iloc[n:-n]
 
-        # Berechne die Komponenten der Materialentfernung
-        data['mrr_x'] = -data['materialremoved_sim'] * ((data['v_x']) / (np.abs(data['v_x']) + np.abs(data['v_y']) + 1e-10))
-        data['mrr_y'] = -data['materialremoved_sim'] * ((data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']) + 1e-10))
+    # Berechne die Komponenten der Materialentfernung
+    data['mrr_x'] = -data['materialremoved_sim'] * ((data['v_x']) / (np.abs(data['v_x']) + np.abs(data['v_y']) + 1e-10))
+    data['mrr_y'] = -data['materialremoved_sim'] * ((data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']) + 1e-10))
 
-        f_x = data['f_x_sim'].values
-        f_y = data['f_y_sim'].values
-        v_x = data['v_x'].values
-        v_y = data['v_y'].values
-        a_x = data['a_x'].values
-        a_y = data['a_y'].values
-        y = data['curr_x'].values
-        mrr_x = data['mrr_x'].values
-        mrr_y = data['mrr_y'].values
+    f_x = data['f_x_sim'].values
+    f_y = data['f_y_sim'].values
+    v_x = data['v_x'].values
+    v_y = data['v_y'].values
+    a_x = data['a_x'].values
+    a_y = data['a_y'].values
+    y = data['curr_x'].values
+    mrr_x = data['mrr_x'].values
+    mrr_y = data['mrr_y'].values
 
-        x_values = data['pos_x'].values
-        y_values = data['pos_y'].values
+    x_values = data['pos_x'].values
+    y_values = data['pos_y'].values
 
-        axis = 'x'
-        data[f't2_{axis}'] = data[f'v_{axis}'] ** 2 * np.sign(data[f'v_{axis}'])
-        data[f't2_{axis}_s'] = data[f'v_{axis}'] ** 2 * np.sign(data[f'v_{axis}'])
-        data[f't3_{axis}'] = data[f'f_{axis}_sim'] * data[f'mrr_{axis}']
-        t2 = data[f't2_{axis}'].values
-        t3 = data[f't3_{axis}'].values
+    axis = 'x'
+    data[f't2_{axis}'] = data[f'v_{axis}'] ** 2 * np.sign(data[f'v_{axis}'])
+    data[f't2_{axis}_s'] = data[f'v_{axis}'] ** 2 * np.sign(data[f'v_{axis}'])
+    data[f't3_{axis}'] = data[f'f_{axis}_sim'] * data[f'mrr_{axis}']
+    t2 = data[f't2_{axis}'].values
+    t3 = data[f't3_{axis}'].values
 
-        # Kombinierte Gleichung mit t3 und sign(v_x)
-        initial_params_combined_lin = [1, 1, 1, 1]
+    # Kombinierte Gleichung mit t3 und sign(v_x)
+    initial_params_combined_lin = [1, 1, 1, 1]
 
-        params_combined_lin, _ = curve_fit(combined_model_linear_3, (f_x, np.sign(v_x), a_x), y, p0=initial_params_combined_lin)
-        y_pred_combined_lin = combined_model_linear_3((f_x, np.sign(v_x), a_x), *params_combined_lin)
-        mae_combined_lin = calculate_mae(y, y_pred_combined_lin)
-        mae_values.append(mae_combined_lin)
-
-
-        # Plotte den zeitlichen Verlauf des Stroms, der Vorhersage und des Fehlers
-        loss = y - y_pred_combined_lin
-        plt.figure(figsize=(12, 6))
-        plt.plot(data.index, y, label='curr_x', color='blue')
-        plt.plot(data.index, y_pred_combined_lin, label='Predicted curr_x', color='green')
-        plt.plot(data.index, loss, label='error Naive model', color='red')
-        plt.xlabel('Index')
-        plt.ylabel('Value')
-        plt.title(f'Zeitlicher Verlauf von Strom, Vorhersage und Fehler für {file}')
-        plt.legend()
-        plt.show()
-
-        color_values = np.clip(loss, -0.5, 0.5)
-        plot_2d_with_color(x_values, y_values, color_values, label='error', title=file + 'sign(v_x)',
-                           dpi=300)
+    params_combined_lin, _ = curve_fit(combined_model_linear_3, (f_x, np.sign(v_x), a_x), y, p0=initial_params_combined_lin)
+    y_pred_combined_lin = combined_model_linear_3((f_x, np.sign(v_x), a_x), *params_combined_lin)
+    mae_combined_lin = calculate_mae(y, y_pred_combined_lin)
+    mae_values.append(mae_combined_lin)
 
 
-        data['loss'] = loss
-        # Berechne die Korrelationsmatrix für curr_x
-        corr_matrix = data[['loss', 'mrr_x', 'mrr_y', 'materialremoved_sim', 'v_y', 'f_y_sim', 'curr_y', 'v_z', 'f_z_sim', 'curr_z', 'f_sp_sim', 'curr_sp']].corr()
+    # Plotte den zeitlichen Verlauf des Stroms, der Vorhersage und des Fehlers
+    loss = y - y_pred_combined_lin
+    plt.figure(figsize=(12, 6))
+    plt.plot(data.index, y, label='curr_x', color='blue')
+    plt.plot(data.index, y_pred_combined_lin, label='Predicted curr_x', color='green')
+    plt.plot(data.index, loss, label='error Naive model', color='red')
+    plt.xlabel('Index')
+    plt.ylabel('Value')
+    plt.title(f'Zeitlicher Verlauf von Strom, Vorhersage und Fehler für {file}')
+    plt.legend()
+    plt.show()
 
-        # Plotte die Korrelationsmatrix
-        plt.figure(figsize=(10, 8))
-        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-        plt.title(f'{file}: Korrelationsmatrix für curr_x und andere Komponenten')
-        plt.show()
+    color_values = np.clip(loss, -0.5, 0.5)
+    plot_2d_with_color(x_values, y_values, color_values, label='error', title=file + 'sign(v_x)',
+                       dpi=300)
 
-        fig, axs = plt.subplots(3, 1, figsize=(12, 10), sharex=True)
 
-        # 1. Plot: loss vs. materialremoved_sim
-        ax1 = axs[0]
-        ax2 = ax1.twinx()
-        ax1.plot(data.index, data['loss'], label='loss', color='red')
-        ax2.plot(data.index, data['materialremoved_sim'], label='materialremoved_sim', color='blue')
-        ax1.set_ylabel('loss', color='red')
-        ax2.set_ylabel('materialremoved_sim', color='blue')
-        ax1.set_title(f'{file} - Zeitverlauf: loss & materialremoved_sim')
+    data['loss'] = loss
+    # Berechne die Korrelationsmatrix für curr_x
+    corr_matrix = data[['loss', 'mrr_x', 'mrr_y', 'materialremoved_sim', 'v_y', 'f_y_sim', 'curr_y', 'v_z', 'f_z_sim', 'curr_z', 'f_sp_sim', 'curr_sp']].corr()
 
-        # 2. Plot: loss vs. mrr_x
-        ax1 = axs[1]
-        ax2 = ax1.twinx()
-        ax1.plot(data.index, data['loss'], label='loss', color='red')
-        ax2.plot(data.index, data['mrr_x'], label='mrr_x', color='green')
-        ax1.set_ylabel('loss', color='red')
-        ax2.set_ylabel('mrr_x', color='green')
-        ax1.set_title(f'{file} - Zeitverlauf: loss & mrr_x')
+    # Plotte die Korrelationsmatrix
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title(f'{file}: Korrelationsmatrix für curr_x und andere Komponenten')
+    plt.show()
 
-        # 3. Plot: loss vs. mrr_y
-        ax1 = axs[2]
-        ax2 = ax1.twinx()
-        ax1.plot(data.index, data['loss'], label='loss', color='red')
-        ax2.plot(data.index, data['mrr_y'], label='mrr_y', color='purple')
-        ax1.set_ylabel('loss', color='red')
-        ax2.set_ylabel('mrr_y', color='purple')
-        ax1.set_xlabel('Index')
-        ax1.set_title(f'{file} - Zeitverlauf: loss & mrr_y')
+    fig, axs = plt.subplots(3, 1, figsize=(12, 10), sharex=True)
 
-        plt.tight_layout()
-        plt.show()
+    # 1. Plot: loss vs. materialremoved_sim
+    ax1 = axs[0]
+    ax2 = ax1.twinx()
+    ax1.plot(data.index, data['loss'], label='loss', color='red')
+    ax2.plot(data.index, data['materialremoved_sim'], label='materialremoved_sim', color='blue')
+    ax1.set_ylabel('loss', color='red')
+    ax2.set_ylabel('materialremoved_sim', color='blue')
+    ax1.set_title(f'{file} - Zeitverlauf: loss & materialremoved_sim')
 
-        fig, axs = plt.subplots(1, 3, figsize=(18, 5))
+    # 2. Plot: loss vs. mrr_x
+    ax1 = axs[1]
+    ax2 = ax1.twinx()
+    ax1.plot(data.index, data['loss'], label='loss', color='red')
+    ax2.plot(data.index, data['mrr_x'], label='mrr_x', color='green')
+    ax1.set_ylabel('loss', color='red')
+    ax2.set_ylabel('mrr_x', color='green')
+    ax1.set_title(f'{file} - Zeitverlauf: loss & mrr_x')
 
-        axs[0].scatter(data['materialremoved_sim'], data['loss'], s=5, alpha=0.5, c='blue')
-        axs[0].set_xlabel('materialremoved_sim')
-        axs[0].set_ylabel('loss')
-        axs[0].set_title(f'{file} - Scatter: loss vs. materialremoved_sim')
+    # 3. Plot: loss vs. mrr_y
+    ax1 = axs[2]
+    ax2 = ax1.twinx()
+    ax1.plot(data.index, data['loss'], label='loss', color='red')
+    ax2.plot(data.index, data['mrr_y'], label='mrr_y', color='purple')
+    ax1.set_ylabel('loss', color='red')
+    ax2.set_ylabel('mrr_y', color='purple')
+    ax1.set_xlabel('Index')
+    ax1.set_title(f'{file} - Zeitverlauf: loss & mrr_y')
 
-        axs[1].scatter(data['mrr_x'], data['loss'], s=5, alpha=0.5, c='green')
-        axs[1].set_xlabel('mrr_x')
-        axs[1].set_ylabel('loss')
-        axs[1].set_title(f'{file} - Scatter: loss vs. mrr_x')
+    plt.tight_layout()
+    plt.show()
 
-        axs[2].scatter(data['mrr_y'], data['loss'], s=5, alpha=0.5, c='purple')
-        axs[2].set_xlabel('mrr_y')
-        axs[2].set_ylabel('loss')
-        axs[2].set_title(f'{file} - Scatter: loss vs. mrr_y')
+    fig, axs = plt.subplots(1, 3, figsize=(18, 5))
 
-        plt.tight_layout()
-        plt.show()
+    axs[0].scatter(data['materialremoved_sim'], data['loss'], s=5, alpha=0.5, c='blue')
+    axs[0].set_xlabel('materialremoved_sim')
+    axs[0].set_ylabel('loss')
+    axs[0].set_title(f'{file} - Scatter: loss vs. materialremoved_sim')
+
+    axs[1].scatter(data['mrr_x'], data['loss'], s=5, alpha=0.5, c='green')
+    axs[1].set_xlabel('mrr_x')
+    axs[1].set_ylabel('loss')
+    axs[1].set_title(f'{file} - Scatter: loss vs. mrr_x')
+
+    axs[2].scatter(data['mrr_y'], data['loss'], s=5, alpha=0.5, c='purple')
+    axs[2].set_xlabel('mrr_y')
+    axs[2].set_ylabel('loss')
+    axs[2].set_title(f'{file} - Scatter: loss vs. mrr_y')
+
+    plt.tight_layout()
+    plt.show()
 
 
 

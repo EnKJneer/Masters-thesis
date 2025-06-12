@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 import torch
+from numpy.f2py.auxfuncs import throw_error
 from torch import nn
 import Helper.handling_data as hdata
 import Helper.handling_plots as hplot
@@ -42,7 +43,17 @@ class CustomDataLoader(hdata.DataclassCombinedTrainVal):
             series = series.reset_index(drop=True)
 
             # Erstelle eine Maske basierend auf der Bedingung
-            mask = abs(df['v_x_1_current']) < threshold
+            if self.target_channels[0] == 'curr_x':
+                mask = abs(df['v_x_1_current']) < threshold
+            elif self.target_channels[0] == 'curr_y':
+                mask = abs(df['v_y_1_current']) < threshold
+            elif self.target_channels[0] == 'curr_z':
+                mask = abs(df['v_z_1_current']) < threshold
+            elif self.target_channels[0] == 'curr_sp':
+                mask = abs(df['v_sp_1_current']) < threshold
+            else:
+                throw_error('Please select a valid target channel.')
+
 
             # Filtere den DataFrame basierend auf der Maske
             filtered_df = df[mask].reset_index(drop=True)
@@ -125,6 +136,62 @@ class CustomDataLoader(hdata.DataclassCombinedTrainVal):
 
         return self.prepare_output(all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test)
 
+    def load_raw_test_data(self):
+        """
+        Loads and preprocesses the full dataframe.
+        Applies a rolling mean to the data and adjusts the dataset based on specified past and future values.
+
+        Parameters
+        ----------
+        paths: list of str
+            A list of paths to the data files.
+
+        Returns
+        -------
+        tuple
+            A list containing the raw data:
+            - datas : list of pd.DataFrame
+                Preprocessed test data with rolling mean applied.
+        """
+        threshold = 0.01
+        # Getting validation data to right format:
+        fulltestdatas = hdata.read_fulldata(self.testing_data_paths, self.folder)
+
+        # Apply rolling mean to each DataFrame in the lists
+        test_datas = hdata.apply_action(fulltestdatas,
+                                  lambda data: data.rolling(window=self.window_size, min_periods=1).mean())
+
+        if self.past_values + self.future_values != 0:
+            test_datas = hdata.apply_action(test_datas, lambda target: target.iloc[self.past_values:-self.future_values])
+
+        # Initialisiere leere Listen für die gefilterten Daten
+        filtered_X_test = []
+
+        # Iteriere über die DataFrames und Serien und filtere sie
+        for df in test_datas:
+            # Stelle sicher, dass die Indizes übereinstimmen
+            df = df.reset_index(drop=True)
+
+            # Erstelle eine Maske basierend auf der Bedingung
+            if self.target_channels[0] == 'curr_x':
+                mask = abs(df['v_x']) < threshold
+            elif self.target_channels[0] == 'curr_y':
+                mask = abs(df['v_y']) < threshold
+            elif self.target_channels[0] == 'curr_z':
+                mask = abs(df['v_z']) < threshold
+            elif self.target_channels[0] == 'curr_sp':
+                mask = abs(df['v_sp']) < threshold
+            else:
+                throw_error('Please select a valid target channel.')
+
+            # Filtere den DataFrame basierend auf der Maske
+            filtered_df = df[mask].reset_index(drop=True)
+
+            filtered_X_test.append(filtered_df)
+
+        # Überschreibe die ursprünglichen Listen mit den gefilterten Daten
+        test_datas = filtered_X_test
+        return test_datas
 
 if __name__ == "__main__":
     """ Constants """
@@ -159,11 +226,12 @@ if __name__ == "__main__":
     dataClass_2.window_size = window_size
     dataClass_2.past_values = past_values
     dataClass_2.future_values = future_values
+    dataClass_2.target_channels = ['curr_y']
     dataSets_list = [dataClass_2] # dataClass_1
 
     experiment_results = hexp.run_experiment(dataSets_list, True, False, [model_rf],
                         NUMBEROFEPOCHS, NUMBEROFMODELS, past_values, future_values,n_drop_values=25,
-                        plot_types=['heatmap', 'prediction_overview'])
+                        plot_types=['heatmap', 'prediction_overview', 'geometry_mae'])
     # 'heatmap_std', , 'geometry_mae', 'force_mae', 'mrr_mae'
 
     # Zugriff auf Ergebnisse

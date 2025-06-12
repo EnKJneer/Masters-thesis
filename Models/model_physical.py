@@ -298,8 +298,8 @@ class ModelZhou(mb.BaseModel, nn.Module):
         }}
         return documentation
 
-class BasePhysicalModel(mb.BaseModel, nn.Module):
-    def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=1, optimizer_type='quasi_newton'):
+class BasePhysicalModel(mb.BaseModel, nn.Module, ABC):
+    def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=1, optimizer_type='quasi_newton', target_channel = 'curr_x'):
         """
         Initializes the base neural network model with common attributes.
 
@@ -324,6 +324,17 @@ class BasePhysicalModel(mb.BaseModel, nn.Module):
         self.optimizer_type = optimizer_type
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
+        self.target_channel = target_channel
+        if target_channel == 'curr_x':
+            self.axis = 1
+        elif target_channel == 'curr_y':
+            self.axis = 2
+        elif target_channel == 'curr_z':
+            self.axis = 3
+        elif target_channel == 'curr_sp':
+            self.axis = 0
+        else:
+            throw_error('Pleas select an valid target channel.')
 
     def criterion(self, y_target, y_pred):
         criterion = nn.MSELoss()
@@ -583,15 +594,16 @@ class PhysicalModelErd(BasePhysicalModel):
             "hyperparameters": {
                 "learning_rate": self.learning_rate,
                 "optimizer_type": self.optimizer_type,
+                'target_channel': self.target_channel,
                 **theta_dict
             }
         }
         return documentation
 
 class PhysicalModelErdSingleAxis(BasePhysicalModel):
-    def __init__(self, c_1=1e-4, c_2=1e-3, c_3=1e-7, c_4=1e-1, c_5=1e-3, learning_rate=1, optimizer_type='quasi_newton',
-                 name="Physical_Model_Single_Axis"):
-        super(PhysicalModelErdSingleAxis, self).__init__()
+    def __init__(self, *args, c_1=1e-4, c_2=1e-3, c_3=1e-7, c_4=1e-1, c_5=1e-3, learning_rate=1, optimizer_type='quasi_newton',
+                 name="Physical_Model_Single_Axis",  **kwargs):
+        super(PhysicalModelErdSingleAxis, self).__init__(*args, **kwargs)
         self.initial_params = {"c_1": c_1, "c_2": c_2, "c_3": c_3, "c_4": c_4, "c_5": c_5}
         self.c_1 = nn.Parameter(torch.tensor(c_1, dtype=torch.float32))
         self.c_2 = nn.Parameter(torch.tensor(c_2, dtype=torch.float32))
@@ -617,12 +629,12 @@ class PhysicalModelErdSingleAxis(BasePhysicalModel):
             self.c_4.copy_(torch.tensor(self.initial_params["c_4"], dtype=torch.float32))
             self.c_5.copy_(torch.tensor(self.initial_params["c_5"], dtype=torch.float32))
 
-    def forward(self, input_vector, axis=1):
+    def forward(self, input_vector):
         acceleration, velocity, force, MRR = self.get_input_vector_from_tensor(input_vector)
-        if axis is not None and len(acceleration) > 1:
-            acceleration = acceleration[axis]
-            velocity = velocity[axis]
-            force = force[axis]
+        if self.axis is not None and len(acceleration) > 1:
+            acceleration = acceleration[self.axis]
+            velocity = velocity[self.axis]
+            force = force[self.axis]
         movment = self.c_1 * acceleration * velocity + self.c_2 * velocity ** 2 * torch.sign(velocity)
         material = self.c_3 * force * MRR
         current = movment + material + self.c_4 * torch.sign(velocity) + self.c_5 # shape: [4, T]
@@ -653,11 +665,10 @@ class PhysicalModelErdSingleAxis(BasePhysicalModel):
         }
         return documentation
 
-
 class NaiveModelSigmoid(BasePhysicalModel):
-    def __init__(self, input_size=None, output_size=1, name="Naive_Model_Sigmoid", learning_rate=1,
-                 optimizer_type='quasi_newton', a1 = -1, b1 = 0, a2 = -1, b2 = 0, c2 = 0, a3 = -1):
-        super(NaiveModelSigmoid, self).__init__(input_size, output_size, name, learning_rate, optimizer_type)
+    def __init__(self, *args, name="Naive_Model_Sigmoid", learning_rate=1,
+                 optimizer_type='quasi_newton', a1 = -1, b1 = 0, a2 = -1, b2 = 0, c2 = 0, a3 = -1,  **kwargs):
+        super(NaiveModelSigmoid, self).__init__(*args, name=name, learning_rate=learning_rate, optimizer_type=optimizer_type, **kwargs)
 
         self.initial_params = {"a1": a1, "b1": b1, "a2": a2, "b2": b2, "c2": c2, "a3": a3}
         self.a1 = nn.Parameter(torch.tensor(a1, dtype=torch.float32))
@@ -701,16 +712,14 @@ class NaiveModelSigmoid(BasePhysicalModel):
         acceleration, velocity, force, MRR = self.get_input_vector_from_tensor(x)
 
         # Sicherstellen, dass die Eingaben Tensors sind
-        force_x = force[1] if isinstance(force[1], torch.Tensor) else torch.tensor(force[1], dtype=torch.float32,
+        force_x = force[self.axis] if isinstance(force[self.axis], torch.Tensor) else torch.tensor(force[self.axis], dtype=torch.float32,
                                                                                    device=self.device)
-        velocity_x = velocity[1] if isinstance(velocity[1], torch.Tensor) else torch.tensor(velocity[1],
+        velocity_x = velocity[self.axis] if isinstance(velocity[self.axis], torch.Tensor) else torch.tensor(velocity[self.axis],
                                                                                             dtype=torch.float32,
                                                                                             device=self.device)
-
-        acceleration_x = acceleration[1] if isinstance(acceleration[1], torch.Tensor) else torch.tensor(acceleration[1],
-                                                                                                        dtype=torch.float32,
-                                                                                                        device=self.device)
-
+        acceleration_x = acceleration[self.axis] if isinstance(acceleration[self.axis], torch.Tensor) else torch.tensor(acceleration[self.axis],
+                                                                                            dtype=torch.float32,
+                                                                                            device=self.device)
 
         y_force = self.a1 * force_x + self.b1
         y_acceleration = self.a3 * acceleration_x
@@ -770,6 +779,7 @@ class NaiveModelSigmoid(BasePhysicalModel):
             "hyperparameters": {
                 "learning_rate": self.learning_rate,
                 "optimizer_type": self.optimizer_type,
+                'target_channel': self.target_channel,
                 **self.initial_params,
             },
             "description": "This model combines a linear and a numerically stable sigmoid function."
@@ -777,9 +787,9 @@ class NaiveModelSigmoid(BasePhysicalModel):
         return documentation
 
 class NaiveModel(BasePhysicalModel):
-    def __init__(self, input_size=None, output_size=1, name="Naive_Model", learning_rate=1,
-                 optimizer_type='quasi_newton', a1 = -1e-3, a2 = -1e-3,  a3 = -1e-1, b = 1e-2):
-        super(NaiveModel, self).__init__(input_size, output_size, name, learning_rate, optimizer_type)
+    def __init__(self,*args, name="Naive_Model", learning_rate=1,
+                 optimizer_type='quasi_newton', a1 = -1e-3, a2 = -1e-3,  a3 = -1e-1, b = 1e-2, **kwargs):
+        super(NaiveModel, self).__init__(*args, name = name, learning_rate=learning_rate, optimizer_type=optimizer_type, **kwargs)
 
         # VIEL kleinere und sicherere Initialwerte
         self.initial_params = {"a1": a1, "a2": a2, "a3": a3, "b": b}
@@ -802,12 +812,12 @@ class NaiveModel(BasePhysicalModel):
         acceleration, velocity, force, MRR = self.get_input_vector_from_tensor(x)
 
         # Sicherstellen, dass die Eingaben Tensors sind
-        force_x = force[1] if isinstance(force[1], torch.Tensor) else torch.tensor(force[1], dtype=torch.float32,
+        force_x = force[self.axis] if isinstance(force[self.axis], torch.Tensor) else torch.tensor(force[self.axis], dtype=torch.float32,
                                                                                    device=self.device)
-        velocity_x = velocity[1] if isinstance(velocity[1], torch.Tensor) else torch.tensor(velocity[1],
+        velocity_x = velocity[self.axis] if isinstance(velocity[self.axis], torch.Tensor) else torch.tensor(velocity[self.axis],
                                                                                             dtype=torch.float32,
                                                                                             device=self.device)
-        acceleration_x = acceleration[1] if isinstance(acceleration[1], torch.Tensor) else torch.tensor(acceleration[1],
+        acceleration_x = acceleration[self.axis] if isinstance(acceleration[self.axis], torch.Tensor) else torch.tensor(acceleration[self.axis],
                                                                                             dtype=torch.float32,
                                                                                             device=self.device)
         # NaN-Checks für Inputs
@@ -883,8 +893,143 @@ class NaiveModel(BasePhysicalModel):
             "hyperparameters": {
                 "learning_rate": self.learning_rate,
                 "optimizer_type": self.optimizer_type,
+                'target_channel': self.target_channel,
                 **self.initial_params,
             },
-            "description": "This model combines a linear and a  quadratic function."
+            "description": "This model combines a linear functions."
+        }
+        return documentation
+
+class NaiveModel2(BasePhysicalModel):
+    def __init__(self,*args, name="Naive_Model", learning_rate=1,
+                 optimizer_type='quasi_newton', a1 = -1e-3, a2 = -1e-3,  a3 = -1e-1, b = 1e-2, **kwargs):
+        super(NaiveModel2, self).__init__(*args, name = name, learning_rate=learning_rate, optimizer_type=optimizer_type, **kwargs)
+
+        # VIEL kleinere und sicherere Initialwerte
+        self.initial_params = {"a1": a1, "a2": a2, "a3": a3, "b": b}
+        self.a1 = nn.Parameter(torch.tensor(a1, dtype=torch.float32))
+        self.a2 = nn.Parameter(torch.tensor(a2, dtype=torch.float32))
+        self.a3 = nn.Parameter(torch.tensor(a3, dtype=torch.float32))
+        self.b = nn.Parameter(torch.tensor(b, dtype=torch.float32))
+
+        self.to(self.device)
+
+    def _initialize(self):
+        """Setzt die Parameter auf die initial übergebenen Werte zurück."""
+        with torch.no_grad():
+            self.a1.copy_(torch.tensor(self.initial_params["a1"], dtype=torch.float32))
+            self.a2.copy_(torch.tensor(self.initial_params["a2"], dtype=torch.float32))
+            self.a3.copy_(torch.tensor(self.initial_params["a3"], dtype=torch.float32))
+            self.b.copy_(torch.tensor(self.initial_params["b"], dtype=torch.float32))
+
+    def get_input_vector_from_tensor(self, input_vector):
+        if type(input_vector) is list:
+            [acceleration, velocity, force, MRR] = input_vector # shape: [4, T] je Achse
+        elif type(input_vector) is torch.Tensor:
+            if input_vector.shape[1] == 14:
+                input_vector = input_vector.T
+                acceleration = [input_vector[0,:], input_vector[1,:], input_vector[2,:], input_vector[3,:]]
+                force = [input_vector[4, :], input_vector[5, :], input_vector[6, :], input_vector[7, :]]
+                MRR = input_vector[8, :]
+                velocity = [input_vector[9,:], input_vector[10,:], input_vector[11,:], input_vector[12,:]]
+                y = input_vector[13, :]
+            elif input_vector.shape[1] == 5:  # Wenn mit NaiveModel-Prediction
+                [acceleration, force, MRR, velocity, y] = input_vector.T
+            else:
+                throw_error(f'input_vector shape {input_vector.shape}, wrong shape')
+        else:
+            throw_error(f'input_vector is of type {type(input_vector)} but should be of type list or torch.tensor')
+
+        return acceleration, velocity, force, MRR, y
+
+    def forward(self, x):
+        acceleration, velocity, force, MRR, y = self.get_input_vector_from_tensor(x)
+
+        # Sicherstellen, dass die Eingaben Tensors sind
+        force_x = force[self.axis] if isinstance(force[self.axis], torch.Tensor) else torch.tensor(force[self.axis], dtype=torch.float32,
+                                                                                   device=self.device)
+        velocity_x = velocity[self.axis] if isinstance(velocity[self.axis], torch.Tensor) else torch.tensor(velocity[self.axis],
+                                                                                            dtype=torch.float32,
+                                                                                            device=self.device)
+        acceleration_x = acceleration[self.axis] if isinstance(acceleration[self.axis], torch.Tensor) else torch.tensor(acceleration[self.axis],
+                                                                                            dtype=torch.float32,
+                                                                                            device=self.device)
+        # NaN-Checks für Inputs
+        if torch.isnan(force_x).any():
+            print("ERROR: NaN in force_y input!")
+            return torch.full_like(force_x, 0.0)
+        if torch.isnan(velocity_x).any():
+            print("ERROR: NaN in velocity_y input!")
+            return torch.full_like(velocity_x, 0.0)
+
+        # Parameter-Checks
+        if torch.isnan(self.a1) or torch.isnan(self.a3):
+            print("ERROR: NaN in linear parameters!")
+            return torch.full_like(force_x, 0.0)
+
+        if torch.isnan(self.a2) or torch.isnan(self.b):
+            print("ERROR: NaN in sigmoid parameters!")
+            return torch.full_like(force_x, 0.0)
+
+        y_force = self.a1 * force_x
+        y_acceleration = self.a2 * acceleration_x
+        y_v = self.a3 * y
+
+        # Finale Addition mit Schutz
+        result = y_force + y_acceleration + y_v + self.b
+        if torch.isnan(result).any() or torch.isinf(result).any():
+            print("ERROR: Final result has NaN/Inf!")
+            result = torch.clamp(result, min=-1e6, max=1e6)
+            result = torch.nan_to_num(result, nan=0.0, posinf=1e6, neginf=-1e6)
+
+        return result
+
+    def criterion(self, y_target, y_pred):
+        """Robuste Loss-Funktion mit NaN-Handling"""
+        # Shapes angleichen
+        y_target = y_target.squeeze()
+        y_pred = y_pred.squeeze()
+
+        # Debug: Shapes prüfen
+        if y_target.shape != y_pred.shape:
+            print(f"Shape mismatch: y_target {y_target.shape}, y_pred {y_pred.shape}")
+            # Kleinere Dimension erweitern
+            if y_target.dim() < y_pred.dim():
+                y_target = y_target.unsqueeze(-1)
+            elif y_pred.dim() < y_target.dim():
+                y_pred = y_pred.unsqueeze(-1)
+
+        # NaN-Werte identifizieren (elementweise)
+        nan_mask_pred = torch.isnan(y_pred)
+        nan_mask_target = torch.isnan(y_target)
+        mask = ~(nan_mask_pred | nan_mask_target)
+
+        # Prüfen ob überhaupt gültige Werte vorhanden sind
+        if mask.sum() == 0:
+            print("Warning: All values are NaN!")
+            return torch.tensor(1e6, requires_grad=True, device=self.device)
+
+        # Nur gültige Werte verwenden
+        y_pred_clean = y_pred[mask]
+        y_target_clean = y_target[mask]
+
+        # MSE Loss berechnen
+        mse_loss = nn.MSELoss()(y_target_clean, y_pred_clean)
+
+        # Extreme Losses clippen
+        if mse_loss > 1e6:
+            mse_loss = torch.tensor(1e6, requires_grad=True, device=self.device)
+
+        return mse_loss
+
+    def get_documentation(self):
+        documentation = {
+            "hyperparameters": {
+                "learning_rate": self.learning_rate,
+                "optimizer_type": self.optimizer_type,
+                'target_channel': self.target_channel,
+                **self.initial_params,
+            },
+            "description": "This model combines a linear functions."
         }
         return documentation

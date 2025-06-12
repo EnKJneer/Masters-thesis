@@ -72,7 +72,9 @@ df_merged = df_naive.copy()
 df_merged = df_merged.merge(df_moirai, on=common_columns, how='left')
 df_merged = df_merged.merge(df_rf, on=common_columns, how='left')
 df_merged = df_merged.merge(df_rnn, on=common_columns, how='left')
-
+#df_merged = df_merged[(df_merged['materialremoved_sim'] >= 300) & (df_merged['materialremoved_sim'] <= 400)]
+df_merged['mrr_x'] = df_merged['materialremoved_sim'] * df_merged['v_x'] /(np.abs(df_merged['v_x']) + np.abs(df_merged['v_y']))
+df_merged['mrr_y'] = df_merged['materialremoved_sim'] * df_merged['v_y'] /(np.abs(df_merged['v_x']) + np.abs(df_merged['v_y']))
 # Remove specified columns
 columns_to_remove = ['PK_TrainVal_Neural_Net_y', 'PK_TrainVal_Random_Forest', 'PK_TrainVal_Physical_Model_Single_Axis']
 df_merged = df_merged.drop(columns=[col for col in columns_to_remove if col in df_merged.columns])
@@ -161,11 +163,40 @@ fig.tight_layout()
 plt.show()
 
 # List of columns to plot against 'mean_dev'
-columns_to_plot = ['v_x', 'v_y', 'v_z', 'a_x', 'curr_x', 'curr_y', 'curr_sp', 'f_x_sim', 'f_y_sim', 'f_z_sim', 'f_sp_sim', 'materialremoved_sim']
+columns_to_plot = ['v_x', 'v_y', 'a_x', 'a_y', 'curr_y', 'curr_sp', 'f_x_sim', 'f_y_sim', 'f_z_sim', 'f_sp_sim','mrr_x', 'mrr_y', 'materialremoved_sim']
 
 # Filter data where 'v_x' is approximately 0
 threshold = 0.01  # Define a threshold for 'v_x' being approximately 0
-df_filtered = df_cleaned[abs(df_cleaned['v_x']) < threshold]
+df_filtered = df_cleaned[abs(df_cleaned['v_x']) < threshold].reset_index(drop=True)
+
+# Plot temporal progression of 'v_x' and 'mean_dev' with separate axes
+
+labels = columns_to_plot # ['materialremoved_sim', 'f_x_sim', 'f_z_sim', 'curr_sp', 'curr_y', 'v_y']
+for label in labels:
+    fig, ax1 = plt.subplots(figsize=(14, 6))
+    # Plot 'v_x' on the first axis
+    color = 'tab:blue'
+    ax1.set_xlabel('Index')
+    ax1.set_ylabel(label, color=color)
+    ax1.plot(df_filtered[label], label=label, color=color)
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.grid(True)
+
+    # Create a second y-axis with the same x-axis
+    ax2 = ax1.twinx()
+
+    # Plot 'mean_dev' on the second axis
+    color = 'tab:red'
+    ax2.set_ylabel('curr_x', color=color)
+    ax2.plot(df_filtered['curr_x'], label='curr_x', color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
+
+    # Set the title
+    plt.title(f'Temporal Progression of {label} and curr_x')
+
+    # Show the plot
+    fig.tight_layout()
+    plt.show()
 
 # Calculate the correlation matrix for the filtered data
 correlation_matrix = df_filtered[columns_to_plot + ['mean_dev']].corr()
@@ -185,7 +216,8 @@ def plot_scatter(df, x_col, y_col, x_label, y_label, title):
     plt.title(title)
     plt.grid(True)
     plt.show()
-
+"""
 # Create scatter plots for the filtered data
 for col in columns_to_plot:
     plot_scatter(df_filtered, col, 'mean_dev', col, 'Mean Deviation', f'{col} vs Mean Deviation (v_x ≈ 0)')
+"""

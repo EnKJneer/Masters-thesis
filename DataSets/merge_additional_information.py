@@ -37,7 +37,34 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     plt.savefig(filename + '.png')
     # Anzeigen des Plots
     #plt.show()
+def plot_time_series(data, filename, title, dpi=300):
+    """
+    Erstellt einen Zeitverlaufsplot mit zwei y-Achsen.
 
+    :param data: DataFrame mit den Daten
+    :param filename: Dateiname zum Speichern des Plots
+    :param title: Titel des Plots
+    :param dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
+    """
+    fig, ax1 = plt.subplots(figsize=(10, 6), dpi=dpi)
+
+    # Plot der CTRL_DIFF, CTRL_DIFF2 und Cont_DEV_X Daten
+    ax1.plot(data['Zeit'], data['CTRL_DIFF_X'], label='CTRL_DIFF_X', color='tab:blue')
+    ax1.plot(data['Zeit'], data['CTRL_DIFF2_X'], label='CTRL_DIFF2_X', color='tab:orange')
+    ax1.plot(data['Zeit'], data['CONT_DEV_X'], label='CONT_DEV_X', color='tab:green')
+    ax1.set_xlabel('Zeit')
+    ax1.set_ylabel('Werte')
+    ax1.set_title(title)
+    ax1.legend(loc='upper left')
+
+    # Zweite y-Achse für curr_x
+    ax2 = ax1.twinx()
+    ax2.plot(data['Zeit'], data['CURRENT_X'], label='CURRENT_X', color='tab:red')
+    ax2.set_ylabel('CURRENT_X')
+    ax2.legend(loc='upper right')
+
+    plt.savefig(filename + '.png')
+    plt.close()
 path_additional_data = 'AdditionalDataFiltered'
 path_data = 'DataFiltered'
 
@@ -76,3 +103,7 @@ for file in os.listdir(path_additional_data):
     color_values = values
     label = '|CTRL_DIFF2_X + CTRL_DIFF2_Y|'
     plot_2d_with_color(x_values, y_values, color_values, f'Plots/{file}_{key}', label = label, title = file, dpi = 600)
+
+    data_reduced['Zeit'] = np.arange(len(data_reduced))
+
+    plot_time_series(data_reduced, f'Plots/{file}_time_series', title=f'{file}')

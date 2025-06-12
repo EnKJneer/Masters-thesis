@@ -101,9 +101,9 @@ for filename in files:
                 plt.figure(figsize=(12, 8))
                 ax = plt.axes(projection='3d')  # Create a 3D axis
 
-                label = 'curr_y'
-                max_value = -4  # -3 for curr_y # 2 for curr_x
-                min_value = -7  # -7 for curr_y # -2 for curr_x
+                label = axis
+                max_value = 2  # -3 for curr_y # 2 for curr_x
+                min_value = -2  # -7 for curr_y # -2 for curr_x
                 color_values = np.clip(data[label], min_value, max_value)
 
                 # Scatter plot with three axes

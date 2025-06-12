@@ -17,7 +17,6 @@ def calculate_mae(y_true, y_pred):
 def sigmoid_basic(x):
     return 1 / (1 + np.exp(-x))
 
-
 def sign_hold(v_x):
     signs = np.sign(v_x)
     # Finde Indizes wo Vorzeichen != 0
