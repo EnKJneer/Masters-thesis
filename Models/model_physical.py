@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize, curve_fit
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 from sympy.physics.units import acceleration, velocity
 from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
@@ -1070,6 +1071,151 @@ class LuGreModelSciPy(mb.BaseModel):
                 "v_s": self.v_s,
                 "dt": self.dt,
                 "target_channel": self.target_channel
+            }
+        }
+        return documentation
+
+class FrictionModel(mb.BaseModel):
+    def __init__(self, name="Friction_Model", velocity_threshold=1e-6, acceleration_threshold=1e-6):
+        self.name = name
+        self.velocity_threshold = velocity_threshold
+        self.acceleration_threshold = acceleration_threshold
+        self.F_s = 0
+        self.a_s = 1
+        self.b_s = 0
+        self.F_c = 0
+        self.sigma_2 = 0
+        self.a_d = 1
+        self.a_b = 0
+        self.b_d = 0
+
+    def sign_hold(self, v_x):
+        signs = np.sign(v_x)
+        result = signs.copy()
+        for i in range(len(signs)):
+            if signs[i] == 0:
+                last_five_non_zero = []
+                j = i - 1
+                while j >= 0 and len(last_five_non_zero) < 5:
+                    if signs[j] != 0:
+                        last_five_non_zero.append(signs[j])
+                    j -= 1
+                if last_five_non_zero:
+                    sum_signs = np.sum(last_five_non_zero)
+                    result[i] = np.sign(sum_signs)
+        return result
+
+    def criterion(self, y_target, y_pred):
+        return np.mean(np.abs(y_target - y_pred))
+
+    def predict(self, X):
+        v_x = X['v_x_1_current'].values
+        a_x = X['a_x_1_current'].values
+        f_x_sim = X['f_x_sim_1_current'].values
+
+        stillstand_mask = (np.abs(v_x) <= self.velocity_threshold) & (np.abs(a_x) <= self.acceleration_threshold)
+        bewegung_mask = ~stillstand_mask
+
+        y_pred = np.zeros_like(v_x, dtype=float)
+        v_s = self.sign_hold(v_x)
+
+        y_pred[stillstand_mask] = (self.F_s * v_s[stillstand_mask] +
+                                   self.a_s * f_x_sim[stillstand_mask] +
+                                   self.b_s)
+
+        y_pred[bewegung_mask] = (self.F_c * np.sign(v_x[bewegung_mask]) +
+                                 self.sigma_2 * v_x[bewegung_mask] +
+                                 self.a_d * f_x_sim[bewegung_mask] +
+                                 self.a_b * a_x[bewegung_mask] +
+                                 self.b_d)
+
+        return y_pred
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        data = X_train.copy()
+        data['curr_x'] = y_train.values
+
+        params, _, _ = self.fit_friction_model(data)
+
+        self.F_s = params['F_s']
+        self.a_s = params['a_s']
+        self.b_s = params['b_s']
+        self.F_c = params['F_c']
+        self.sigma_2 = params['sigma_2']
+        self.a_d = params['a_d']
+        self.a_b = params['a_b']
+        self.b_d = params['b_d']
+
+        validation_loss = self.criterion(y_val.values.squeeze(), self.predict(X_val))
+        print(f"Validation Loss: {validation_loss:.4e}")
+        return validation_loss
+
+    def fit_friction_model(self, data):
+        v_x = data['v_x_1_current'].values
+        v_s = self.sign_hold(v_x)
+        a_x = data['a_x_1_current'].values
+        f_x_sim = data['f_x_sim_1_current'].values
+        curr_x = data['curr_x'].values
+
+        stillstand_mask = (np.abs(v_x) <= self.velocity_threshold) & (np.abs(a_x) <= self.acceleration_threshold)
+        bewegung_mask = ~stillstand_mask
+
+        params = {}
+
+        if np.sum(stillstand_mask) > 2:
+            X_stillstand = np.column_stack([v_s[stillstand_mask], f_x_sim[stillstand_mask], np.ones(np.sum(stillstand_mask))])
+            y_stillstand = curr_x[stillstand_mask]
+            reg_stillstand = LinearRegression(fit_intercept=False)
+            reg_stillstand.fit(X_stillstand, y_stillstand)
+            params['F_s'] = reg_stillstand.coef_[0]
+            params['a_s'] = reg_stillstand.coef_[1]
+            params['b_s'] = reg_stillstand.coef_[2]
+        else:
+            print("Warnung: Nicht genügend Stillstandspunkte für Fitting")
+            params['F_s'] = 0
+            params['a_s'] = 1
+            params['b_s'] = 0
+
+        if np.sum(bewegung_mask) > 4:
+            X_bewegung = np.column_stack([np.sign(v_x[bewegung_mask]), v_x[bewegung_mask], f_x_sim[bewegung_mask], a_x[bewegung_mask], np.ones(np.sum(bewegung_mask))])
+            y_bewegung = curr_x[bewegung_mask]
+            reg_bewegung = LinearRegression(fit_intercept=False)
+            reg_bewegung.fit(X_bewegung, y_bewegung)
+            params['F_c'] = reg_bewegung.coef_[0]
+            params['sigma_2'] = reg_bewegung.coef_[1]
+            params['a_d'] = reg_bewegung.coef_[2]
+            params['a_b'] = reg_bewegung.coef_[3]
+            params['b_d'] = reg_bewegung.coef_[4]
+        else:
+            print("Warnung: Nicht genügend Bewegungspunkte für Fitting")
+            params['F_c'] = 0
+            params['sigma_2'] = 0
+            params['a_d'] = 1
+            params['a_b'] = 0
+            params['b_d'] = 0
+
+        return params, stillstand_mask, bewegung_mask
+
+    def test_model(self, X, y_target):
+        prediction = self.predict(X)
+        loss = self.criterion(y_target.values.squeeze(), prediction)
+        return loss, prediction
+
+    def get_documentation(self):
+        documentation = {
+            "description": "This model fits a two-stage friction model: stillstand and movement.",
+            "parameters": {
+                "name": self.name,
+                "velocity_threshold": self.velocity_threshold,
+                "acceleration_threshold": self.acceleration_threshold,
+                "F_s": self.F_s,
+                "a_s": self.a_s,
+                "b_s": self.b_s,
+                "F_c": self.F_c,
+                "sigma_2": self.sigma_2,
+                "a_d": self.a_d,
+                "a_b": self.a_b,
+                "b_d": self.b_d
             }
         }
         return documentation

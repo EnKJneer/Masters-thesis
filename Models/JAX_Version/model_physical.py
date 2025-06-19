@@ -280,7 +280,6 @@ class LuGreModelJAX(mb.BaseModel):
             }
         }
 
-
 class LuGreModelJAX2TwoStage(mb.BaseModel):
     def __init__(self, name="LuGre_Model_Jax_TwoStage",
                  a1=1e1, a2=1e1, a3=1, b=1e1,
