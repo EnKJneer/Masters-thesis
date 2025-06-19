@@ -46,7 +46,7 @@ dataSets = ''
 folder_path =  dataSets+'DataFiltered'
 files = os.listdir(folder_path)
 files = ['AL_2007_T4_Plate_Normal_3.csv']
-files = ['AL_2007_T4_Plate_Depth_2.csv', 'AL_2007_T4_Plate_Depth_1.csv']
+#files = ['AL_2007_T4_Plate_Depth_2.csv', 'AL_2007_T4_Plate_Depth_1.csv']
 for filename in files:
 
     data = pd.read_csv(os.path.join(folder_path, filename))

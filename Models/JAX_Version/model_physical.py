@@ -85,7 +85,7 @@ class LuGreModelJAX(mb.BaseModel):
     def g_fn(v, f_s, f_c, v_s):
         f_c_s = f_c #
         eps = 1e-8
-        return f_c_s + (f_s - f_c_s) * v_s  + eps #jnp.exp(-(v / v_s) ** 2)
+        return f_c_s + (f_s - f_c_s) * jnp.exp(-(v / 0.001) ** 2)  + eps #
 
     @staticmethod
     def step_fn(carry, inputs):
