@@ -1,0 +1,5 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+PK_TrainVal,AL_2007_T4_Gear_Normal_3,Neural_Net,Neural_Net_JAX,-8.846132436127427
+PK_TrainVal,AL_2007_T4_Plate_Normal_3,Neural_Net,Neural_Net_JAX,-3.6232340103252625
+PK_TrainVal,S235JR_Gear_Normal_3,Neural_Net,Neural_Net_JAX,-10.384955548785761
+PK_TrainVal,S235JR_Plate_Normal_3,Neural_Net,Neural_Net_JAX,-7.037433770657499

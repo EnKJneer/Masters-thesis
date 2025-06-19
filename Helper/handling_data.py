@@ -59,6 +59,12 @@ class BaseDataClass(ABC):
         tuple
             X_train, X_val, X_test, y_train, y_val, y_test
         """
+        if type(all_X_train) is not list:
+            all_X_train = [all_X_train]
+            all_y_train = [all_y_train]
+        if type(all_X_val) is not list:
+            all_X_val = [all_X_val]
+            all_y_val = [all_y_val]
         if self.keep_separate:
             return all_X_train, all_X_val, X_test, all_y_train, all_y_val, y_test
         else:
@@ -844,12 +850,46 @@ Combined_Gear_TrainVal = DataclassCombinedTrainVal('Gear_TrainVal', folder_data,
                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
                                                    dataPaths_Test,
                                                    ["curr_x"], )
-
+Combined_Plate_simple = DataClass('Plate', folder_data,
+                          ['AL_2007_T4_Plate_Normal_3.csv'],
+                          ['AL_2007_T4_Plate_Depth_2.csv'],
+                          [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_2.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv'],
+                          ["curr_x"], keep_separate= True)
 Combined_Plate = DataClass('Plate', folder_data,
                           dataPaths_Train_Plate,
                           dataPaths_Val_KL,
                           dataPaths_Test,
                           ["curr_x"], )
+
+dataPaths_Test_Extended = [ 'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv',
+                            'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv',
+                            'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
+
+PPhys = DataClass('PPhys', folder_data,
+                        ['AL_2007_T4_Plate_Normal_2.csv'], #
+                          ['AL_2007_T4_Plate_Normal_1.csv'], #
+                          dataPaths_Test_Extended,
+                          ["curr_x"], )
+
+Combined_PPhys_SF = DataClass('PPhys_SF', folder_data,
+                        ['AL_2007_T4_Plate_Normal_2.csv', 'AL_2007_T4_Plate_SF_2.csv'], #
+                          ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Normal_1.csv'], #
+                          dataPaths_Test_Extended,
+                          ["curr_x"], )
+
+Combined_PPhys_Depth = DataClass('PPhys_Depth', folder_data,
+                        ['AL_2007_T4_Plate_Normal_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'], #
+                          ['AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Plate_Depth_1.csv'], #,  'AL_2007_T4_Gear_Depth_2.csv'
+                          dataPaths_Test_Extended,
+                          ["curr_x"], )
+
+Combined_PPhys = DataClass('Combined_PPhys', folder_data,
+                        ['AL_2007_T4_Plate_Normal_2.csv', 'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'], #
+                          ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Normal_1.csv',  'AL_2007_T4_Plate_Depth_1.csv'], #
+                          dataPaths_Test_Extended,
+                          ["curr_x"], )
+
+
 Combined_Plate_2 = DataClass('Plate_2', folder_data,
                             dataPaths_Train_Plate_sort,
                             dataPaths_Val_Plate,
@@ -883,6 +923,7 @@ Combined_PK_TrainVal = DataclassCombinedTrainVal('PK_TrainVal', folder_data,
                                                         ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
                                                   dataPaths_Test,
                                                   ["curr_x"], )
+
 
 Combined_KL = DataClass('KL', folder_data,
                         dataPaths_Val_KL,

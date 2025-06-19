@@ -25,7 +25,7 @@ class BaseModel(ABC):
         pass
 
     @abstractmethod
-    def test_model(self, X, y_target, criterion_test = None):
+    def test_model(self, X, y_target):
         pass
     @abstractmethod
     def get_documentation(self):

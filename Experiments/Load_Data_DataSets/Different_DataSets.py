@@ -222,7 +222,7 @@ if __name__ == "__main__":
                                                      dataPaths_Test,
                                                      ["curr_x"], )
 
-    dataClass_2 = Combined_PK_TrainVal
+    dataClass_2 = hdata.Combined_PK_TrainVal
     dataClass_2.window_size = window_size
     dataClass_2.past_values = past_values
     dataClass_2.future_values = future_values

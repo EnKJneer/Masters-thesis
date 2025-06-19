@@ -12,6 +12,7 @@ from datetime import datetime
 import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
+import Models.model_physical as mphys
 
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
 
@@ -840,7 +841,7 @@ def debug_results_structure(results: List):
 def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10,
                    past_values=2, future_values=2, batched_data=False,
-                   n_drop_values=20, patience=5, plot_types=None):
+                   n_drop_values=20, patience=5, plot_types=None, use_phys_reference=False):
     # In calculate_and_store_results Funktion:
     def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
                                     n_drop_values, raw_data):  # dataSets Parameter hinzufügen
@@ -913,26 +914,9 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
     if use_rf_reference:
         model_rf = mrf.get_reference()
         reference_models.append(model_rf)
-
-    # Add reference models to meta information
-    for model in reference_models:
-        model_info = {
-            model.name+"_Ensemble": {
-                "NUMBEROFMODELS": NUMBEROFMODELS,
-                **model.get_documentation()
-            },
-        }
-        meta_information["Models"].append(model_info)
-
-    # Add models to meta information
-    for model in models:
-        model_info = {
-            model.name+"_Ensemble": {
-                "NUMBEROFMODELS": NUMBEROFMODELS,
-                **model.get_documentation()
-            },
-        }
-        meta_information["Models"].append(model_info)
+    if use_phys_reference:
+        model = mphys.get_reference()
+        reference_models.append(model)
 
     # Add datasets to meta information
     for data_params in dataSets:
@@ -940,11 +924,6 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
             **data_params.get_documentation()
         }
         meta_information["DataSets"].append(data_info)
-
-    # Save the meta information to a JSON file
-    documentation = meta_information
-
-    """ Check if data_params.testing_data_paths is the same """
 
     """ Prediction """
     results = []
@@ -963,11 +942,12 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
             header_list = []
 
         # Train and test reference models
-        for model in reference_models:
+        for idx, model in enumerate(reference_models):
             # Modellvergleich auf neuen Daten
             nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
 
             for _ in range(NUMBEROFMODELS):
+                model = reference_models_copy[idx]
                 model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=patience)
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
@@ -978,7 +958,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                     mse, pred_nn = model.test_model(X_test, y_test)
                     nn_preds.append(pred_nn.flatten())
                     print(f"{model.name}: Test MAE: {mse}")
-                reference_models = reference_models_copy
+                reference_models[idx] = model
 
             # Fehlerberechnung
             calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
@@ -989,11 +969,12 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
         else:
             criterion = None
         # Train and test models
-        for model in models:
+        for idx, model in enumerate(models):
             # Modellvergleich auf neuen Daten
             nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
 
             for _ in range(NUMBEROFMODELS):
+                model = models_copy[idx]
                 model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
                 if hasattr(model, 'clear_active_experts_log'):
                     model.clear_active_experts_log()  # Clear the log for the next test
@@ -1016,16 +997,38 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                     if hasattr(model, 'plot_active_experts'):
                         model.plot_active_experts()
                         model.clear_active_experts_log()  # Clear the log for the next test
-
-                models = models_copy
-
+                models[idx] = model # save for documentation
             # Fehlerberechnung
             calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
                                         n_drop_values, raw_data)
 
     #debug_results_structure(results)
 
-    # ========== NEUE MODULARE PLOT-ERSTELLUNG ==========
+
+    # After training to include learned parameters
+    # Add reference models to meta information
+    for model in reference_models:
+        model_info = {
+            model.name: {
+                "NUMBEROFMODELS": NUMBEROFMODELS,
+                **model.get_documentation()
+            },
+        }
+        meta_information["Models"].append(model_info)
+    # Add models to meta information
+    for model in models:
+        model_info = {
+            model.name: {
+                "NUMBEROFMODELS": NUMBEROFMODELS,
+                **model.get_documentation()
+            },
+        }
+        meta_information["Models"].append(model_info)
+
+    # Save the meta information to a JSON file
+    documentation = meta_information
+
+    # ========== MODULARE PLOT-ERSTELLUNG ==========
 
     # DataFrame mit korrigierter Struktur erstellen
     df = pd.DataFrame(results, columns=HEADER)
@@ -1104,7 +1107,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
     # ========== ERWEITERTE DOKUMENTATION ==========
 
     documentation["Results"] = {
-        "Model_Comparison": results,
+        #"Model_Comparison": results,
         "Improvement_Analysis": improvement_results,
         "Summary_Statistics": {
             "Total_Experiments": len(results),
@@ -1116,19 +1119,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
             "Models_Compared": df['Model'].unique().tolist(),
             "Best_Model_Overall": df.loc[df['MAE'].idxmin(), 'Model'],
             "Worst_Model_Overall": df.loc[df['MAE'].idxmax(), 'Model']
-        },
-        "Predictions": {
-            datapath: {
-                "MeanPredictions":
-                    df[df['DataPath'] == datapath][['Model', 'Predictions']].set_index('Model').to_dict()[
-                        'Predictions'],
-                "GroundTruth": df[df['DataPath'] == datapath]['GroundTruth'].iloc[0],
-                "RawData": df[df['DataPath'] == datapath]['RawData'].iloc[0]  # RawData hinzufügen
-            }
-            for datapath in datapaths
         }
     }
-
     # JSON-Dokumentation speichern
     documentation_file = os.path.join(results_dir, 'documentation.json')
     with open(documentation_file, 'w', encoding='utf-8') as json_file:

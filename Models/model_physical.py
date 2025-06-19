@@ -9,6 +9,11 @@ from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 import optuna
 from numpy.f2py.auxfuncs import throw_error
+from abc import ABC, abstractmethod
+import numpy as np
+import pandas as pd
+from scipy.optimize import minimize, curve_fit
+import matplotlib.pyplot as plt
 from sympy.physics.units import acceleration, velocity
 from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
@@ -396,6 +401,15 @@ class BasePhysicalModel(mb.BaseModel, nn.Module, ABC):
 
     def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=10, draw_loss=False, epsilon=0.00005,
                     trial=None, n_outlier=12, reset_parameters=True):
+
+        # --- Daten vorbereiten ---
+        if not isinstance(X_train, list):
+            X_train = [X_train]
+            y_train = [y_train]
+        if not isinstance(X_val, list):
+            X_val = [X_val]
+            y_val = [y_val]
+
         if reset_parameters:
             print(f"{self.name}: Setze Parameter auf Initialwerte zurück.")
             self._initialize()
@@ -496,10 +510,10 @@ class BasePhysicalModel(mb.BaseModel, nn.Module, ABC):
             with torch.no_grad():
                 if is_batched_val:
                     for batch_x, batch_y in zip(X_val, y_val):
-                        batch_x_tensor = self.get_input_vector_from_df(batch_x)
-                        batch_y_tensor = to_tensor(batch_y)
-                        output = self.forward(batch_x_tensor)
-                        val_loss = self.criterion(output, batch_y_tensor)
+                        x_tensor = self.get_input_vector_from_df(batch_x)
+                        y_tensor = to_tensor(batch_y)
+                        output = self.forward(x_tensor)
+                        val_loss = self.criterion(output, y_tensor)
                         val_losses.append(val_loss.item())
                 else:
                     x_tensor = self.get_input_vector_from_df(X_val)
@@ -792,21 +806,20 @@ class NaiveModel(BasePhysicalModel):
         super(NaiveModel, self).__init__(*args, name = name, learning_rate=learning_rate, optimizer_type=optimizer_type, **kwargs)
 
         # VIEL kleinere und sicherere Initialwerte
-        self.initial_params = {"a1": a1, "a2": a2, "a3": a3, "b": b}
+        self.initial_params = {"a1_init": a1, "a2_init": a2, "a3_init": a3, "b_init": b}
         self.a1 = nn.Parameter(torch.tensor(a1, dtype=torch.float32))
         self.a2 = nn.Parameter(torch.tensor(a2, dtype=torch.float32))
         self.a3 = nn.Parameter(torch.tensor(a3, dtype=torch.float32))
         self.b = nn.Parameter(torch.tensor(b, dtype=torch.float32))
-
         self.to(self.device)
 
     def _initialize(self):
         """Setzt die Parameter auf die initial übergebenen Werte zurück."""
         with torch.no_grad():
-            self.a1.copy_(torch.tensor(self.initial_params["a1"], dtype=torch.float32))
-            self.a2.copy_(torch.tensor(self.initial_params["a2"], dtype=torch.float32))
-            self.a3.copy_(torch.tensor(self.initial_params["a3"], dtype=torch.float32))
-            self.b.copy_(torch.tensor(self.initial_params["b"], dtype=torch.float32))
+            self.a1.copy_(torch.tensor(self.initial_params["a1_init"], dtype=torch.float32))
+            self.a2.copy_(torch.tensor(self.initial_params["a2_init"], dtype=torch.float32))
+            self.a3.copy_(torch.tensor(self.initial_params["a3_init"], dtype=torch.float32))
+            self.b.copy_(torch.tensor(self.initial_params["b_init"], dtype=torch.float32))
 
     def forward(self, x):
         acceleration, velocity, force, MRR = self.get_input_vector_from_tensor(x)
@@ -847,7 +860,6 @@ class NaiveModel(BasePhysicalModel):
             print("ERROR: Final result has NaN/Inf!")
             result = torch.clamp(result, min=-1e6, max=1e6)
             result = torch.nan_to_num(result, nan=0.0, posinf=1e6, neginf=-1e6)
-
         return result
 
     def criterion(self, y_target, y_pred):
@@ -896,140 +908,168 @@ class NaiveModel(BasePhysicalModel):
                 'target_channel': self.target_channel,
                 **self.initial_params,
             },
-            "description": "This model combines a linear functions."
+            "description": "This model combines a linear functions.",
+            "parameters": {
+                "a1": float(self.a1.detach().cpu().numpy()),
+                "a2": float(self.a2.detach().cpu().numpy()),
+                "a3": float(self.a3.detach().cpu().numpy()),
+                "b": float(self.b.detach().cpu().numpy()),
+            }
         }
         return documentation
 
-class NaiveModel2(BasePhysicalModel):
-    def __init__(self,*args, name="Naive_Model", learning_rate=1,
-                 optimizer_type='quasi_newton', a1 = -1e-3, a2 = -1e-3,  a3 = -1e-1, b = 1e-2, **kwargs):
-        super(NaiveModel2, self).__init__(*args, name = name, learning_rate=learning_rate, optimizer_type=optimizer_type, **kwargs)
+def get_reference(input_size=None):
+    return NaiveModel()
 
-        # VIEL kleinere und sicherere Initialwerte
-        self.initial_params = {"a1": a1, "a2": a2, "a3": a3, "b": b}
-        self.a1 = nn.Parameter(torch.tensor(a1, dtype=torch.float32))
-        self.a2 = nn.Parameter(torch.tensor(a2, dtype=torch.float32))
-        self.a3 = nn.Parameter(torch.tensor(a3, dtype=torch.float32))
-        self.b = nn.Parameter(torch.tensor(b, dtype=torch.float32))
+class LuGreModelSciPy(mb.BaseModel):
+    def __init__(self,name="LuGre_Model",
+                 a1 = 1, a2 = 1,  b = 1,
+                 sigma_0=1, sigma_1=1, sigma_2=1,
+                 f_s=1, f_c=1, v_s=1,
+                 dt = 0.02, target_channel = 'curr_x'):
+        self.name = name
+        self.a1 = a1
+        self.a2 = a2
+        self.b = b
+        self.sigma_0 = sigma_0
+        self.sigma_1 = sigma_1
+        self.sigma_2 = sigma_2
+        self.f_s = f_s
+        self.f_c = f_c
+        self.v_s = v_s
+        self.dt = dt
 
-        self.to(self.device)
+        self.z = 0.0
 
-    def _initialize(self):
-        """Setzt die Parameter auf die initial übergebenen Werte zurück."""
-        with torch.no_grad():
-            self.a1.copy_(torch.tensor(self.initial_params["a1"], dtype=torch.float32))
-            self.a2.copy_(torch.tensor(self.initial_params["a2"], dtype=torch.float32))
-            self.a3.copy_(torch.tensor(self.initial_params["a3"], dtype=torch.float32))
-            self.b.copy_(torch.tensor(self.initial_params["b"], dtype=torch.float32))
-
-    def get_input_vector_from_tensor(self, input_vector):
-        if type(input_vector) is list:
-            [acceleration, velocity, force, MRR] = input_vector # shape: [4, T] je Achse
-        elif type(input_vector) is torch.Tensor:
-            if input_vector.shape[1] == 14:
-                input_vector = input_vector.T
-                acceleration = [input_vector[0,:], input_vector[1,:], input_vector[2,:], input_vector[3,:]]
-                force = [input_vector[4, :], input_vector[5, :], input_vector[6, :], input_vector[7, :]]
-                MRR = input_vector[8, :]
-                velocity = [input_vector[9,:], input_vector[10,:], input_vector[11,:], input_vector[12,:]]
-                y = input_vector[13, :]
-            elif input_vector.shape[1] == 5:  # Wenn mit NaiveModel-Prediction
-                [acceleration, force, MRR, velocity, y] = input_vector.T
-            else:
-                throw_error(f'input_vector shape {input_vector.shape}, wrong shape')
+        self.target_channel = target_channel
+        if target_channel == 'curr_x':
+            self.axis = 1
+        elif target_channel == 'curr_y':
+            self.axis = 2
+        elif target_channel == 'curr_z':
+            self.axis = 3
+        elif target_channel == 'curr_sp':
+            self.axis = 0
         else:
-            throw_error(f'input_vector is of type {type(input_vector)} but should be of type list or torch.tensor')
+            throw_error('Pleas select an valid target channel.')
 
-        return acceleration, velocity, force, MRR, y
+    def get_input_vector_from_df(self, df):
+        prefix_current = '_1_current'
+        axes = ['sp','x', 'y', 'z']
+        acceleration = []
+        velocity = []
+        force = []
+        for axis in axes:
+            acceleration.append(df[['a_' + axis + prefix_current]].values)
+            velocity.append(df[['v_' + axis + prefix_current]].values)
+            force.append(df[['f_' + axis + '_sim' + prefix_current]].values)
+        MRR = df['materialremoved_sim' + prefix_current].values
 
-    def forward(self, x):
-        acceleration, velocity, force, MRR, y = self.get_input_vector_from_tensor(x)
+        acceleration = np.array(acceleration)
+        velocity = np.array(velocity)
+        force = np.array(force)
 
-        # Sicherstellen, dass die Eingaben Tensors sind
-        force_x = force[self.axis] if isinstance(force[self.axis], torch.Tensor) else torch.tensor(force[self.axis], dtype=torch.float32,
-                                                                                   device=self.device)
-        velocity_x = velocity[self.axis] if isinstance(velocity[self.axis], torch.Tensor) else torch.tensor(velocity[self.axis],
-                                                                                            dtype=torch.float32,
-                                                                                            device=self.device)
-        acceleration_x = acceleration[self.axis] if isinstance(acceleration[self.axis], torch.Tensor) else torch.tensor(acceleration[self.axis],
-                                                                                            dtype=torch.float32,
-                                                                                            device=self.device)
-        # NaN-Checks für Inputs
-        if torch.isnan(force_x).any():
-            print("ERROR: NaN in force_y input!")
-            return torch.full_like(force_x, 0.0)
-        if torch.isnan(velocity_x).any():
-            print("ERROR: NaN in velocity_y input!")
-            return torch.full_like(velocity_x, 0.0)
-
-        # Parameter-Checks
-        if torch.isnan(self.a1) or torch.isnan(self.a3):
-            print("ERROR: NaN in linear parameters!")
-            return torch.full_like(force_x, 0.0)
-
-        if torch.isnan(self.a2) or torch.isnan(self.b):
-            print("ERROR: NaN in sigmoid parameters!")
-            return torch.full_like(force_x, 0.0)
-
-        y_force = self.a1 * force_x
-        y_acceleration = self.a2 * acceleration_x
-        y_v = self.a3 * y
-
-        # Finale Addition mit Schutz
-        result = y_force + y_acceleration + y_v + self.b
-        if torch.isnan(result).any() or torch.isinf(result).any():
-            print("ERROR: Final result has NaN/Inf!")
-            result = torch.clamp(result, min=-1e6, max=1e6)
-            result = torch.nan_to_num(result, nan=0.0, posinf=1e6, neginf=-1e6)
-
-        return result
+        return [acceleration, velocity, force, MRR]
 
     def criterion(self, y_target, y_pred):
-        """Robuste Loss-Funktion mit NaN-Handling"""
-        # Shapes angleichen
-        y_target = y_target.squeeze()
-        y_pred = y_pred.squeeze()
+        return np.mean(np.abs(y_target - y_pred))
 
-        # Debug: Shapes prüfen
-        if y_target.shape != y_pred.shape:
-            print(f"Shape mismatch: y_target {y_target.shape}, y_pred {y_pred.shape}")
-            # Kleinere Dimension erweitern
-            if y_target.dim() < y_pred.dim():
-                y_target = y_target.unsqueeze(-1)
-            elif y_pred.dim() < y_target.dim():
-                y_pred = y_pred.unsqueeze(-1)
+    @staticmethod
+    def stedy_state_equation(X, a1, a2, b, sigma_0, sigma_1, sigma_2, f_s, f_c, v_s, dt=0.02):
+        a, v, f = X
+        f_friction = f_c * np.sign(v) + (f_s - f_c) * np.exp(-(v / v_s) ** 2) * np.sign(v) + sigma_2 * v
+        return a1 * a + a2 * f + f_friction + b
 
-        # NaN-Werte identifizieren (elementweise)
-        nan_mask_pred = torch.isnan(y_pred)
-        nan_mask_target = torch.isnan(y_target)
-        mask = ~(nan_mask_pred | nan_mask_target)
+    @staticmethod
+    def equation(X, a1, a2, b, sigma_0, sigma_1, sigma_2, f_s, f_c, v_s, dt=0.02):
+        acceleration, velocity, force = X
 
-        # Prüfen ob überhaupt gültige Werte vorhanden sind
-        if mask.sum() == 0:
-            print("Warning: All values are NaN!")
-            return torch.tensor(1e6, requires_grad=True, device=self.device)
+        def g(v):
+            eps = 1e-12
+            return f_c + (f_s - f_c) * np.exp(-(v / v_s) ** 2) + eps
 
-        # Nur gültige Werte verwenden
-        y_pred_clean = y_pred[mask]
-        y_target_clean = y_target[mask]
+        def step(v, dt, z):
+            dz = v - (sigma_0 * np.abs(v) / g(v)) * z
+            z += dz * dt
+            f_friction = sigma_0 * z + sigma_1 * dz + sigma_2 * v
+            return z, f_friction
 
-        # MSE Loss berechnen
-        mse_loss = nn.MSELoss()(y_target_clean, y_pred_clean)
+        # Initialize z
+        z = 0.0
+        y = np.zeros_like(velocity, dtype=float)
 
-        # Extreme Losses clippen
-        if mse_loss > 1e6:
-            mse_loss = torch.tensor(1e6, requires_grad=True, device=self.device)
+        # Iterate over each time step
+        for i in range(len(velocity)):
+            z, f_friction = step(velocity[i], dt, z)
+            z = np.clip(z, -1e2, 1e2)
+            y[i] = a1 * acceleration[i] + a2 * force[i] + f_friction + b
 
-        return mse_loss
+            # Print progress every 100 time steps
+            if (i + 1) % 1000 == 0:
+                print(f"Fortschritt: {i + 1}/{len(velocity)} Schritte abgeschlossen.")
+
+        return y
+
+    def predict(self, X):
+        [acceleration, velocity, force, MRR] = self.get_input_vector_from_df(X)
+        acceleration = acceleration[self.axis].squeeze()
+        velocity = velocity[self.axis].squeeze()
+        force = force[self.axis].squeeze()
+
+        return self.equation([acceleration, velocity, force], self.a1, self.a2, self.b, self.sigma_0, self.sigma_1, self.sigma_2, self.f_s, self.f_c, self.v_s)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+
+        initial_params = [self.a1, self.a2, self.b, self.sigma_0, self.sigma_1, self.sigma_2, self.f_s, self.f_c, self.v_s]
+
+        [acceleration, velocity, force, MRR] = self.get_input_vector_from_df(X_train)
+        acceleration = acceleration[self.axis].squeeze()
+        velocity = velocity[self.axis].squeeze()
+        force = force[self.axis].squeeze()
+        x_data = [acceleration, velocity, force]
+        y = np.array(y_train).squeeze()
+        params_lugre, y_pred = curve_fit(f = self.equation, xdata = x_data, ydata = y, p0=initial_params, maxfev=10000)
+
+        [self.a1, self.a2, self.b, self.sigma_0, self.sigma_1, self.sigma_2, self.f_s, self.f_c, self.v_s] = params_lugre
+
+        # Ausgabe der trainierten Parameter
+        print("Trained Parameters:")
+        print(f"a1: {self.a1:.3f}")
+        print(f"a2: {self.a2:.3f}")
+        print(f"b: {self.b:.3f}")
+        print(f"sigma_0: {self.sigma_0:.3f}")
+        print(f"sigma_1: {self.sigma_1:.3f}")
+        print(f"sigma_2: {self.sigma_2:.3f}")
+        print(f"f_s: {self.f_s:.3f}")
+        print(f"f_c: {self.f_c:.3f}")
+        print(f"v_s: {self.v_s:.3f}")
+
+        validation_loss = self.criterion(y_val.squeeze(), self.predict(X_val))
+        print(f"Validation Loss: {validation_loss:.4e}")
+
+        return validation_loss
+
+    def test_model(self, X, y_target):
+        prediction = self.predict(X)
+        loss = self.criterion(y_target.squeeze(), prediction)
+        return loss, prediction
 
     def get_documentation(self):
         documentation = {
-            "hyperparameters": {
-                "learning_rate": self.learning_rate,
-                "optimizer_type": self.optimizer_type,
-                'target_channel': self.target_channel,
-                **self.initial_params,
-            },
-            "description": "This model combines a linear functions."
+            "description": "This model combines linear functions with the LuGre friction model to simulate friction in dynamic systems. It uses SciPy for curve fitting to train the model parameters.",
+            "parameters": {
+                "name": self.name,
+                "a1": self.a1,
+                "a2": self.a2,
+                "b": self.b,
+                "sigma_0": self.sigma_0,
+                "sigma_1": self.sigma_1,
+                "sigma_2": self.sigma_2,
+                "f_s": self.f_s,
+                "f_c": self.f_c,
+                "v_s": self.v_s,
+                "dt": self.dt,
+                "target_channel": self.target_channel
+            }
         }
         return documentation

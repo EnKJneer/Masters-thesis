@@ -38,28 +38,60 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     # Anzeigen des Plots
     plt.show()
 
+def plot_time_series(data, title, dpi=300, label = 'v_x'):
+    """
+    Erstellt einen Zeitverlaufsplot mit zwei y-Achsen.
+
+    :param data: DataFrame mit den Daten
+    :param filename: Dateiname zum Speichern des Plots
+    :param title: Titel des Plots
+    :param dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
+    """
+    fig, ax1 = plt.subplots(figsize=(10, 6), dpi=dpi)
+
+    # Plot der CTRL_DIFF, CTRL_DIFF2 und Cont_DEV_X Daten
+    #ax1.plot(data['Zeit'], data['CTRL_DIFF_X'], label='CTRL_DIFF_X', color='tab:blue')
+    #ax1.plot(data['Zeit'], data['CTRL_DIFF2_X'], label='CTRL_DIFF2_X', color='tab:orange')
+    #ax1.plot(data['Zeit'], data['CONT_DEV_X'], label='CONT_DEV_X', color='tab:green')
+    ax1.plot(data.index, data[label], label=label, color='tab:green')
+    ax1.set_xlabel('Zeit')
+    ax1.set_ylabel('Werte')
+    ax1.set_title(title)
+    ax1.legend(loc='upper left')
+    #ax1.set_ylim(-6, 6)
+
+    # Zweite y-Achse für curr_x
+    ax2 = ax1.twinx()
+    ax2.plot(data.index, -data['curr_x'], label='curr_x', color='tab:red')
+    ax2.set_ylabel('curr_x')
+    ax2.legend(loc='upper right')
+    ax2.set_ylim(-2, 2)
+
+    plt.show()
+
 path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
-files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
+files = ['AL_2007_T4_Plate_Normal_2.csv', 'AL_2007_T4_Plate_Normal_3.csv']
 for file in files:
-    if '_3' in file:
-        #file = file.replace('.csv', '')
-        data = pd.read_csv(f'{path_data}/{file}')
+    #file = file.replace('.csv', '')
+    data = pd.read_csv(f'{path_data}/{file}')
 
-        print(data.columns)
-        print(data.shape)
+    print(data.columns)
+    print(data.shape)
 
-        xlabel = 'pos_x'
-        ylabel = 'pos_y'
-        label = 'f_y_sim'
-        n = 25
-        x_values = data[xlabel].iloc[:-n]
-        y_values = data[ylabel].iloc[:-n]
-        color_values = data[label].iloc[:-n] * (data['v_y'].iloc[:-n]) / (np.abs(data['v_x'].iloc[:-n]) + np.abs(data['v_y'].iloc[:-n]))
-        max_value = 2#-3 for curr_y # 2 for curr_x
-        min_value = -2#-7 for curr_y # -2 for curr_x
-        #color_values = np.clip(color_values, min_value, max_value)
+    xlabel = 'pos_x'
+    ylabel = 'pos_y'
+    label = 'f_y_sim'
+    n = 25
+    data = data.iloc[:-n]
+    x_values = data[xlabel]
+    y_values = data[ylabel]
+    color_values = data[label] * (data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']))
+    max_value = 2#-3 for curr_y # 2 for curr_x
+    min_value = -2#-7 for curr_y # -2 for curr_x
+    #color_values = np.clip(color_values, min_value, max_value)
 
-        name = file.replace('.csv', '')
-        plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
+    name = file.replace('.csv', '')
+    #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
+    plot_time_series(data, name, label='f_x_sim', dpi=300)

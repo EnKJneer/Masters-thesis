@@ -5,26 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/DataSets/LuGre.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataSets/data_v_zero_fit_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataSets/data_visualisation_similarity_v_zero.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Discontinus_Data/Discontinus_Data.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/MoE_MemoryAdvanced/Experiment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/DifferentTrees/Experiment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/JAX_Implementation_NN/Experiment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/LuGreModel/Experiment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/JAX_Version/model_base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/JAX_Version/model_neural_net.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/JAX_Version/model_physical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/Comparson_Erd_vs_Naive.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Comparson_Erd_vs_Naive.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/Naive_Model_analysy.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Naive_Model_analysy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/LuGre.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/LuGre.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/data_visualisation_2D.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/data_visualisation_2D.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataSets/data_visualisation_3D.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/data_visualisation_3D.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/data_visualisation_simularity.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/data_visualisation_similarity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/data_visualization_curr.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/data_visualisation_curr.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/influence_error.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/influence_error.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/merge_additional_information.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/merge_additional_information.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/merge_additional_information.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Controler_Influence.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Discontinus_Data/Discontinus_Data.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Friction_simple.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Load_Data_DataSets/Different_DataSets.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Loss_Analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Loss_Analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/MoE_Moirai/MoE_Moirai.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/MoE_Moirai/MoE_Moirai.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Experiments/NaiveModel/NaiveModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/NaiveModel/NaiveModel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Helper/handling_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Helper/handling_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/model_mixture_of_experts.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_mixture_of_experts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/model_physical.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_physical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_random_forest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_random_forest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +74,7 @@
     "Python.Compare_different_trainingsdata.executor": "Run",
     "Python.Comparson_Erd_vs_Naive.executor": "Run",
     "Python.Comparson_of_physical_model.executor": "Debug",
+    "Python.Controler_Influence.executor": "Run",
     "Python.Different_DataSets.executor": "Run",
     "Python.Evaluate_RNN_potential.executor": "Run",
     "Python.Evaluate_Sequential_potential.executor": "Run",
@@ -117,14 +118,14 @@
     "Python.influence_error.executor": "Run",
     "Python.influence_test.executor": "Run",
     "Python.merge_additional_information.executor": "Run",
-    "Python.model_base.executor": "Debug",
+    "Python.model_base.executor": "Run",
     "Python.model_physical.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "ToolWindow.Plots.ShowToolbar": "false",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/DataSets",
+    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -201,6 +202,11 @@
       <workItem from="1749453702079" duration="17198000" />
       <workItem from="1749537305046" duration="12811000" />
       <workItem from="1749621562991" duration="32858000" />
+      <workItem from="1750061456698" duration="20921000" />
+      <workItem from="1750102914260" duration="20000" />
+      <workItem from="1750145365192" duration="26944000" />
+      <workItem from="1750234077004" duration="19664000" />
+      <workItem from="1750319029795" duration="5058000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -251,7 +257,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Helper/handling_experiment.py</url>
-          <line>701</line>
+          <line>702</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -261,7 +267,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Helper/handling_experiment.py</url>
-          <line>538</line>
+          <line>539</line>
           <option name="timeStamp" value="140" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -282,13 +288,13 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Master_thesis$handling_data.coverage" NAME="handling_data Coverage Results" MODIFIED="1747920449234" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
     <SUITE FILE_PATH="coverage/Master_thesis$FilterData.coverage" NAME="FilterData Coverage Results" MODIFIED="1748610373558" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
-    <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_3D.coverage" NAME="data_visualisation_3D Coverage Results" MODIFIED="1749633098669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_3D.coverage" NAME="data_visualisation_3D Coverage Results" MODIFIED="1750320190578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Comparson_Erd_vs_Naive.coverage" NAME="Comparson_Erd_vs_Naive Coverage Results" MODIFIED="1749663126039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$MoE_Gating.coverage" NAME="MoE_Gating Coverage Results" MODIFIED="1749027647505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_Gating" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_different_trainingsdata.coverage" NAME="Compare_different_trainingsdata Coverage Results" MODIFIED="1747814942326" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Trainingsdata_Plate_vs_Gear" />
     <SUITE FILE_PATH="coverage/Master_thesis$Model_Erd.coverage" NAME="Model_Erd Coverage Results" MODIFIED="1749027599774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Physical_Model_Erd" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Potential_Transformer.coverage" NAME="Potential_Transformer Coverage Results" MODIFIED="1747754528108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Transformer" />
     <SUITE FILE_PATH="coverage/Master_thesis$Load_Data_Method_Comparsion.coverage" NAME="Load_Data_Method_Comparsion Coverage Results" MODIFIED="1748351002470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Potential_Transformer.coverage" NAME="Potential_Transformer Coverage Results" MODIFIED="1747754528108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Transformer" />
     <SUITE FILE_PATH="coverage/Master_thesis$Load_Single_Axis.coverage" NAME="Load_Single_Axis Coverage Results" MODIFIED="1748505689186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Single_Axis" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_Activation_Functions.coverage" NAME="Compare Activation Functions Coverage Results" MODIFIED="1747662253865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Activation_Function" />
     <SUITE FILE_PATH="coverage/Master_thesis$handling_read_data_from_json.coverage" NAME="handling_read_data_from_json Coverage Results" MODIFIED="1748610303445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
@@ -300,12 +306,12 @@
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_similarity_v_zero.coverage" NAME="data_visualisation_similarity_v_zero Coverage Results" MODIFIED="1749659290940" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Search_for_causality.coverage" NAME="Search_for_causality Coverage Results" MODIFIED="1749631049925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_batches_vs_single.coverage" NAME="Compare_batches_vs_single Coverage Results" MODIFIED="1747393429118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Batches" />
-    <SUITE FILE_PATH="coverage/Master_thesis$handling_experiment.coverage" NAME="handling_experiment Coverage Results" MODIFIED="1749557466600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
+    <SUITE FILE_PATH="coverage/Master_thesis$handling_experiment.coverage" NAME="handling_experiment Coverage Results" MODIFIED="1750149290678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
     <SUITE FILE_PATH="coverage/Master_thesis$Loss_functions.coverage" NAME="Loss_functions Coverage Results" MODIFIED="1748263304107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss_with_delta_y" />
     <SUITE FILE_PATH="coverage/Master_thesis$Loss_Analysis.coverage" NAME="Loss_Analysis Coverage Results" MODIFIED="1749555632792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments" />
     <SUITE FILE_PATH="coverage/Master_thesis$MoE.coverage" NAME="MoE Coverage Results" MODIFIED="1749052880353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_Physics_motivated" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Different_DataSets.coverage" NAME="Different_DataSets Coverage Results" MODIFIED="1749625212097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_curr.coverage" NAME="data_visualisation_curr Coverage Results" MODIFIED="1749632755487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Different_DataSets.coverage" NAME="Different_DataSets Coverage Results" MODIFIED="1750176677248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$PiNNs.coverage" NAME="PiNNs Coverage Results" MODIFIED="1749201001092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/PiNN" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualization_curr.coverage" NAME="data_visualization_curr Coverage Results" MODIFIED="1749133142817" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Loss_Functions_Test.coverage" NAME="Loss_Functions_Test Coverage Results" MODIFIED="1748865606888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss Functions" />
@@ -317,20 +323,21 @@
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation.coverage" NAME="data_visualisation Coverage Results" MODIFIED="1748849505811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualization_simularity_v_zero.coverage" NAME="data_visualization_simularity_v_zero Coverage Results" MODIFIED="1749627063876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_Sequential_potential.coverage" NAME="Evaluate_Sequential_potential Coverage Results" MODIFIED="1747755304239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/SequentialNet" />
-    <SUITE FILE_PATH="coverage/Master_thesis$model_base.coverage" NAME="model_base Coverage Results" MODIFIED="1749652527460" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models" />
+    <SUITE FILE_PATH="coverage/Master_thesis$model_base.coverage" NAME="model_base Coverage Results" MODIFIED="1750065290627" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models/JAX_Version" />
     <SUITE FILE_PATH="coverage/Master_thesis$Hyperparameteroptimization_Methods_Comparsion.coverage" NAME="Hyperparameteroptimization_Methods_Comparsion Coverage Results" MODIFIED="1748937552126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Hyperparameteroptimization" />
     <SUITE FILE_PATH="coverage/Master_thesis$handling_plots.coverage" NAME="handling_plots Coverage Results" MODIFIED="1744631419667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
     <SUITE FILE_PATH="coverage/Master_thesis$error_influence.coverage" NAME="error_influence Coverage Results" MODIFIED="1749199001508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_v_zero_fit_model.coverage" NAME="data_v_zero_fit_model Coverage Results" MODIFIED="1749631953644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
-    <SUITE FILE_PATH="coverage/Master_thesis$LuGre.coverage" NAME="LuGre Coverage Results" MODIFIED="1749663131687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
-    <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_2D.coverage" NAME="data_visualisation_2D Coverage Results" MODIFIED="1749625117163" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$LuGre.coverage" NAME="LuGre Coverage Results" MODIFIED="1750179307357" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_2D.coverage" NAME="data_visualisation_2D Coverage Results" MODIFIED="1750324175739" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Analyse_Errors.coverage" NAME="Analyse_Errors Coverage Results" MODIFIED="1748532309276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Guided.coverage" NAME="Hyprid_Models_Guided Coverage Results" MODIFIED="1748243212134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Hybrid_Guided" />
     <SUITE FILE_PATH="coverage/Master_thesis$Change_Point_Detection.coverage" NAME="Change_Point_Detection Coverage Results" MODIFIED="1749483065774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Change_Point_Detection" />
     <SUITE FILE_PATH="coverage/Master_thesis$Comparson_of_physical_model.coverage" NAME="Comparson_of_physical_model Coverage Results" MODIFIED="1747926851923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Physical_Models" />
     <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_RNN_potential.coverage" NAME="Evaluate_RNN_potential Coverage Results" MODIFIED="1749458469987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Recursive_Nets" />
     <SUITE FILE_PATH="coverage/Master_thesis$NaiveModel.coverage" NAME="NaiveModel Coverage Results" MODIFIED="1749623230928" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NaiveModel" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1749658134552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_MemoryAdvanced" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1750256956042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/LuGreModel" />
     <SUITE FILE_PATH="coverage/Master_thesis$MoE_Moirai.coverage" NAME="MoE_Moirai Coverage Results" MODIFIED="1749562688199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_Moirai" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Controler_Influence.coverage" NAME="Controler_Influence Coverage Results" MODIFIED="1750249301411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
   </component>
 </project>
