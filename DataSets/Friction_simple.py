@@ -1,3 +1,5 @@
+from collections import deque
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,45 +9,39 @@ from sklearn.metrics import mean_absolute_error
 from scipy.optimize import minimize
 
 
-def sign_hold(v_x):
-    signs = np.sign(v_x)
-    result = signs.copy()
+def sign_hold(v, eps = 1e-1):
+    # Initialisierung des Arrays z mit Nullen
+    z = np.zeros(len(v))
 
-    # Iteriere über jedes Element im Array
-    for i in range(len(signs)):
-        if signs[i] == 0:
-            # Sammle die letzten fünf nicht-null Vorzeichen
-            last_five_non_zero = []
-            j = i - 1
-            while j >= 0 and len(last_five_non_zero) < 5:
-                if signs[j] != 0:
-                    last_five_non_zero.append(signs[j])
-                j -= 1
+    # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
+    h = deque([0, 0, 0, 0, 0], maxlen=5)
 
-            # Berechne die Summe der letzten fünf nicht-null Vorzeichen
-            if last_five_non_zero:
-                sum_signs = np.sum(last_five_non_zero)
-                # Bestimme das Vorzeichen der Summe
-                result[i] = np.sign(sum_signs)
+    # Berechnung von z
+    for i in range(len(v)):
+        if abs(v[i]) > eps:
+            h.append(v[i])
 
-    return result
+        if i >= 4:  # Da wir ab dem 5. Element starten wollen
+            # Berechne zi als Vorzeichen der Summe
+            z[i] = np.sign(sum(h))
 
+    return z
 
 def fit_friction_model(data, velocity_threshold=1e-6, acceleration_threshold=1e-6):
     """
     Fittet das zweistufige Reibungsmodell:
-    - Stillstand (v_x ≈ 0, a_x ≈ 0): y = F_s * sign_hold(v_x) + a_s * f_x_sim + b_s
-    - Bewegung: y = F_c * sign(v_x) + sigma_2 * v_x + a_d * f_x_sim + a_b * a_x + b_d
+    - Stillstand (v_y ≈ 0, a_y ≈ 0): y = F_s * sign_hold(v_y) + a_s * f_y_sim + b_s
+    - Bewegung: y = F_c * sign(v_y) + sigma_2 * v_y + a_d * f_y_sim + a_b * a_y + b_d
     """
     # Extrahiere relevante Variablen
-    v_x = data['v_x'].values
-    v_s = sign_hold(v_x)
-    a_x = data['a_x'].values
-    f_x_sim = data['f_x_sim'].values
-    curr_x = data['curr_x'].values
+    v_y = data['v_y'].values
+    v_s = sign_hold(v_y)
+    a_y = data['a_y'].values
+    f_y_sim = data['f_y_sim'].values
+    curr_y = data['curr_y'].values
 
     # Definiere Stillstands- und Bewegungsmasken
-    stillstand_mask = (np.abs(v_x) <= velocity_threshold) & (np.abs(a_x) <= acceleration_threshold)
+    stillstand_mask = (np.abs(v_y) <= velocity_threshold) & (np.abs(a_y) <= acceleration_threshold)
     bewegung_mask = ~stillstand_mask
 
     print(f"Anzahl Stillstandspunkte: {np.sum(stillstand_mask)}")
@@ -56,13 +52,13 @@ def fit_friction_model(data, velocity_threshold=1e-6, acceleration_threshold=1e-
 
     # === Stillstandsmodell fitten ===
     if np.sum(stillstand_mask) > 2:
-        # y = F_s * sign_hold(v_x) + a_s * f_x_sim + b_s
+        # y = F_s * sign_hold(v_y) + a_s * f_y_sim + b_s
         X_stillstand = np.column_stack([
             v_s[stillstand_mask],
-            f_x_sim[stillstand_mask],
+            f_y_sim[stillstand_mask],
             np.ones(np.sum(stillstand_mask))  # Bias term
         ])
-        y_stillstand = curr_x[stillstand_mask]
+        y_stillstand = curr_y[stillstand_mask]
 
         reg_stillstand = LinearRegression(fit_intercept=False)
         reg_stillstand.fit(X_stillstand, y_stillstand)
@@ -78,15 +74,15 @@ def fit_friction_model(data, velocity_threshold=1e-6, acceleration_threshold=1e-
 
     # === Bewegungsmodell fitten ===
     if np.sum(bewegung_mask) > 4:  # Jetzt 5 Parameter, also mindestens 5 Punkte
-        # y = F_c * sign(v_x) + sigma_2 * v_x + a_d * f_x_sim + a_b * a_x + b_d
+        # y = F_c * sign(v_y) + sigma_2 * v_y + a_d * f_y_sim + a_b * a_y + b_d
         X_bewegung = np.column_stack([
-            np.sign(v_x[bewegung_mask]),
-            v_x[bewegung_mask],
-            f_x_sim[bewegung_mask],
-            a_x[bewegung_mask],  # Neuer Beschleunigungsterm
+            np.sign(v_y[bewegung_mask]),
+            v_y[bewegung_mask],
+            f_y_sim[bewegung_mask],
+            a_y[bewegung_mask],  # Neuer Beschleunigungsterm
             np.ones(np.sum(bewegung_mask))  # Bias term
         ])
-        y_bewegung = curr_x[bewegung_mask]
+        y_bewegung = curr_y[bewegung_mask]
 
         reg_bewegung = LinearRegression(fit_intercept=False)
         reg_bewegung.fit(X_bewegung, y_bewegung)
@@ -109,29 +105,29 @@ def fit_friction_model(data, velocity_threshold=1e-6, acceleration_threshold=1e-
 
 def predict_model(data, params, stillstand_mask=None, bewegung_mask=None):
     """Vorhersage mit dem gefitteten Modell"""
-    v_x = data['v_x'].values
-    v_s = sign_hold(v_x)
-    a_x = data['a_x'].values
-    f_x_sim = data['f_x_sim'].values
-    y_pred = np.zeros_like(v_x)
+    v_y = data['v_y'].values
+    v_s = sign_hold(v_y)
+    a_y = data['a_y'].values
+    f_y_sim = data['f_y_sim'].values
+    y_pred = np.zeros_like(v_y)
 
     # Wenn keine Masken übergeben werden, berechne sie neu
     if stillstand_mask is None or bewegung_mask is None:
-        stillstand_mask = (np.abs(v_x) <= 1e-6) & (np.abs(a_x) <= 1e-6)
+        stillstand_mask = (np.abs(v_y) <= 1e-6) & (np.abs(a_y) <= 1e-6)
         bewegung_mask = ~stillstand_mask
 
     # Stillstandsvorhersage
     if np.sum(stillstand_mask) > 0:
         y_pred[stillstand_mask] = (params['F_s'] * v_s[stillstand_mask] +
-                                   params['a_s'] * f_x_sim[stillstand_mask] +
+                                   params['a_s'] * f_y_sim[stillstand_mask] +
                                    params['b_s'])
 
     # Bewegungsvorhersage
     if np.sum(bewegung_mask) > 0:
-        y_pred[bewegung_mask] = (params['F_c'] * np.sign(v_x[bewegung_mask]) +
-                                 params['sigma_2'] * v_x[bewegung_mask] +
-                                 params['a_d'] * f_x_sim[bewegung_mask] +
-                                 params['a_b'] * a_x[bewegung_mask] +  # Neuer Term
+        y_pred[bewegung_mask] = (params['F_c'] * np.sign(v_y[bewegung_mask]) +
+                                 params['sigma_2'] * v_y[bewegung_mask] +
+                                 params['a_d'] * f_y_sim[bewegung_mask] +
+                                 params['a_b'] * a_y[bewegung_mask] +  # Neuer Term
                                  params['b_d'])
 
     return y_pred
@@ -144,7 +140,7 @@ def plot_results(data, y_pred, mae, file_name, params, stillstand_mask, bewegung
     time_index = np.arange(len(data))
 
     # Plot 1: Gemessene vs vorhergesagte Werte
-    ax1.plot(time_index, data['curr_x'], 'b-', label='Gemessen', alpha=0.7)
+    ax1.plot(time_index, data['curr_y'], 'b-', label='Gemessen', alpha=0.7)
     ax1.plot(time_index, y_pred, 'r--', label='Vorhergesagt', alpha=0.7)
     ax1.set_ylabel('Strom X [A]')
     ax1.set_title(f'{file_name} - Modellfit (MAE: {mae:.4f})')
@@ -170,11 +166,11 @@ def plot_results(data, y_pred, mae, file_name, params, stillstand_mask, bewegung
     ax2.grid(True, alpha=0.3)
 
     # Plot 3: Residuen
-    residuals = data['curr_x'] - y_pred
+    residuals = data['curr_y'] - y_pred
     ax3.plot(time_index, residuals, 'k-', alpha=0.7)
     ax3.axhline(y=0, color='r', linestyle='--', alpha=0.5)
     ax3.set_ylabel('Residuen [A]')
-    ax3.set_xlabel('Zeitindex')
+    ax3.set_ylabel('Zeitindex')
     ax3.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -244,7 +240,7 @@ if __name__ == '__main__':
 
         # Trainings-Performance
         train_pred = predict_model(training_data_processed, trained_params, train_stillstand_mask, train_bewegung_mask)
-        train_mae = mean_absolute_error(training_data_processed['curr_x'], train_pred)
+        train_mae = mean_absolute_error(training_data_processed['curr_y'], train_pred)
 
         print(f"\nTrainierte Parameter:")
         print(f"Stillstandsreibung (F_s): {trained_params['F_s']:.6f}")
@@ -290,14 +286,14 @@ if __name__ == '__main__':
 
             # Verwende trainierte Parameter für Vorhersage
             test_pred = predict_model(test_data_processed, trained_params)
-            test_mae = mean_absolute_error(test_data_processed['curr_x'], test_pred)
+            test_mae = mean_absolute_error(test_data_processed['curr_y'], test_pred)
 
             print(f"Test MAE: {test_mae:.6f}")
 
             # Bestimme Masken für Plotting
-            v_x = test_data_processed['v_x'].values
-            a_x = test_data_processed['a_x'].values
-            test_stillstand_mask = (np.abs(v_x) <= 1e-6) & (np.abs(a_x) <= 1e-6)
+            v_y = test_data_processed['v_y'].values
+            a_y = test_data_processed['a_y'].values
+            test_stillstand_mask = (np.abs(v_y) <= 1e-6) & (np.abs(a_y) <= 1e-6)
             test_bewegung_mask = ~test_stillstand_mask
 
             # Plot Test-Ergebnisse
@@ -335,5 +331,5 @@ if __name__ == '__main__':
         print(f"\nDurchschnittliche MAE auf reinen Test-Dateien: {avg_test_mae:.6f}")
 
     print(f"\nErweiterte Modellgleichungen:")
-    print(f"Stillstand: y = F_s * sign_hold(v_x) + a_s * f_x_sim + b_s")
-    print(f"Bewegung:   y = F_c * sign(v_x) + sigma_2 * v_x + a_d * f_x_sim + a_b * a_x + b_d")
+    print(f"Stillstand: y = F_s * sign_hold(v_y) + a_s * f_y_sim + b_s")
+    print(f"Bewegung:   y = F_c * sign(v_y) + sigma_2 * v_y + a_d * f_y_sim + a_b * a_y + b_d")

@@ -32,17 +32,18 @@ if __name__ == "__main__":
     dataClasses = [hdata.PPhys, hdata.Combined_PPhys_SF, hdata.Combined_PPhys_Depth, hdata.Combined_PPhys]
     #for dataClass in dataClasses:
     #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_PPhys
+    dataClass_1 = hdata.Combined_PK_TrainVal
     dataClass_1.window_size = window_size
     dataClass_1.past_values = past_values
     dataClass_1.future_values = future_values
     #dataClass_1.keep_separate = True
-    dataClass_1.target_channels = ['curr_x']
+    dataClass_1.target_channels = ['curr_y']
 
     dataSets_list = [dataClass_1]
 
     #model_simple = mphys.NaiveModelSimple()
     model = mphys.FrictionModel()
+    model.target_channel = 'curr_y'
     models = [model] # ,
 
     # Run the experiment

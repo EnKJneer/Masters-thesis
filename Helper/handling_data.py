@@ -11,7 +11,7 @@ import glob
 #libarie import
 import os
 import pickle
-from collections import Counter
+from collections import Counter, deque
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,12 +26,33 @@ import pickle
 
 from abc import ABC, abstractmethod
 
+from sympy import false
+
 # konstanten
 WINDOWSIZE = 1
 
 HEADER = ["pos_x", "pos_y", "pos_z", "v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "curr_x", "curr_y", "curr_z", "curr_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
 HEADER_x = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
+HEADER_v = ["v_sp", "v_x", "v_y", "v_z"]
 HEADER_y = ["curr_x", "curr_y", "curr_z", "curr_sp"]
+
+def sign_hold(v, eps = 1e-1):
+    # Initialisierung des Arrays z mit Nullen
+    z = np.zeros(len(v))
+
+    # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
+    h = deque([0, 0, 0, 0, 0], maxlen=5)
+
+    # Berechnung von z
+    for i in range(len(v)):
+        if abs(v[i]) > eps:
+            h.append(v[i])
+
+        if i >= 4:  # Da wir ab dem 5. Element starten wollen
+            # Berechne zi als Vorzeichen der Summe
+            z[i] = np.sign(sum(h))
+
+    return z
 
 class BaseDataClass(ABC):
     @abstractmethod
@@ -518,6 +539,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
         self.N = N
         self.training_validation_datas = training_validation_datas
         self.testing_data_paths = testing_data_paths
+        self.add_sign_hold = False
 
     def load_data(self):
         """
@@ -533,6 +555,12 @@ class DataclassCombinedTrainVal(BaseDataClass):
         fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
         test_datas = apply_action(fulltestdatas,
                                   lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
+
+        if self.add_sign_hold:
+            for data in test_datas:
+                for header in HEADER_v:
+                    data[header+'_hold'] = sign_hold(data[header].values)
+
         X_test = apply_action(test_datas,
                               lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         test_targets = apply_action(fulltestdatas, lambda data: data[self.target_channels])
@@ -560,6 +588,10 @@ class DataclassCombinedTrainVal(BaseDataClass):
             file_datas_y = apply_action(file_datas,
                                         lambda data: data[self.target_channels].rolling(window=self.window_size,
                                                                                                min_periods=1).mean())
+            if self.add_sign_hold:
+                for data in file_datas_x:
+                    for header in HEADER_v:
+                        data[header + '_hold'] = sign_hold(data[header].values)
 
             X_files = apply_action(file_datas_x,
                                    lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values,
@@ -607,6 +639,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
             "training_validation_data": self.training_validation_datas,
             "testing_data_paths": self.testing_data_paths,
             "target_channels": self.target_channels,
+            "add_sign_hold": self.add_sign_hold,
         }
         return documentation
 
@@ -889,6 +922,11 @@ Combined_PPhys = DataClass('Combined_PPhys', folder_data,
                           dataPaths_Test_Extended,
                           ["curr_x"], )
 
+Combined_PPhys_St = DataClass('Combined_PPhys_St', folder_data,
+                        ['S235JR_Plate_Normal_2.csv', 'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv'], #
+                          ['S235JR_Plate_SF_1.csv', 'S235JR_Plate_Normal_1.csv',  'S235JR_Plate_Depth_1.csv'], #
+                          dataPaths_Test_Extended,
+                          ["curr_x"], )
 
 Combined_Plate_2 = DataClass('Plate_2', folder_data,
                             dataPaths_Train_Plate_sort,
@@ -909,6 +947,16 @@ Combined_Plate_Single_2 = DataClassSingleAxis('Plate_Single_Axis_2', folder_data
 
 Combined_Plate_TrainVal = DataclassCombinedTrainVal('Plate_TrainVal', folder_data,
                                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], )
+
+Combined_Plate_AlSt_TrainVal = DataclassCombinedTrainVal('Plate_AlSt_TrainVal', folder_data,
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
+                                                     'S235JR_T4_Plate', 'S235JR_T4_Plate_Depth', 'S235JR_Plate_SF'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], )
+Combined_Plate_St_TrainVal = DataclassCombinedTrainVal('Plate_St_TrainVal', folder_data,
+                                                    ['S235JR_T4_Plate', 'S235JR_T4_Plate_Depth', 'S235JR_Plate_SF'],
                                                     dataPaths_Test,
                                                     ["curr_x"], )
 

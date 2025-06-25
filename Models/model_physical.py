@@ -1,3 +1,4 @@
+from collections import deque
 from typing import List
 
 import torch
@@ -371,6 +372,17 @@ class BasePhysicalModel(mb.BaseModel, nn.Module, ABC):
         return [acceleration, velocity, force, MRR]
 
     def get_input_vector_from_tensor(self, input_vector):
+        if self.target_channel == 'curr_x':
+            self.axis = 1
+        elif self.target_channel == 'curr_y':
+            self.axis = 2
+        elif self.target_channel == 'curr_z':
+            self.axis = 3
+        elif self.target_channel == 'curr_sp':
+            self.axis = 0
+        else:
+            throw_error('Pleas select an valid target channel.')
+
         if type(input_vector) is list:
             [acceleration, velocity, force, MRR] = input_vector # shape: [4, T] je Achse
         elif type(input_vector) is torch.Tensor:
@@ -1076,7 +1088,7 @@ class LuGreModelSciPy(mb.BaseModel):
         return documentation
 
 class FrictionModel(mb.BaseModel):
-    def __init__(self, name="Friction_Model", velocity_threshold=1e-6, acceleration_threshold=1e-6):
+    def __init__(self, name="Friction_Model", velocity_threshold=1e-3, acceleration_threshold=1e-3, target_channel = 'curr_x'):
         self.name = name
         self.velocity_threshold = velocity_threshold
         self.acceleration_threshold = acceleration_threshold
@@ -1088,30 +1100,35 @@ class FrictionModel(mb.BaseModel):
         self.a_d = 1
         self.a_b = 0
         self.b_d = 0
+        self.target_channel = target_channel
 
-    def sign_hold(self, v_x):
-        signs = np.sign(v_x)
-        result = signs.copy()
-        for i in range(len(signs)):
-            if signs[i] == 0:
-                last_five_non_zero = []
-                j = i - 1
-                while j >= 0 and len(last_five_non_zero) < 5:
-                    if signs[j] != 0:
-                        last_five_non_zero.append(signs[j])
-                    j -= 1
-                if last_five_non_zero:
-                    sum_signs = np.sum(last_five_non_zero)
-                    result[i] = np.sign(sum_signs)
-        return result
+    def sign_hold(self, v, eps=1e-1):
+        # Initialisierung des Arrays z mit Nullen
+        z = np.zeros(len(v))
+
+        # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
+        h = deque([0, 0, 0, 0, 0], maxlen=5)
+
+        # Berechnung von z
+        for i in range(len(v)):
+            if abs(v[i]) > eps:
+                h.append(v[i])
+
+            if i >= 4:  # Da wir ab dem 5. Element starten wollen
+                # Berechne zi als Vorzeichen der Summe
+                z[i] = np.sign(sum(h))
+
+        return z
 
     def criterion(self, y_target, y_pred):
         return np.mean(np.abs(y_target - y_pred))
 
     def predict(self, X):
-        v_x = X['v_x_1_current'].values
-        a_x = X['a_x_1_current'].values
-        f_x_sim = X['f_x_sim_1_current'].values
+
+        axis = self.target_channel.replace('curr_', '')
+        v_x = X[f'v_{axis}_1_current'].values
+        a_x = X[f'a_{axis}_1_current'].values
+        f_x_sim = X[f'f_{axis}_sim_1_current'].values
 
         stillstand_mask = (np.abs(v_x) <= self.velocity_threshold) & (np.abs(a_x) <= self.acceleration_threshold)
         bewegung_mask = ~stillstand_mask
@@ -1133,7 +1150,7 @@ class FrictionModel(mb.BaseModel):
 
     def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
         data = X_train.copy()
-        data['curr_x'] = y_train.values
+        data[self.target_channel] = y_train.values
 
         params, _, _ = self.fit_friction_model(data)
 
@@ -1151,11 +1168,14 @@ class FrictionModel(mb.BaseModel):
         return validation_loss
 
     def fit_friction_model(self, data):
-        v_x = data['v_x_1_current'].values
+        axis = self.target_channel.replace('curr_', '')
+        v_x = data[f'v_{axis}_1_current'].values
+        a_x = data[f'a_{axis}_1_current'].values
+        f_x_sim = data[f'f_{axis}_sim_1_current'].values
+
         v_s = self.sign_hold(v_x)
-        a_x = data['a_x_1_current'].values
-        f_x_sim = data['f_x_sim_1_current'].values
-        curr_x = data['curr_x'].values
+
+        curr_x = data[self.target_channel].values
 
         stillstand_mask = (np.abs(v_x) <= self.velocity_threshold) & (np.abs(a_x) <= self.acceleration_threshold)
         bewegung_mask = ~stillstand_mask

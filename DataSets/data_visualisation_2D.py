@@ -1,8 +1,27 @@
 import os
+from collections import deque
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+
+def sign_hold(v, eps = 1e-1):
+    # Initialisierung des Arrays z mit Nullen
+    z = np.zeros(len(v))
+
+    # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
+    h = deque([0, 0, 0, 0, 0], maxlen=5)
+
+    # Berechnung von z
+    for i in range(len(v)):
+        if abs(v[i]) > eps:
+            h.append(v[i])
+
+        if i >= 4:  # Da wir ab dem 5. Element starten wollen
+            # Berechne zi als Vorzeichen der Summe
+            z[i] = np.sign(sum(h))
+
+    return z
 
 def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x + v_y|', title = '2D Plot von pos_x und pos_y mit Farbe', dpi=300, xlabel = 'pos_x', ylabel = 'pos_y'):
     """
@@ -62,17 +81,17 @@ def plot_time_series(data, title, dpi=300, label = 'v_x'):
 
     # Zweite y-Achse für curr_x
     ax2 = ax1.twinx()
-    ax2.plot(data.index, -data['curr_x'], label='curr_x', color='tab:red')
-    ax2.set_ylabel('curr_x')
+    ax2.plot(data.index, data['curr_y'], label='curr_y', color='tab:red')
+    ax2.set_ylabel('curr_y')
     ax2.legend(loc='upper right')
-    ax2.set_ylim(-2, 2)
+    #ax2.set_ylim(-2, 2)
 
     plt.show()
 
 path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
-files = ['AL_2007_T4_Plate_Normal_2.csv', 'AL_2007_T4_Plate_Normal_3.csv']
+files = ['AL_2007_T4_Plate_Normal_3.csv'] #, 'AL_2007_T4_Plate_Normal_3.csv'
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -80,6 +99,8 @@ for file in files:
     print(data.columns)
     print(data.shape)
 
+    data['z_x'] = sign_hold(data['v_x'])
+    data['z_y'] = sign_hold(data['v_y'])
     xlabel = 'pos_x'
     ylabel = 'pos_y'
     label = 'f_y_sim'
@@ -94,4 +115,6 @@ for file in files:
 
     name = file.replace('.csv', '')
     #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
-    plot_time_series(data, name, label='f_x_sim', dpi=300)
+    plot_time_series(data, name, label='f_y_sim', dpi=300)
+    plot_time_series(data, name, label='v_y', dpi=300)
+    plot_time_series(data, name, label='z_y', dpi=300)

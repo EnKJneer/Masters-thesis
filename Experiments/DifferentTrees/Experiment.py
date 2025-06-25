@@ -23,7 +23,7 @@ if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1
-    NUMBEROFMODELS = 1
+    NUMBEROFMODELS = 2
 
     window_size = 1
     past_values = 0
@@ -35,6 +35,7 @@ if __name__ == "__main__":
     dataClass_1.past_values = past_values
     dataClass_1.future_values = future_values
     dataClass_1.target_channels = ['curr_x']
+    dataClass_1.add_sign_hold = True
     dataSets_list = [dataClass_1]
 
     #model_simple = mphys.NaiveModelSimple()

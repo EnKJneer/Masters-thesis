@@ -948,6 +948,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
 
             for _ in range(NUMBEROFMODELS):
                 model = reference_models_copy[idx]
+                model.target_channel = dataClass.target_channels[0]
                 model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=patience)
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
@@ -975,6 +976,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
 
             for _ in range(NUMBEROFMODELS):
                 model = models_copy[idx]
+                model.target_channel = dataClass.target_channels[0]
                 model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
                 if hasattr(model, 'clear_active_experts_log'):
                     model.clear_active_experts_log()  # Clear the log for the next test
