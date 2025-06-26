@@ -13,6 +13,7 @@ from numpy.f2py.auxfuncs import throw_error
 from abc import ABC, abstractmethod
 import numpy as np
 import pandas as pd
+from scipy.integrate import solve_ivp
 from scipy.optimize import minimize, curve_fit
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
@@ -1088,18 +1089,18 @@ class LuGreModelSciPy(mb.BaseModel):
         return documentation
 
 class FrictionModel(mb.BaseModel):
-    def __init__(self, name="Friction_Model", velocity_threshold=1e-3, acceleration_threshold=1e-3, target_channel = 'curr_x'):
+    def __init__(self, name="Friction_Model", f_s = 0, a_s = 0, b_s = 0, f_c = 0, sigma_2 = 0, a_d = 0, a_b =0, b_d = 0, velocity_threshold=1e-3, acceleration_threshold=1e-3, target_channel = 'curr_x'):
         self.name = name
         self.velocity_threshold = velocity_threshold
         self.acceleration_threshold = acceleration_threshold
-        self.F_s = 0
-        self.a_s = 1
-        self.b_s = 0
-        self.F_c = 0
-        self.sigma_2 = 0
-        self.a_d = 1
-        self.a_b = 0
-        self.b_d = 0
+        self.F_s = f_s
+        self.a_s = a_s
+        self.b_s = b_s
+        self.F_c = f_c
+        self.sigma_2 = sigma_2
+        self.a_d = a_d
+        self.a_b = a_b
+        self.b_d = b_d
         self.target_channel = target_channel
 
     def sign_hold(self, v, eps=1e-1):
@@ -1129,6 +1130,7 @@ class FrictionModel(mb.BaseModel):
         v_x = X[f'v_{axis}_1_current'].values
         a_x = X[f'a_{axis}_1_current'].values
         f_x_sim = X[f'f_{axis}_sim_1_current'].values
+        mrr_sim = X[f'materialremoved_sim_1_current'].values
 
         stillstand_mask = (np.abs(v_x) <= self.velocity_threshold) & (np.abs(a_x) <= self.acceleration_threshold)
         bewegung_mask = ~stillstand_mask
@@ -1137,12 +1139,12 @@ class FrictionModel(mb.BaseModel):
         v_s = self.sign_hold(v_x)
 
         y_pred[stillstand_mask] = (self.F_s * v_s[stillstand_mask] +
-                                   self.a_s * f_x_sim[stillstand_mask] +
+                                   self.a_s * f_x_sim[stillstand_mask]+
                                    self.b_s)
 
         y_pred[bewegung_mask] = (self.F_c * np.sign(v_x[bewegung_mask]) +
                                  self.sigma_2 * v_x[bewegung_mask] +
-                                 self.a_d * f_x_sim[bewegung_mask] +
+                                 self.a_d * f_x_sim[bewegung_mask]+
                                  self.a_b * a_x[bewegung_mask] +
                                  self.b_d)
 
@@ -1163,6 +1165,10 @@ class FrictionModel(mb.BaseModel):
         self.a_b = params['a_b']
         self.b_d = params['b_d']
 
+        # Ausgabe der Parameter
+        for param_name, param_value in params.items():
+            print(f"{param_name}: {param_value}")
+
         validation_loss = self.criterion(y_val.values.squeeze(), self.predict(X_val))
         print(f"Validation Loss: {validation_loss:.4e}")
         return validation_loss
@@ -1172,6 +1178,7 @@ class FrictionModel(mb.BaseModel):
         v_x = data[f'v_{axis}_1_current'].values
         a_x = data[f'a_{axis}_1_current'].values
         f_x_sim = data[f'f_{axis}_sim_1_current'].values
+        mrr_sim = data[f'materialremoved_sim_1_current'].values
 
         v_s = self.sign_hold(v_x)
 
@@ -1239,3 +1246,113 @@ class FrictionModel(mb.BaseModel):
             }
         }
         return documentation
+
+class LCResonantChainModel(mb.BaseModel):
+    def __init__(self, L1=1, L2=1, L3=1, C1=1, C2=1, C3=1, RL1=1, RL2=1, RL3=1, fs=50, name="LCResonantChainModel"):
+
+        self.name = name
+        self.L1 = L1
+        self.L2 = L2
+        self.L3 = L3
+        self.C1 = C1
+        self.C2 = C2
+        self.C3 = C3
+        self.RL1 = RL1
+        self.RL2 = RL2
+        self.RL3 = RL3
+        self.fs = fs  # Abtastrate in Hz
+
+    def system_ode(self, t, x, u_func, params):
+        i1, i2, i3, v1, v2, v3 = x
+        L1, L2, L3, C1, C2, C3, RL1, RL2, RL3 = params
+        u = u_func(t)
+        di1_dt = (u - v1) / L1
+        di2_dt = (v1 - v2) / L2
+        di3_dt = (v2 - v3) / L3
+        dv1_dt = (i1 - i2 - v1 / RL1) / C1
+        dv2_dt = (i2 - i3 - v2 / RL2) / C2
+        dv3_dt = (i3 - v3 / RL3) / C3
+        return [di1_dt, di2_dt, di3_dt, dv1_dt, dv2_dt, dv3_dt]
+
+    def predict(self, X, params=None):
+        u_arr = np.asarray(X['v_x_1_current'].values)
+        N = len(u_arr)
+        dt = 1 / self.fs
+        t = np.arange(N) * dt  # Zeitpunkte
+
+        def u_func(tau):
+            tau = np.atleast_1d(tau)
+            interp_vals = np.interp(tau, t, u_arr)
+            if interp_vals.size == 1:
+                return interp_vals[0]
+            return interp_vals
+
+        x0 = np.zeros(6)
+        if params is None:
+            params = [self.L1, self.L2, self.L3, self.C1, self.C2, self.C3, self.RL1, self.RL2, self.RL3]
+
+        sol = solve_ivp(lambda tau, x: self.system_ode(tau, x, u_func, params),
+                        (t[0], t[-1]), x0, t_eval=t, method='RK45')
+        return {
+            'i1': sol.y[0],
+            'i2': sol.y[1],
+            'i3': sol.y[2],
+            'v1': sol.y[3],
+            'v2': sol.y[4],
+            'v3': sol.y[5]
+        }
+
+    def criterion(self, y_target, y_pred):
+        return np.mean((y_target.values - y_pred) ** 2)
+
+    def _loss_function(self, param_vec, X_train, y_train):
+        if np.any(param_vec <= 1e-9):
+            return 1e9
+        y_pred = self.predict(X_train, params=param_vec)
+        loss = self.criterion(y_train, y_pred['i1'])
+        return loss
+
+    def train_model(self, X_train, y_train, X_val=None, y_val=None, **kwargs):
+        x0 = np.array([self.L1, self.L2, self.L3, self.C1, self.C2, self.C3, self.RL1, self.RL2, self.RL3])
+        bounds = [(1e-9, None)] * 9
+        res = minimize(self._loss_function, x0, args=(X_train, y_train),
+                       bounds=bounds, method='L-BFGS-B',
+                       options={'maxiter': 200})
+
+        if res.success:
+            self.L1, self.L2, self.L3, self.C1, self.C2, self.C3, self.RL1, self.RL2, self.RL3 = res.x
+            print(f"Training erfolgreich. Gefundene Parameter:")
+            print(f"L1={self.L1:.4e}, L2={self.L2:.4e}, L3={self.L3:.4e}")
+            print(f"C1={self.C1:.4e}, C2={self.C2:.4e}, C3={self.C3:.4e}")
+            print(f"RL1={self.RL1:.4e}, RL2={self.RL2:.4e}, RL3={self.RL3:.4e}")
+        else:
+            print("Optimierung war nicht erfolgreich:", res.message)
+
+        if X_val is not None and y_val is not None:
+            y_val_pred = self.predict(X_val)
+            val_loss = self.criterion(y_val, y_val_pred['i1'])
+            print(f"Validation Loss: {val_loss:.4e}")
+            return val_loss
+        return None
+
+    def test_model(self, X, y_target):
+        y_pred = self.predict(X)
+        loss = self.criterion(y_target, y_pred['i1'])
+        return loss, y_pred
+
+    def get_documentation(self):
+        return {
+            "description": "LC-Resonant Chain Model mit Trainingsmethode zur Anpassung von L, C, R.",
+            "parameters": {
+                "L1": self.L1,
+                "L2": self.L2,
+                "L3": self.L3,
+                "C1": self.C1,
+                "C2": self.C2,
+                "C3": self.C3,
+                "RL1": self.RL1,
+                "RL2": self.RL2,
+                "RL3": self.RL3,
+                "fs": self.fs
+            }
+        }

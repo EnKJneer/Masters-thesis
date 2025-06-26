@@ -23,14 +23,21 @@ if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1
-    NUMBEROFMODELS = 2
+    NUMBEROFMODELS = 1
 
     window_size = 1
     past_values = 0
     future_values = 0
 
+    dataclasses = [hdata.Combined_Plate_reduced_TrainVal, hdata.Combined_Plate_TrainVal_CONTDEV] #
+    for dataclass in dataclasses:
+        dataclass.window_size = window_size
+        dataclass.past_values = past_values
+        dataclass.future_values = future_values
+        dataclass.target_channels = ['curr_x']
+        dataclass.add_sign_hold = True
     #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_PK_TrainVal
+    dataClass_1 = hdata.Combined_Plate_TrainVal_CONTDEV
     dataClass_1.window_size = window_size
     dataClass_1.past_values = past_values
     dataClass_1.future_values = future_values
@@ -43,7 +50,7 @@ if __name__ == "__main__":
     models = [model]
 
     # Run the experiment
-    hexp.run_experiment(dataSets_list, use_nn_reference=False, use_rf_reference=True, models=models,
+    hexp.run_experiment(dataclasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
                         plot_types=['heatmap', 'prediction_overview'])

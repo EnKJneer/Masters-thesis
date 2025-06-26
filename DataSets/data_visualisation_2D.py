@@ -81,8 +81,8 @@ def plot_time_series(data, title, dpi=300, label = 'v_x'):
 
     # Zweite y-Achse für curr_x
     ax2 = ax1.twinx()
-    ax2.plot(data.index, data['curr_y'], label='curr_y', color='tab:red')
-    ax2.set_ylabel('curr_y')
+    ax2.plot(data.index, data['curr_x'], label='curr_x', color='tab:red')
+    ax2.set_ylabel('curr_x')
     ax2.legend(loc='upper right')
     #ax2.set_ylim(-2, 2)
 
@@ -91,7 +91,7 @@ def plot_time_series(data, title, dpi=300, label = 'v_x'):
 path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
-files = ['AL_2007_T4_Plate_Normal_3.csv'] #, 'AL_2007_T4_Plate_Normal_3.csv'
+files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -115,6 +115,8 @@ for file in files:
 
     name = file.replace('.csv', '')
     #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
-    plot_time_series(data, name, label='f_y_sim', dpi=300)
-    plot_time_series(data, name, label='v_y', dpi=300)
-    plot_time_series(data, name, label='z_y', dpi=300)
+    plot_time_series(data, name, label='f_x_sim', dpi=300)
+    plot_time_series(data, name, label='v_x', dpi=300)
+    plot_time_series(data, name, label='pos_x', dpi=300)
+    #plot_time_series(data, name, label='v_x', dpi=300)
+    #plot_time_series(data, name, label='z_x', dpi=300)

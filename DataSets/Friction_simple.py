@@ -34,11 +34,11 @@ def fit_friction_model(data, velocity_threshold=1e-6, acceleration_threshold=1e-
     - Bewegung: y = F_c * sign(v_y) + sigma_2 * v_y + a_d * f_y_sim + a_b * a_y + b_d
     """
     # Extrahiere relevante Variablen
-    v_y = data['v_y'].values
+    v_y = data['v_x'].values
     v_s = sign_hold(v_y)
-    a_y = data['a_y'].values
+    a_y = data['a_x'].values
     f_y_sim = data['f_y_sim'].values
-    curr_y = data['curr_y'].values
+    curr_y = data['curr_x'].values
 
     # Definiere Stillstands- und Bewegungsmasken
     stillstand_mask = (np.abs(v_y) <= velocity_threshold) & (np.abs(a_y) <= acceleration_threshold)
@@ -105,9 +105,9 @@ def fit_friction_model(data, velocity_threshold=1e-6, acceleration_threshold=1e-
 
 def predict_model(data, params, stillstand_mask=None, bewegung_mask=None):
     """Vorhersage mit dem gefitteten Modell"""
-    v_y = data['v_y'].values
+    v_y = data['v_x'].values
     v_s = sign_hold(v_y)
-    a_y = data['a_y'].values
+    a_y = data['a_x'].values
     f_y_sim = data['f_y_sim'].values
     y_pred = np.zeros_like(v_y)
 
@@ -140,7 +140,7 @@ def plot_results(data, y_pred, mae, file_name, params, stillstand_mask, bewegung
     time_index = np.arange(len(data))
 
     # Plot 1: Gemessene vs vorhergesagte Werte
-    ax1.plot(time_index, data['curr_y'], 'b-', label='Gemessen', alpha=0.7)
+    ax1.plot(time_index, data['curr_x'], 'b-', label='Gemessen', alpha=0.7)
     ax1.plot(time_index, y_pred, 'r--', label='Vorhergesagt', alpha=0.7)
     ax1.set_ylabel('Strom X [A]')
     ax1.set_title(f'{file_name} - Modellfit (MAE: {mae:.4f})')
@@ -166,7 +166,7 @@ def plot_results(data, y_pred, mae, file_name, params, stillstand_mask, bewegung
     ax2.grid(True, alpha=0.3)
 
     # Plot 3: Residuen
-    residuals = data['curr_y'] - y_pred
+    residuals = data['curr_x'] - y_pred
     ax3.plot(time_index, residuals, 'k-', alpha=0.7)
     ax3.axhline(y=0, color='r', linestyle='--', alpha=0.5)
     ax3.set_ylabel('Residuen [A]')
@@ -209,12 +209,14 @@ if __name__ == '__main__':
 
     # Training-Datei (zum Fitten des Modells)
     training_file = 'AL_2007_T4_Plate_Normal_3.csv'
-
+    training_file = 'S235JR_Plate_Depth_3.csv'
     # Test-Dateien (zum Testen des gefitteten Modells)
     test_files = ['AL_2007_T4_Plate_Normal_3.csv',
+                  'AL_2007_T4_Plate_Depth_3.csv',
                   'AL_2007_T4_Gear_Normal_3.csv',
                   'S235JR_Gear_Normal_3.csv',
-                  'S235JR_Plate_Normal_3.csv']
+                  'S235JR_Plate_Normal_3.csv',
+                  'S235JR_Plate_Depth_3.csv']
 
     print(f'{"=" * 60}')
     print("SCHRITT 1: MODELL TRAINING")
@@ -240,7 +242,7 @@ if __name__ == '__main__':
 
         # Trainings-Performance
         train_pred = predict_model(training_data_processed, trained_params, train_stillstand_mask, train_bewegung_mask)
-        train_mae = mean_absolute_error(training_data_processed['curr_y'], train_pred)
+        train_mae = mean_absolute_error(training_data_processed['curr_x'], train_pred)
 
         print(f"\nTrainierte Parameter:")
         print(f"Stillstandsreibung (F_s): {trained_params['F_s']:.6f}")
@@ -286,14 +288,14 @@ if __name__ == '__main__':
 
             # Verwende trainierte Parameter für Vorhersage
             test_pred = predict_model(test_data_processed, trained_params)
-            test_mae = mean_absolute_error(test_data_processed['curr_y'], test_pred)
+            test_mae = mean_absolute_error(test_data_processed['curr_x'], test_pred)
 
             print(f"Test MAE: {test_mae:.6f}")
 
             # Bestimme Masken für Plotting
-            v_y = test_data_processed['v_y'].values
-            a_y = test_data_processed['a_y'].values
-            test_stillstand_mask = (np.abs(v_y) <= 1e-6) & (np.abs(a_y) <= 1e-6)
+            v_x = test_data_processed['v_x'].values
+            a_x = test_data_processed['a_x'].values
+            test_stillstand_mask = (np.abs(v_x) <= 1e-6) & (np.abs(a_x) <= 1e-6)
             test_bewegung_mask = ~test_stillstand_mask
 
             # Plot Test-Ergebnisse
@@ -331,5 +333,5 @@ if __name__ == '__main__':
         print(f"\nDurchschnittliche MAE auf reinen Test-Dateien: {avg_test_mae:.6f}")
 
     print(f"\nErweiterte Modellgleichungen:")
-    print(f"Stillstand: y = F_s * sign_hold(v_y) + a_s * f_y_sim + b_s")
-    print(f"Bewegung:   y = F_c * sign(v_y) + sigma_2 * v_y + a_d * f_y_sim + a_b * a_y + b_d")
+    print(f"Stillstand: y = F_s * sign_hold(v_x) + a_s * f_x_sim + b_s")
+    print(f"Bewegung:   y = F_c * sign(v_x) + sigma_2 * v_x + a_d * f_x_sim + a_b * a_x + b_d")

@@ -521,7 +521,9 @@ class DataClassSingleAxis(BaseDataClass):
         return documentation
 
 class DataclassCombinedTrainVal(BaseDataClass):
-    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y, do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False, N = 3, load_all_geometrie_variations=True):
+    def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y,
+                 do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False, N = 3,
+                 header=HEADER_x):
         self.name = name
         self.folder = folder
         self.target_channels = target_channels
@@ -540,6 +542,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
         self.training_validation_datas = training_validation_datas
         self.testing_data_paths = testing_data_paths
         self.add_sign_hold = False
+        self.header = header
 
     def load_data(self):
         """
@@ -554,7 +557,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
         # Load test data
         fulltestdatas = read_fulldata(self.testing_data_paths, self.folder)
         test_datas = apply_action(fulltestdatas,
-                                  lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
+                                  lambda data: data[self.header].rolling(window=self.window_size, min_periods=1).mean())
 
         if self.add_sign_hold:
             for data in test_datas:
@@ -583,7 +586,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
             files = [f for f in files if os.path.basename(f) not in test_files]
 
             file_datas = read_fulldata(files, self.folder)
-            file_datas_x = apply_action(file_datas, lambda data: data[HEADER_x].rolling(window=self.window_size,
+            file_datas_x = apply_action(file_datas, lambda data: data[self.header].rolling(window=self.window_size,
                                                                                         min_periods=1).mean())
             file_datas_y = apply_action(file_datas,
                                         lambda data: data[self.target_channels].rolling(window=self.window_size,
@@ -895,7 +898,7 @@ Combined_Plate = DataClass('Plate', folder_data,
                           ["curr_x"], )
 
 dataPaths_Test_Extended = [ 'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv',
-                            'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv',
+                            'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv',
                             'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
 
 PPhys = DataClass('PPhys', folder_data,
@@ -962,16 +965,29 @@ Combined_Plate_St_TrainVal = DataclassCombinedTrainVal('Plate_St_TrainVal', fold
 
 Combined_Plate_TrainVal_Single = DataclassCombinedTrainValSingleAxis('Plate_TrainVal', folder_data,
                                                            ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
-                                                           dataPaths_Test,
+                                                           dataPaths_Test_Extended,
                                                            ["curr_x"], )
 
 Combined_PK_TrainVal = DataclassCombinedTrainVal('PK_TrainVal', folder_data,
                                                   [   'AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
                                                         'Kühlgrill_Mat_S2800', 'Kühlgrill_Mat_S3800', 'Kühlgrill_Mat_S4700',
                                                         ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
+                                                  dataPaths_Test_Extended,
+                                                  ["curr_x"], )
+Combined_Plate_reduced_TrainVal = DataclassCombinedTrainVal('Plate_reduced_TrainVal', folder_data,
+                                                  ['AL_2007_T4_Plate_SF', 'AL_2007_T4_Plate_Depth'
+                                                        ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
                                                   dataPaths_Test,
                                                   ["curr_x"], )
 
+Combined_Plate_TrainVal_CONTDEV = DataclassCombinedTrainVal('Plate_TrainVal_CONTDEV', '..\\..\\DataSets\DataMatched',
+                                                    ['AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
+                                                    [ 'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv'],
+                                                    ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z",
+                                                                          "a_x", "a_y", "a_z", "a_sp",
+                                                                          "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim",
+                                                                          "materialremoved_sim",
+                                                                          "CONT_DEV_X", "CONT_DEV_Y", "CONT_DEV_Z"])
 
 Combined_KL = DataClass('KL', folder_data,
                         dataPaths_Val_KL,

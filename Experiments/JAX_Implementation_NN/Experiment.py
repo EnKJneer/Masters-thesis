@@ -30,7 +30,7 @@ if __name__ == "__main__":
     future_values = 0
 
     #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_PK_TrainVal
+    dataClass_1 = hdata.Combined_Plate_Depth_TrainVal
     dataClass_1.window_size = window_size
     dataClass_1.past_values = past_values
     dataClass_1.future_values = future_values

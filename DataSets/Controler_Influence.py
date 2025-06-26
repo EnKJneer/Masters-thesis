@@ -37,7 +37,7 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     plt.savefig(filename + '.png')
     # Anzeigen des Plots
     #plt.show()
-def plot_time_series(data, filename, title, dpi=300):
+def plot_time_series(data, filename, title, dpi=300, label = 'a_x'):
     """
     Erstellt einen Zeitverlaufsplot mit zwei y-Achsen.
 
@@ -51,8 +51,8 @@ def plot_time_series(data, filename, title, dpi=300):
     # Plot der CTRL_DIFF, CTRL_DIFF2 und Cont_DEV_X Daten
     #ax1.plot(data['Zeit'], data['CTRL_DIFF_X'], label='CTRL_DIFF_X', color='tab:blue')
     #ax1.plot(data['Zeit'], data['CTRL_DIFF2_X'], label='CTRL_DIFF2_X', color='tab:orange')
-    #ax1.plot(data['Zeit'], data['CONT_DEV_X'], label='CONT_DEV_X', color='tab:green')
-    ax1.plot(data['Zeit'], data['a_x'], label='a_x', color='tab:green')
+    ax1.plot(data['Zeit'], data['CONT_DEV_X'], label='CONT_DEV_X', color='tab:green')
+    #ax1.plot(data['Zeit'], data[label], label=label, color='tab:green')
     ax1.set_xlabel('Zeit')
     ax1.set_ylabel('Werte')
     ax1.set_title(title)
@@ -61,7 +61,7 @@ def plot_time_series(data, filename, title, dpi=300):
 
     # Zweite y-Achse für curr_x
     ax2 = ax1.twinx()
-    ax2.plot(data['Zeit'], data['curr_x'], label='CURRENT_X', color='tab:red')
+    ax2.plot(data['Zeit'], data['CURRENT_X'], label='CURRENT_X', color='tab:red')
     ax2.set_ylabel('CURRENT_X')
     ax2.legend(loc='upper right')
 
@@ -69,10 +69,11 @@ def plot_time_series(data, filename, title, dpi=300):
 
 path_additional_data = 'AdditionalDataFiltered'
 path_data = 'DataFiltered'
-
-for file in os.listdir(path_additional_data):
+files = os.listdir(path_additional_data)
+files = ['AL_2007_T4_Plate_Normal', 'S235JR_Plate_Normal']
+for file in files:
     file = file.replace('.csv', '')
-    data = pd.read_csv(f'{path_data}/{file}_1.csv')
+    data = pd.read_csv(f'{path_data}/{file}_3.csv')
     data_additional = pd.read_csv(f'{path_additional_data}/{file}.csv')
 
     # Fenstergröße für den gleitenden Mittelwert
@@ -109,5 +110,5 @@ for file in os.listdir(path_additional_data):
     data_reduced['Zeit'] = np.arange(len(data_reduced))
     data['Zeit'] = np.arange(len(data))
 
-    #plot_time_series(data_reduced, f'Plots/{file}_time_series', title=f'{file}')
-    plot_time_series(data, f'Plots/{file}_time_series', title=f'{file}')
+    plot_time_series(data_reduced, f'Plots/{file}_time_series', title=f'{file}')
+    #plot_time_series(data, f'Plots/{file}_time_series', title=f'{file}')

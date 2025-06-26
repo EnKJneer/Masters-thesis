@@ -273,6 +273,7 @@ class HeatmapPlotter(BasePlotter):
         plot_path = self.save_plot(fig, filename)
 
         return [plot_path]
+
 class HeatmapStdPlotter(BasePlotter):
     """Erstellt eine Heatmap der Std-Werte"""
 
@@ -310,6 +311,7 @@ class HeatmapStdPlotter(BasePlotter):
         plot_path = self.save_plot(fig, filename)
 
         return [plot_path]
+
 class HeatmapEnsemblePlotter(BasePlotter):
     """Erstellt eine Heatmap der MAE-Werte"""
 
