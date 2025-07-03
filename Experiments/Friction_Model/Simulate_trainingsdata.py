@@ -33,13 +33,15 @@ if __name__ == "__main__":
     sigma_2 = 0.001
     a_b = 0.005
 
-    model_simulation = mphys.FrictionModel(f_s=f_s, a_s=a_f, b_s=0, f_c=F_c, sigma_2=sigma_2, a_d=a_f, a_b=a_b, b_d=0)
+    model_simulation = mphys.FrictionModel(f_s=f_s, a_x=a_f, a_sp= 0.1*a_f, b=0, f_c=F_c, sigma_2=sigma_2, a_b=a_b)
 
     def simulate_y(x):
         y = model_simulation.predict(x)
-        y_fy = 0.1 * a_b * x['f_y_sim_1_current'].values
-        y_fz = 0.1 * a_b * x['f_z_sim_1_current'].values
-        y = y + y_fy + y_fz
+        #y_fy = 0.5 * a_f * x['f_y_sim_1_current'].values
+        y_fz = 0.5 * a_f * x['f_z_sim_1_current'].values
+        y_mrr = -0.5 * a_f * x['materialremoved_sim_1_current'].values
+        y = y  + y_fz + y_mrr #+ y_fy
+
         # Erstelle eine zufällige Variation für jedes Element in y
         noise = np.random.uniform(-0.05, 0.05, size=y.shape)
         y = y * (1 + noise)
@@ -94,7 +96,7 @@ if __name__ == "__main__":
             plt.plot(y_test.values[:-n_drop], color='black', label='y_test')
             plt.plot(y_test_pred[:-n_drop], label='y_test_pred')
             plt.plot(y_test_pred_rf[:-n_drop], label='y_test_pred_rf')
-            #plt.plot(y_test_original[idx].values[:-n_drop], 'r--', label='y_test_original', alpha=0.5)
+            plt.plot(y_test_original[idx].values[:-n_drop], 'r--', label='y_test_original', alpha=0.5)
             plt.xlabel('Index')
             plt.ylabel('Wert')
             plt.title(name)

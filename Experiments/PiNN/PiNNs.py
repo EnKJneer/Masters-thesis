@@ -49,30 +49,25 @@ if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 800
-    NUMBEROFMODELS = 2
+    NUMBEROFMODELS = 1
 
     window_size = 1
     past_values = 0
     future_values = 0
 
     #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_PK_TrainVal
-    dataClass_1.window_size = window_size
-    dataClass_1.past_values = past_values
-    dataClass_1.future_values = future_values
+    dataclasses = [hdata.Combined_Plate_TrainVal_CONTDEV] #
+    for dataclass in dataclasses:
+        dataclass.window_size = window_size
+        dataclass.past_values = past_values
+        dataclass.future_values = future_values
+        dataclass.target_channels = ['curr_x']
+        dataclass.add_sign_hold = True
+        dataclass.header = ["v_x", "a_x", "f_x_sim", "f_y_sim", "materialremoved_sim", "CONT_DEV_X"]
 
-    dataSets_list = [dataClass_1]
 
-    #X_train, X_val, X_test, y_train, y_val, y_test = dataClass_1.load_data()
-
-    #folder_path = '..\\..\\Models\\Hyperparameter\\PiNN_PK_Train_Val'
-    #model_params = hyperparameter_optimization_PiNN(folder_path, X_train, X_val, y_train, y_val)
-
-    #model = mnn.PiNN(name='PiNN_optimized', **model_params)
-
-    #model_erd = mphys.PhysicalModelErd(learning_rate=1)
-
-    model_pinn = mnn.PiNNNaiveLinear(penalty_weight=50)
+    model_pinn = mnn.PiNNFriction(penalty_weight=50)
+    #model_pinn.input_head =["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim", "z_x", "z_y", "z_z", "z_sp", ]
     model_pinn_naive = mnn.PiNNNaive()
 
     model_pinn_adaptive = mnn.PiNNAdaptiv(penalty_weight=50)
@@ -82,7 +77,12 @@ if __name__ == "__main__":
                                                                [-3.34966649e-06, -9.13457313e-07,  3.79570906e-06, -1.32213537e-11, -1.06608064e-11],
                                                                [ 2.84573389e-07, -5.36836637e-08,  9.28007239e-07, -1.75489189e-11, -1.06608064e-11],
                                                                [-8.91113905e-10, -7.01598113e-10,  2.98052828e-06, -1.00204480e-11, -1.06608064e-11]]))
-    models = [model_pinn_naive, model_pinn, model_pinn_matrix] # model_pinn_adaptive,
+
+    model = mnn.Net(n_hidden_size=3, name='Short_Net')
+    models = [model_pinn] # model_pinn_adaptive,
 
     # Run the experiment
-    hexp.run_experiment(dataSets_list, use_nn_reference=True, use_rf_reference=False, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, window_size=window_size, past_values=past_values, future_values=future_values)
+    hexp.run_experiment(dataclasses, use_nn_reference=True, use_rf_reference=False, models=models,
+                        NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
+                        window_size=window_size, past_values=past_values,
+                        future_values=future_values, patience=10)

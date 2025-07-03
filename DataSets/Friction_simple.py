@@ -14,7 +14,7 @@ def sign_hold(v, eps = 1e-1):
     z = np.zeros(len(v))
 
     # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
-    h = deque([0, 0, 0, 0, 0], maxlen=5)
+    h = deque([1, 1, 1, 1, 1], maxlen=5)
 
     # Berechnung von z
     for i in range(len(v)):

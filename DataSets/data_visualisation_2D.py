@@ -10,7 +10,7 @@ def sign_hold(v, eps = 1e-1):
     z = np.zeros(len(v))
 
     # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
-    h = deque([0, 0, 0, 0, 0], maxlen=5)
+    h = deque([1, 1, 1, 1, 1], maxlen=5)
 
     # Berechnung von z
     for i in range(len(v)):
@@ -77,7 +77,7 @@ def plot_time_series(data, title, dpi=300, label = 'v_x'):
     ax1.set_ylabel('Werte')
     ax1.set_title(title)
     ax1.legend(loc='upper left')
-    #ax1.set_ylim(-6, 6)
+    #ax1.set_ylim(-0.000001, 0.000001)
 
     # Zweite y-Achse für curr_x
     ax2 = ax1.twinx()
@@ -92,6 +92,7 @@ path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
+files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -101,6 +102,8 @@ for file in files:
 
     data['z_x'] = sign_hold(data['v_x'])
     data['z_y'] = sign_hold(data['v_y'])
+    data['z_sp'] = -data['f_sp_sim']
+    data['z_mrr'] = sign_hold(data['v_x']) * data['materialremoved_sim']
     xlabel = 'pos_x'
     ylabel = 'pos_y'
     label = 'f_y_sim'
@@ -115,8 +118,12 @@ for file in files:
 
     name = file.replace('.csv', '')
     #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
-    plot_time_series(data, name, label='f_x_sim', dpi=300)
+    #plot_time_series(data, name, label='f_x_sim', dpi=300)
+    #plot_time_series(data, name, label='f_y_sim', dpi=300)
     plot_time_series(data, name, label='v_x', dpi=300)
     plot_time_series(data, name, label='pos_x', dpi=300)
+    #plot_time_series(data, name, label='f_z_sim', dpi=300)
+    #plot_time_series(data, name, label='z_sp', dpi=300)
+    #plot_time_series(data, name, label='z_mrr', dpi=300)
     #plot_time_series(data, name, label='v_x', dpi=300)
     #plot_time_series(data, name, label='z_x', dpi=300)

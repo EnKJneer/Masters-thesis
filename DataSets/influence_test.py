@@ -27,6 +27,10 @@ def combined_model_linear_3(x, a, b, c, d):
     x_1, x_2, x_3 = x
     return a * x_1 + b * x_2 + c * x_3 + d
 
+def combined_model_linear_4(x, a, b, c, d, e):
+    x_1, x_2, x_3, x_4 = x
+    return a * x_1 + b * x_2 + c * x_3 + d * x_4 + e
+
 path_data = 'DataFiltered'
 
 files = os.listdir(path_data)
@@ -44,6 +48,7 @@ for file in files:
 
         f_x = data['f_x_sim'].iloc[:-n].values
         f_y = data['f_y_sim'].iloc[:-n].values
+        pos_x = data['pos_x'].iloc[:-n].values
         v_x = data['v_x'].iloc[:-n].values
         v_y = data['v_y'].iloc[:-n].values
         a_x = data['a_x'].iloc[:-n].values
@@ -60,32 +65,25 @@ for file in files:
         print(f'Parameter Combined: {params_combined}')
         mse_combined = calculate_mae(y, y_pred_combined)
 
-        initial_params_combined_lin_2 = [1, 1, 1, 1, 1, 1]
-        params_combined_lin_2, _ = curve_fit(combined_model_y, (f_x, np.sign(v_x), f_y), y, p0=initial_params_combined_lin_2)
-        y_pred_combined_lin_2 = combined_model_y((f_x, np.sign(v_x), a_x), *params_combined_lin_2)
+        initial_params_combined_lin_2 = [1, 1, 1, 1, 1]
+        xdata = (f_x, a_x, v_x, pos_x)
+        params_combined_lin_2, _ = curve_fit(combined_model_linear_4, xdata, y, p0=initial_params_combined_lin_2)
+        y_pred_combined_lin_2 = combined_model_linear_4(xdata, *params_combined_lin_2)
         print(f'Parameter Combined 2: {params_combined_lin_2}')
         mse_combined_lin_2 = calculate_mae(y, y_pred_combined_lin_2)
 
         # MSE Werte speichern
-        mae_values[file].extend([mse_linear_fx, mse_linear_vx, mse_linear_vx_s, mse_sigmoid_vx,
-                                 mse_combined, mse_combined_lin, mse_combined_lin_2])
+        mae_values[file].extend([mse_combined, mse_combined_lin_2])
 
         # Ergebnisse ausgeben
-        print(f"MSE für lineare Gleichung mit f_x_sim: {mse_linear_fx:.2f}")
-        print(f"MSE für lineare Gleichung mit v_x: {mse_linear_vx:.2f}")
-        print(f"MSE für lineare Gleichung mit v_x²*sign(v_x): {mse_linear_vx_s:.2f}")
-        print(f"MSE für sigmoidale Gleichung mit v_x: {mse_sigmoid_vx:.2f}")
+
         print(f"MSE für kombinierte Gleichung: {mse_combined:.2f}")
-        print(f"MSE für kombinierte Gleichung Linear: {mse_combined_lin:.2f}")
         print(f"MSE für kombinierte Gleichung 2: {mse_combined_lin_2:.2f}")
 
         # Plots für den zeitlichen Verlauf
         plt.figure(figsize=(12, 6))
         plt.plot(data.index[:-n], y, label='Original curr_x', color='blue')
-        plt.plot(data.index[:-n], y_pred_linear_fx, label='Lineare Gleichung mit f_x_sim', linestyle='--')
-        plt.plot(data.index[:-n], y_pred_linear_vx, label='Lineare Gleichung mit v_x', linestyle='--')
-        plt.plot(data.index[:-n], y_pred_linear_vx, label='Lineare Gleichung mit v_x²*sign(v_x)', linestyle='--')
-        plt.plot(data.index[:-n], y_pred_sigmoid_vx, label='Sigmoidale Gleichung mit v_x', linestyle='--')
+
         plt.xlabel('Index')
         plt.ylabel('curr_x')
         plt.title(f'Zeitlicher Verlauf von curr_x für {file}')
@@ -95,7 +93,6 @@ for file in files:
         plt.figure(figsize=(12, 6))
         plt.plot(data.index[:-n], y, label='Original curr_x', color='blue')
         plt.plot(data.index[:-n], y_pred_combined, label='Kombinierte Gleichung', linestyle='--')
-        plt.plot(data.index[:-n], y_pred_combined_lin, label='Kombinierte Gleichung linear', linestyle='--')
         plt.plot(data.index[:-n], y_pred_combined_lin_2, label='Kombinierte Gleichung 2', linestyle='--')
         plt.xlabel('Index')
         plt.ylabel('curr_x')
@@ -108,8 +105,7 @@ for file in files:
         
 # Balkendiagramm der MSE Werte
 plt.figure(figsize=(12, 6))
-labels = ['Linear f_x_sim', 'Linear v_x', 'Linear v_x²*sgn(v_x)', 'Sigmoid v_x',
-          'Kombiniert', 'Kombiniert linear', 'Kombiniert 2']
+labels = ['Kombiniert sigmoid', 'Linear 4']
 x = np.arange(len(labels))
 width = 0.2
 

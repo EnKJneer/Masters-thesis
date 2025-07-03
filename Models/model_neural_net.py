@@ -12,12 +12,14 @@ import numpy as np
 import optuna
 import pandas as pd
 import torch
+import torchcde
 import torch.jit
 import torch.nn as nn
 from numpy.f2py.auxfuncs import throw_error
 from sklearn.preprocessing import QuantileTransformer
 
 import Models.model_base as mb
+import Helper.handling_data as hdata
 
 def get_reference(input_size=None):
     """
@@ -1474,6 +1476,132 @@ class PiNNNaiveLinear(Net):
         }}
         return documentation
 
+class PiNNFriction(Net):
+    def __init__(self, *args, name="PiNNFriction", penalty_weight=1, optimizer_type='adam', learning_rate=0.001, theta_init=None,**kwargs):
+        super(PiNNFriction, self).__init__(*args, learning_rate=learning_rate, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
+        self.theta_init = theta_init
+        self.input_head = hdata.HEADER_x
+        # Neue Parameter-Matrix für alle Achsen
+        if theta_init is not None:
+            if theta_init.shape != (4, 5):
+                raise ValueError("theta_init must have shape (4, 5)")
+            self.theta = nn.Parameter(torch.tensor(theta_init, dtype=torch.float32))
+        else:
+            self.theta = nn.Parameter(torch.zeros(4, 5, dtype=torch.float32))  # Achsen: x, y, z, sp
+
+    def get_indices_by_prefix(self, header, prefix):
+        return [index for index, item in enumerate(header) if item.startswith(prefix)]
+
+    def criterion(self, y_target, y_pred, x_input=None):
+
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
+
+        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+            x_input = x_input.clone().detach().requires_grad_(True)
+            y_pred_physics = self(x_input)
+
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+
+            axis = self.target_channel.replace('curr_', '')
+
+            # Extrahiere die Indizes und die entsprechenden Daten
+            indices_a = self.get_indices_by_prefix(self.input_head, f'a_{axis}')
+            indices_f = self.get_indices_by_prefix(self.input_head, f'f_{axis}')
+            indices_v = self.get_indices_by_prefix(self.input_head, f'v_{axis}')
+            indices_z = self.get_indices_by_prefix(self.input_head, f'z_{axis}')#
+
+            # Kombiniere alle Indizes, die wir nicht in dy_remaining wollen
+            all_excluded_indices = set(indices_a + indices_f + indices_v + indices_z)
+
+            # Erstelle eine Maske für die verbleibenden Indizes
+            remaining_indices = [i for i in range(dy_dx.shape[1]) if i not in all_excluded_indices]
+
+            # Extrahiere die verbleibenden Teile von dy_dx
+            dy_remaining = dy_dx[:, remaining_indices]
+
+            # Die bereits extrahierten Teile
+            dy_da = dy_dx[:, indices_a]
+            dy_df = dy_dx[:, indices_f]
+            dy_dv = dy_dx[:, indices_v]
+            dy_dz = dy_dx[:, indices_z]
+
+            a = x_input[:, indices_a]
+            f = x_input[:, indices_f]
+            v = x_input[:, indices_v]
+            z = x_input[:, indices_z]
+
+            # Constraint-Berechnung für jede Achse separat
+            constraint = []
+            deriv =  dy_dv + dy_df + dy_da + dy_dz
+            dim = v.shape[1]
+            influences = (
+                    self.theta[1, 0] +
+                    v * self.theta[:dim, 1] +
+                    f * self.theta[:dim, 2] +
+                    a * self.theta[:dim, 3] +
+                    z * self.theta[:dim, 4]
+            )
+            constraint_i = deriv - influences
+            constraint.append(constraint_i.unsqueeze(1))
+
+            constraint = torch.cat(constraint, dim=1)  # (N, 4)
+            penalty = torch.mean(constraint ** 2)  + 1/10 * torch.mean(dy_remaining ** 2)
+            return mse_loss + self.penalty_weight * penalty
+
+        return mse_loss
+
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        original_criterion = self.criterion
+
+        self.input_head = [col for col in X_train.columns if "_1_current" in col]
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiNNFriction, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion
+            return result
+
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
+            "penalty_weight": self.penalty_weight,
+        }}
+        return documentation
+
 class PiNNNaive(Net):
     def __init__(self, *args, name="PiNN_Naive", penalty_weight=1, optimizer_type='adam', learning_rate=0.001,  theta_init=None, **kwargs):
         super(PiNNNaive, self).__init__(*args,learning_rate=learning_rate, **kwargs)
@@ -1621,4 +1749,366 @@ class PiNNNaive(Net):
             "optimizer_type": self.optimizer_type,
             "penalty_weight": self.penalty_weight,
         }}
+        return documentation
+
+
+class NeuralCDE(mb.BaseNetModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=2,
+                 activation=nn.ReLU, learning_rate=0.001, name="NeuralCDE", optimizer_type='adam',
+                 cde_hidden_size=None, interpolation='cubic', solver='dopri5', rtol=1e-3, atol=1e-5,
+                 sequence_length=10, overlap=0.5, auto_sequential=True):
+        """
+        Neural Controlled Differential Equation model.
+
+        Parameters
+        ----------
+        input_size : int, optional
+            The number of input features (channels). If None, it will be set during the first forward pass.
+        output_size : int
+            The number of output features.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during initialization.
+        n_hidden_layers : int
+            The number of hidden layers in the vector field network.
+        activation : torch.nn.Module
+            The activation function to be used in the hidden layers.
+        learning_rate : float
+            The learning rate for the optimizer.
+        name : str
+            The name of the model.
+        optimizer_type : str
+            The type of optimizer to use.
+        cde_hidden_size : int, optional
+            Hidden state size for the CDE. If None, it will be set to n_hidden_size.
+        interpolation : str
+            Interpolation method for the control path ('cubic', 'linear').
+        solver : str
+            ODE solver ('dopri5', 'rk4', 'euler').
+        rtol : float
+            Relative tolerance for the ODE solver.
+        atol : float
+            Absolute tolerance for the ODE solver.
+        sequence_length : int
+            Length of each sequence when converting tabular to sequential data.
+        overlap : float
+            Overlap ratio between consecutive sequences (0 to 1).
+        auto_sequential : bool
+            If True, automatically convert tabular data to sequential format.
+        """
+        super(NeuralCDE, self).__init__(
+            input_size=input_size,
+            output_size=output_size,
+            name=name,
+            learning_rate=learning_rate,
+            optimizer_type=optimizer_type
+        )
+
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = n_hidden_layers
+        self.activation = activation()
+        self.cde_hidden_size = cde_hidden_size
+        self.interpolation = interpolation
+        self.solver = solver
+        self.rtol = rtol
+        self.atol = atol
+        self.sequence_length = sequence_length
+        self.overlap = overlap
+        self.auto_sequential = auto_sequential
+
+        # Store original data mappings for compatibility
+        self.sequence_to_original_mapping = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize()
+
+    def _initialize(self):
+        """Initialize the neural network layers."""
+        self.scaler = None
+
+        # Set default sizes if not provided
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+        if self.cde_hidden_size is None:
+            self.cde_hidden_size = self.n_hidden_size
+
+        # Initial hidden state network
+        self.initial_fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+        self.initial_fc2 = nn.Linear(self.n_hidden_size, self.cde_hidden_size)
+
+        # Vector field network
+        # Input: hidden state + control input
+        vector_field_input_size = self.cde_hidden_size + self.input_size
+        self.vector_fc1 = nn.Linear(vector_field_input_size, self.n_hidden_size)
+        self.vector_fcs = nn.ModuleList([
+            nn.Linear(self.n_hidden_size, self.n_hidden_size)
+            for _ in range(self.n_hidden_layers)
+        ])
+        # Output: cde_hidden_size * input_size (for matrix multiplication)
+        self.vector_fc_out = nn.Linear(self.n_hidden_size, self.cde_hidden_size * self.input_size)
+
+        # Readout network
+        self.readout_fc1 = nn.Linear(self.cde_hidden_size, self.n_hidden_size)
+        self.readout_fc2 = nn.Linear(self.n_hidden_size, self.output_size)
+
+        # Move to device
+        self.to(self.device)
+
+    def prepare_sequential_data(self, X, y=None):
+        """
+        Convert tabular data to sequential format for Neural CDE.
+
+        Parameters
+        ----------
+        X : np.ndarray or pd.DataFrame
+            Input data of shape (n_samples, n_features).
+        y : np.ndarray or pd.Series, optional
+            Target data. If provided, will be aligned with sequences.
+
+        Returns
+        -------
+        tuple
+            (X_sequential, y_sequential, mapping) where mapping tracks original indices.
+        """
+        if hasattr(X, 'values'):
+            X_array = X.values
+        else:
+            X_array = X
+
+        n_samples, n_features = X_array.shape
+        step_size = max(1, int(self.sequence_length * (1 - self.overlap)))
+
+        sequences = []
+        y_sequences = []
+        mapping = []
+
+        for i in range(0, n_samples - self.sequence_length + 1, step_size):
+            sequences.append(X_array[i:i + self.sequence_length])
+            mapping.append(list(range(i, i + self.sequence_length)))
+
+            if y is not None:
+                if hasattr(y, 'values'):
+                    y_array = y.values
+                elif hasattr(y, 'to_numpy'):
+                    y_array = y.to_numpy()
+                else:
+                    y_array = y
+                # Use the last target value of the sequence
+                y_sequences.append(y_array[i + self.sequence_length - 1])
+
+        X_sequential = np.array(sequences)
+
+        if y is not None:
+            y_sequential = np.array(y_sequences)
+            return X_sequential, y_sequential, mapping
+        else:
+            return X_sequential, None, mapping
+
+    def vector_field_func(self, t, z, X_interp):
+        """
+        Vector field function for the CDE.
+
+        Parameters
+        ----------
+        t : torch.Tensor
+            Current time point.
+        z : torch.Tensor
+            Current hidden state of shape (batch_size, cde_hidden_size).
+        X_interp : torchcde.CubicSpline or torchcde.LinearInterpolation
+            Interpolated control path.
+
+        Returns
+        -------
+        torch.Tensor
+            Derivative of the hidden state.
+        """
+        # Evaluate the control path at time t
+        X_t = X_interp.evaluate(t)  # Shape: (batch_size, input_size)
+
+        # Concatenate hidden state and control input
+        z_and_X = torch.cat([z, X_t], dim=-1)  # Shape: (batch_size, cde_hidden_size + input_size)
+
+        # Pass through vector field network
+        x = self.activation(self.vector_fc1(z_and_X))
+        for fc in self.vector_fcs:
+            x = self.activation(fc(x))
+        output = self.vector_fc_out(x)  # Shape: (batch_size, cde_hidden_size * input_size)
+
+        # Reshape to (batch_size, cde_hidden_size, input_size)
+        output = output.view(z.size(0), self.cde_hidden_size, self.input_size)
+
+        # Compute dX/dt at time t
+        dX_dt = X_interp.derivative(t)  # Shape: (batch_size, input_size)
+
+        # Matrix multiplication: (batch_size, cde_hidden_size, input_size) @ (batch_size, input_size, 1)
+        # -> (batch_size, cde_hidden_size, 1) -> (batch_size, cde_hidden_size)
+        dz_dt = torch.bmm(output, dX_dt.unsqueeze(-1)).squeeze(-1)
+
+        return dz_dt
+
+    def forward(self, X):
+        """
+        Defines the forward pass of the Neural CDE.
+
+        Parameters
+        ----------
+        X : torch.Tensor
+            Input tensor of shape (batch_size, sequence_length, input_size).
+
+        Returns
+        -------
+        torch.Tensor
+            The output tensor from the neural network.
+        """
+        # Handle case where X is 2D (tabular data)
+        if len(X.shape) == 2:
+            # Convert to sequential format
+            batch_size, n_features = X.shape
+            # Create artificial sequences by repeating the same sample
+            X = X.unsqueeze(1).repeat(1, self.sequence_length, 1)
+
+        # Handle dynamic initialization like in Net class
+        if self.input_size is None:
+            self.input_size = X.shape[-1]  # Last dimension is input_size for sequential data
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            if self.cde_hidden_size is None:
+                self.cde_hidden_size = self.n_hidden_size
+            self._initialize()
+
+        batch_size, seq_len, input_size = X.shape
+
+        # Create time points
+        t = torch.linspace(0, 1, seq_len, device=X.device, dtype=X.dtype)
+
+        # Add time dimension to create coefficients for interpolation
+        # Shape: (batch_size, seq_len, input_size + 1) where +1 is for time
+        t_expanded = t.unsqueeze(0).unsqueeze(-1).expand(batch_size, seq_len, 1)
+        X_with_time = torch.cat([t_expanded, X], dim=-1)
+
+        # Create interpolation
+        if self.interpolation == 'cubic':
+            X_interp = torchcde.CubicSpline(X_with_time)
+        elif self.interpolation == 'linear':
+            X_interp = torchcde.LinearInterpolation(X_with_time)
+        else:
+            raise ValueError(f"Unknown interpolation method: {self.interpolation}")
+
+        # Initial hidden state network
+        z0 = self.activation(self.initial_fc1(X[:, 0]))  # Use first time point
+        z0 = self.initial_fc2(z0)
+
+        # Solve the CDE
+        z_T = torchcde.cdeint(
+            X=X_interp,
+            func=self.vector_field_func,
+            z0=z0,
+            t=torch.tensor([0., 1.], device=X.device, dtype=X.dtype),
+            method=self.solver,
+            rtol=self.rtol,
+            atol=self.atol
+        )
+
+        # Take the final state (at time T=1)
+        z_final = z_T[-1]  # Shape: (batch_size, cde_hidden_size)
+
+        # Apply readout network
+        x = self.activation(self.readout_fc1(z_final))
+        x = self.readout_fc2(x)
+
+        return x
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        """
+        Override train_model to handle tabular to sequential conversion.
+        """
+        if self.auto_sequential and (len(X_train.shape) == 2 if isinstance(X_train, np.ndarray) else
+        not isinstance(X_train, list)):
+            # Convert tabular data to sequential
+            X_train_seq, y_train_seq, _ = self.prepare_sequential_data(X_train, y_train)
+            X_val_seq, y_val_seq, _ = self.prepare_sequential_data(X_val, y_val)
+
+            # Call parent train_model with sequential data
+            return super().train_model(X_train_seq, y_train_seq, X_val_seq, y_val_seq, **kwargs)
+        else:
+            # Data is already in correct format or is batched
+            return super().train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def test_model(self, X, y_target, criterion_test=None):
+        """
+        Override test_model to handle tabular to sequential conversion.
+        """
+        if self.auto_sequential and len(X.shape) == 2:
+            # Convert tabular data to sequential
+            X_seq, y_seq, mapping = self.prepare_sequential_data(X, y_target)
+            self.sequence_to_original_mapping = mapping
+
+            # Call parent test_model with sequential data
+            loss, y_pred_seq = super().test_model(X_seq, y_seq, criterion_test)
+
+            # Map predictions back to original data size
+            y_pred_full = np.full(len(y_target), np.nan)
+
+            for i, seq_mapping in enumerate(mapping):
+                # Use the prediction for the last element of each sequence
+                original_idx = seq_mapping[-1]
+                if i < len(y_pred_seq):
+                    y_pred_full[original_idx] = y_pred_seq[i]
+
+            # Fill any remaining NaN values with the mean of available predictions
+            nan_mask = np.isnan(y_pred_full)
+            if np.any(nan_mask):
+                mean_pred = np.nanmean(y_pred_full)
+                y_pred_full[nan_mask] = mean_pred
+
+            return loss, y_pred_full
+        else:
+            # Data is already in correct format
+            return super().test_model(X, y_target, criterion_test)
+
+    def predict(self, X):
+        """
+        Override predict to handle tabular to sequential conversion.
+        """
+        if self.auto_sequential and len(X.shape) == 2:
+            X_seq, _, mapping = self.prepare_sequential_data(X)
+            X_tensor = self.scaled_to_tensor(X_seq)
+            y_pred_seq = self(X_tensor).detach().cpu().numpy()
+
+            # Map predictions back to original data size
+            y_pred_full = np.full(X.shape[0], np.nan)
+
+            for i, seq_mapping in enumerate(mapping):
+                original_idx = seq_mapping[-1]
+                if i < len(y_pred_seq):
+                    y_pred_full[original_idx] = y_pred_seq[i].item() if y_pred_seq[i].ndim == 0 else y_pred_seq[i][0]
+
+            # Fill any remaining NaN values
+            nan_mask = np.isnan(y_pred_full)
+            if np.any(nan_mask):
+                mean_pred = np.nanmean(y_pred_full)
+                y_pred_full[nan_mask] = mean_pred
+
+            return torch.tensor(y_pred_full, device=self.device)
+        else:
+            return super().predict(X)
+
+    def get_documentation(self):
+        """Get model documentation including hyperparameters."""
+        documentation = {
+            "hyperparameters": {
+                "learning_rate": self.learning_rate,
+                "n_hidden_size": self.n_hidden_size,
+                "n_hidden_layers": self.n_hidden_layers,
+                "n_activation_function": self.activation.__class__.__name__,
+                "cde_hidden_size": self.cde_hidden_size,
+                "interpolation": self.interpolation,
+                "solver": self.solver,
+                "rtol": self.rtol,
+                "atol": self.atol,
+                "sequence_length": self.sequence_length,
+                "overlap": self.overlap,
+                "auto_sequential": self.auto_sequential,
+            }
+        }
         return documentation

@@ -10,6 +10,7 @@ path_data = 'DataFiltered'
 # Liste der Dateien
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv',
          'S235JR_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
+
 #files = ['AL_2007_T4_Plate_Normal_3.csv']
 # Anzahl der letzten Datenpunkte, die ausgeschlossen werden sollen
 n = 25
@@ -40,10 +41,10 @@ for file in files:
         data['mrr_z'] = data['materialremoved_sim'] * (np.abs(v_z) / (np.abs(v_x) + np.abs(v_y) + 1e-10))
 
         # Definiere die Achsen
-        axes = ['x', 'y']
+        axes = ['x']
 
         # Berechne die Korrelationsmatrix für curr_x
-        corr_matrix = data[['curr_x', 'v_x', 'f_x_sim', 'mrr_x', 'materialremoved_sim', 'curr_y', 'curr_z', 'curr_sp']].corr()
+        corr_matrix = data[['curr_x', 'curr_y', 'pos_x', 'v_x', 'f_x_sim', 'materialremoved_sim', 'f_y_sim', 'f_z_sim', 'f_sp_sim']].corr()
 
         # Plotte die Korrelationsmatrix
         plt.figure(figsize=(10, 8))
@@ -87,13 +88,21 @@ for file in files:
             plt.ylabel(f'curr_{axis}')
             plt.title(f'{file}: f_{axis}_sim vs. curr_{axis}')
 
+            """            
             if axis == 'x' or axis == 'y':
                 # Streudiagramm von mrr vs. curr
                 plt.subplot(2, 2, 3)
                 plt.scatter(data[f'mrr_{axis}'], data[f'curr_{axis}'], alpha=0.5)
                 plt.xlabel(f'mrr_{axis}')
                 plt.ylabel(f'curr_{axis}')
-                plt.title(f'{file}: mrr_{axis} vs. curr_{axis}')
+                plt.title(f'{file}: mrr_{axis} vs. curr_{axis}')"""
+
+            # Streudiagramm von mrr vs. curr
+            plt.subplot(2, 2, 3)
+            plt.scatter(data[f'pos_x'], data[f'curr_{axis}'], alpha=0.5)
+            plt.xlabel(f'pos_x')
+            plt.ylabel(f'curr_{axis}')
+            plt.title(f'{file}: pos_x vs. curr_{axis}')
 
             # Streudiagramm von materialremoved_sim vs. curr
             plt.subplot(2, 2, 4)

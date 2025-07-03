@@ -13,6 +13,10 @@ import os
 import pickle
 from collections import Counter, deque
 
+import jax
+import jax.numpy as jnp
+from functools import partial
+
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.f2py.auxfuncs import throw_error
@@ -520,6 +524,26 @@ class DataClassSingleAxis(BaseDataClass):
         }
         return documentation
 
+# Enable JIT compilation for all functions
+@partial(jax.jit, static_argnums=(0,))
+def rk4_step(f, y, t, dt, *args):
+    """Single Runge-Kutta 4th order step - JIT compiled"""
+    k1 = f(y, t, *args)
+    k2 = f(y + 0.5 * dt * k1, t + 0.5 * dt, *args)
+    k3 = f(y + 0.5 * dt * k2, t + 0.5 * dt, *args)
+    k4 = f(y + dt * k3, t + dt, *args)
+    return y + (dt / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
+
+@partial(jax.jit, static_argnums=(0,))
+def rk4_scan_integrate(f, y0, t_array, *static_args):
+    def scan_fn(y, t_curr):
+        dt = t_array[1] - t_array[0]
+        y_next = rk4_step(f, y, t_curr, dt, *static_args)
+        return y_next, y_next
+
+    _, y_values = jax.lax.scan(scan_fn, y0, t_array[1:])
+    return jnp.concatenate([jnp.array([y0]), y_values])
+
 class DataclassCombinedTrainVal(BaseDataClass):
     def __init__(self, name, folder, training_validation_datas, testing_data_paths, target_channels=HEADER_y,
                  do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False, N = 3,
@@ -559,10 +583,33 @@ class DataclassCombinedTrainVal(BaseDataClass):
         test_datas = apply_action(fulltestdatas,
                                   lambda data: data[self.header].rolling(window=self.window_size, min_periods=1).mean())
 
+        header_v = []
+        for column in self.header:
+            if column.startswith('v_'):
+                header_v.append(column)
+
+        def integrand_x0(x0, t_curr, v_data):
+            idx = jnp.argmin(jnp.abs(t_curr - jnp.arange(len(v_data))))
+            v_interp = v_data[idx]
+            return v_interp
+
+        for column in self.header:
+            if column.startswith('CONT_DEV_'):
+                for data in test_datas:
+                    cont_dev = jnp.array(data[column])
+                    # Define the time array
+                    t = jnp.linspace(0, len(cont_dev) - 1, len(cont_dev))
+
+                    # Integrate cont_dev_x using RK4
+                    integrated_cont_dev_x = rk4_scan_integrate(partial(integrand_x0, v_data=cont_dev),
+                                                               jnp.array([cont_dev[0]]), t)
+
+                    data[column.replace('CONT_DEV_', 'dev_int_')] = integrated_cont_dev_x
+
         if self.add_sign_hold:
             for data in test_datas:
-                for header in HEADER_v:
-                    data[header+'_hold'] = sign_hold(data[header].values)
+                for header in header_v:
+                    data[header.replace('v', 'z')] = sign_hold(data[header].values)
 
         X_test = apply_action(test_datas,
                               lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
@@ -593,8 +640,21 @@ class DataclassCombinedTrainVal(BaseDataClass):
                                                                                                min_periods=1).mean())
             if self.add_sign_hold:
                 for data in file_datas_x:
-                    for header in HEADER_v:
-                        data[header + '_hold'] = sign_hold(data[header].values)
+                    for header in header_v:
+                        data[header.replace('v', 'z')] = sign_hold(data[header].values)
+
+            for column in self.header:
+                if column.startswith('CONT_DEV_'):
+                    for data in file_datas_x:
+                        cont_dev = jnp.array(data[column])
+                        # Define the time array
+                        t = jnp.linspace(0, len(cont_dev) - 1, len(cont_dev))
+
+                        # Integrate cont_dev_x using RK4
+                        integrated_cont_dev_x = rk4_scan_integrate(partial(integrand_x0, v_data=cont_dev),
+                                                                   jnp.array([cont_dev[0]]), t)
+
+                        data[column.replace('CONT_DEV_', 'dev_int_')] = integrated_cont_dev_x
 
             X_files = apply_action(file_datas_x,
                                    lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values,
@@ -643,6 +703,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
             "testing_data_paths": self.testing_data_paths,
             "target_channels": self.target_channels,
             "add_sign_hold": self.add_sign_hold,
+            "Header": self.header,
         }
         return documentation
 
@@ -979,7 +1040,16 @@ Combined_Plate_reduced_TrainVal = DataclassCombinedTrainVal('Plate_reduced_Train
                                                         ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
                                                   dataPaths_Test,
                                                   ["curr_x"], )
-
+Combined_Plate_reduced_AlSt_TrainVal = DataclassCombinedTrainVal('Plate_reduced_AlSt_TrainVal', folder_data,
+                                                  ['AL_2007_T4_Plate_SF', 'AL_2007_T4_Plate_Depth', 'S235JR_Plate_SF', 'S235JR_Plate_Depth'
+                                                        ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
+                                                  dataPaths_Test,
+                                                  ["curr_x"], )
+Combined_PlateGear_reduced_TrainVal = DataclassCombinedTrainVal('PlateGear_reduced_TrainVal', folder_data,
+                                                  ['AL_2007_T4_Plate_SF', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Gear_SF', 'AL_2007_T4_Gear_Depth'
+                                                        ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
+                                                  dataPaths_Test,
+                                                  ["curr_x"], )
 Combined_Plate_TrainVal_CONTDEV = DataclassCombinedTrainVal('Plate_TrainVal_CONTDEV', '..\\..\\DataSets\DataMatched',
                                                     ['AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
                                                     [ 'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv'],

@@ -37,24 +37,13 @@ if __name__ == "__main__":
         dataClass.add_sign_hold = True
         dataClass.target_channels = ['curr_x']
 
-    #for dataClass in dataClasses:
-    #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_Plate_TrainVal
-    dataClass_1.window_size = window_size
-    dataClass_1.past_values = past_values
-    dataClass_1.future_values = future_values
-    dataClass_1.add_sign_hold = True
-    dataClass_1.target_channels = ['curr_x']
-
-    dataSets_list = [dataClass_1]
-
     #model_simple = mphys.NaiveModelSimple()
     model = mphys.FrictionModel()
     model.target_channel = 'curr_x'
     models = [model] # ,
 
     # Run the experiment
-    hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=True, use_phys_reference=False, models = models,
+    hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=False, use_phys_reference=True, models = models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
                         plot_types=['heatmap', 'prediction_overview'])

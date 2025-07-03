@@ -29,25 +29,20 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
-    dataclasses = [hdata.Combined_Plate_reduced_TrainVal, hdata.Combined_Plate_TrainVal_CONTDEV] #
+    dataclass2 = hdata.Combined_Plate_TrainVal
+    dataclass2.add_sign_hold = True
+    dataclasses = [hdata.Combined_Plate_TrainVal_CONTDEV, dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
     for dataclass in dataclasses:
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
         dataclass.target_channels = ['curr_x']
-        dataclass.add_sign_hold = True
-    #Combined_Gear,Combined_KL
-    dataClass_1 = hdata.Combined_Plate_TrainVal_CONTDEV
-    dataClass_1.window_size = window_size
-    dataClass_1.past_values = past_values
-    dataClass_1.future_values = future_values
-    dataClass_1.target_channels = ['curr_x']
-    dataClass_1.add_sign_hold = True
-    dataSets_list = [dataClass_1]
+        #dataclass.add_sign_hold = True
+        #dataclass.header = ["v_x", "a_x", "f_x_sim", "CONT_DEV_X",]
 
     #model_simple = mphys.NaiveModelSimple()
     model = mrf.ExtraTreesModel()
-    models = [model]
+    models = []
 
     # Run the experiment
     hexp.run_experiment(dataclasses, use_nn_reference=False, use_rf_reference=True, models=models,
