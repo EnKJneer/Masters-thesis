@@ -1134,16 +1134,16 @@ class FrictionModel(mb.BaseModel):
         v_x = X[f'v_{axis}_1_current'].values
         a_x = X[f'a_{axis}_1_current'].values
         f_x_sim = X[f'f_x_sim_1_current'].values
-        f_y_sim = X[f'f_y_sim_1_current'].values
-        f_z_sim = X[f'f_z_sim_1_current'].values
-        f_sp_sim = X[f'f_sp_sim_1_current'].values
-        mrr_sim = X[f'materialremoved_sim_1_current'].values
+        #f_y_sim = X[f'f_y_sim_1_current'].values
+        #f_z_sim = X[f'f_z_sim_1_current'].values
+        #f_sp_sim = X[f'f_sp_sim_1_current'].values
+        #mrr_sim = X[f'materialremoved_sim_1_current'].values
 
         stillstand_mask = (np.abs(v_x) <= self.velocity_threshold) & (np.abs(a_x) <= self.acceleration_threshold)
         bewegung_mask = ~stillstand_mask
 
         y_pred = np.zeros_like(v_x, dtype=float)
-        v_s = self.sign_hold(v_x) * f_y_sim
+        v_s = self.sign_hold(v_x)
         y_pred[stillstand_mask] = (self.F_s * v_s[stillstand_mask] +
                                    self.a_x * f_x_sim[stillstand_mask] +
                                   # self.a_y * f_y_sim[stillstand_mask] +
@@ -1191,11 +1191,11 @@ class FrictionModel(mb.BaseModel):
         v_x = data[f'v_{axis}_1_current'].values
         a_x = data[f'a_{axis}_1_current'].values
         f_x_sim = data[f'f_x_sim_1_current'].values
-        f_y_sim = data[f'f_y_sim_1_current'].values
-        f_z_sim = data[f'f_z_sim_1_current'].values
-        f_sp_sim = data[f'f_sp_sim_1_current'].values
-        mrr_sim = data[f'materialremoved_sim_1_current'].values
-        v_s = self.sign_hold(v_x) * f_y_sim
+        #f_y_sim = data[f'f_y_sim_1_current'].values
+        #f_z_sim = data[f'f_z_sim_1_current'].values
+        #f_sp_sim = data[f'f_sp_sim_1_current'].values
+        #mrr_sim = data[f'materialremoved_sim_1_current'].values
+        v_s = self.sign_hold(v_x)
 
         curr_x = data[self.target_channel].values
 
