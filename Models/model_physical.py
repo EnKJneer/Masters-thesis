@@ -1097,14 +1097,14 @@ class FrictionModel(mb.BaseModel):
         self.velocity_threshold = velocity_threshold
         self.acceleration_threshold = acceleration_threshold
         self.F_s = f_s
-        self.a_x = a_x
+        self.theta_f = a_x
         #self.a_y = a_y
         #self.a_z = a_z
         self.a_sp = a_sp
         self.b = b
         self.F_c = f_c
         self.sigma_2 = sigma_2
-        self.a_b = a_b
+        self.theta_a = a_b
         self.target_channel = target_channel
 
     def sign_hold(self, v, eps=1e-1):
@@ -1145,19 +1145,19 @@ class FrictionModel(mb.BaseModel):
         y_pred = np.zeros_like(v_x, dtype=float)
         v_s = self.sign_hold(v_x)
         y_pred[stillstand_mask] = (self.F_s * v_s[stillstand_mask] +
-                                   self.a_x * f_x_sim[stillstand_mask] +
-                                  # self.a_y * f_y_sim[stillstand_mask] +
-                                  # self.a_z * f_z_sim[stillstand_mask] +
-                                  # self.a_sp * f_sp_sim[stillstand_mask] +
+                                   self.theta_f * f_x_sim[stillstand_mask] +
+                                   # self.a_y * f_y_sim[stillstand_mask] +
+                                   # self.a_z * f_z_sim[stillstand_mask] +
+                                   # self.a_sp * f_sp_sim[stillstand_mask] +
                                    self.b)
 
         y_pred[bewegung_mask] = (self.F_c * np.sign(v_x[bewegung_mask]) +
                                  self.sigma_2 * v_x[bewegung_mask] +
-                                 self.a_x * f_x_sim[bewegung_mask] +
+                                 self.theta_f * f_x_sim[bewegung_mask] +
                                  #self.a_y * f_y_sim[bewegung_mask] +
                                  #self.a_z * f_z_sim[bewegung_mask] +
                                  #self.a_sp * f_sp_sim[bewegung_mask] +
-                                 self.a_b * a_x[bewegung_mask] +
+                                 self.theta_a * a_x[bewegung_mask] +
                                  self.b)
 
         return y_pred
@@ -1169,14 +1169,14 @@ class FrictionModel(mb.BaseModel):
         params, _, _ = self.fit_friction_model(data)
 
         self.F_s = params['F_s']
-        self.a_x = params['a_x']
+        self.theta_f = params['theta_f']
         #self.a_y = params['a_y']
         #self.a_z = params['a_z']
         #self.a_sp = params['a_sp']
         self.b = params['b']
         self.F_c = params['F_c']
         self.sigma_2 = params['sigma_2']
-        self.a_b = params['a_b']
+        self.theta_a = params['theta_a']
 
         # Ausgabe der Parameter
         for param_name, param_value in params.items():
@@ -1214,7 +1214,7 @@ class FrictionModel(mb.BaseModel):
             reg_stillstand = LinearRegression(fit_intercept=False)
             reg_stillstand.fit(X_stillstand, y_stillstand)
             params['F_s'] = reg_stillstand.coef_[0]
-            params['a_x'] = reg_stillstand.coef_[1]
+            params['theta_f'] = reg_stillstand.coef_[1]
             #params['a_y'] = reg_stillstand.coef_[2]
             #params['a_z'] = reg_stillstand.coef_[3]
             #params['a_sp'] = reg_stillstand.coef_[2]
@@ -1222,7 +1222,7 @@ class FrictionModel(mb.BaseModel):
         else:
             print("Warnung: Nicht genügend Stillstandspunkte für Fitting")
             params['F_s'] = 0
-            params['a_x'] = 1
+            params['theta_f'] = 1
             #params['a_y'] = 1
             #params['a_z'] = 1
             params['b'] = 0
@@ -1238,21 +1238,21 @@ class FrictionModel(mb.BaseModel):
             reg_bewegung.fit(X_bewegung, y_bewegung)
             params['F_c'] = reg_bewegung.coef_[0]
             params['sigma_2'] = reg_bewegung.coef_[1]
-            params['a_x'] = reg_bewegung.coef_[2]
+            params['theta_f'] = reg_bewegung.coef_[2]
             #params['a_y'] = reg_bewegung.coef_[3]
             #params['a_z'] = reg_bewegung.coef_[4]
             #params['a_sp'] = reg_bewegung.coef_[3]
-            params['a_b'] = reg_bewegung.coef_[3]
+            params['theta_a'] = reg_bewegung.coef_[3]
             params['b'] = reg_bewegung.coef_[4]
         else:
             print("Warnung: Nicht genügend Bewegungspunkte für Fitting")
             params['F_c'] = 0
             params['sigma_2'] = 0
-            params['a_x'] = 1
+            params['theta_f'] = 1
             params['a_y'] = 1
             params['a_z'] = 1
             params['a_sp'] = 0
-            params['a_b'] = 0
+            params['theta_a'] = 0
             params['b_s'] = 0
 
         return params, stillstand_mask, bewegung_mask
@@ -1270,14 +1270,14 @@ class FrictionModel(mb.BaseModel):
                 "velocity_threshold": self.velocity_threshold,
                 "acceleration_threshold": self.acceleration_threshold,
                 "F_s": self.F_s,
-                "a_x": self.a_x,
+                "a_x": self.theta_f,
                 #"a_y": self.a_y,
                 #"a_z": self.a_z,
                 "a_sp": self.a_sp,
                 "b": self.b,
                 "F_c": self.F_c,
                 "sigma_2": self.sigma_2,
-                "a_b": self.a_b,
+                "a_b": self.theta_a,
             }
         }
         return documentation

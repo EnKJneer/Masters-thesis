@@ -7,32 +7,23 @@ import lineax as lx
 import Helper.handling_data as hdata
 
 def model_controller(params, args):
-    K, K_l, K_mw, F, p1, p2, p3, p4 = params
-    x_e, a, v, f, t = args
+    p1, p2, p3, p4, p5, p6 = params
+    a, v, f, t = args
 
     # Cast zu JAX-kompatiblen Arrays
-    x_e = jnp.asarray(x_e)
     a   = jnp.asarray(a)
     v   = jnp.asarray(v)
     f   = jnp.asarray(f)
     t   = jnp.asarray(t)
 
     def body_fun(carry, i):
-        v_e_past, i_e_past, y_i = carry
-        M_l = p3 * f[i] # p1 * a[i] + p2 * v[i] + p3 * f[i] + p4
-        #v_i = v_val + K_mw * (y_val - M_l) * dt
-        #y_i_next = y_val + K * (x_e[i] * K_l - v_i)* dt # * jnp.exp(-F * t[i])
-        v_e = K_l * x_e[i] - v[i]
-        i_s = p1* (v_e_past + v_e)
-        i_e = i_s - (y_i + M_l)
-        u = i_e_past + i_e
-        y_i_next = y_i + (K*u - y_i)
-        return (v_e, i_e, y_i_next), y_i_next
+        y_i = carry
 
-    v_val = jnp.zeros_like(t)
+        y_i_next = p1 * a[i] + p2 * y_i
+        return (y_i_next), y_i_next
 
-    _, y = jax.lax.scan(body_fun, (v_val[0], 0, 0.45), jnp.arange(len(t)))
-
+    _, z = jax.lax.scan(body_fun, (p5), jnp.arange(len(t)))
+    y = p3 * f + p4 * z
     return y
 def model_linear(params, args):
     p1, p2, p3, p4 = params
@@ -83,8 +74,6 @@ if __name__ == "__main__":
     dataClass.target_channels = ['curr_x']
     X_train, X_val, X_test, y_train, y_val, y_test_original = dataClass.load_data()
 
-
-
     indx = 1
     n = 25
     #X_test[indx].rolling(window=50, min_periods=1).mean()
@@ -96,11 +85,11 @@ if __name__ == "__main__":
     y_gt = y_test_original[indx][dataClass.target_channels].iloc[:-n].values
 
     # Initial parameter guesses
-    params0_controller = jnp.array([1.0, 10000.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+    params0_controller = jnp.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
     params0_linear = jnp.array([1.0, 1.0, 1.0, 1.0])
 
     # Fit the models
-    args_controller = (x_e, a, v, f_x, t, y_gt.squeeze())
+    args_controller = (a, v, f_x, t, y_gt.squeeze())
     params_controller = fit_model_fast(residual_fn_controller, params0_controller, args_controller, "Controller")
 
     args_linear = (x_e, a, v, f_x, y_gt.squeeze())

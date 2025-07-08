@@ -29,17 +29,18 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
-    dataclasses = [hdata.Combined_Plate_TrainVal_CONTDEV] #, hdata.Combined_Plate_TrainVal_CONTDEV
+    data2 = hdata.Combined_Plate_TrainVal
+    data2.add_sign_hold = True
+    dataclasses = [hdata.Combined_Plate_TrainVal_CONTDEV, data2] #, hdata.Combined_Plate_TrainVal_CONTDEV
     for dataclass in dataclasses:
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
         dataclass.target_channels = ['curr_x']
-        dataclass.add_sign_hold = False
 
     #model_simple = mphys.NaiveModelSimple()
     model = mrf.ExtraTreesModel()
-    models = [model]
+    models = []
 
     # Run the experiment
     hexp.run_experiment(dataclasses, use_nn_reference=False, use_rf_reference=True, models=models,

@@ -70,7 +70,9 @@ file_colors = {
 path_data = 'DataFiltered'
 files = [
     'AL_2007_T4_Plate_Normal_2.csv', 'AL_2007_T4_Gear_Normal_2.csv',
-    'S235JR_Plate_Normal_2.csv', 'S235JR_Gear_Normal_2.csv',
+    'AL_2007_T4_Plate_Depth_3.csv', 'AL_2007_T4_Gear_Depth_3.csv',
+    #'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Gear_SF_2.csv',
+    #'S235JR_Plate_Normal_2.csv', 'S235JR_Gear_Normal_2.csv',
 ]
 
 n = 25
@@ -268,9 +270,9 @@ for axis in axes:
             # Glättung der Daten
             if len(v_axis) > 50:
                 d = pd.Series(v_axis)
-                v_axis = np.array(d.rolling(50, min_periods=1).mean())
+                v_axis = np.array(d.rolling(10, min_periods=1).mean())
                 d = pd.Series(curr_axis)
-                curr_axis = np.array(d.rolling(50, min_periods=1).mean())
+                curr_axis = np.array(d.rolling(10, min_periods=1).mean())
 
             # Entferne NaN-Werte nach Glättung
             final_mask = ~(np.isnan(v_axis) | np.isnan(f_axis) | np.isnan(curr_axis))
@@ -291,7 +293,7 @@ for axis in axes:
             continue
 
     if processed_files == 0:
-        print("❌ Keine Daten geladen!")
+        print("Keine Daten geladen!")
         continue
 
     # Konfiguriere die Achsen

@@ -1058,6 +1058,52 @@ Combined_Plate_TrainVal_CONTDEV = DataclassCombinedTrainVal('Plate_TrainVal_CONT
                                                                           "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim",
                                                                           "materialremoved_sim",
                                                                           "CONT_DEV_X", "CONT_DEV_Y", "CONT_DEV_Z"])
+Combined_OldData = DataClass('OldData', '..\\..\\DataSets\OldDataSets',
+                            [   'CMX_Alu_Tr_Air_2_alldata_allcurrent.pkl',
+                                                'CMX_Alu_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_Alu_Tr_Air_2_alldata_allcurrent.pkl',
+                                                'I40_Alu_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                'CMX_St_Tr_Air_2_alldata_allcurrent.pkl',
+                                'CMX_St_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                'I40_St_Tr_Air_2_alldata_allcurrent.pkl',
+                                'I40_St_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl'
+                                ],
+                             [ 'CMX_Alu_Val_Air_2_alldata_allcurrent.pkl',
+                                                'CMX_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_Alu_Val_Air_2_alldata_allcurrent.pkl',
+                                                'I40_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'CMX_Alu_St_Air_2_alldata_allcurrent.pkl',
+                                                'CMX_Alu_St_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_Alu_St_Air_2_alldata_allcurrent.pkl',
+                                                'I40_Alu_St_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                               ],
+                             ['CMX_Alu_Tr_Air_3_alldata_allcurrent.pkl',
+                                             'CMX_Alu_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'I40_Alu_Tr_Air_3_alldata_allcurrent.pkl',
+                                             'I40_Alu_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'CMX_Alu_St_Air_3_alldata_allcurrent.pkl',
+                                             'CMX_Alu_St_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'I40_Alu_St_Air_3_alldata_allcurrent.pkl',
+                                             'I40_Alu_St_Mat_3_alldata_allforces_MRR_allcurrent.pkl'
+                                              ]
+                             )
+Combined_OldData_noAir = DataClass('OldData no Air', '..\\..\\DataSets\OldDataSets',
+                            [   'CMX_Alu_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_Alu_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'CMX_St_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_St_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl'
+                                            ],
+                             [ 'CMX_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'CMX_Alu_St_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_Alu_St_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                ],
+                             ['CMX_Alu_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'I40_Alu_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'CMX_Alu_St_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'I40_Alu_St_Mat_3_alldata_allforces_MRR_allcurrent.pkl'
+                                              ]
+                             )
 
 Combined_KL = DataClass('KL', folder_data,
                         dataPaths_Val_KL,
@@ -1143,13 +1189,23 @@ def read_file(file_path, header = HEADER):
             return df
 
     elif file_path.endswith('.pkl'):
-        # ToDo: Header anpassen, pkl waren anders angeordnet
-        # ToDo: pkl haben keine v und a muss berechnet werden
         # Load .pkl files and convert the data to a DataFrame
         with open(file_path, 'rb') as file:
             data = pickle.load(file)
+            data = data.T
             df = pd.DataFrame(data)
-            df.columns = header
+            if 'Air' in file_path:
+                df.columns = ['pos_x', 'pos_y', 'pos_z', 'pos_sp', 'curr_x', 'curr_y', 'curr_z', 'curr_sp']
+            elif 'Mat' in file_path:
+                df.columns = ['pos_x', 'pos_y', 'pos_z', 'pos_sp',
+                              'f_x_sim', 'f_y_sim', 'f_z_sim', 'f_sp_sim', 'materialremoved_sim',
+                              'curr_x', 'curr_y', 'curr_z', 'curr_sp']
+            else:
+                raise ValueError("Invalid file name. File name must include Mat or Air")
+            for pos in ['pos_x', 'pos_y', 'pos_z', 'pos_sp']:
+                axis = pos.replace('pos_', '')
+                data[f'v_{axis}'] = data[pos].diff()
+                data[f'a_{axis}'] = data[f'v_{axis}'].diff()
             return df
     else:
         raise ValueError("Invalid file format. Please provide a CSV, NPZ, or PKL file.")
@@ -1258,7 +1314,7 @@ def load_filtered_data(data_params: BaseDataClass, past_values=2, future_values=
     fullvaldatas = read_fulldata(data_params.validation_data_paths, data_params.folder)
 
     # Apply rolling mean to each DataFrame in the lists
-    training_datas = apply_action(fulltrainingdatas, lambda data: data[HEADER].rolling(window=window_size, min_periods=1).mean())
+    training_datas = apply_action(fulltrainingdatas, lambda data: data[HEADER] )
     test_datas = apply_action(fulltestdatas, lambda data: data[HEADER].rolling(window=window_size, min_periods=1).mean())
     val_datas = apply_action(fullvaldatas,lambda data: data[HEADER].rolling(window=window_size, min_periods=1).mean())
 

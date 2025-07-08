@@ -53,7 +53,7 @@ def combined_model_linear_3_dual(x,
     return y_pred
 
 # Pfad zu den Dateien
-path_data = 'DataFiltered'
+path_data = '../../DataSets/DataFiltered'
 
 # Liste der Dateien
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv',

@@ -130,7 +130,7 @@ for file in files:
     mask_a_x = (np.abs(a_x) <= 1000)
 
     v_x = v_x[mask_a_x]
-    f_x_sim = data['f_x_sim'].iloc[:-n][mask_a_x]
+    f_x_sim = data['f_y_sim'].iloc[:-n][mask_a_x]
     curr_x = -data['curr_x'].iloc[:-n][mask_a_x]
 
 
@@ -140,7 +140,7 @@ for file in files:
     # Plot data for v_x > 0
     mask_gt_zero = v_x > 0
     axs[0].scatter(f_x_sim[mask_gt_zero], curr_x[mask_gt_zero], c=color, s=2, label=label)
-    axs[0].set_xlabel('f_x_sim')
+    axs[0].set_xlabel('f_y_sim')
     axs[0].set_ylabel('curr_x')
     axs[0].set_title('Plot for v_x > 0')
     axs[0].legend()
@@ -148,7 +148,7 @@ for file in files:
     # Plot data for v_x < 0
     mask_lt_zero = v_x < 0
     axs[1].scatter(f_x_sim[mask_lt_zero], curr_x[mask_lt_zero], color=color, s=2, label=label)
-    axs[1].set_xlabel('f_x_sim')
+    axs[1].set_xlabel('f_y_sim')
     axs[1].set_ylabel('curr_x')
     axs[1].set_title('Plot for v_x < 0')
     axs[1].legend()

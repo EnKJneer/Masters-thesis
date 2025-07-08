@@ -101,21 +101,24 @@ for axis in axes:
         a_axis = data[f'a_{axis}'].iloc[:-n].copy()
         v_axis = data[f'v_{axis}'].iloc[:-n].copy()
         f_axis = data[f'f_{axis}_sim'].iloc[:-n].copy()
+        f_y = data[f'f_y_sim'].iloc[:-n].copy()
         curr_axis = -data[f'curr_{axis}'].iloc[:-n].copy()
         mrr = data['materialremoved_sim'].iloc[:-n].copy()
         time = data.index[:-n].copy()
 
         # Maske, um evtl. Ausreißer zu entfernen (optional, wie in Original)
-        mask = (np.abs(v_axis) <= 1000) #& (np.abs(v_axis) <= epsilon)  # kann angepasst werden
-        v_axis = v_axis[mask]
-        f_axis = f_axis[mask]
-        curr_axis = curr_axis[mask]
+        mask = (np.abs(v_axis) <= 1000) & (np.abs(a_axis) <= 10)#& (np.abs(v_axis) <= epsilon)  # kann angepasst werden
+        v_axis = v_axis[mask].reset_index(drop=True)
+        f_axis = f_axis[mask].reset_index(drop=True)
+        f_y = f_y[mask].reset_index(drop=True)
+        a_axis = a_axis[mask].reset_index(drop=True)
+        curr_axis = curr_axis[mask].reset_index(drop=True)
         z = sign_hold(v_axis)
 
         d = pd.Series(v_axis)
-        v_axis = np.array(d.rolling(50).mean())
+        v_axis = np.array(d.rolling(10).mean())
         d = pd.Series(curr_axis)
-        curr_axis = np.array(d.rolling(50).mean().fillna(0))
+        curr_axis = np.array(d.rolling(10).mean().fillna(0))
 
         color, label = file_colors.get(file, ('black', file))
 
@@ -131,15 +134,16 @@ for axis in axes:
         # Differenz berechnen
         diff = curr_axis - curr_approx
 
-        y_datas = [("curr_axis", curr_axis), ("diff", diff)]
+        y_datas = [("curr_axis", curr_axis)] #, ("diff", diff)
 
+        color_value = ("a_axis", a_axis)
         for y_data in y_datas:
 
             fig, axs = plt.subplots(1, 2, figsize=(14, 6), dpi=300)
             fig.suptitle(file)
 
             # Scatterplot v vs curr
-            axs[0].scatter(v_axis, y_data[1], c=time, s=2, alpha=0.5, label=label)
+            axs[0].scatter(v_axis, y_data[1], c=color_value[1], s=2, alpha=0.5, label=label)
             axs[0].set_xlabel(f'v_{axis}')
             axs[0].set_ylabel(y_data[0])
             axs[0].set_title(f'Scatterplot {y_data[0]} vs v for axis {axis}')
@@ -149,34 +153,36 @@ for axis in axes:
             #axs[0].set_ylim(max(-ylimit, min(curr_axis)*1.1), min(ylimit, max(curr_axis)*1.1))
 
             # Pfeile zwischen aufeinanderfolgenden Punkten
+            dx = []
+            dy = []
             for i in range(len(v_axis) - 1):
-                dx = v_axis[i + 1] - v_axis[i]
-                dy = y_data[1][i + 1] - y_data[1][i]
-                axs[0].quiver(v_axis[i], y_data[1][i], dx, dy, angles='xy', scale_units='xy', scale=1, width=0.005,
-                              color='gray',
-                              alpha=0.5)
+                dx.append(v_axis[i + 1] - v_axis[i])
+                dy.append(y_data[1][i + 1] - y_data[1][i])
+            axs[0].quiver(v_axis[:-1], y_data[1][:-1], dx, dy, angles='xy', scale_units='xy', scale=1, width=0.005,
+                          color='gray',
+                          alpha=0.5)
 
-                axs[1].quiver(v_axis[i], y_data[1][i], dx, dy, angles='xy', scale_units='xy', scale=1, width=0.005,
-                              color='gray',
-                              alpha=0.5)
+            axs[1].quiver(v_axis[:-1], y_data[1][:-1], dx, dy, angles='xy', scale_units='xy', scale=1, width=0.005,
+                          color='gray',
+                          alpha=0.5)
 
             # Differenz vs v plotten im 2. Subplot
             axs[1].plot(v_axis, y_data[1], color='gray', alpha=0.5, linewidth=0.5)
-            axs[1].scatter(v_axis, y_data[1], c=time, s=5, alpha=0.8)
+            axs[1].scatter(v_axis, y_data[1], c=color_value[1], s=5, alpha=0.8)
             #axs[1].plot(v_axis, diff, c=color, alpha=0.25, label=label)
             axs[1].set_xlabel(f'v_{axis}')
             axs[1].set_ylabel(y_data[0])
-            axs[1].set_title(f'Difference {y_data[0]} vs v for axis {axis}')
+            axs[1].set_title(f'{y_data[0]} vs v for axis {axis}')
             axs[1].set_xlim(max(-xlimit, min(v_axis)*1.1), min(xlimit, max(v_axis)*1.1))
             axs[1].set_ylim(max(-ylimit, min(y_data[1])*1.1), min(ylimit, max(y_data[1])*1.1))
 
             # Normalize time
-            norm = mcolors.Normalize(vmin=np.min(time), vmax=np.max(time))
+            norm = mcolors.Normalize(vmin=np.min(color_value[1]), vmax=np.max(color_value[1]))
             sm = plt.cm.ScalarMappable(norm=norm)
             sm.set_array([])
 
             # Add colorbar for the derivative
-            plt.colorbar(sm, ax=axs[1], label='time')
+            plt.colorbar(sm, ax=axs[1], label=color_value[0])
 
             # Legende nur einmal anzeigen
             handles, labels = axs[0].get_legend_handles_labels()
