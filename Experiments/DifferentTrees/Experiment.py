@@ -31,13 +31,14 @@ if __name__ == "__main__":
 
     dataclass2 = hdata.Combined_Plate_TrainVal
     dataclass2.add_sign_hold = True
-    dataclasses = [hdata.Combined_Plate_TrainVal_CONTDEV, dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
-    for dataclass in dataclasses:
+    #dataClasses = [hdata.Combined_Plate_TrainVal_CONTDEV, dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
+    dataClasses = [hdata.I40_OldData_noAir, hdata.CMX_OldData_noAir]
+    for dataclass in dataClasses:
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
         dataclass.target_channels = ['curr_x']
-        #dataclass.add_sign_hold = True
+        dataclass.add_sign_hold = True
         #dataclass.header = ["v_x", "a_x", "f_x_sim", "CONT_DEV_X",]
 
     #model_simple = mphys.NaiveModelSimple()
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     models = []
 
     # Run the experiment
-    hexp.run_experiment(dataclasses, use_nn_reference=False, use_rf_reference=True, models=models,
+    hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
                         plot_types=['heatmap', 'prediction_overview'])

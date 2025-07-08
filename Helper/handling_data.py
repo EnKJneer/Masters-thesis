@@ -1095,16 +1095,37 @@ Combined_OldData_noAir = DataClass('OldData no Air', '..\\..\\DataSets\OldDataSe
                                             ],
                              [ 'CMX_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
                                                 'I40_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
-                                                'CMX_Alu_St_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
-                                                'I40_Alu_St_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'CMX_St_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_St_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
                                                 ],
                              ['CMX_Alu_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
+                                             'CMX_St_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
                                              'I40_Alu_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
-                                             'CMX_Alu_St_Mat_3_alldata_allforces_MRR_allcurrent.pkl',
-                                             'I40_Alu_St_Mat_3_alldata_allforces_MRR_allcurrent.pkl'
+                                             'I40_St_Tr_Mat_3_alldata_allforces_MRR_allcurrent.pkl'
                                               ]
                              )
-
+CMX_OldData_noAir = DataClass('CMX OldData no Air', '..\\..\\DataSets\OldDataSets',
+                            [   'CMX_Alu_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'CMX_St_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                            ],
+                             [ 'CMX_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'CMX_St_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                ],
+                             ['CMX_Alu_Tr_Mat_1_alldata_allforces_MRR_allcurrent.pkl',
+                                             'CMX_St_Tr_Mat_1_alldata_allforces_MRR_allcurrent.pkl',
+                                              ]
+                             )
+I40_OldData_noAir = DataClass('I40 OldData no Air', '..\\..\\DataSets\OldDataSets',
+                            ['I40_Alu_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_St_Tr_Mat_2_alldata_allforces_MRR_allcurrent.pkl'
+                                            ],
+                             [ 'I40_Alu_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                'I40_St_Val_Mat_2_alldata_allforces_MRR_allcurrent.pkl',
+                                                ],
+                             ['I40_Alu_Tr_Mat_1_alldata_allforces_MRR_allcurrent.pkl',
+                                             'I40_St_Tr_Mat_1_alldata_allforces_MRR_allcurrent.pkl'
+                                              ]
+                             )
 Combined_KL = DataClass('KL', folder_data,
                         dataPaths_Val_KL,
                         dataPaths_Train_Plate,
@@ -1204,8 +1225,9 @@ def read_file(file_path, header = HEADER):
                 raise ValueError("Invalid file name. File name must include Mat or Air")
             for pos in ['pos_x', 'pos_y', 'pos_z', 'pos_sp']:
                 axis = pos.replace('pos_', '')
-                data[f'v_{axis}'] = data[pos].diff()
-                data[f'a_{axis}'] = data[f'v_{axis}'].diff()
+                df[f'v_{axis}'] = df[pos].diff()
+                df[f'a_{axis}'] = df[f'v_{axis}'].diff()
+            df.dropna(inplace=True)
             return df
     else:
         raise ValueError("Invalid file format. Please provide a CSV, NPZ, or PKL file.")
