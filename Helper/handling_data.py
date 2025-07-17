@@ -259,6 +259,8 @@ class DataClass(BaseDataClass):
         self.training_data_paths = training_data_paths
         self.validation_data_paths = validation_data_paths
         self.testing_data_paths = testing_data_paths
+        self.only_aircut = False
+        self.remove_bias = False
 
     def check_data_overlap(self):
         """
@@ -301,10 +303,23 @@ class DataClass(BaseDataClass):
 
         # Load data
         fulldatas = read_fulldata(data_paths, self.folder)
+
+        if self.only_aircut:
+            for i, data in enumerate(fulldatas):
+                n = data[data['materialremoved_sim'] > 0].index.min()
+                fulldatas[i] = data.iloc[:n, :]
+
         datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
+
         X = apply_action(datas, lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         targets = apply_action(fulldatas, lambda data: data[self.target_channels])
         Y = apply_action(targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
+
+        if self.remove_bias:
+            for i, data in enumerate(Y):
+                print(f'{data_paths[i]}: {data.iloc[0]}')
+                Y[i] = data - data.iloc[0]
+
         if self.past_values + self.future_values != 0:
             Y = apply_action(Y, lambda target: target.iloc[self.past_values:-self.future_values])
 
@@ -1050,7 +1065,7 @@ Combined_PlateGear_reduced_TrainVal = DataclassCombinedTrainVal('PlateGear_reduc
                                                         ], # 'Laufrad_Durchlauf_1', 'Laufrad_Durchlauf_2'
                                                   dataPaths_Test,
                                                   ["curr_x"], )
-Combined_Plate_TrainVal_CONTDEV = DataclassCombinedTrainVal('Plate_TrainVal_CONTDEV', '..\\..\\DataSets\DataMatched',
+Combined_Plate_TrainVal_CONTDEV = DataclassCombinedTrainVal('Plate_TrainVal_CONTDEV', '..\\..\\DataSets\\MergedDataFiltered',
                                                     ['AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],
                                                     [ 'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv'],
                                                     ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z",
@@ -1131,6 +1146,16 @@ Combined_KL = DataClass('KL', folder_data,
                         dataPaths_Train_Plate,
                         dataPaths_Test,
                         ["curr_x"], )
+AirCut= DataClass('AirCut', '..\\..\\DataSets\\DataFiltered',
+                       ['AL_2007_T4_Gear_SF_1.csv','AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv', 'AL_2007_T4_Gear_Depth_1.csv',
+                        'Kühlgrill_Mat_S2800_1.csv', 'Kühlgrill_Mat_S3800_1.csv'],
+                       [ 'S235JR_Plate_SF_1.csv', 'S235JR_Gear_SF_1.csv','S235JR_Plate_Depth_1.csv', 'S235JR_Gear_Depth_1.csv'],
+                       ['S235JR_Plate_Normal_1.csv', 'S235JR_Gear_Normal_1.csv', 'Laufrad_Durchlauf_1_1.csv', 'Kühlgrill_Mat_S4700_1.csv'])
+AirCutNo_Plate= DataClass('AirCut_No_Plate', '..\\..\\DataSets\\Data',
+                       ['AL_2007_T4_Gear_SF_1.csv', 'AL_2007_T4_Gear_Depth_1.csv',
+                        'Kühlgrill_Mat_S2800_1.csv', 'Kühlgrill_Mat_S3800_1.csv'],
+                       [ 'S235JR_Gear_SF_1.csv','S235JR_Gear_Depth_1.csv'],
+                       ['AL_2007_T4_Plate_Normal_1.csv', 'S235JR_Gear_Normal_1.csv', 'Laufrad_Durchlauf_1_1.csv', 'Kühlgrill_Mat_S4700_1.csv'])
 
 def create_full_ml_vector_optimized(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
     """

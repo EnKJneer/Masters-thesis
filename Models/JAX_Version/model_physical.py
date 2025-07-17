@@ -1,19 +1,407 @@
-from abc import ABC
-
-import jax
 import jax.numpy as jnp
-import optax
-import optuna
-import pandas as pd
-from jax import jit, vmap, grad, lax
-from jax.scipy.optimize import minimize
+import jax
 import numpy as np
-from functools import partial
+import optax
+import pandas as pd
+from jax import lax
+import lineax as lx
+from optimistix import LevenbergMarquardt, max_norm, least_squares
 
-from scipy.optimize import curve_fit
-DT = 0.02
 import Models.model_base as mb
-from matplotlib import pyplot as plt
+# Annahme: DT ist definiert (falls nicht, bitte anpassen)
+DT = 0.02  # Beispielwert
+
+def fit_model_fast(residual_fn, params0, args, name=""):
+    """Optimized fitting with multiple acceleration techniques"""
+    solver = LevenbergMarquardt(
+        rtol=1e-4,
+        atol=1e-4,
+        norm=max_norm,
+        linear_solver=lx.QR(),
+        verbose=frozenset()
+    )
+    result = least_squares(
+        residual_fn,
+        solver,
+        params0,
+        args=args,
+        max_steps=1000000,
+        has_aux=False,
+        throw=True
+    )
+    print(f"[{name}] Gefundene Parameter:", result.value)
+    print(f"[{name}] MAE:", jnp.mean(jnp.abs(residual_fn(params0, args))))
+    return result.value
+
+
+class ODEModelJAX(mb.BaseModel):
+    def __init__(self, name="ODE_Model_JAX",
+                 R0=1.0, C0=1.0, R10=1.0, L10=1.0, R1=1.0, C1=1.0,
+                 x0_0=0.0, x1_0=0.0, alpha=1.0,
+                 dt=DT, target_channel='curr_x'):
+        self.name = name
+        self.R0 = R0
+        self.C0 = C0
+        self.R10 = R10
+        self.L10 = L10
+        self.R1 = R1
+        self.C1 = C1
+        self.x0_0 = x0_0
+        self.x1_0 = x1_0
+        self.alpha = alpha
+        self.dt = dt
+        self.target_channel = target_channel
+        self.axis_map = {'curr_sp': 0, 'curr_x': 1, 'curr_y': 2, 'curr_z': 3}
+        if target_channel not in self.axis_map:
+            raise ValueError("Ungültiger target_channel.")
+        self.axis = self.axis_map[target_channel]
+
+    def get_input_vector_from_df(self, df_list):
+        prefix_current = '_1_current'
+        axes = ['sp', 'x', 'y', 'z']
+        acceleration_list = []
+        velocity_list = []
+        force_list = []
+        time_list = []
+
+        for df in df_list:
+            acceleration = []
+            velocity = []
+            force = []
+            for axis in axes:
+                acceleration.append(df[['a_' + axis + prefix_current]].values)
+                velocity.append(df[['v_' + axis + prefix_current]].values)
+                force.append(df[['f_' + axis + '_sim' + prefix_current]].values)
+
+            # Zeit aus Index oder separater Spalte extrahieren
+            if 'time' in df.columns:
+                time = df['time'].values
+            else:
+                time = np.arange(len(df)) * self.dt
+
+            acceleration_list.append(np.array(acceleration[self.axis].squeeze()))
+            velocity_list.append(np.array(velocity[self.axis].squeeze()))
+            force_list.append(np.array(force[self.axis].squeeze()))
+            time_list.append(time)
+
+        return acceleration_list, velocity_list, force_list, time_list
+
+    def criterion(self, y_target, y_pred):
+        if isinstance(y_target, list) and isinstance(y_pred, list):
+            mse_list = [jnp.mean((yt - yp) ** 2) for yt, yp in zip(y_target, y_pred)]
+            return jnp.mean(jnp.array(mse_list))
+        else:
+            if type(y_target) == pd.DataFrame:
+                y_target = y_target.values
+            return jnp.mean((y_target - y_pred) ** 2)
+
+    @staticmethod
+    def equation(params, X):
+        a, v, f, t = X
+        R0, C0, R10, L10, R1, C1, x0_0, x1_0, alpha = params
+
+        # i10 berechnen
+        i10 = v / R0 + a / C0
+
+        # x0 berechnen, numerische Integration
+        x0 = jnp.cumsum(v * (t[1] - t[0]) if len(t) > 1 else v * 0.01) + x0_0
+
+        # x1 berechnen (analytische Lösung)
+        exponential_term_1 = jnp.exp(-R10 / L10 * t)
+        x1 = x0 + (x1_0 + R10 * i10) * exponential_term_1
+
+        # v1 berechnen (Ableitung von x1)
+        v1 = jnp.gradient(x1, t[1] - t[0] if len(t) > 1 else 0.01)
+
+        # i21 berechnen
+        i21 = v1 / R1 + jnp.gradient(v1, t[1] - t[0] if len(t) > 1 else 0.01) / C1 + i10
+
+        # tau berechnen (Modell-Ausgabe)
+        tau_model = alpha * i21
+
+        return tau_model
+
+    def predict(self, X):
+        if type(X) is not list:
+            X = [X]
+        a, v, f, t = self.get_input_vector_from_df(X)
+
+        # Flache Listen für fit_model_fast
+        a = jnp.array(jnp.concatenate(a))
+        v = jnp.array(jnp.concatenate(v))
+        f = jnp.array(jnp.concatenate(f))
+        t = jnp.array(jnp.concatenate(t))
+
+        params = (self.R0, self.C0, self.R10, self.L10, self.R1, self.C1,
+                  self.x0_0, self.x1_0, self.alpha)
+        return self.equation(params, (a, v, f, t))
+
+    def train_model_old(self, X_train, y_train, X_val, y_val, verbose=True, **kwargs):
+        """Training mit LevenbergMarquardt wie im Original"""
+        # --- Daten vorbereiten ---
+        if not isinstance(X_train, list):
+            X_train = [X_train]
+            y_train = [y_train]
+
+        a_raw, v_raw, f_raw, t_raw = self.get_input_vector_from_df(X_train)
+        y = [jnp.array(y.squeeze()) for y in y_train]
+
+        # Flache Listen für fit_model_fast
+        a_flat = jnp.array(jnp.concatenate(a_raw))
+        v_flat = jnp.array(jnp.concatenate(v_raw))
+        f_flat = jnp.array(jnp.concatenate(f_raw))
+        t_flat = jnp.array(jnp.concatenate(t_raw))
+        y_flat = jnp.array(jnp.concatenate(y))
+
+        def residual_fn_ode(params, args):
+
+            y_pred = self.equation(params, args[:-1])
+            y_true = args[-1]
+
+            # Parameter extrahieren
+            R0, C0, R10, L10, R1, C1, x0_0, x1_0, alpha = params
+
+            # Straffunktion für negative Parameter
+            penalty = 0.0
+            penalty += jnp.sum(jnp.where(R0 < 0, -R0 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(C0 < 0, -C0 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(R10 < 0, -R10 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(L10 < 0, -L10 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(R1 < 0, -R1 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(C1 < 0, -C1 * 1e6, 0))
+
+            return (y_pred - y_true) + penalty
+
+        # Initiale Parameter
+        params0 = jnp.array([
+            self.R0, self.C0, self.R10, self.L10, self.R1, self.C1,
+            self.x0_0, self.x1_0, self.alpha
+        ])
+
+        # Args für fit_model_fast
+        args = (a_flat, v_flat, f_flat, t_flat, y_flat)
+
+        # Training mit LevenbergMarquardt
+        result_params = fit_model_fast(residual_fn_ode, params0, args, name="ODE_Model")
+
+        # Beste Parameter setzen
+        (self.R0, self.C0, self.R10, self.L10, self.R1, self.C1,
+         self.x0_0, self.x1_0, self.alpha) = result_params.tolist()
+
+        if verbose:
+            print(f'\nFinal best params: R0={self.R0:.3f}, C0={self.C0:.3f}, R10={self.R10:.3f}, L10={self.L10:.3f}')
+            print(
+                f'R1={self.R1:.3f}, C1={self.C1:.3f}, x0_0={self.x0_0:.3f}, x1_0={self.x1_0:.3f}, alpha={self.alpha:.3f}')
+
+        return result_params
+
+    def train_model(self, X_train, y_train, X_val, y_val, verbose=True, **kwargs):
+        """Training mit LevenbergMarquardt wie im Original"""
+        # --- Daten vorbereiten ---
+        if not isinstance(X_train, list):
+            X_train = [X_train]
+            y_train = [y_train]
+
+        a, v, f, t = self.get_input_vector_from_df(X_train)
+        y = [jnp.array(y.squeeze()) for y in y_train]
+
+        def residual_fn_ode(params, args):
+            a_list, v_list, f_list, t_list, y_list = args
+            residuen =  []
+            for a, v, f, t, y in zip(a_list, v_list, f_list, t_list, y_list):
+                y_pred = self.equation(params, (a, v, f, t))
+                y_true = y
+                residuen.append(y_true - y_pred)
+
+            residuen = jnp.concatenate(residuen)
+
+            # Parameter extrahieren
+            R0, C0, R10, L10, R1, C1, x0_0, x1_0, alpha = params
+
+            # Straffunktion für negative Parameter
+            penalty = 0.0
+            penalty += jnp.sum(jnp.where(R0 < 0, -R0 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(C0 < 0, -C0 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(R10 < 0, -R10 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(L10 < 0, -L10 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(R1 < 0, -R1 * 1e6, 0))
+            penalty += jnp.sum(jnp.where(C1 < 0, -C1 * 1e6, 0))
+
+            return residuen + penalty
+
+        # Initiale Parameter
+        params0 = jnp.array([
+            self.R0, self.C0, self.R10, self.L10, self.R1, self.C1,
+            self.x0_0, self.x1_0, self.alpha
+        ])
+
+        # Args für fit_model_fast
+        args = (a, v, f, t, y)
+
+        # Training mit LevenbergMarquardt
+        result_params = fit_model_fast(residual_fn_ode, params0, args, name="ODE_Model")
+
+        # Beste Parameter setzen
+        (self.R0, self.C0, self.R10, self.L10, self.R1, self.C1,
+         self.x0_0, self.x1_0, self.alpha) = result_params.tolist()
+
+        if verbose:
+            print(f'\nFinal best params: R0={self.R0:.3f}, C0={self.C0:.3f}, R10={self.R10:.3f}, L10={self.L10:.3f}')
+            print(
+                f'R1={self.R1:.3f}, C1={self.C1:.3f}, x0_0={self.x0_0:.3f}, x1_0={self.x1_0:.3f}, alpha={self.alpha:.3f}')
+
+        return result_params
+
+    def test_model(self, X, y_target):
+        prediction = self.predict(X)
+        loss = self.criterion(y_target, prediction)
+        return loss, prediction
+
+    def get_documentation(self):
+        return {
+            "description": "This is a JAX version of an ODE-based electrical circuit model with resistors, capacitors, and inductors.",
+            "parameters": {
+                "name": self.name,
+                "R0": self.R0,
+                "C0": self.C0,
+                "R10": self.R10,
+                "L10": self.L10,
+                "R1": self.R1,
+                "C1": self.C1,
+                "x0_0": self.x0_0,
+                "x1_0": self.x1_0,
+                "alpha": self.alpha,
+                "dt": self.dt,
+                "target_channel": self.target_channel
+            }
+        }
+
+class LinearModelJAX(mb.BaseModel):
+    def __init__(self, name="Linear_Model_JAX",
+                 p1=1.0, p2=1.0, p3=0.0,
+                 dt=DT, target_channel='curr_x'):
+        self.name = name
+        self.p1 = p1
+        self.p2 = p2
+        self.p3 = p3
+        self.dt = dt
+        self.target_channel = target_channel
+        self.axis_map = {'curr_sp': 0, 'curr_x': 1, 'curr_y': 2, 'curr_z': 3}
+        if target_channel not in self.axis_map:
+            raise ValueError("Ungültiger target_channel.")
+        self.axis = self.axis_map[target_channel]
+
+    def get_input_vector_from_df(self, df_list):
+        prefix_current = '_1_current'
+        axes = ['sp', 'x', 'y', 'z']
+        acceleration_list = []
+        velocity_list = []
+        force_list = []
+
+        for df in df_list:
+            acceleration = []
+            velocity = []
+            force = []
+            for axis in axes:
+                acceleration.append(df[['a_' + axis + prefix_current]].values)
+                velocity.append(df[['v_' + axis + prefix_current]].values)
+                force.append(df[['f_' + axis + '_sim' + prefix_current]].values)
+
+            acceleration_list.append(np.array(acceleration[self.axis].squeeze()))
+            velocity_list.append(np.array(velocity[self.axis].squeeze()))
+            force_list.append(np.array(force[self.axis].squeeze()))
+
+        return acceleration_list, velocity_list, force_list
+
+    def criterion(self, y_target, y_pred):
+        if isinstance(y_target, list) and isinstance(y_pred, list):
+            mse_list = [jnp.mean((yt - yp) ** 2) for yt, yp in zip(y_target, y_pred)]
+            return jnp.mean(jnp.array(mse_list))
+        else:
+            if type(y_target) == pd.DataFrame:
+                y_target = y_target.values
+            return jnp.mean((y_target - y_pred) ** 2)
+
+    @staticmethod
+    def equation(params, X):
+        a_list, v_list, f_list = X
+        p1, p2, p3 = params
+
+        a = jnp.asarray(a_list)
+        v = jnp.asarray(v_list)
+        f = jnp.asarray(f_list)
+
+        y = p1 * a + p2 * v + p3
+
+        return y
+
+    def predict(self, X):
+        if type(X) is not list:
+            X = [X]
+        a, v, f = self.get_input_vector_from_df(X)
+        a = jnp.concatenate(a)
+        v = jnp.concatenate(v)
+        f = jnp.concatenate(f)
+
+        params = (self.p1, self.p2, self.p3)
+        return np.array(self.equation(params, (a, v, f)))
+
+    def train_model(self, X_train, y_train, X_val, y_val, verbose=True, **kwargs):
+        """Training mit LevenbergMarquardt wie im Original"""
+        # --- Daten vorbereiten ---
+        if not isinstance(X_train, list):
+            X_train = [X_train]
+            y_train = [y_train]
+
+        a, v, f = self.get_input_vector_from_df(X_train)
+        y = [jnp.array(y.squeeze()) for y in y_train]
+
+        # Flache Listen für fit_model_fast
+        a_flat = jnp.concatenate(a)
+        v_flat = jnp.concatenate(v)
+        f_flat = jnp.concatenate(f)
+        y_flat = jnp.concatenate(y)
+
+        def residual_fn_linear(params, args):
+            y_pred = self.equation(params, args[:-1])
+            y_true = args[-1]
+            p1, p2, p3 = params
+            return y_pred - y_true + jnp.abs(p3)
+
+        # Initiale Parameter
+        params0 = jnp.array([self.p1, self.p2, self.p3])
+
+        # Args für fit_model_fast
+        args = (a_flat, v_flat, f_flat, y_flat)
+
+        # Training mit LevenbergMarquardt
+        result_params = fit_model_fast(residual_fn_linear, params0, args, name="Linear_Model")
+
+        # Beste Parameter setzen
+        self.p1, self.p2, self.p3 = result_params.tolist()
+
+        if verbose:
+            print(f'\nFinal best params: p1={self.p1:.3f}, p2={self.p2:.3f}, p3={self.p3:.3f}')
+
+        return result_params
+
+    def test_model(self, X, y_target):
+        prediction = self.predict(X)
+        loss = self.criterion(y_target, prediction)
+        return loss, prediction
+
+    def get_documentation(self):
+        return {
+            "description": "This is a JAX version of a simple linear model with three parameters.",
+            "parameters": {
+                "name": self.name,
+                "p1": self.p1,
+                "p2": self.p2,
+                "p3": self.p3,
+                "dt": self.dt,
+                "target_channel": self.target_channel
+            }
+        }
 
 class LuGreModelJAX(mb.BaseModel):
     def __init__(self, name="LuGre_Model_Jax",

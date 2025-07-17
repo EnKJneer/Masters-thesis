@@ -47,28 +47,29 @@ def plot_2d_with_color(x_values, y_values, color_values,
     # Anzeigen des Plots
     plt.show()
 
-file_rf = 'Load_Data_DataSets/Results/2025_06_09_09_51_29/Predictions/AL_2007_T4_Plate_Normal_3.csv'
-df_rf = pd.read_csv(file_rf)
+dataSet =  'AL_2007_T4_Plate_Normal_3.csv' #'S235JR_Plate_Normal_3.csv' #'S235JR_Gear_Normal_3.csv'
+file_rf = 'Load_Data_DataSets/Results/2025_06_09_09_51_29/Predictions/'
+df_rf = pd.read_csv(file_rf+dataSet)
 
-file_moirai = 'MoE_Moirai/Results/2025_06_04_16_22_51/Predictions/AL_2007_T4_Plate_Normal_3.csv'
-df_moirai = pd.read_csv(file_moirai)
+file_moirai = 'MoE_Moirai/Results/2025_06_04_16_22_51/Predictions/'
+df_moirai = pd.read_csv(file_moirai+dataSet)
 
-file_rnn = 'Recursive_Nets/Results/2025_06_09_10_41_12/Predictions/AL_2007_T4_Plate_Normal_3.csv'
-df_rnn = pd.read_csv(file_rnn)
+file_rnn = 'Recursive_Nets/Results/2025_06_09_10_41_12/Predictions/'
+df_rnn = pd.read_csv(file_rnn+dataSet)
 
-file_naive = 'NaiveModel/Results/2025_06_06_16_59_01/Predictions/AL_2007_T4_Plate_Normal_3.csv'
-df_naive = pd.read_csv(file_naive)
+file_naive = 'NeuralNet/Results/2025_07_13_12_04_29/Predictions/'
+df_reference = pd.read_csv(file_naive+dataSet)
 
-print(df_naive.columns)
+print(df_reference.columns)
 print(df_moirai.columns)
 print(df_rf.columns)
 print(df_rnn.columns)
 
 
-common_columns = list(set(df_rf.columns) & set(df_moirai.columns) & set(df_rnn.columns) & set(df_naive.columns))
+common_columns = list(set(df_rf.columns) & set(df_moirai.columns) & set(df_rnn.columns) & set(df_reference.columns))
 
 # Führen Sie die DataFrames zusammen
-df_merged = df_naive.copy()
+df_merged = df_reference.copy()
 df_merged = df_merged.merge(df_moirai, on=common_columns, how='left')
 df_merged = df_merged.merge(df_rf, on=common_columns, how='left')
 df_merged = df_merged.merge(df_rnn, on=common_columns, how='left')
@@ -80,10 +81,10 @@ columns_to_remove = ['PK_TrainVal_Neural_Net_y', 'PK_TrainVal_Random_Forest', 'P
 df_merged = df_merged.drop(columns=[col for col in columns_to_remove if col in df_merged.columns])
 
 # Remove rows with NaN values
-df_cleaned = df_merged.dropna().reset_index(drop=True)
+df_cleaned = df_merged #.dropna().reset_index(drop=True)
 
 # Identify columns starting with 'PK_TrainVal' or 'PKL_TrainVal'
-pk_columns = [col for col in df_cleaned.columns if col.startswith('PK_TrainVal') or col.startswith('PKL_TrainVal')]
+pk_columns = [col for col in df_cleaned.columns if col.startswith('PK_TrainVal') or col.startswith('PKL_TrainVal')or col.startswith('Plate_TrainVal')]
 
 # Dictionary to store deviations
 dev_dict = {}
@@ -94,29 +95,18 @@ for col in pk_columns:
     dev = df_cleaned['curr_x'] - df_cleaned[col]
     dev_dict[col] = dev
 
-"""    # Plotting
-    plt.figure(figsize=(12, 6))
-    plt.plot(df_cleaned['curr_x'], label='curr_x', color='blue')
-    plt.plot(df_cleaned[col], label=col, color='orange')
-    plt.plot(dev, label='Deviation', linestyle='--', color='green')
-    plt.title(f'Plot of {col} and curr_x')
-    plt.xlabel('Index')
-    plt.ylabel('Value')
-    plt.legend()
-    plt.show()"""
-
 # Plot all deviations together
 plt.figure(figsize=(14, 6))  # Increased figure width
 for col, dev in dev_dict.items():
     plt.plot(dev, label=f'Dev {col}')
 
-plt.title('Deviations of all PK columns from curr_x')
+plt.title('Zeitlicher Verlauf der Abweichung')
 plt.xlabel('Index')
-plt.ylabel('Deviation')
+plt.ylabel('Abweichung')
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')  # Place the legend outside the plot
 plt.tight_layout(rect=[0, 0, 0.85, 1])  # Adjust layout to make room for the legend
 plt.show()
-
+'''
 # Calculate the mean of deviations over time
 mean_dev_over_time = pd.DataFrame(dev_dict).mean(axis=1)
 
@@ -220,4 +210,4 @@ def plot_scatter(df, x_col, y_col, x_label, y_label, title):
 # Create scatter plots for the filtered data
 for col in columns_to_plot:
     plot_scatter(df_filtered, col, 'mean_dev', col, 'Mean Deviation', f'{col} vs Mean Deviation (v_x ≈ 0)')
-"""
+"""'''

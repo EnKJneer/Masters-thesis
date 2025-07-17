@@ -1,0 +1,377 @@
+C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\.venv\Scripts\python.exe C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets\Merge_Controler.py
+
+Verarbeitung: AL_2007_T4_Gear_Depth
+
+Version: 1
+data Länge: 2300
+data_reduced Länge: 6756
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000137
+Erfolgreich gemappte Zeilen: 2300/2300
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9990 bei Index 3
+Erfolgreich gemappte Zeilen: 2300/2300
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.475 bis 0.505
+Nicht-NaN Werte: 2300
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 2300
+  - Gematchter Bereich in data_reduced: 3 bis 2303
+  - Bereich Länge: 2300
+  - Erfolgreich gemappte CONT_DEV Werte: 2300/2300 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.475 bis 0.505
+  - CONT_DEV_X Mittelwert: 0.000
+  - CONT_DEV_X Standardabweichung: 0.032
+==================================================
+
+Verarbeitung: AL_2007_T4_Gear_Normal
+
+Version: 1
+data Länge: 2500
+data_reduced Länge: 7240
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 347 mit Score 25.064194
+⚠️ Kein guter Match – nehme trotzdem best_idx zur Analyse.
+Erfolgreich gemappte Zeilen: 2500/2500
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.8042 bei Index 238
+Erfolgreich gemappte Zeilen: 2500/2500
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.742 bis 0.744
+Nicht-NaN Werte: 2500
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 2500
+  - Gematchter Bereich in data_reduced: 347 bis 2847
+  - Bereich Länge: 2500
+  - Erfolgreich gemappte CONT_DEV Werte: 2500/2500 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.742 bis 0.744
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.065
+==================================================
+
+Verarbeitung: AL_2007_T4_Gear_SF
+
+Version: 1
+data Länge: 3500
+data_reduced Länge: 7505
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000187
+Erfolgreich gemappte Zeilen: 3500/3500
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9995 bei Index 3
+Erfolgreich gemappte Zeilen: 3500/3500
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.745 bis 0.745
+Nicht-NaN Werte: 3500
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 3500
+  - Gematchter Bereich in data_reduced: 3 bis 3503
+  - Bereich Länge: 3500
+  - Erfolgreich gemappte CONT_DEV Werte: 3500/3500 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.745 bis 0.745
+  - CONT_DEV_X Mittelwert: 0.000
+  - CONT_DEV_X Standardabweichung: 0.055
+==================================================
+
+Verarbeitung: AL_2007_T4_Plate_Depth
+
+Version: 1
+data Länge: 3550
+data_reduced Länge: 11288
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000101
+Erfolgreich gemappte Zeilen: 3550/3550
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9992 bei Index 3
+Erfolgreich gemappte Zeilen: 3550/3550
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.648 bis 0.643
+Nicht-NaN Werte: 3550
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 3550
+  - Gematchter Bereich in data_reduced: 3 bis 3553
+  - Bereich Länge: 3550
+  - Erfolgreich gemappte CONT_DEV Werte: 3550/3550 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.648 bis 0.643
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.029
+==================================================
+
+Verarbeitung: AL_2007_T4_Plate_Normal
+
+Version: 1
+data Länge: 3700
+data_reduced Länge: 10783
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 71 mit Score 157.899745
+⚠️ Kein guter Match – nehme trotzdem best_idx zur Analyse.
+Erfolgreich gemappte Zeilen: 3700/3700
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.7887 bei Index 0
+Erfolgreich gemappte Zeilen: 3700/3700
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.742 bis 0.746
+Nicht-NaN Werte: 3700
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 3700
+  - Gematchter Bereich in data_reduced: 71 bis 3771
+  - Bereich Länge: 3700
+  - Erfolgreich gemappte CONT_DEV Werte: 3700/3700 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.742 bis 0.746
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.055
+==================================================
+
+Verarbeitung: AL_2007_T4_Plate_SF
+
+Version: 1
+data Länge: 4600
+data_reduced Länge: 11069
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000101
+Erfolgreich gemappte Zeilen: 4600/4600
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9993 bei Index 3
+Erfolgreich gemappte Zeilen: 4600/4600
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.624 bis 0.630
+Nicht-NaN Werte: 4600
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 4600
+  - Gematchter Bereich in data_reduced: 3 bis 4603
+  - Bereich Länge: 4600
+  - Erfolgreich gemappte CONT_DEV Werte: 4600/4600 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.624 bis 0.630
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.025
+==================================================
+
+Verarbeitung: S235JR_Gear_Depth
+
+Version: 1
+data Länge: 1600
+data_reduced Länge: 4518
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000114
+Erfolgreich gemappte Zeilen: 1600/1600
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9993 bei Index 3
+Erfolgreich gemappte Zeilen: 1600/1600
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.742 bis 0.744
+Nicht-NaN Werte: 1600
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 1600
+  - Gematchter Bereich in data_reduced: 3 bis 1603
+  - Bereich Länge: 1600
+  - Erfolgreich gemappte CONT_DEV Werte: 1600/1600 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.742 bis 0.744
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.081
+==================================================
+
+Verarbeitung: S235JR_Gear_Normal
+
+Version: 1
+data Länge: 1600
+data_reduced Länge: 4463
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000114
+Erfolgreich gemappte Zeilen: 1600/1600
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9994 bei Index 3
+Erfolgreich gemappte Zeilen: 1600/1600
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.745 bis 0.745
+Nicht-NaN Werte: 1600
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 1600
+  - Gematchter Bereich in data_reduced: 3 bis 1603
+  - Bereich Länge: 1600
+  - Erfolgreich gemappte CONT_DEV Werte: 1600/1600 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.745 bis 0.745
+  - CONT_DEV_X Mittelwert: 0.000
+  - CONT_DEV_X Standardabweichung: 0.081
+==================================================
+
+Verarbeitung: S235JR_Gear_SF
+
+Version: 1
+data Länge: 2000
+data_reduced Länge: 4678
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000173
+Erfolgreich gemappte Zeilen: 2000/2000
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9995 bei Index 3
+Erfolgreich gemappte Zeilen: 2000/2000
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.741 bis 0.739
+Nicht-NaN Werte: 2000
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 2000
+  - Gematchter Bereich in data_reduced: 3 bis 2003
+  - Bereich Länge: 2000
+  - Erfolgreich gemappte CONT_DEV Werte: 2000/2000 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.741 bis 0.739
+  - CONT_DEV_X Mittelwert: 0.000
+  - CONT_DEV_X Standardabweichung: 0.072
+==================================================
+
+Verarbeitung: S235JR_Plate_Depth
+
+Version: 1
+data Länge: 2300
+data_reduced Länge: 6918
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000101
+Erfolgreich gemappte Zeilen: 2300/2300
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9994 bei Index 3
+Erfolgreich gemappte Zeilen: 2300/2300
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.744 bis 0.743
+Nicht-NaN Werte: 2300
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 2300
+  - Gematchter Bereich in data_reduced: 3 bis 2303
+  - Bereich Länge: 2300
+  - Erfolgreich gemappte CONT_DEV Werte: 2300/2300 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.744 bis 0.743
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.070
+==================================================
+
+Verarbeitung: S235JR_Plate_Normal
+
+Version: 1
+data Länge: 2250
+data_reduced Länge: 6741
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000113
+Erfolgreich gemappte Zeilen: 2250/2250
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9992 bei Index 3
+Erfolgreich gemappte Zeilen: 2250/2250
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.629 bis 0.617
+Nicht-NaN Werte: 2250
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 2250
+  - Gematchter Bereich in data_reduced: 3 bis 2253
+  - Bereich Länge: 2250
+  - Erfolgreich gemappte CONT_DEV Werte: 2250/2250 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.629 bis 0.617
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.035
+==================================================
+
+Verarbeitung: S235JR_Plate_SF
+
+Version: 1
+data Länge: 3400
+data_reduced Länge: 7463
+
+=== Sequenz-basiertes Matching ===
+Bester Match gefunden bei Index 3 mit Score 0.000102
+Erfolgreich gemappte Zeilen: 3400/3400
+
+=== Korrelations-basiertes Matching ===
+Beste Korrelation: 0.9996 bei Index 3
+Erfolgreich gemappte Zeilen: 3400/3400
+
+Verwende Sequenz-Matching (besser)
+
+=== Validierung ===
+CONT_DEV_X Bereich: -0.744 bis 0.745
+Nicht-NaN Werte: 3400
+
+=== Visualisierung der Sequenz-Überlappung ===
+Mapping Statistiken:
+  - data Länge: 3400
+  - Gematchter Bereich in data_reduced: 3 bis 3403
+  - Bereich Länge: 3400
+  - Erfolgreich gemappte CONT_DEV Werte: 3400/3400 (100.0%)
+  - CONT_DEV_X Wertebereich: -0.744 bis 0.745
+  - CONT_DEV_X Mittelwert: -0.000
+  - CONT_DEV_X Standardabweichung: 0.058
+==================================================
+
+Process finished with exit code 0

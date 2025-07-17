@@ -22,35 +22,34 @@ from datetime import datetime
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
-    NUMBEROFEPOCHS = 1
-    NUMBEROFMODELS = 1
+    NUMBEROFEPOCHS = 500
+    NUMBEROFMODELS = 10
 
     window_size = 1
-    past_values = 2
-    future_values = 2
+    past_values = 0
+    future_values = 0
 
-    dataclass2 = hdata.Combined_Plate_TrainVal
+    dataclass2 = hdata.AirCutNo_Plate
     dataclass2.target_channels = ['curr_x']
-    #dataclass2.add_sign_hold = True
-    #dataclass2.header = ["v_x", "a_x", "f_x_sim"]
+
     dataClasses = [dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
     #dataClasses = [hdata.I40_OldData_noAir, hdata.CMX_OldData_noAir]
     for dataclass in dataClasses:
+        dataclass.only_aircut = True
+        dataclass.remove_bias = True
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
-        #dataclass.target_channels = ['v_x']
         #dataclass.add_sign_hold = True
 
-
     #model_simple = mphys.NaiveModelSimple()
-    model = mrf.ExtraTreesModel()
-    models = []
+    model = mnn.get_reference()
+    models = [model]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        window_size=window_size, past_values=past_values, future_values=future_values,
+                        window_size=window_size, past_values=past_values, future_values=future_values, n_drop_values=25,
                         plot_types=['heatmap', 'prediction_overview'])
 
 

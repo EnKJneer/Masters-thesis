@@ -83,8 +83,6 @@ if __name__ == "__main__":
     dataClass.target_channels = ['curr_x']
     X_train, X_val, X_test, y_train, y_val, y_test_original = dataClass.load_data()
 
-
-
     indx = 1
     n = 25
     #X_test[indx].rolling(window=50, min_periods=1).mean()

@@ -223,9 +223,9 @@ def plot_sequence_overlap(data, data_reduced, data_extended, filename):
             print(f"  - CONT_DEV_X Standardabweichung: {data_extended['CONT_DEV_X'].std():.3f}")
 
 # Setup
-path_additional_data = 'AdditionalDataFiltered'
-path_data = 'DataFiltered'
-path_target = 'DataMatched'
+path_additional_data = 'AdditionalData'
+path_data = 'Data'
+path_target = 'MergedData'
 files = ['AL_2007_T4_Plate_Normal', 'S235JR_Plate_Normal']
 files = os.listdir(path_additional_data)
 # Hauptverarbeitung
@@ -233,7 +233,7 @@ for file in files:
     file = file.replace('.csv', '')
     print(f"\nVerarbeitung: {file}")
 
-    for version in ['1', '2', '3']:
+    for version in ['1']:
         print(f"\nVersion: {version}")
         data = pd.read_csv(f'{path_data}/{file}_{version}.csv')
         data_additional = pd.read_csv(f'{path_additional_data}/{file}.csv')

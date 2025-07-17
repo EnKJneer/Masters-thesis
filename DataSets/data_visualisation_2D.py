@@ -57,9 +57,9 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     # Anzeigen des Plots
     plt.show()
 
-def plot_time_series(data, title, dpi=300, label = 'v_x'):
+def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x'):
     """
-    Erstellt einen Zeitverlaufsplot mit zwei y-Achsen.
+    Erstellt einen Zeitverlaufsplan mit zwei y-Achsen.
 
     :param data: DataFrame mit den Daten
     :param filename: Dateiname zum Speichern des Plots
@@ -73,57 +73,62 @@ def plot_time_series(data, title, dpi=300, label = 'v_x'):
     #ax1.plot(data['Zeit'], data['CTRL_DIFF2_X'], label='CTRL_DIFF2_X', color='tab:orange')
     #ax1.plot(data['Zeit'], data['CONT_DEV_X'], label='CONT_DEV_X', color='tab:green')
     ax1.plot(data.index, data[label], label=label, color='tab:green')
-    ax1.set_xlabel('Zeit')
-    ax1.set_ylabel('Werte')
+    ax1.set_xlabel('Index')
+    ax1.set_ylabel(label)
     ax1.set_title(title)
     ax1.legend(loc='upper left')
     #ax1.set_ylim(-0.000001, 0.000001)
 
     # Zweite y-Achse für curr_x
     ax2 = ax1.twinx()
-    ax2.plot(data.index, data['curr_x'], label='curr_x', color='tab:red')
-    ax2.set_ylabel('curr_x')
+    ax2.plot(data.index, data[ylabel], label=ylabel, color='tab:red')
+    ax2.set_ylabel(ylabel)
     ax2.legend(loc='upper right')
     #ax2.set_ylim(-2, 2)
 
     plt.show()
 
-path_data = 'DataFiltered'
-
+path_data = 'Old_CombinedData'
+#path_data = 'DataFiltered'
 files = os.listdir(path_data)
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
-files = ['AL_2007_T4_Plate_Normal_3.csv', 'AL_2007_T4_Gear_Normal_3.csv']
+files = ['AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Gear_Normal_1.csv', 'Kühlgrill_Mat_S3800_1.csv']
+#files = ['AL_2007_T4/Training/AL_2007_T4_Plate_Normal/AL_2007_T4_Plate_Normal.csv']+
+files = ['AL_2007_T4_Plate_Depth.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
+    #n = data[data['materialremoved_sim'] > 0].index.min() + 200
+    #n = 200
+    n = int(len(data)/3)
+    data = data.iloc[2*n:, :]
+    #data = data.iloc[:200, :]
+    #print(data.columns)
+    #print(data.shape)
 
-    print(data.columns)
-    print(data.shape)
-
-    data['z_x'] = sign_hold(data['v_x'])
-    data['z_y'] = sign_hold(data['v_y'])
-    data['z_sp'] = -data['f_sp_sim']
-    data['z_mrr'] = sign_hold(data['v_x']) * data['materialremoved_sim']
+    #data['z_x'] = sign_hold(data['v_x'])
+    #data['z_y'] = sign_hold(data['v_y'])
+    #data['z_sp'] = -data['f_sp_sim']
+    #data['z_mrr'] = sign_hold(data['v_x']) * data['materialremoved_sim']
     xlabel = 'pos_x'
     ylabel = 'pos_y'
-    label = 'f_y_sim'
-    n = 25
-    data = data.iloc[:-n]
+    data['v'] = np.sqrt(data['v_x']**2 + data['v_y']**2)
+    data['v'] = np.clip(data['v'], 5.83, 6)
+    label = 'v'
+
     x_values = data[xlabel]
     y_values = data[ylabel]
-    color_values = data[label] * (data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']))
+    color_values = data[label] #data[label] * (data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']))
     max_value = 2#-3 for curr_y # 2 for curr_x
     min_value = -2#-7 for curr_y # -2 for curr_x
-    #color_values = np.clip(color_values, min_value, max_value)
+    color_values = np.clip(color_values, min_value, max_value)
 
     name = file.replace('.csv', '')
     #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
+    #plot_time_series(data, name, label='materialremoved_sim', dpi=300)
+    plot_time_series(data, name, label='f_x', dpi=300)
+    #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_y_sim', dpi=300)
-    plot_time_series(data, name, label='v_x', dpi=300)
-    plot_time_series(data, name, label='pos_x', dpi=300)
     #plot_time_series(data, name, label='f_z_sim', dpi=300)
-    #plot_time_series(data, name, label='z_sp', dpi=300)
-    #plot_time_series(data, name, label='z_mrr', dpi=300)
-    #plot_time_series(data, name, label='v_x', dpi=300)
-    #plot_time_series(data, name, label='z_x', dpi=300)
+    #plot_time_series(data, name, label='f_sp_sim', dpi=300)

@@ -843,7 +843,8 @@ def debug_results_structure(results: List):
 def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10,
                    past_values=2, future_values=2, batched_data=False,
-                   n_drop_values=20, patience=5, plot_types=None, use_phys_reference=False):
+                   n_drop_values=20, patience=5, plot_types=None, use_phys_reference=False,
+                   experiment_name = 'Experiment'):
     # In calculate_and_store_results Funktion:
     def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
                                     n_drop_values, raw_data):  # dataSets Parameter hinzufügen
@@ -891,7 +892,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
 
     # Create directory for results
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    results_dir = os.path.join("Results", timestamp)
+    results_dir = os.path.join(experiment_name, timestamp)
+    results_dir = os.path.join('Results', results_dir)
     os.makedirs(results_dir, exist_ok=True)
 
     # Define the meta information structure
