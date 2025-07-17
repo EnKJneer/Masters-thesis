@@ -180,9 +180,9 @@ def mse_multivariate_regression_offset(data, target_cols=['curr_x', 'curr_y', 'c
     """
     # Prüfe welche Spalten verfügbar sind
     available_cols = [col for col in target_cols if col in data.columns]
-    if not available_cols or source_col not in data.columns:
-        print(f"Warnung: Nicht alle Spalten verfügbar. Verfügbar: {data.columns.tolist()}")
-        return 0, [], []
+    #if not available_cols or source_col not in data.columns:
+    #    print(f"Warnung: Nicht alle Spalten verfügbar. Verfügbar: {data.columns.tolist()}")
+    #    return 0, [], []
 
     # Erstelle saubere Daten ohne NaN
     clean_data = data[available_cols + [source_col]].dropna()

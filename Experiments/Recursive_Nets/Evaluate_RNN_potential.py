@@ -24,7 +24,7 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
-    dataClasses = [hdata.Combined_Plate_TrainVal] # , hdata.Combined_Plate_St_TrainVal
+    dataClasses = [hdata.Combined_Plate_TrainVal_OldData] # , hdata.Combined_Plate_St_TrainVal
     for dataClass in dataClasses:
         dataClass.window_size = window_size
         dataClass.past_values = past_values

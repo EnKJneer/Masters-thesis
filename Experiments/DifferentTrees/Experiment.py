@@ -26,22 +26,19 @@ if __name__ == "__main__":
     NUMBEROFMODELS = 1
 
     window_size = 1
-    past_values = 2
-    future_values = 2
+    past_values = 0
+    future_values = 0
 
-    dataclass2 = hdata.Combined_Plate_TrainVal
-    dataclass2.target_channels = ['curr_x']
-    #dataclass2.add_sign_hold = True
-    #dataclass2.header = ["v_x", "a_x", "f_x_sim"]
-    dataClasses = [dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
-    #dataClasses = [hdata.I40_OldData_noAir, hdata.CMX_OldData_noAir]
+    dataclass1 = hdata.Combined_Plate_TrainVal_OldData
+    dataclass2 = hdata.Combined_PlateNotch_TrainVal_OldData
+    #dataclass2 = hdata.Combined_Plate_TrainVal
+    dataClasses = [dataclass1, dataclass2]
     for dataclass in dataClasses:
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
-        #dataclass.target_channels = ['v_x']
-        #dataclass.add_sign_hold = True
-
+        dataclass.add_sign_hold = True
+        dataclass.use_filter = True
 
     #model_simple = mphys.NaiveModelSimple()
     model = mrf.ExtraTreesModel()
@@ -51,6 +48,4 @@ if __name__ == "__main__":
     hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
-                        plot_types=['heatmap', 'prediction_overview'])
-
-
+                        plot_types=['heatmap', 'prediction_overview'], experiment_name='Notch_vs_Plate')

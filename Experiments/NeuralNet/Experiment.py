@@ -26,19 +26,20 @@ if __name__ == "__main__":
     NUMBEROFMODELS = 10
 
     window_size = 1
-    past_values = 2
-    future_values = 2
+    past_values = 0
+    future_values = 0
 
-    dataclass2 = hdata.Combined_Plate_TrainVal
-    dataclass2.target_channels = ['curr_x']
+    dataclass1 = hdata.Combined_PlateNotch_OldData
+    dataclass2 = hdata.Combined_Plate_TrainVal_OldData
 
-    dataClasses = [dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
+    dataClasses = [dataclass1, dataclass2] #, hdata.Combined_Plate_TrainVal_CONTDEV
     #dataClasses = [hdata.I40_OldData_noAir, hdata.CMX_OldData_noAir]
     for dataclass in dataClasses:
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
         #dataclass.add_sign_hold = True
+        dataclass.use_filter = False
 
     #model_simple = mphys.NaiveModelSimple()
     model = mnn.get_reference()

@@ -5,114 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/DataSets/Align_Force_Measurements_Method_Analysis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataSets/MergedData/Log/Log.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataSets/analyse_process_start.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataSets/visualize_z_transform.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel/Adddition_ARMAX.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel/Addition.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel/Addition_LinearSigmoid.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel/Linear_AirCut.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel/Test_sysident.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Controller/Simple_PI_Controler_AirCut.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/DifferentTrees/Visualization_Heatmap.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/FFT/Experiment.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/MachineStateSpace/Experiment_AirCut.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/MachineStateSpace/Linear_AirCut.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/MachineStateSpace/ODE_AirCut.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/NeuralNet/AirCut.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/NeuralNet/Experiment.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/NeuralNet/Visualization_Heatmap.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/SystemIdentifikation/PySINDy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Z-Transform/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataSets/Align_Force_Measurments.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_Depth_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_Depth_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_Depth_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_Normal_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_Normal_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_Normal_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_SF_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_SF_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Gear_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Gear_SF_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_Depth_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_Depth_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_Depth_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_Normal_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_Normal_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_Normal_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_SF_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_SF_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/AL_2007_T4_Plate_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/AL_2007_T4_Plate_SF_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/Log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/Log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_0.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_0.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_10.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_10.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_11.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_11.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_12.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_12.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_13.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_13.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_14.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_14.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_15.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_15.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_16.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_16.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_17.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_17.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_18.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_18.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_19.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_19.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_20.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_20.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_21.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_21.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_22.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_22.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_23.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_23.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_24.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_24.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_25.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_25.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_26.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_26.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_27.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_27.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_28.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_28.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_29.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_29.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_30.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_30.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_31.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_31.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_32.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_32.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_33.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_33.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_34.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_34.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_35.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_35.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_4.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_5.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_6.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_7.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_7.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_8.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_8.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/Log/plot_2025-06-25 17-44-58_9.png" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/Log/plot_2025-06-25 17-44-58_9.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_Depth_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_Depth_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_Depth_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_Normal_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_Normal_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_Normal_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_SF_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_SF_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Gear_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Gear_SF_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_Depth_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_Depth_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_Depth_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_Depth_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_Depth_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_Depth_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_Normal_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_Normal_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_Normal_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_Normal_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_Normal_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_Normal_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_SF_1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_SF_1.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_SF_2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_SF_2.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/DataMatched/S235JR_Plate_SF_3.csv" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/MergedDataFiltered/S235JR_Plate_SF_3.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/Merge_Controler.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Merge_Controler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets/data_visualisation_2D.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/data_visualisation_2D.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Cont_Dev/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Controller/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Cont_Dev/Integrate_Cont_Dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Controller/Integrate_Cont_Dev.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Cont_Dev/Mathematic_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Controller/Mathematic_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Cont_Dev/Simple_PI_Controler.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Controller/Simple_PI_Controler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Cont_Dev/Simple_PI_Controller_Adam.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Controller/Simple_PI_Controller_Adam.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets/Align_Force_Measurements_Method_Analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets/Align_Force_Measurements_Method_Analysis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Experiments/DifferentTrees/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/DifferentTrees/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Loss_Analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Loss_Analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/NeuralNet/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/NeuralNet/Experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Recursive_Nets/Evaluate_RNN_potential.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Recursive_Nets/Evaluate_RNN_potential.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Helper/handling_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Helper/handling_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/JAX_Version/model_physical.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/JAX_Version/model_physical.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/model_random_forest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_random_forest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,6 +59,7 @@
     &quot;Python.Addition_LinearSigmoid.executor&quot;: &quot;Run&quot;,
     &quot;Python.Additional_Input.executor&quot;: &quot;Run&quot;,
     &quot;Python.AirCut.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Align_Force_Measurements_Method_Analysis.executor&quot;: &quot;Run&quot;,
     &quot;Python.Align_Force_Measurments.executor&quot;: &quot;Run&quot;,
     &quot;Python.Analyse_Errors.executor&quot;: &quot;Debug&quot;,
     &quot;Python.Change_Point_Detection.executor&quot;: &quot;Run&quot;,
@@ -364,7 +264,9 @@
       <workItem from="1752512739704" duration="1335000" />
       <workItem from="1752566763233" duration="20512000" />
       <workItem from="1752647303303" duration="14278000" />
-      <workItem from="1752733963652" duration="302000" />
+      <workItem from="1752733963652" duration="4872000" />
+      <workItem from="1752739776351" duration="1076000" />
+      <workItem from="1752741076226" duration="8999000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -428,6 +330,11 @@
           <line>51</line>
           <option name="timeStamp" value="167" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DataSets/Align_Force_Measurements_Method_Analysis.py</url>
+          <line>194</line>
+          <option name="timeStamp" value="192" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -455,7 +362,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$Mathematic_model.coverage" NAME="Mathematic_model Coverage Results" MODIFIED="1751553635900" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Cont_Dev" />
     <SUITE FILE_PATH="coverage/Master_thesis$Load_Data_Method_Comparsion.coverage" NAME="Load_Data_Method_Comparsion Coverage Results" MODIFIED="1748351002470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data" />
     <SUITE FILE_PATH="coverage/Master_thesis$Potential_Transformer.coverage" NAME="Potential_Transformer Coverage Results" MODIFIED="1747754528108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Transformer" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Align_Force_Measurments.coverage" NAME="Align_Force_Measurments Coverage Results" MODIFIED="1752734161891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Align_Force_Measurments.coverage" NAME="Align_Force_Measurments Coverage Results" MODIFIED="1752740506763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Load_Single_Axis.coverage" NAME="Load_Single_Axis Coverage Results" MODIFIED="1748505689186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Single_Axis" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_Activation_Functions.coverage" NAME="Compare Activation Functions Coverage Results" MODIFIED="1747662253865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Activation_Function" />
     <SUITE FILE_PATH="coverage/Master_thesis$handling_read_data_from_json.coverage" NAME="handling_read_data_from_json Coverage Results" MODIFIED="1748610303445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
@@ -519,17 +426,18 @@
     <SUITE FILE_PATH="coverage/Master_thesis$LuGre.coverage" NAME="LuGre Coverage Results" MODIFIED="1750755928011" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$ODE_AirCut.coverage" NAME="ODE_AirCut Coverage Results" MODIFIED="1752481337833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_2D.coverage" NAME="data_visualisation_2D Coverage Results" MODIFIED="1752651305933" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Align_Force_Measurements_Method_Analysis.coverage" NAME="Align_Force_Measurements_Method_Analysis Coverage Results" MODIFIED="1752735818029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$LRRC.coverage" NAME="LRRC Coverage Results" MODIFIED="1751305710534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$Analyse_Errors.coverage" NAME="Analyse_Errors Coverage Results" MODIFIED="1748532309276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_Scatter_plot.coverage" NAME="analyse_Scatter_plot Coverage Results" MODIFIED="1751904122817" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Guided.coverage" NAME="Hyprid_Models_Guided Coverage Results" MODIFIED="1748243212134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Hybrid_Guided" />
     <SUITE FILE_PATH="coverage/Master_thesis$Change_Point_Detection.coverage" NAME="Change_Point_Detection Coverage Results" MODIFIED="1749483065774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Change_Point_Detection" />
     <SUITE FILE_PATH="coverage/Master_thesis$Comparson_of_physical_model.coverage" NAME="Comparson_of_physical_model Coverage Results" MODIFIED="1747926851923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Physical_Models" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_RNN_potential.coverage" NAME="Evaluate_RNN_potential Coverage Results" MODIFIED="1751273538662" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Recursive_Nets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Evaluate_RNN_potential.coverage" NAME="Evaluate_RNN_potential Coverage Results" MODIFIED="1752752036990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Recursive_Nets" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_dependence_v_state.coverage" NAME="analyse_dependence_v_state Coverage Results" MODIFIED="1751904290768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$NaiveModel.coverage" NAME="NaiveModel Coverage Results" MODIFIED="1750775584434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NaiveModel" />
     <SUITE FILE_PATH="coverage/Master_thesis$ODE_Model_1.coverage" NAME="ODE_Model_1 Coverage Results" MODIFIED="1751701798783" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1752513192746" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/DifferentTrees" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1752755889167" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NeuralNet" />
     <SUITE FILE_PATH="coverage/Master_thesis$MoE_Moirai.coverage" NAME="MoE_Moirai Coverage Results" MODIFIED="1749562688199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_Moirai" />
     <SUITE FILE_PATH="coverage/Master_thesis$LRRC_2.coverage" NAME="LRRC_2 Coverage Results" MODIFIED="1751701860915" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$Controler_Influence.coverage" NAME="Controler_Influence Coverage Results" MODIFIED="1750855686756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
