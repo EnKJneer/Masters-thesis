@@ -30,6 +30,7 @@ import pickle
 
 from abc import ABC, abstractmethod
 from scipy.signal import butter, filtfilt
+from sklearn.model_selection import train_test_split
 from sympy import false
 
 # konstanten
@@ -241,7 +242,8 @@ class BaseDataClass(ABC):
 
 # Datenklassen
 class DataClass(BaseDataClass):
-    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
+    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, header = HEADER_x,
+                 do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
         self.name = name
         self.folder = folder
         self.target_channels = target_channels
@@ -262,7 +264,9 @@ class DataClass(BaseDataClass):
         self.only_aircut = False
         self.remove_bias = False
         self.use_filter = False
-        self.header = HEADER_x
+        self.cutoff = 5
+        self.filter_order = 4
+        self.header = header
 
     def butter_lowpass(self, cutoff, order, nyq_freq=25):
         normal_cutoff = cutoff / nyq_freq
@@ -330,8 +334,8 @@ class DataClass(BaseDataClass):
         Y = apply_action(targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
 
         if self.use_filter:
-            X = apply_action(X, lambda data: self.apply_lowpass_filter(data[self.header], self.cutoff, self.filter_order))
-            Y = apply_action(Y, lambda data: self.apply_lowpass_filter(data[self.target_channels], self.cutoff, self.filter_order))
+            X = apply_action(X, lambda data: self.apply_lowpass_filter(data, self.cutoff, self.filter_order))
+            Y = apply_action(Y, lambda data: self.apply_lowpass_filter(data, self.cutoff, self.filter_order))
 
         if self.remove_bias:
             for i, data in enumerate(Y):
@@ -386,8 +390,9 @@ class DataClass(BaseDataClass):
         }
         return documentation
 
-class DataClassSingleAxis(BaseDataClass):
-    def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, axis='x', do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
+class DataClassShuffel(BaseDataClass):
+    def __init__(self, name, folder, training_data_paths, testing_data_paths, target_channels = HEADER_y, header = HEADER_x,
+                 do_preprocessing=True, n=12, past_values=2, future_values=2, window_size=1, keep_separate=False):
         self.name = name
         self.folder = folder
         self.target_channels = target_channels
@@ -402,63 +407,26 @@ class DataClassSingleAxis(BaseDataClass):
         else:
             self.window_size = window_size
         self.keep_separate = keep_separate
-        self.axis = axis
         self.training_data_paths = training_data_paths
-        self.validation_data_paths = validation_data_paths
         self.testing_data_paths = testing_data_paths
+        self.only_aircut = False
+        self.remove_bias = False
+        self.use_filter = False
+        self.header = header
+        self.cutoff = 10
+        self.filter_order = 4
 
-    def create_full_ml_vector_optimized(self, past_values, future_values, channels_in: pd.DataFrame) -> np.array:
-        """
-        Creates a full machine learning vector optimized for multiple channels.
+    def butter_lowpass(self, cutoff, order, nyq_freq=25):
+        normal_cutoff = cutoff / nyq_freq
+        b, a = butter(order, normal_cutoff, btype='low', analog=False)
+        return b, a
 
-        Parameters
-        ----------
-        past_values : int
-            The number of past values to consider.
-        future_values : int
-            The number of future values to predict.
-        channels_in : pd.DataFrame
-            A DataFrame of input channel data.
-
-        Returns
-        -------
-        pd.DataFrame
-            The optimized machine learning vector for all channels.
-        """
-        if not isinstance(channels_in, pd.DataFrame):
-            channels_in = pd.DataFrame(channels_in).T
-        df_filtered = channels_in.filter(regex=self.axis)
-        df_filtered['materialremoved_sim'] = channels_in['materialremoved_sim']
-        n = len(df_filtered)
-
-        # Remove past_values from the beginning and future_values from the end
-        # channels_in = channels_in.iloc[past_values:n - future_values]
-
-        full_vector = pd.DataFrame(index=range(n - (past_values + future_values)))
-
-        # Determine the maximum length of the numbers in the column names
-        max_digits = len(str(len(df_filtered.columns)))
-
-        for i in range(past_values + future_values + 1):
-            if i < past_values:
-                shifted = df_filtered.shift(-i)
-                shifted.columns = [f'{str(col).zfill(max_digits)}_0_past_{i}' for col in df_filtered.columns]
-            elif i == past_values:
-                shifted = df_filtered.shift(-past_values)
-                shifted.columns = [f'{str(col).zfill(max_digits)}_1_current' for col in df_filtered.columns]
-            else:
-                shifted = df_filtered.shift(-i)
-                shifted.columns = [f'{str(col).zfill(max_digits)}_2_future_{i - past_values - 1}' for col in
-                                   df_filtered.columns]
-
-            full_vector = pd.concat([full_vector, shifted], axis=1).dropna()
-
-        # Sort column names
-        sorted_columns = sorted(full_vector.columns)
-
-        # Create DataFrame with sorted column names
-        full_vector = full_vector[sorted_columns]
-        return full_vector
+    def apply_lowpass_filter(self, data, cutoff, order):
+        b, a = self.butter_lowpass(cutoff, order)
+        data2 = data.copy()
+        for col in data.columns:
+            data2[col] = filtfilt(b, a, data2[col])
+        return data2
 
     def check_data_overlap(self):
         """
@@ -475,14 +443,11 @@ class DataClassSingleAxis(BaseDataClass):
         # Names of training files
         training_files = set(os.path.basename(p) for p in self.training_data_paths)
 
-        # Names of validation files
-        validation_files = set(os.path.basename(p) for p in self.validation_data_paths)
-
         # Check for overlaps
         overlap_with_training = not test_files.isdisjoint(training_files)
-        overlap_with_validation = not test_files.isdisjoint(validation_files)
 
-        return overlap_with_training, overlap_with_validation
+
+        return overlap_with_training
 
     def load_data_from_path(self, data_paths):
         """
@@ -498,12 +463,30 @@ class DataClassSingleAxis(BaseDataClass):
         tuple
             X, Y: Preprocessed data and targets.
         """
+
         # Load data
         fulldatas = read_fulldata(data_paths, self.folder)
-        datas = apply_action(fulldatas, lambda data: data[HEADER_x].rolling(window=self.window_size, min_periods=1).mean())
-        X = apply_action(datas, lambda data: self.create_full_ml_vector_optimized(self.past_values, self.future_values, data))
+
+        if self.only_aircut:
+            for i, data in enumerate(fulldatas):
+                n = data[data['materialremoved_sim'] > 0].index.min()
+                fulldatas[i] = data.iloc[:n, :]
+
+        datas = apply_action(fulldatas, lambda data: data[self.header].rolling(window=self.window_size, min_periods=1).mean())
+
+        X = apply_action(datas, lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         targets = apply_action(fulldatas, lambda data: data[self.target_channels])
         Y = apply_action(targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
+
+        if self.use_filter:
+            X = apply_action(X, lambda data: self.apply_lowpass_filter(data, self.cutoff, self.filter_order))
+            Y = apply_action(Y, lambda data: self.apply_lowpass_filter(data, self.cutoff, self.filter_order))
+
+        if self.remove_bias:
+            for i, data in enumerate(Y):
+                print(f'{data_paths[i]}: {data.iloc[0]}')
+                Y[i] = data - data.iloc[0]
+
         if self.past_values + self.future_values != 0:
             Y = apply_action(Y, lambda target: target.iloc[self.past_values:-self.future_values])
 
@@ -517,11 +500,6 @@ class DataClassSingleAxis(BaseDataClass):
         """
         Loads and preprocesses data for training, validation, and testing.
 
-        Parameters
-        ----------
-        self.past_values : int, optional
-            The number of past values to consider. The default is 2.
-
         Returns
         -------
         tuple
@@ -532,26 +510,41 @@ class DataClassSingleAxis(BaseDataClass):
         X_test, y_test = self.load_data_from_path(self.testing_data_paths)
 
         # Check for overlaps with assert
-        overlap_with_training, overlap_with_validation = self.check_data_overlap()
+        overlap_with_training = self.check_data_overlap()
         assert not overlap_with_training, "Warning: Test data is included in the training data."
-        assert not overlap_with_validation, "Warning: Test data is included in the validation data."
 
         # Load training and validation data
         X_train, y_train = self.load_data_from_path(self.training_data_paths)
-        X_val, y_val = self.load_data_from_path(self.validation_data_paths)
 
         if self.do_preprocessing:
             X_train, y_train = self.preprocessing(X_train, y_train)
-            X_val, y_val = self.preprocessing(X_val, y_val)
 
-        return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test)
+        return self.prepare_output(X_train, X_test, y_train, y_test)
+
+    def prepare_output(self, all_X_train, X_test, all_y_train, y_test):
+        """
+        Returns
+        -------
+        tuple
+            X_train, X_val, X_test, y_train, y_val, y_test
+        """
+        if type(all_X_train) is not list:
+            all_X_train = [all_X_train]
+            all_y_train = [all_y_train]
+
+        X = pd.concat(all_X_train).reset_index(drop=True)
+        y = pd.concat(all_y_train).reset_index(drop=True)
+
+        # Aufteilung in Trainings- und Validierungsdaten (z.B. 80% Trainingsdaten, 20% Validierungsdaten)
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.8, random_state=42)
+
+        return X_train, X_val, X_test, y_train, y_val, y_test
 
     def get_documentation(self):
         documentation = {
             "name": self.name,
             "folder": self.folder,
             "training_data_paths": self.training_data_paths,
-            "validation_data_paths": self.validation_data_paths,
             "testing_data_paths": self.testing_data_paths,
             "target_channels": self.target_channels,
         }
@@ -602,7 +595,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
         self.header = header
         self.use_filter = False
         self.filter_order = 4
-        self.cutoff = 20
+        self.cutoff = 5
 
     def butter_lowpass(self, cutoff, order, nyq_freq=25):
         normal_cutoff = cutoff / nyq_freq
@@ -980,7 +973,7 @@ Al_St_Plate_Gear = DataclassCombinedTrainVal('Al_St_Plate_Gear', folder_data,
                                              ["curr_x"])
 dataSets_list_Plate = [Al_Al_Plate_Gear,Al_St_Plate_Plate,Al_St_Plate_Gear]
 
-dataPaths_Test = [  'AL_2007_T4_Gear_Normal_2.csv','AL_2007_T4_Plate_Normal_2.csv', 'S235JR_Gear_Normal_2.csv','S235JR_Plate_Normal_2.csv']
+dataPaths_Test = [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
 
 dataPaths_Val_KL = ['Kühlgrill_Mat_S2800_1.csv', 'Kühlgrill_Mat_S3800_1.csv', 'Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_1.csv', 'Laufrad_Durchlauf_2_1.csv',
                     'Kühlgrill_Mat_S2800_2.csv', 'Kühlgrill_Mat_S3800_2.csv','Kühlgrill_Mat_S4700_1.csv', 'Laufrad_Durchlauf_1_2.csv',  'Laufrad_Durchlauf_2_2.csv',
@@ -994,7 +987,8 @@ dataPaths_Train_Gear_sort = ['AL_2007_T4_Gear_SF_1.csv', 'AL_2007_T4_Gear_Depth_
 dataPaths_Val_Gear = ['AL_2007_T4_Gear_SF_2.csv', 'AL_2007_T4_Gear_Depth_2.csv', 'AL_2007_T4_Gear_Normal_2.csv', ]
 
 dataPaths_Train_Plate = ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv', 'AL_2007_T4_Plate_Normal_1.csv',
-                    'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv','AL_2007_T4_Plate_Normal_3.csv', ]
+                    'AL_2007_T4_Plate_Normal_2.csv',
+                    'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv']
 
 dataPaths_Train_Plate_sort = ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv', 'AL_2007_T4_Plate_Normal_1.csv']
 
@@ -1010,17 +1004,6 @@ Combined_Gear_2 = DataClass('Gear_2', folder_data,
                             dataPaths_Val_Gear,
                             dataPaths_Test,
                             ["curr_x"], )
-Combined_Gear_Single = DataClassSingleAxis('Gear_Single_Axis', folder_data,
-                                           dataPaths_Train_Gear,
-                                           dataPaths_Val_KL,
-                                           dataPaths_Test,
-                                           ["curr_x"], )
-
-Combined_Gear_Single_2 = DataClassSingleAxis('Gear_Single_Axis_2', folder_data,
-                                             dataPaths_Train_Gear_sort,
-                                             dataPaths_Val_Gear,
-                                             dataPaths_Test,
-                                             ["curr_x"], )
 
 Combined_Gear_TrainVal = DataclassCombinedTrainVal('Gear_TrainVal', folder_data,
                                                    ['AL_2007_T4_Gear', 'AL_2007_T4_Gear_Depth', 'AL_2007_T4_Gear_SF'],
@@ -1076,22 +1059,38 @@ Combined_Plate_2 = DataClass('Plate_2', folder_data,
                             dataPaths_Val_Plate,
                             dataPaths_Test,
                             ["curr_x"], )
-Combined_Plate_Single = DataClassSingleAxis('Plate_Single_Axis', folder_data,
-                                           dataPaths_Train_Plate,
-                                           dataPaths_Val_KL,
-                                           dataPaths_Test,
-                                           ["curr_x"], )
 
-Combined_Plate_Single_2 = DataClassSingleAxis('Plate_Single_Axis_2', folder_data,
-                                             dataPaths_Train_Plate_sort,
-                                             dataPaths_Val_Plate,
+Combined_PlateNotch_OldData_TrainValSame = DataClass('PlateNotch_TrainValSame', '..\\..\\DataSets\\OldData_Aligned',
+                                        ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                         'AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Plate_Normal_2.csv',
+                                         'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv',
+                                         'AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv',
+                                        'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'],
+                        ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                         'AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Plate_Normal_2.csv',
+                                         'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv',
+                                         'AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv',
+                                        'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'],
                                              dataPaths_Test,
-                                             ["curr_x"], )
-Combined_PlateNotch_OldData = DataClassSingleAxis('PlateNotch', '..\\..\\DataSets\\OldData_Aligned',
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+
+Combined_PlateNotch_OldData = DataClass('PlateNotch', '..\\..\\DataSets\\OldData_Aligned',
                                              dataPaths_Train_Plate,
-                                             ['AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv'],
+                                             ['AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv',
+                                              'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'],
                                              dataPaths_Test,
-                                             ["curr_x"], )
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+
+
+Combined_PlateNotch_OldData_RandomSplit = DataClassShuffel('PlateNotch_RandomSplit', '..\\..\\DataSets\\OldData_Aligned',
+                                               ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                                'AL_2007_T4_Plate_Normal_1.csv',
+                                                'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv',
+                                                'AL_2007_T4_Plate_Normal_2.csv',
+                                                'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv',
+                                                'AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv'],
+                                                dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
 Combined_Plate_TrainVal = DataclassCombinedTrainVal('Plate_TrainVal', folder_data,
                                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],

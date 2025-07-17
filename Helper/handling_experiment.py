@@ -236,7 +236,55 @@ class ModelComparisonPlotter(BasePlotter):
 
         return [plot_path]
 
+
 class HeatmapPlotter(BasePlotter):
+    """Erstellt eine Heatmap der MAE-Werte mit MAE und Standardabweichung"""
+
+    def create_plots(self, df: pd.DataFrame, **kwargs):
+        # Model + DataSet Kombination erstellen
+        df['Model_Dataset'] = df['Model'] + '_' + df['DataSet']
+
+        # Pivot-Tabellen für MAE und StdDev erstellen
+        pivot_mae = df.pivot_table(values='MAE', index='DataPath', columns='Model_Dataset', aggfunc='mean')
+        pivot_std = df.pivot_table(values='StdDev', index='DataPath', columns='Model_Dataset', aggfunc='mean')
+
+        fig, ax = plt.subplots(figsize=(max(10, len(pivot_mae.columns) * 0.8), max(6, len(pivot_mae.index) * 0.5)))
+
+        im = ax.imshow(pivot_mae.values, cmap='RdYlBu_r', aspect='auto')
+
+        # Achsenbeschriftungen
+        ax.set_xticks(np.arange(len(pivot_mae.columns)))
+        ax.set_yticks(np.arange(len(pivot_mae.index)))
+        ax.set_xticklabels(pivot_mae.columns)
+        ax.set_yticklabels([path.replace('.csv', '') for path in pivot_mae.index])
+
+        # Rotiere die x-Achsenbeschriftungen
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+        # Werte in die Zellen schreiben (MAE ± StdDev)
+        for i in range(len(pivot_mae.index)):
+            for j in range(len(pivot_mae.columns)):
+                mae_value = pivot_mae.iloc[i, j]
+                std_value = pivot_std.iloc[i, j]
+
+                if not np.isnan(mae_value) and not np.isnan(std_value):
+                    text = ax.text(j, i, f'{mae_value:.3f}\n±{std_value:.3f}',
+                                   ha="center", va="center",
+                                   color="white" if mae_value > pivot_mae.values.mean() else "black",
+                                   fontsize=9)
+
+        ax.set_title("MAE Heatmap: DataPath vs Model_DataSet")
+        ax.set_xlabel("Model + DataSet")
+        ax.set_ylabel("DataPath")
+        fig.colorbar(im, ax=ax, label='MAE')
+        plt.tight_layout()
+
+        filename = 'heatmap_mae_with_std.png'
+        plot_path = self.save_plot(fig, filename)
+
+        return [plot_path]
+
+class HeatmapPlotterOLD(BasePlotter):
     """Erstellt eine Heatmap der MAE-Werte"""
 
     def create_plots(self, df: pd.DataFrame, **kwargs):
@@ -980,6 +1028,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
 
             for _ in range(NUMBEROFMODELS):
                 model = models_copy[idx]
+                if hasattr(model, 'input_size'):
+                    model.input_size = None
                 model.target_channel = dataClass.target_channels[0]
                 model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
                 if hasattr(model, 'clear_active_experts_log'):

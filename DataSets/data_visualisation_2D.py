@@ -4,6 +4,8 @@ from collections import deque
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import butter, filtfilt
+
 
 def sign_hold(v, eps = 1e-1):
     # Initialisierung des Arrays z mit Nullen
@@ -87,21 +89,35 @@ def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x'):
     #ax2.set_ylim(-2, 2)
 
     plt.show()
+def butter_lowpass(cutoff, order, nyq_freq=0.5):
+    normal_cutoff = cutoff / nyq_freq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
 
-path_data = 'Old_CombinedData'
+def apply_lowpass_filter(data, cutoff, order):
+    b, a = butter_lowpass(cutoff, order)
+    data2 = data.copy()
+    for col in data.columns:
+        data2[col] = filtfilt(b, a, data2[col])
+    return data2
+
+path_data = 'OldData_Aligned'
 #path_data = 'DataFiltered'
 files = os.listdir(path_data)
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
 files = ['AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Gear_Normal_1.csv', 'Kühlgrill_Mat_S3800_1.csv']
 #files = ['AL_2007_T4/Training/AL_2007_T4_Plate_Normal/AL_2007_T4_Plate_Normal.csv']+
-files = ['AL_2007_T4_Plate_Depth.csv']
+files = ['AL_2007_T4_Notch_Normal_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
+    cutoff = 0.1
+    filter_order = 4
+    data = apply_lowpass_filter(data, cutoff, filter_order)
     #n = data[data['materialremoved_sim'] > 0].index.min() + 200
     #n = 200
-    n = int(len(data)/3)
-    data = data.iloc[2*n:, :]
+    #n = int(len(data)/3)
+    #data = data.iloc[2*n:, :]
     #data = data.iloc[:200, :]
     #print(data.columns)
     #print(data.shape)
@@ -126,7 +142,10 @@ for file in files:
     name = file.replace('.csv', '')
     #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300)
-    plot_time_series(data, name, label='f_x', dpi=300)
+    data['a_x'] = np.clip(data['a_x'], -5, 5)
+    plot_time_series(data, name, label='a_x', dpi=300)
+    plot_time_series(data, name, label='v_x', dpi=300)
+    plot_time_series(data, name, label='pos_x', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_y_sim', dpi=300)
