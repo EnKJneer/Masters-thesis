@@ -30,7 +30,7 @@ if __name__ == "__main__":
     future_values = 0
 
     data2 = hdata.Combined_Plate_TrainVal
-    data2.add_sign_hold = True
+    data2.add_sign_hold = False
     dataclasses = [hdata.Combined_Plate_TrainVal_CONTDEV, data2] #, hdata.Combined_Plate_TrainVal_CONTDEV
     for dataclass in dataclasses:
         dataclass.window_size = window_size
@@ -46,6 +46,6 @@ if __name__ == "__main__":
     hexp.run_experiment(dataclasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values,
-                        plot_types=['heatmap', 'prediction_overview'])
+                        plot_types=['heatmap', 'prediction_overview'], experiment_name='Integrate_CONTDEV')
 
 

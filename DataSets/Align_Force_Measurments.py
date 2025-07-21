@@ -198,7 +198,7 @@ def apply_lowpass_filter(data, cutoff, order):
     return filtered_data
 
 output_path = 'OldData_Aligned'
-path_data = 'Old_CombinedData'
+path_data = 'OldData'
 files = os.listdir(path_data)
 
 for file in files:

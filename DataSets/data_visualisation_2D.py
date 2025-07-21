@@ -81,12 +81,13 @@ def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x'):
     ax1.legend(loc='upper left')
     #ax1.set_ylim(-0.000001, 0.000001)
 
-    # Zweite y-Achse für curr_x
-    ax2 = ax1.twinx()
-    ax2.plot(data.index, data[ylabel], label=ylabel, color='tab:red')
-    ax2.set_ylabel(ylabel)
-    ax2.legend(loc='upper right')
-    #ax2.set_ylim(-2, 2)
+    if ylabel is not None:
+        # Zweite y-Achse für curr_x
+        ax2 = ax1.twinx()
+        ax2.plot(data.index, data[ylabel], label=ylabel, color='tab:red')
+        ax2.set_ylabel(ylabel)
+        ax2.legend(loc='upper right')
+        #ax2.set_ylim(-2, 2)
 
     plt.show()
 def butter_lowpass(cutoff, order, nyq_freq=0.5):
@@ -107,18 +108,18 @@ files = os.listdir(path_data)
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
 files = ['AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Gear_Normal_1.csv', 'Kühlgrill_Mat_S3800_1.csv']
 #files = ['AL_2007_T4/Training/AL_2007_T4_Plate_Normal/AL_2007_T4_Plate_Normal.csv']+
-files = ['AL_2007_T4_Notch_Normal_2.csv']
+files = ['AL_2007_T4_Gear_SF_1.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
     cutoff = 0.1
     filter_order = 4
-    data = apply_lowpass_filter(data, cutoff, filter_order)
+    #data = apply_lowpass_filter(data, cutoff, filter_order)
     #n = data[data['materialremoved_sim'] > 0].index.min() + 200
     #n = 200
-    #n = int(len(data)/3)
+    n = int(len(data)/3)
     #data = data.iloc[2*n:, :]
-    #data = data.iloc[:200, :]
+    data = data.iloc[:n, :]
     #print(data.columns)
     #print(data.shape)
 
@@ -126,26 +127,27 @@ for file in files:
     #data['z_y'] = sign_hold(data['v_y'])
     #data['z_sp'] = -data['f_sp_sim']
     #data['z_mrr'] = sign_hold(data['v_x']) * data['materialremoved_sim']
-    xlabel = 'pos_x'
-    ylabel = 'pos_y'
-    data['v'] = np.sqrt(data['v_x']**2 + data['v_y']**2)
-    data['v'] = np.clip(data['v'], 5.83, 6)
-    label = 'v'
+    #xlabel = 'pos_x'
+    #ylabel = 'pos_y'
+    #data['v'] = np.sqrt(data['v_x']**2 + data['v_y']**2)
+    #data['v'] = np.clip(data['v'], 5.83, 6)
+    #label = 'v'
 
-    x_values = data[xlabel]
-    y_values = data[ylabel]
-    color_values = data[label] #data[label] * (data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']))
-    max_value = 2#-3 for curr_y # 2 for curr_x
-    min_value = -2#-7 for curr_y # -2 for curr_x
-    color_values = np.clip(color_values, min_value, max_value)
+    #x_values = data[xlabel]
+    #y_values = data[ylabel]
+    #color_values = data[label] #data[label] * (data['v_y']) / (np.abs(data['v_x']) + np.abs(data['v_y']))
+    #max_value = 2#-3 for curr_y # 2 for curr_x
+    #min_value = -2#-7 for curr_y # -2 for curr_x
+    #color_values = np.clip(color_values, min_value, max_value)
 
     name = file.replace('.csv', '')
     #plot_2d_with_color(x_values, y_values, color_values, f'Plots/{name}_{xlabel}_{label}', label = label, title = file, dpi = 600, xlabel = xlabel, ylabel = ylabel)
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300)
-    data['a_x'] = np.clip(data['a_x'], -5, 5)
-    plot_time_series(data, name, label='a_x', dpi=300)
-    plot_time_series(data, name, label='v_x', dpi=300)
-    plot_time_series(data, name, label='pos_x', dpi=300)
+
+    #plot_time_series(data, name, label='a_x', dpi=300)
+    #data['f_x'] = np.clip(data['f_x_sim'], -1000, 1000)
+    plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='pos_x', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_y_sim', dpi=300)

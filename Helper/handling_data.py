@@ -267,6 +267,7 @@ class DataClass(BaseDataClass):
         self.cutoff = 5
         self.filter_order = 4
         self.header = header
+        self.add_sign_hold = False
 
     def butter_lowpass(self, cutoff, order, nyq_freq=25):
         normal_cutoff = cutoff / nyq_freq
@@ -303,6 +304,14 @@ class DataClass(BaseDataClass):
         overlap_with_validation = not test_files.isdisjoint(validation_files)
 
         return overlap_with_training, overlap_with_validation
+
+    def add_z_to_data(self, data):
+        output = data.copy()
+        for header in output.columns:
+            if header.startswith('v'):
+                output[header.replace('v', 'z')] = sign_hold(output[header].values)
+
+        return output
 
     def load_data_from_path(self, data_paths):
         """
@@ -341,6 +350,9 @@ class DataClass(BaseDataClass):
             for i, data in enumerate(Y):
                 print(f'{data_paths[i]}: {data.iloc[0]}')
                 Y[i] = data - data.iloc[0]
+
+        if self.add_sign_hold:
+            X = apply_action(X, lambda data: self.add_z_to_data(data))
 
         if self.past_values + self.future_values != 0:
             Y = apply_action(Y, lambda target: target.iloc[self.past_values:-self.future_values])
@@ -642,7 +654,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
             return v_interp
 
         for column in self.header:
-            if column.startswith('CONT_DEV_'):
+            if column.startswith('CONT_DEV_') or column.startswith('cont_dev_'):
                 for data in test_datas:
                     cont_dev = jnp.array(data[column])
                     # Define the time array
@@ -651,8 +663,11 @@ class DataclassCombinedTrainVal(BaseDataClass):
                     # Integrate cont_dev_x using RK4
                     integrated_cont_dev_x = rk4_scan_integrate(partial(integrand_x0, v_data=cont_dev),
                                                                jnp.array([cont_dev[0]]), t)
+                    if column.startswith('cont_dev_'):
+                        data[column.replace('cont_dev_', 'dev_int_')] = integrated_cont_dev_x
+                    elif column.startswith('CONT_DEV_'):
+                        data[column.replace('CONT_DEV_', 'dev_int_')] = integrated_cont_dev_x
 
-                    data[column.replace('CONT_DEV_', 'dev_int_')] = integrated_cont_dev_x
 
         if self.add_sign_hold:
             for data in test_datas:
@@ -716,7 +731,7 @@ class DataclassCombinedTrainVal(BaseDataClass):
                         data[header.replace('v', 'z')] = sign_hold(data[header].values)
 
             for column in self.header:
-                if column.startswith('CONT_DEV_'):
+                if column.startswith('CONT_DEV_')  or column.startswith('cont_dev_'):
                     for data in file_datas_x:
                         cont_dev = jnp.array(data[column])
                         # Define the time array
@@ -726,7 +741,10 @@ class DataclassCombinedTrainVal(BaseDataClass):
                         integrated_cont_dev_x = rk4_scan_integrate(partial(integrand_x0, v_data=cont_dev),
                                                                    jnp.array([cont_dev[0]]), t)
 
-                        data[column.replace('CONT_DEV_', 'dev_int_')] = integrated_cont_dev_x
+                        if column.startswith('cont_dev_'):
+                            data[column.replace('cont_dev_', 'dev_int_')] = integrated_cont_dev_x
+                        elif column.startswith('CONT_DEV_'):
+                            data[column.replace('CONT_DEV_', 'dev_int_')] = integrated_cont_dev_x
 
             X_files = apply_action(file_datas_x,
                                    lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values,
@@ -1074,23 +1092,67 @@ Combined_PlateNotch_OldData_TrainValSame = DataClass('PlateNotch_TrainValSame', 
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
-Combined_PlateNotch_OldData = DataClass('PlateNotch', '..\\..\\DataSets\\OldData_Aligned',
+Combined_PlateNotch_OldData = DataClass('OldData', '..\\..\\DataSets\\OldData_Aligned',
                                              dataPaths_Train_Plate,
                                              ['AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv',
                                               'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
-
-
-Combined_PlateNotch_OldData_RandomSplit = DataClassShuffel('PlateNotch_RandomSplit', '..\\..\\DataSets\\OldData_Aligned',
-                                               ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
-                                                'AL_2007_T4_Plate_Normal_1.csv',
-                                                'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv',
-                                                'AL_2007_T4_Plate_Normal_2.csv',
-                                                'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv',
-                                                'AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv'],
-                                                dataPaths_Test,
+DataClassV3_Plate_Notch = DataClass('DataV3', '..\\..\\DataSetsV3\\Data',
+                                    ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                     'AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Plate_Normal_2.csv',
+                                    'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv',
+                                     'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv'],
+                                             ['AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv',
+                                              'AL_2007_T4_Notch_Depth_1.csv', 'AL_2007_T4_Notch_Depth_2.csv'],
+                                             dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data',
+                                    ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                                    'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
+                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
+                                                    'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+                                             ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
+                                              'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv'],
+                                             dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+DataClassOld_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSets\\OldData_Aligned',
+                                    ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                     'S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
+                                     'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+                                             ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
+                                              'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv'],
+                                             dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+
+DataClass_ST_Plate = DataClass('ST_Data', '..\\..\\DataSets\\Data',
+                                    ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                     'S235JR_Plate_Normal_1.csv',
+                                     'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+                                             ['S235JR_Plate_Normal_2.csv',
+                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',],
+                                             dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim"])
+
+
+DataClass2_Plate_Notch_TrainVal_ContDev = DataclassCombinedTrainVal('DataClass2_Plate_Notch_TrainVal_ContDev', '..\\..\\DataSetsV2\\Data',
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
+                                                     'AL_2007_T4_Notch'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], header = ['cont_dev_x','cont_dev_y','cont_dev_z','cont_dev_sp','v_x','a_x','v_y','a_y','v_z','a_z','v_sp','a_sp','f_x','f_y','f_z'] )
+
+DataClass2_Plate_Notch_TrainVal = DataclassCombinedTrainVal('DataClass2_Plate_Notch_TrainVal', '..\\..\\DataSetsV2\\Data',
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
+                                                     'AL_2007_T4_Notch'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], header = ['v_x','a_x','v_y','a_y','v_z','a_z','v_sp','a_sp','f_x','f_y','f_z'] )
+
+DataClass3_Plate_Notch_TrainVal = DataclassCombinedTrainVal('DataClass3_Plate_Notch_TrainVal', '..\\..\\DataSetsV3\\Data',
+                                                    ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF',
+                                                     'AL_2007_T4_Notch'],
+                                                    dataPaths_Test,
+                                                    ["curr_x"], header = ['v_x','a_x','v_y','a_y','v_z','a_z','v_sp','a_sp','f_x','f_y','f_z'] )
 
 Combined_Plate_TrainVal = DataclassCombinedTrainVal('Plate_TrainVal', folder_data,
                                                     ['AL_2007_T4_Plate', 'AL_2007_T4_Plate_Depth', 'AL_2007_T4_Plate_SF'],

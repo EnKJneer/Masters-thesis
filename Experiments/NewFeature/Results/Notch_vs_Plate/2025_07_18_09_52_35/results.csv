@@ -1,0 +1,9 @@
+DataSet,DataPath,Model,MAE,StdDev,MAE_Ensemble
+PlateNotch_TrainVal_OldData,AL_2007_T4_Gear_Normal_3,Random_Forest,0.08286120496208531,0.0,0.08248098821596245
+PlateNotch_TrainVal_OldData,AL_2007_T4_Plate_Normal_3,Random_Forest,0.09769186762883612,0.0,0.09729042587507195
+PlateNotch_TrainVal_OldData,S235JR_Gear_Normal_3,Random_Forest,0.1206171503883495,0.0,0.11917245258757961
+PlateNotch_TrainVal_OldData,S235JR_Plate_Normal_3,Random_Forest,0.1790683569394841,0.0,0.17800290605108054
+PlateNotch_TrainVal_OldData,AL_2007_T4_Gear_Normal_3,Enhanced_Random_Forest,0.1179338507477488,0.0,0.11813079075528168
+PlateNotch_TrainVal_OldData,AL_2007_T4_Plate_Normal_3,Enhanced_Random_Forest,0.07848885913180371,0.0,0.07818970570444732
+PlateNotch_TrainVal_OldData,S235JR_Gear_Normal_3,Enhanced_Random_Forest,0.2425969264538835,0.0,0.23916017257165606
+PlateNotch_TrainVal_OldData,S235JR_Plate_Normal_3,Enhanced_Random_Forest,0.22336058274553572,0.0,0.22170741036247546

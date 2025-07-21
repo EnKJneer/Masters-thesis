@@ -11,16 +11,19 @@ path_list = [   'RawData/AL_2007_T4/Training/AL_2007_T4_Plate_Normal',
                 'RawData/AL_2007_T4/Training/AL_2007_T4_Gear_Normal',
                 'RawData/AL_2007_T4/Training/AL_2007_T4_Gear_SF',
                 'RawData/AL_2007_T4/Training/AL_2007_T4_Gear_Depth',
-
+                'RawData/AL_2007_T4/Training/AL_2007_T4_Notch_Normal',
                 'RawData/S235JR/Training/S235JR_Plate_Normal',
                 'RawData/S235JR/Training/S235JR_Plate_SF',
                 'RawData/S235JR/Training/S235JR_Plate_Depth',
                 'RawData/S235JR/Training/S235JR_Gear_Normal',
                 'RawData/S235JR/Training/S235JR_Gear_SF',
                 'RawData/S235JR/Training/S235JR_Gear_Depth',
+                'RawData/S235JR/Training/S235JR_Notch_Normal',
+                'RawData/S235JR/Training/S235JR_Notch_SF',
+                'RawData/S235JR/Training/S235JR_Notch_Depth',
              ]
 
-path_target = 'AdditionalData'
+path_target = 'OldData_Additional'
 for path in path_list:
 
     machine = 'CMX'  # CMX, DMU

@@ -1,0 +1,84 @@
+{
+    "DataSets": [
+        {
+            "name": "PlateNotch_TrainVal_OldData",
+            "folder": "..\\..\\DataSets\\OldData_Aligned",
+            "training_validation_data": [
+                "AL_2007_T4_Plate",
+                "AL_2007_T4_Plate_Depth",
+                "AL_2007_T4_Plate_SF",
+                "AL_2007_T4_Notch"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "add_sign_hold": true,
+            "Header": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x",
+                "f_y",
+                "f_z"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 1,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "window_size": 1,
+        "past_values": 0,
+        "future_values": 0,
+        "batched_data": false,
+        "n_drop_values": 20,
+        "NUMBEROFEPOCHS": 1
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Notch_vs_Plate\\2025_07_18_09_55_47\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Notch_vs_Plate\\2025_07_18_09_55_47\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\Notch_vs_Plate\\2025_07_18_09_55_47\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\Notch_vs_Plate\\2025_07_18_09_55_47\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\Notch_vs_Plate\\2025_07_18_09_55_47\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [],
+        "Summary_Statistics": {
+            "Total_Experiments": 4,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "PlateNotch_TrainVal_OldData": 4
+            },
+            "Models_Compared": [
+                "Random_Forest"
+            ],
+            "Best_Model_Overall": "Random_Forest",
+            "Worst_Model_Overall": "Random_Forest"
+        }
+    }
+}
