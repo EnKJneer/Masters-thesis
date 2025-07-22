@@ -1,0 +1,16 @@
+Maximum number of iterations has been exceeded.
+
+9443.386031435803
+[ 8.06640615e-01  5.88356153e-01  5.18810162e-01  4.95379356e+02
+  3.84438067e+02  6.98897296e+02  2.28314540e-01  2.18170127e+00
+ -2.51098395e+00  6.83534969e-01]
+
+ SLSQP:
+ Optimization terminated successfully    (Exit mode 0)
+            Current function value: 178450.9944000053
+            Iterations: 10
+            Function evaluations: 196
+            Gradient evaluations: 10
+[8.57207748e-01 9.24693448e-01 2.31761971e-01 1.99000000e+03
+ 3.51000000e+02 2.74000000e+02 6.23945258e-01 7.44161727e-01
+ 6.06567510e-01 9.59577402e-01]

@@ -116,7 +116,6 @@ def apply_lowpass_filter(data, cutoff, order):
     return data2
 
 
-
 files = ['data.csv']
 for file in files:
     #file = file.replace('.csv', '')
@@ -124,8 +123,8 @@ for file in files:
     cutoff = 0.1
     filter_order = 4
     #data = apply_lowpass_filter(data, cutoff, filter_order)
-    n = int(len(data)*1.1/3)
-    data = data.iloc[500:n, :]
+    #n = int(len(data)*1.1/3)
+    #data = data.iloc[500:n, :]
     #print(data.columns)
     #print(data.shape)
 
@@ -138,8 +137,6 @@ for file in files:
     #t_e = data.index[-1] * 1/500
     #print(t_e)
     data['f_x'] = -data['f_x']
-    print(min(abs(data['v_sp'])))
-    print(max(abs(data['v_sp'])))
-    data['f_x_sim'] = np.clip(data['f_x_sim'], -250, 250)
-    plot_time_series(data, name, label='pos_x', dpi=300, ylabel='f_x', align_axis = False)
-    plot_2d_with_color(data['pos_x'], data['pos_y'], data['time'])
+    data['v_z'] = np.clip(data['v_z'], -1, 1)
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x', align_axis=False)
+    #plot_2d_with_color(data['pos_x'], data['pos_y'], data['time'])

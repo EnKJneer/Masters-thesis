@@ -122,6 +122,7 @@ for file in files:
     name = file.replace('.csv', '')
     #t_e = data.index[-1] * 1/500
     #print(t_e)
+
     plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
     #plot_time_series(data, name, label='f_y', dpi=300, ylabel='curr_y')
     #plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')

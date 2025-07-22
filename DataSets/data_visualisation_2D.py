@@ -108,7 +108,7 @@ files = os.listdir(path_data)
 files = ['AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
 files = ['AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Gear_Normal_1.csv', 'Kühlgrill_Mat_S3800_1.csv']
 #files = ['AL_2007_T4/Training/AL_2007_T4_Plate_Normal/AL_2007_T4_Plate_Normal.csv']+
-files = ['AL_2007_T4_Plate_Normal_2.csv']
+files = ['AL_2007_T4_Plate_Normal_1.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -146,7 +146,7 @@ for file in files:
 
     #plot_time_series(data, name, label='a_x', dpi=300)
     #data['f_x'] = np.clip(data['f_x_sim'], -1000, 1000)
-    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='curr_x')
+    plot_time_series(data, name, label='v_sp', dpi=300, ylabel='curr_x')
     #plot_time_series(data, name, label='pos_x', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
     #plot_time_series(data, name, label='f_x_sim', dpi=300)
