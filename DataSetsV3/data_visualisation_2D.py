@@ -102,31 +102,30 @@ def apply_lowpass_filter(data, cutoff, order):
 path_data = 'Data'
 files = os.listdir(path_data)
 
-#files = ['AL_2007_T4_Gear_Depth.csv']
+files = ['S235JR_Plate_Normal_2.csv']
 for file in files:
-    if '_0' in file:
-        #file = file.replace('.csv', '')
-        data = pd.read_csv(f'{path_data}/{file}')
-        cutoff = 0.1
-        filter_order = 4
-        #data = apply_lowpass_filter(data, cutoff, filter_order)
-        #n = int(len(data)*1.1/3)
-        #data = data.iloc[:2*n, :]
-        #print(data.columns)
-        #print(data.shape)
+    #file = file.replace('.csv', '')
+    data = pd.read_csv(f'{path_data}/{file}')
+    cutoff = 0.1
+    filter_order = 4
+    #data = apply_lowpass_filter(data, cutoff, filter_order)
+    #n = int(len(data)*1.1/3)
+    #data = data.iloc[:2*n, :]
+    #print(data.columns)
+    #print(data.shape)
 
-        #color_values = data['v_x']
-        #max_value = 2#-3 for curr_y # 2 for curr_x
-        #min_value = -2#-7 for curr_y # -2 for curr_x
-        #color_values = np.clip(color_values, min_value, max_value)
+    #color_values = data['v_x']
+    #max_value = 2#-3 for curr_y # 2 for curr_x
+    #min_value = -2#-7 for curr_y # -2 for curr_x
+    #color_values = np.clip(color_values, min_value, max_value)
 
-        name = file.replace('.csv', '')
-        #t_e = data.index[-1] * 1/500
-        #print(t_e)
-        plot_time_series(data, name, label='curr_x', dpi=300, ylabel='f_x')
-        #plot_time_series(data, name, label='f_y', dpi=300, ylabel='curr_y')
-        #plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
-        #plot_time_series(data, name, label='v_sp', dpi=300, ylabel='curr_sp')
-        #plot_time_series(data, name, label='v_x', dpi=300, ylabel='curr_x')
-        #plot_time_series(data, name, label='v_y', dpi=300, ylabel='curr_y')
-        #plot_time_series(data, name, label='v_z', dpi=300, ylabel='curr_z')
+    name = file.replace('.csv', '')
+    #t_e = data.index[-1] * 1/500
+    #print(t_e)
+    plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='f_y', dpi=300, ylabel='curr_y')
+    #plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='v_sp', dpi=300, ylabel='curr_sp')
+    #plot_time_series(data, name, label='v_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='v_y', dpi=300, ylabel='curr_y')
+    #plot_time_series(data, name, label='v_z', dpi=300, ylabel='curr_z')

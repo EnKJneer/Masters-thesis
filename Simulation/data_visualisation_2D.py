@@ -25,7 +25,7 @@ def sign_hold(v, eps = 1e-1):
 
     return z
 
-def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x + v_y|', title = '2D Plot von pos_x und pos_y mit Farbe', dpi=300, xlabel = 'pos_x', ylabel = 'pos_y'):
+def plot_2d_with_color(x_values, y_values, color_values, label='|v_x + v_y|', title = '2D Plot von pos_x und pos_y mit Farbe', dpi=300, xlabel = 'pos_x', ylabel = 'pos_y'):
     """
     Erstellt einen 2D-Plot mit Linien, deren Farbe basierend auf den color_values bestimmt wird.
 
@@ -59,20 +59,24 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     # Anzeigen des Plots
     plt.show()
 
-def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x', f_a = 500):
+def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50, align_axis=False):
     """
     Erstellt einen Zeitverlaufsplan mit zwei y-Achsen.
 
     :param data: DataFrame mit den Daten
-    :param filename: Dateiname zum Speichern des Plots
     :param title: Titel des Plots
     :param dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
+    :param label: Bezeichnung der ersten y-Achse
+    :param ylabel: Bezeichnung der zweiten y-Achse
+    :param f_a: Abtastrate
     """
     fig, ax1 = plt.subplots(figsize=(10, 6), dpi=dpi)
-    if 'Time' in data.columns:
-        time = data['Time']
+
+    if 'time' in data.columns:
+        time = data['time']
     else:
         time = data.index * (1/f_a)
+
     ax1.plot(time, data[label], label=label, color='tab:green')
     ax1.set_xlabel('Time in s')
     ax1.set_ylabel(label)
@@ -86,7 +90,19 @@ def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x', f_a
         ax2.set_ylabel(ylabel)
         ax2.legend(loc='upper right')
 
+        if align_axis:
+            # Berechne den maximalen absoluten Wert für jede Achse separat
+            y1_min, y1_max = ax1.get_ylim()
+            y2_min, y2_max = ax2.get_ylim()
+
+            abs_max1 = max(abs(y1_min), abs(y1_max))
+            abs_max2 = max(abs(y2_min), abs(y2_max))
+
+            ax1.set_ylim(-abs_max1, abs_max1)
+            ax2.set_ylim(-abs_max2, abs_max2)
+
     plt.show()
+
 def butter_lowpass(cutoff, order, nyq_freq=0.5):
     normal_cutoff = cutoff / nyq_freq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
@@ -99,18 +115,17 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = 'Data'
-#files = os.listdir(path_data)
 
-files = ['S235JR_Notch_Depth_1.csv']
+
+files = ['data.csv']
 for file in files:
     #file = file.replace('.csv', '')
-    data = pd.read_csv(f'{path_data}/{file}')
+    data = pd.read_csv(file)
     cutoff = 0.1
     filter_order = 4
     #data = apply_lowpass_filter(data, cutoff, filter_order)
-    #n = int(len(data)*1.1/3)
-    #data = data.iloc[:2*n, :]
+    n = int(len(data)*1.1/3)
+    data = data.iloc[500:n, :]
     #print(data.columns)
     #print(data.shape)
 
@@ -122,4 +137,9 @@ for file in files:
     name = file.replace('.csv', '')
     #t_e = data.index[-1] * 1/500
     #print(t_e)
-    plot_time_series(data, name, label='curr_x', dpi=300, ylabel='f_x')
+    data['f_x'] = -data['f_x']
+    print(min(abs(data['v_sp'])))
+    print(max(abs(data['v_sp'])))
+    data['f_x_sim'] = np.clip(data['f_x_sim'], -250, 250)
+    plot_time_series(data, name, label='pos_x', dpi=300, ylabel='f_x', align_axis = False)
+    plot_2d_with_color(data['pos_x'], data['pos_y'], data['time'])

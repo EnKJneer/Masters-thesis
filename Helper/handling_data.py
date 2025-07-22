@@ -1107,6 +1107,7 @@ DataClassV3_Plate_Notch = DataClass('DataV3', '..\\..\\DataSetsV3\\Data',
                                               'AL_2007_T4_Notch_Depth_1.csv', 'AL_2007_T4_Notch_Depth_2.csv'],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+
 DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data',
                                     ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
@@ -1116,8 +1117,9 @@ DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data',
                                               'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv'],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+
 DataClassOld_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSets\\OldData_Aligned',
-                                    ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
+                                    ['S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
                                      'S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
                                      'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
@@ -1127,11 +1129,12 @@ DataClassOld_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSets\\OldData_
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
 DataClass_ST_Plate = DataClass('ST_Data', '..\\..\\DataSets\\Data',
-                                    ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
-                                     'S235JR_Plate_Normal_1.csv',
-                                     'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
-                                             ['S235JR_Plate_Normal_2.csv',
-                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',],
+                                    ['S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
+                                                    'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'
+                                                    'S235JR_Plate_Normal_1.csv',
+                                                    ],
+                                [   'S235JR_Plate_Normal_2.csv',
+                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim"])
 
@@ -1915,6 +1918,90 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
     mae_ensemble = np.mean(np.abs(pred_mean.squeeze() - true_values.squeeze()))
 
     return np.mean(mae_values), np.std(mae_values), mae_ensemble
+
+
+def calculate_relative_mae_and_std(predictions_list, true_values, n_drop_values=10, center_data=False):
+    """
+    Berechnet den relativen MAE (Mean Absolute Error) und Standardabweichung.
+
+    Der relative MAE wird berechnet als: mean(|pred - true| / |true|) für jeden Zeitschritt,
+    dann wird über alle Zeitschritte gemittelt.
+
+    Parameters:
+    - predictions_list: Liste von Vorhersage-Arrays
+    - true_values: Array der wahren Werte
+    - n_drop_values: Anzahl der Werte, die am Ende abgeschnitten werden (default: 10)
+    - center_data: Ob die Daten zentriert werden sollen (default: False)
+
+    Returns:
+    - relativer_mae_mean: Mittelwert der relativen MAE-Werte
+    - relativer_mae_std: Standardabweichung der relativen MAE-Werte
+    - relativer_mae_ensemble: Relativer MAE für das Ensemble
+    """
+    relative_mae_values = []
+
+    for pred in predictions_list:
+        # Werte kürzen
+        pred_trimmed = pred[:-n_drop_values]
+        true_trimmed = true_values[:-n_drop_values]
+
+        if center_data:
+            # Zentrierung
+            mean = np.mean(true_trimmed)
+            pred_centered = pred_trimmed - mean
+            true_centered = true_trimmed - mean
+        else:
+            pred_centered = pred_trimmed
+            true_centered = true_trimmed
+
+        # Relative Abweichung für jeden Zeitschritt berechnen
+        absolute_errors = np.abs(pred_centered.squeeze() - true_centered.squeeze())
+        true_abs = np.abs(true_centered.squeeze())
+
+        # Vermeidung von Division durch Null für jeden Zeitschritt
+        relative_errors = []
+        for abs_err, true_val in zip(absolute_errors, true_abs):
+            if true_val == 0:
+                rel_err = 0 if abs_err == 0 else float('inf')
+            else:
+                rel_err = abs_err / true_val
+            relative_errors.append(rel_err)
+
+        # Mitteln der relativen Abweichungen
+        relative_mae = np.mean(relative_errors)
+
+        relative_mae_values.append(relative_mae)
+
+    # Ensemble-Berechnung
+    pred_mean = np.mean(predictions_list, axis=0)
+
+    # Für Ensemble auch kürzen und ggf. zentrieren
+    pred_mean_trimmed = pred_mean[:-n_drop_values]
+    true_trimmed = true_values[:-n_drop_values]
+
+    if center_data:
+        mean = np.mean(true_trimmed)
+        pred_mean_centered = pred_mean_trimmed - mean
+        true_centered = true_trimmed - mean
+    else:
+        pred_mean_centered = pred_mean_trimmed
+        true_centered = true_trimmed
+
+    # Ensemble-Berechnung - auch hier relative Abweichung pro Zeitschritt
+    mae_ensemble_absolute_errors = np.abs(pred_mean_centered.squeeze() - true_centered.squeeze())
+    true_abs_ensemble = np.abs(true_centered.squeeze())
+
+    relative_errors_ensemble = []
+    for abs_err, true_val in zip(mae_ensemble_absolute_errors, true_abs_ensemble):
+        if true_val == 0:
+            rel_err = 0 if abs_err == 0 else float('inf')
+        else:
+            rel_err = abs_err / true_val
+        relative_errors_ensemble.append(rel_err)
+
+    relative_mae_ensemble = np.mean(relative_errors_ensemble)
+
+    return np.mean(relative_mae_values), np.std(relative_mae_values), relative_mae_ensemble
 
 def load_data_with_material_check(data_params: DataclassCombinedTrainVal, past_values=2, future_values=2, window_size=1, keep_separate=False, N=3, do_preprocessing=True, n=12):
     """
