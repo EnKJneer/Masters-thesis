@@ -6,7 +6,7 @@ RawData:
 DataSinumerik_50Hz:
     Ergebnis von Sinumerik_json_to_csv50Hz
     Downsampeld von 500 Hz auf 50 Hz.
-    Gefiltert mit FIR-Filter (Cutoff-freq: 24 Hz) und Mittelwertfilter (Fenster: 5).
+    Gefiltert mit FIR-Filter (Cutoff-freq: 24 Hz) und Mittelwertfilter (Fenster: Down-Samplingfaktor / 2).
     Mit Spline interpolation auf 50Hz gebracht.
     Konvertiert die Daten von dem json file in ein csv File.
     Die daten enthalten die positionen, Geschwindigkeiten, beschleunigungen, ströme und reveler inputs.
@@ -19,4 +19,20 @@ DT98363_50Hz:
 
 DataMerged:
     Ergebnis aus Merge_Sinumerik_DT9836.
-    Zusammengeführte daten von
+    Zusammengeführte daten von Sinumerik und DT98363.
+
+DataSimulated:
+    Ergebnis von Simulation.Simulate_force_MRR
+    Enthält zusätzlich die Daten aus der Simulation.
+
+Data2
+    Ergebnis aus SplitData.
+    Teilt die Daten basierend auf peaks in curr_z auf.
+    Daten in DataSimulation aufgeteilt nach dem Durchlauf.
+    0: Aircut (optional)
+    1: 1. Durchlauf
+    2. 2. Durchlauf
+    3. 3. Durchlauf
+    4. Aircut (optional)
+Data:
+    Wie Data2 nur ohne Simulationsdaten.

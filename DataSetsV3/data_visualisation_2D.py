@@ -99,10 +99,10 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = 'DataSimulated'
+path_data = 'Data2'
 files = os.listdir(path_data)
 
-files = ['S235JR_Plate_Depth.csv']
+files = ['S235JR_Plate_Depth_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -124,7 +124,8 @@ for file in files:
     #print(t_e)
     data['f_x'] = -data['f_x']*200
     data['f_y'] = data['f_y']*200
-    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+    plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='curr_x')
+'''    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
     plot_time_series(data, name, label='f_y_sim', dpi=300, ylabel='f_y')
     #plot_time_series(data, name, label='f_y', dpi=300, ylabel='curr_y')
     #plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
@@ -137,4 +138,4 @@ for file in files:
     plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='materialremoved_sim')
     diff = data['f_x'] - data['f_x_sim']
     plot_2d_with_color(data['pos_x'], data['pos_y'], diff, f'{name}_diff.png', label='diff')
-    plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], f'{name}_diff.png', label='materialremoved_sim')
+    plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], f'{name}_diff.png', label='materialremoved_sim')'''

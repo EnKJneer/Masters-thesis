@@ -93,7 +93,7 @@ def is_tool_in_part(tool_radius, a_p, pos_x, pos_y, pos_z, part_position, part_d
             z_min >= part_z_min and z_max <= part_z_max
     )
 def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.PartialVoxelPart,
-                     process_data: pd.DataFrame, true_curr: pd.DataFrame, frequence: int, part_position, part_dimension) -> pd.DataFrame:
+                     process_data: pd.DataFrame, true_curr: pd.DataFrame, frequence: int, part_position, part_dimension, plot_mrr = False) -> pd.DataFrame:
 
     a_e = machine_state.get_tool_radius() * 2
     a_p_array = calculate_a_p(process_data['pos_z'], part_position[2], part_dimension[2])
@@ -104,7 +104,8 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
 
     simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius)
     times, mrr_values, segments  = simulator.simulate_mrr(process_data, frequence)
-    #simulator.plot_results(times, mrr_values, segments, process_data)
+    if plot_mrr:
+        simulator.plot_results(times, mrr_values, segments, process_data)
 
     '''    
     simulator = CNCMRRSimulation(part_position, part_dimension, tool.radius)

@@ -131,12 +131,13 @@ if __name__ == '__main__':
     target_frequency = 50
     path_material_constant = 'optimized_parameters.json'
 
+    show_results = True
     path = '..\\DataSetsV3\\DataMerged'
     path_target = '..\\DataSetsV3\\DataSimulated'
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
-    #files = ['AL_2007_T4_Plate_Depth.csv']
+    files = ['AL_2007_T4_Plate_Depth.csv']
     for file in files:
         if not file.endswith('.csv'):
             continue
@@ -157,9 +158,10 @@ if __name__ == '__main__':
 
         data_df = monitoring.state_monitoring(new_machine_state, tool,
                                               part, process_value, true_curr,
-                                              target_frequency, part_position, part_dimension)
+                                              target_frequency, part_position, part_dimension, show_results)
         path_data = os.path.join(path_target, file)
         data_df.to_csv(path_data)
-        data_df['f_x'] = -data_df['f_x']*200
-        #plot_time_series(data_df, file, label='f_x_sim', dpi=300, ylabel='f_x', align_axis=True)
-        #plot_time_series(data_df, file, label='f_x_sim', dpi=300, ylabel='materialremoved_sim', align_axis=False)
+        if show_results:
+            data_df['f_x'] = -data_df['f_x']*200
+            plot_time_series(data_df, file, label='f_x_sim', dpi=300, ylabel='f_x', align_axis=True)
+            plot_time_series(data_df, file, label='f_x_sim', dpi=300, ylabel='materialremoved_sim', align_axis=False)

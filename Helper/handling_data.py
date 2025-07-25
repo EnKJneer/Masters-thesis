@@ -1098,15 +1098,6 @@ Combined_PlateNotch_OldData = DataClass('OldData', '..\\..\\DataSets\\OldData_Al
                                               'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv'],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
-DataClassV3_Plate_Notch = DataClass('DataV3', '..\\..\\DataSetsV3\\Data',
-                                    ['AL_2007_T4_Plate_SF_1.csv', 'AL_2007_T4_Plate_Depth_1.csv',
-                                     'AL_2007_T4_Plate_Normal_1.csv', 'AL_2007_T4_Plate_Normal_2.csv',
-                                    'AL_2007_T4_Plate_SF_2.csv', 'AL_2007_T4_Plate_Depth_2.csv',
-                                     'AL_2007_T4_Plate_SF_3.csv', 'AL_2007_T4_Plate_Depth_3.csv'],
-                                             ['AL_2007_T4_Notch_Normal_1.csv', 'AL_2007_T4_Notch_Normal_2.csv', 'AL_2007_T4_Notch_Normal_3.csv',
-                                              'AL_2007_T4_Notch_Depth_1.csv', 'AL_2007_T4_Notch_Depth_2.csv'],
-                                             dataPaths_Test,
-                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
 DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data2',
                                     ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
@@ -1117,6 +1108,28 @@ DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data2',
                                               'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv'],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"])
+DataClassV3_ST_Plate_Notch_noDepth = DataClass('ST_DataV3_noDepth', '..\\..\\DataSetsV3\\Data2',
+                                    ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                                    'S235JR_Plate_SF_1.csv',
+                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
+                                                    'S235JR_Plate_SF_3.csv', ],
+                                             ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
+                                              'S235JR_Notch_Depth_2.csv'],
+                                             dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"])
+DataClassV3_ST_Notch_Plate = DataClass('ST_DataV3_Notch', '..\\..\\DataSetsV3\\Data2',
+                                               ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv',
+
+                                                'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv',
+                                                'S235JR_Notch_Depth_3.csv'],
+                                    ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                                    'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
+                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
+                                                    'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+
+                                             [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"])
+
 DataClassV3_ST_Plate_Notch_Mes = DataClass('ST_DataV3_Mes', '..\\..\\DataSetsV3\\Data2',
                                     ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',

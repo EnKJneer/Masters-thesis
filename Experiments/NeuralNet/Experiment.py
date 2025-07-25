@@ -29,9 +29,10 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
-    dataclass1 = copy.copy(hdata.DataClassV3_ST_Plate_Notch)
+    dataSet = hdata.DataClassV3_ST_Plate_Notch_noDepth
+    dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'
-    dataclass2 = copy.copy(hdata.DataClassV3_ST_Plate_Notch)
+    dataclass2 = copy.copy(dataSet)
     dataclass2.name = 'mit z'
     dataclass2.add_sign_hold = True
     #dataclass2 = hdata.Combined_Plate_TrainVal
@@ -48,6 +49,6 @@ if __name__ == "__main__":
     hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         window_size=window_size, past_values=past_values, future_values=future_values, n_drop_values=50,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name='Data_F_mess')
+                        plot_types=['heatmap', 'prediction_overview'], experiment_name=dataSet.name)
 
 

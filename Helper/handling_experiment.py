@@ -8,11 +8,14 @@ from matplotlib import pyplot as plt
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import datetime
+import seaborn as sns
+from sklearn.metrics import mean_absolute_error
 
 import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 import Models.model_physical as mphys
+from matplotlib.colors import LinearSegmentedColormap
 
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
 
@@ -52,9 +55,21 @@ def plot_2d_with_color(x_values, y_values, color_values, titel='|error|', label_
 class BasePlotter(ABC):
     """Abstrakte Basisklasse für verschiedene Plot-Typen"""
 
-    def __init__(self, output_dir: str):
+    def __init__(self, output_dir: str, known_material: str = 'S235JR', known_geometry: str = 'Plate'):
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
+
+        # KIT-Farben definieren
+        self.kit_red = "#B2372C"
+        self.kit_green = "#009682"
+        self.kit_yellow = "#EEB70D"
+
+        # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
+        self.custom_cmap = LinearSegmentedColormap.from_list(
+            'kit_colors',
+            [self.kit_green, self.kit_yellow, self.kit_red],
+            N=256
+        )
 
     @abstractmethod
     def create_plots(self, df: pd.DataFrame, **kwargs):
@@ -68,110 +83,48 @@ class BasePlotter(ABC):
         plt.close(fig)
         return plot_path
 
-class DatasetGroupedPlotter(BasePlotter):
-    """Erstellt einen Plot pro Dataset (gruppiert alle DataPaths eines Datasets)"""
+    def parse_filename(self, filename: str):
+        """Parst den Dateinamen und extrahiert Material und Geometrie"""
+        # Entferne .csv Extension
+        name_without_ext = filename.replace('.csv', '')
 
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        datasets = sorted(df['DataSet'].unique())
-        models = df['Model'].unique()
+        # Split nach Unterstrichen
+        parts = name_without_ext.split('_')
 
-        plot_paths = []
+        print(f"Debug: Parsing '{filename}' -> Parts: {parts}")
 
-        for dataset in datasets:
-            fig, ax = plt.subplots(figsize=(12, 6))
-            df_dataset = df[df['DataSet'] == dataset]
+        # Für deine spezifischen Dateinamen:
+        # AL_2007_T4_Gear_Normal_3.csv -> ['AL', '2007', 'T4', 'Gear', 'Normal', '3']
+        # S235JR_Plate_Normal_3.csv -> ['S235JR', 'Plate', 'Normal', '3']
 
-            # Gruppiere nach DataPath innerhalb des Datasets
-            datapaths = sorted(df_dataset['DataPath'].unique())
+        material = 'Unknown'
+        geometry = 'Unknown'
 
-            x = np.arange(len(datapaths))
-            bar_width = 0.8 / len(models)
+        if len(parts) >= 4:
+            # AL_2007_T4 Fall
+            if parts[0] == 'AL' and parts[1] == '2007' and parts[2] == 'T4':
+                material = 'AL_2007_T4'
+                geometry = parts[3]  # Gear oder Plate
+            # S235JR Fall
+            elif parts[0] == 'S235JR':
+                material = 'S235JR'
+                geometry = parts[1]  # Gear oder Plate
+            else:
+                # Fallback: Versuche erste 3 Teile als Material
+                potential_material = '_'.join(parts[:3])
+                if potential_material in ['AL_2007_T4']:
+                    material = potential_material
+                    geometry = parts[3]
+                else:
+                    # Versuche ersten Teil als Material
+                    material = parts[0]
+                    geometry = parts[1] if len(parts) > 1 else 'Unknown'
+        elif len(parts) >= 2:
+            material = parts[0]
+            geometry = parts[1]
 
-            for i, model in enumerate(models):
-                df_model = df_dataset[df_dataset['Model'] == model]
-
-                # Stelle sicher, dass alle DataPaths vertreten sind
-                df_model_indexed = df_model.set_index('DataPath').reindex(datapaths).reset_index()
-
-                y = df_model_indexed['MAE'].values
-                yerr = df_model_indexed['StdDev'].values
-
-                x_pos = x + i * bar_width
-                bars = ax.bar(x_pos, y, width=bar_width, label=model, yerr=yerr, capsize=4)
-
-                # Text über jedem Balken
-                for bar, value in zip(bars, y):
-                    if not np.isnan(value):
-                        height = bar.get_height()
-                        ax.text(bar.get_x() + bar.get_width() / 2, height + 0.01 * np.nanmax(y),
-                                f'{value:.3f}', ha='center', va='bottom', fontsize=8)
-
-            ax.set_title(f'Model Comparison for Dataset: {dataset}')
-            ax.set_xlabel('Data Paths')
-            ax.set_ylabel('MAE')
-            ax.set_xticks(x + bar_width * (len(models) - 1) / 2)
-            ax.set_xticklabels(datapaths, rotation=45, ha='right')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
-            plt.tight_layout()
-
-            filename = f'dataset_comparison_{dataset.replace(" ", "_")}.png'
-            plot_path = self.save_plot(fig, filename)
-            plot_paths.append(plot_path)
-
-        return plot_paths
-
-class DataPathGroupedPlotter(BasePlotter):
-    """Erstellt einen Plot pro DataPath (vergleicht alle Datasets für einen DataPath)"""
-
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        datapaths = sorted(df['DataPath'].unique())
-        models = df['Model'].unique()
-
-        plot_paths = []
-
-        for datapath in datapaths:
-            fig, ax = plt.subplots(figsize=(12, 6))
-            df_datapath = df[df['DataPath'] == datapath]
-
-            datasets = sorted(df_datapath['DataSet'].unique())
-
-            x = np.arange(len(datasets))
-            bar_width = 0.8 / len(models)
-
-            for i, model in enumerate(models):
-                df_model = df_datapath[df_datapath['Model'] == model]
-
-                # Stelle sicher, dass alle Datasets vertreten sind
-                df_model_indexed = df_model.set_index('DataSet').reindex(datasets).reset_index()
-
-                y = df_model_indexed['MAE'].values
-                yerr = df_model_indexed['StdDev'].values
-
-                x_pos = x + i * bar_width
-                bars = ax.bar(x_pos, y, width=bar_width, label=model, yerr=yerr, capsize=4)
-
-                # Text über jedem Balken
-                for bar, value in zip(bars, y):
-                    if not np.isnan(value):
-                        height = bar.get_height()
-                        ax.text(bar.get_x() + bar.get_width() / 2, height + 0.01 * np.nanmax(y),
-                                f'{value:.3f}', ha='center', va='bottom', fontsize=8)
-
-            ax.set_title(f'Model Comparison for Data Path: {datapath}')
-            ax.set_xlabel('Datasets')
-            ax.set_ylabel('MAE')
-            ax.set_xticks(x + bar_width * (len(models) - 1) / 2)
-            ax.set_xticklabels(datasets, rotation=45, ha='right')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
-            plt.tight_layout()
-
-            filename = f'datapath_comparison_{datapath.replace(" ", "_").replace(".csv", "")}.png'
-            plot_path = self.save_plot(fig, filename)
-            plot_paths.append(plot_path)
-
-        return plot_paths
+        print(f"Debug: '{filename}' -> Material: '{material}', Geometry: '{geometry}'")
+        return material, geometry
 
 class ModelComparisonPlotter(BasePlotter):
     """Erstellt eine Übersichtsplot aller Modelle über alle Dataset/DataPath Kombinationen"""
@@ -236,7 +189,6 @@ class ModelComparisonPlotter(BasePlotter):
 
         return [plot_path]
 
-
 class HeatmapPlotter(BasePlotter):
     """Erstellt eine Heatmap der MAE-Werte mit MAE und Standardabweichung"""
 
@@ -250,7 +202,7 @@ class HeatmapPlotter(BasePlotter):
 
         fig, ax = plt.subplots(figsize=(max(10, len(pivot_mae.columns) * 0.8), max(6, len(pivot_mae.index) * 0.5)))
 
-        im = ax.imshow(pivot_mae.values, cmap='RdYlBu_r', aspect='auto')
+        im = ax.imshow(pivot_mae.values, cmap=self.custom_cmap, aspect='auto')
 
         # Achsenbeschriftungen
         ax.set_xticks(np.arange(len(pivot_mae.columns)))
@@ -284,119 +236,237 @@ class HeatmapPlotter(BasePlotter):
 
         return [plot_path]
 
-class HeatmapPlotterOLD(BasePlotter):
-    """Erstellt eine Heatmap der MAE-Werte"""
+class ModelHeatmapPlotter(BasePlotter):
+    """Erstellt separate Heatmaps für jedes ML-Modell"""
 
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        # Pivot-Tabelle erstellen
-        df['Dataset_Path'] = df['DataSet'] + '_' + df['DataPath'].str.replace('.csv', '')
-        pivot_df = df.pivot_table(values='MAE', index='Dataset_Path', columns='Model', aggfunc='mean')
+    def __init__(self, output_dir: str, known_material: str = 'AL_2007_T4', known_geometry: str = 'Plate'):
+        super().__init__(output_dir)
+        self.known_material = known_material
+        self.known_geometry = known_geometry
 
-        fig, ax = plt.subplots(figsize=(10, max(6, len(pivot_df.index) * 0.5)))
+        # KIT-Farben definieren
+        self.kit_red = "#B2372C"
+        self.kit_green = "#009682"
+        self.kit_yellow = "#EEB70D"
 
-        im = ax.imshow(pivot_df.values, cmap='RdYlBu_r', aspect='auto')
+        # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
+        self.custom_cmap = LinearSegmentedColormap.from_list(
+            'kit_colors',
+            [self.kit_green, self.kit_yellow, self.kit_red],
+            N=256
+        )
 
-        # Achsenbeschriftungen
-        ax.set_xticks(np.arange(len(pivot_df.columns)))
-        ax.set_yticks(np.arange(len(pivot_df.index)))
-        ax.set_xticklabels(pivot_df.columns)
-        ax.set_yticklabels(pivot_df.index)
+    def parse_filename(self, filename: str):
+        """Parst den Dateinamen und extrahiert Material und Geometrie"""
+        # Entferne .csv Extension
+        name_without_ext = filename.replace('.csv', '')
 
-        # Rotiere die x-Achsenbeschriftungen
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+        # Split nach Unterstrichen
+        parts = name_without_ext.split('_')
 
-        # Werte in die Zellen schreiben
-        for i in range(len(pivot_df.index)):
-            for j in range(len(pivot_df.columns)):
-                value = pivot_df.iloc[i, j]
-                if not np.isnan(value):
-                    text = ax.text(j, i, f'{value:.3f}', ha="center", va="center",
-                                   color="white" if value > pivot_df.values.mean() else "black")
+        print(f"Debug: Parsing '{filename}' -> Parts: {parts}")
 
-        ax.set_title("MAE Heatmap: Models vs Dataset_DataPath")
-        fig.colorbar(im, ax=ax, label='MAE')
-        plt.tight_layout()
+        # Für deine spezifischen Dateinamen:
+        # AL_2007_T4_Gear_Normal_3.csv -> ['AL', '2007', 'T4', 'Gear', 'Normal', '3']
+        # S235JR_Plate_Normal_3.csv -> ['S235JR', 'Plate', 'Normal', '3']
 
-        filename = 'heatmap_mae.png'
-        plot_path = self.save_plot(fig, filename)
+        material = 'Unknown'
+        geometry = 'Unknown'
 
-        return [plot_path]
+        if len(parts) >= 4:
+            # AL_2007_T4 Fall
+            if parts[0] == 'AL' and parts[1] == '2007' and parts[2] == 'T4':
+                material = 'AL_2007_T4'
+                geometry = parts[3]  # Gear oder Plate
+            # S235JR Fall
+            elif parts[0] == 'S235JR':
+                material = 'S235JR'
+                geometry = parts[1]  # Gear oder Plate
+            else:
+                # Fallback: Versuche erste 3 Teile als Material
+                potential_material = '_'.join(parts[:3])
+                if potential_material in ['AL_2007_T4']:
+                    material = potential_material
+                    geometry = parts[3]
+                else:
+                    # Versuche ersten Teil als Material
+                    material = parts[0]
+                    geometry = parts[1] if len(parts) > 1 else 'Unknown'
+        elif len(parts) >= 2:
+            material = parts[0]
+            geometry = parts[1]
 
-class HeatmapStdPlotter(BasePlotter):
-    """Erstellt eine Heatmap der Std-Werte"""
+        print(f"Debug: '{filename}' -> Material: '{material}', Geometry: '{geometry}'")
+        return material, geometry
 
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        # Pivot-Tabelle erstellen
-        df['Dataset_Path'] = df['DataSet'] + '_' + df['DataPath'].str.replace('.csv', '')
-        pivot_df = df.pivot_table(values='StdDev', index='Dataset_Path', columns='Model', aggfunc='mean')
+    def calculate_mae_for_file(self, file_path: str, model_columns: list):
+        """Berechnet MAE für alle Modelle in einer Datei"""
+        try:
+            df = pd.read_csv(file_path)
+            print(f"Debug: Spalten in {os.path.basename(file_path)}: {df.columns.tolist()}")
 
-        fig, ax = plt.subplots(figsize=(10, max(6, len(pivot_df.index) * 0.5)))
+            mae_results = {}
 
-        im = ax.imshow(pivot_df.values, cmap='RdYlBu_r', aspect='auto')
+            for model_col in model_columns:
+                if model_col in df.columns and 'GroundTruth' in df.columns:
+                    # Entferne NaN-Werte
+                    valid_indices = ~(df['GroundTruth'].isna() | df[model_col].isna())
+                    valid_count = valid_indices.sum()
 
-        # Achsenbeschriftungen
-        ax.set_xticks(np.arange(len(pivot_df.columns)))
-        ax.set_yticks(np.arange(len(pivot_df.index)))
-        ax.set_xticklabels(pivot_df.columns)
-        ax.set_yticklabels(pivot_df.index)
+                    print(f"Debug: {model_col} - Gültige Werte: {valid_count}/{len(df)}")
 
-        # Rotiere die x-Achsenbeschriftungen
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+                    if valid_count > 0:
+                        mae = mean_absolute_error(
+                            df.loc[valid_indices, 'GroundTruth'],
+                            df.loc[valid_indices, model_col]
+                        )
+                        mae_results[model_col] = mae
+                        print(f"Debug: {model_col} MAE: {mae}")
+                    else:
+                        mae_results[model_col] = np.nan
+                        print(f"Debug: {model_col} - Keine gültigen Werte")
+                else:
+                    mae_results[model_col] = np.nan
+                    missing_cols = []
+                    if model_col not in df.columns:
+                        missing_cols.append(model_col)
+                    if 'GroundTruth' not in df.columns:
+                        missing_cols.append('GroundTruth')
+                    print(f"Debug: {model_col} - Fehlende Spalten: {missing_cols}")
 
-        # Werte in die Zellen schreiben
-        for i in range(len(pivot_df.index)):
-            for j in range(len(pivot_df.columns)):
-                value = pivot_df.iloc[i, j]
-                if not np.isnan(value):
-                    text = ax.text(j, i, f'{value:.3f}', ha="center", va="center",
-                                   color="white" if value > pivot_df.values.mean() else "black")
+        except Exception as e:
+            print(f"Debug: Fehler beim Lesen von {file_path}: {e}")
+            mae_results = {model_col: np.nan for model_col in model_columns}
 
-        ax.set_title("Std Heatmap: Models vs Dataset_DataPath")
-        fig.colorbar(im, ax=ax, label='StdDev')
-        plt.tight_layout()
+        return mae_results
 
-        filename = 'heatmap_std.png'
-        plot_path = self.save_plot(fig, filename)
+    def create_mae_dataframe(self, folder_path: str, model_columns: list):
+        """Erstellt einen DataFrame mit MAE-Werten für alle Dateien"""
+        files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
+        results = []
 
-        return [plot_path]
+        print(f"Debug: Gefundene Dateien: {files}")
 
-class HeatmapEnsemblePlotter(BasePlotter):
-    """Erstellt eine Heatmap der MAE-Werte"""
+        for file in files:
+            file_path = os.path.join(folder_path, file)
+            material, geometry = self.parse_filename(file)
+            mae_results = self.calculate_mae_for_file(file_path, model_columns)
 
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        # Pivot-Tabelle erstellen
-        df['Dataset_Path'] = df['DataSet'] + '_' + df['DataPath'].str.replace('.csv', '')
-        pivot_df = df.pivot_table(values='MAE_Ensemble', index='Dataset_Path', columns='Model', aggfunc='mean')
+            for model, mae in mae_results.items():
+                results.append({
+                    'Filename': file,
+                    'Material': material,
+                    'Geometry': geometry,
+                    'Model': model,
+                    'MAE': mae
+                })
+                print(f"Debug: {file} -> {material}/{geometry}/{model} -> MAE: {mae}")
 
-        fig, ax = plt.subplots(figsize=(10, max(6, len(pivot_df.index) * 0.5)))
+        df = pd.DataFrame(results)
+        print(f"Debug: MAE DataFrame shape: {df.shape}")
+        print(f"Debug: Unique Materials: {df['Material'].unique()}")
+        print(f"Debug: Unique Geometries: {df['Geometry'].unique()}")
 
-        im = ax.imshow(pivot_df.values, cmap='RdYlBu_r', aspect='auto')
+        return df
 
-        # Achsenbeschriftungen
-        ax.set_xticks(np.arange(len(pivot_df.columns)))
-        ax.set_yticks(np.arange(len(pivot_df.index)))
-        ax.set_xticklabels(pivot_df.columns)
-        ax.set_yticklabels(pivot_df.index)
+    def create_ordered_categories(self, materials: list, geometries: list):
+        """Ordnet die Kategorien so, dass known oben links und unknown unten rechts sind"""
+        # Material-Reihenfolge: known zuerst, dann alphabetisch
+        materials_ordered = []
+        if self.known_material in materials:
+            materials_ordered.append(self.known_material)
+        for mat in sorted(materials):
+            if mat != self.known_material:
+                materials_ordered.append(mat)
 
-        # Rotiere die x-Achsenbeschriftungen
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+        # Geometrie-Reihenfolge: known zuerst, dann alphabetisch
+        geometries_ordered = []
+        if self.known_geometry in geometries:
+            geometries_ordered.append(self.known_geometry)
+        for geo in sorted(geometries):
+            if geo != self.known_geometry:
+                geometries_ordered.append(geo)
 
-        # Werte in die Zellen schreiben
-        for i in range(len(pivot_df.index)):
-            for j in range(len(pivot_df.columns)):
-                value = pivot_df.iloc[i, j]
-                if not np.isnan(value):
-                    text = ax.text(j, i, f'{value:.3f}', ha="center", va="center",
-                                   color="white" if value > pivot_df.values.mean() else "black")
+        return materials_ordered, geometries_ordered
 
-        ax.set_title("MAE_Ensemble Heatmap: Models vs Dataset_DataPath")
-        fig.colorbar(im, ax=ax, label='MAE_Ensemble')
-        plt.tight_layout()
+    def create_plots(self, folder_path: str, model_columns: list, **kwargs):
+        """Erstellt für jedes Modell eine separate Heatmap"""
+        # MAE-Daten erstellen
+        mae_df = self.create_mae_dataframe(folder_path, model_columns)
 
-        filename = 'mae_ensemble_heatmap.png'
-        plot_path = self.save_plot(fig, filename)
+        # Unique Materialien und Geometrien ermitteln
+        materials = mae_df['Material'].unique()
+        geometries = mae_df['Geometry'].unique()
 
-        return [plot_path]
+        # Kategorien ordnen
+        materials_ordered, geometries_ordered = self.create_ordered_categories(materials, geometries)
+
+        plot_paths = []
+
+        # Für jedes Modell eine separate Heatmap erstellen
+        for model in model_columns:
+            model_data = mae_df[mae_df['Model'] == model]
+
+            # Pivot-Tabelle für dieses Modell erstellen
+            pivot_df = model_data.pivot_table(
+                values='MAE',
+                index='Material',
+                columns='Geometry',
+                aggfunc='mean'
+            )
+
+            # Reorder basierend auf der gewünschten Reihenfolge
+            pivot_df = pivot_df.reindex(
+                index=materials_ordered,
+                columns=geometries_ordered
+            )
+
+            # Heatmap erstellen
+            fig, ax = plt.subplots(figsize=(12, 10))
+            fig.set_dpi(1200)
+            # Maske für NaN-Werte
+            mask = pivot_df.isna()
+
+            # Heatmap mit seaborn für bessere Optik
+            sns.heatmap(
+                pivot_df,
+                annot=True,
+                fmt='.4f',
+                cmap=self.custom_cmap,
+                mask=mask,
+                cbar_kws={'label': 'MAE'},
+                ax=ax,
+                square=True,
+                vmin=0,  # Minimum-Wert für Colorbar
+                linewidths=0.5,  # Linien zwischen Zellen
+                linecolor='gray',
+                annot_kws={'size': 20, 'weight': 'bold'}  # Größere Schrift für Werte
+            )
+            model = model.replace('Plate_TrainVal_', '')
+            model = model.replace('_', ' ')
+            # Titel und Labels mit größerer Schrift
+            ax.set_title(f'MAE Heatmap: {model}', fontsize=20, fontweight='bold', pad=20)
+            ax.set_xlabel('Geometry', fontsize=20, fontweight='bold')
+            ax.set_ylabel('Material', fontsize=20, fontweight='bold')
+
+            # Achsenbeschriftungen vergrößern
+            ax.tick_params(axis='both', which='major', labelsize=20)
+
+            # Colorbar-Label vergrößern
+            cbar = ax.collections[0].colorbar
+            cbar.set_label('MAE', fontsize=20, fontweight='bold')
+            cbar.ax.tick_params(labelsize=16)
+
+            plt.tight_layout()
+
+            # Speichern
+            filename = f'heatmap_{model.replace(" ", "_")}.png'
+            plot_path = self.save_plot(fig, filename)
+            plot_paths.append(plot_path)
+
+            print(f"Heatmap für {model} erstellt: {plot_path}")
+
+        return plot_paths
 
 class PredictionPlotter(BasePlotter):
     """Erstellt Plots mit GroundTruth und Vorhersagen für jeden DataPath"""
@@ -847,12 +917,9 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
     plot_manager = PlotManager(plots_dir)
 
     # Plotter registrieren
-    plot_manager.register_plotter('dataset', DatasetGroupedPlotter(plots_dir))
-    plot_manager.register_plotter('datapath', DataPathGroupedPlotter(plots_dir))
     plot_manager.register_plotter('overview', ModelComparisonPlotter(plots_dir))
     plot_manager.register_plotter('heatmap', HeatmapPlotter(plots_dir))
-    plot_manager.register_plotter('heatmap_ensemble', HeatmapEnsemblePlotter(plots_dir))
-    plot_manager.register_plotter('heatmap_std', HeatmapStdPlotter(plots_dir))
+    plot_manager.register_plotter('model_heatmap', ModelHeatmapPlotter(plots_dir))
     plot_manager.register_plotter('prediction_overview', PredictionPlotter(plots_dir))
     plot_manager.register_plotter('prediction_model', PredictionPlotterPerModel(plots_dir))
     plot_manager.register_plotter('prediction_dataset', PredictionPlotterPerDataset(plots_dir))

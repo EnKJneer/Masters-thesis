@@ -1,0 +1,38 @@
+﻿;******************************
+;**** S235JR Notch Depth *****
+;******************************
+
+;Versuch zur Zeitreihenvorhersage mit S235JR
+;Rohteilmaße: 75x150x50 mm (X/Y/Z)
+;BT-KOS liegt in Xmin, Ymin und Zmax des Rohteils aus Sicht des M-KOS
+
+G90 G94 G710    	;G90: Absolute dimensioning, G94: Feed in mm/min and deg/min, G710: Metric system [mm] and [mm/min]
+
+G0 X0 Y0 Z10 		; Startpunkt anfahren
+G0 X-10.0 Y60      	
+
+F576 S3200 M3 		; Zyklus: 1, Tiefe: -3.0
+G0 Z-3.0             
+G1 X30
+G2 X60 Y30 I0 J-30
+G1 Y10
+G1 X40
+G1 X-10.0 Y60
+
+F576 S3200 M3 		; Zyklus: 2, Tiefe: -6.0
+G0 Z-9.0             
+G1 X30
+G2 X60 Y30 I0 J-30
+G1 Y10
+G1 X40
+G1 X-10.0 Y60
+
+F576 S3200 M3		; Zyklus: 3, Tiefe: -12.0
+G0 Z-21.0             
+G1 X30
+G2 X60 Y30 I0 J-30
+G1 Y10
+G1 X40
+G1 X-10.0 Y60
+
+M5 M30
