@@ -29,20 +29,17 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
-    dataclass1 = hdata.Combined_PlateNotch_OldData
-    dataclas4 = hdata.Combined_PlateNotch_OldData_RandomSplit
-    dataclass2 = hdata.Combined_PlateNotch_TrainVal_OldData
-    dataclas3 = hdata.Combined_PlateNotch_OldData_RandomSplit
-    dataclas3 = hdata.Combined_PlateNotch_OldData_TrainValSame
-    dataClasses = [dataclas3, dataclass1, dataclass2, dataclas4]
-    #dataClasses = [hdata.I40_OldData_noAir, hdata.CMX_OldData_noAir]
+    dataclass1 = copy.copy(hdata.DataClassV3_ST_Plate_Notch)
+    dataclass1.name = 'ohne z'
+    dataclass2 = copy.copy(hdata.DataClassV3_ST_Plate_Notch)
+    dataclass2.name = 'mit z'
+    dataclass2.add_sign_hold = True
+    #dataclass2 = hdata.Combined_Plate_TrainVal
+    dataClasses = [dataclass1, dataclass2]
     for dataclass in dataClasses:
-        #dataclass.window_size = window_size
+        dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
-        dataclass.add_sign_hold = True
-        #dataclass.use_filter = True
-
     #model_simple = mphys.NaiveModelSimple()
     model = mnn.get_reference()
     models = [model]
@@ -50,7 +47,7 @@ if __name__ == "__main__":
     # Run the experiment
     hexp.run_experiment(dataClasses, use_nn_reference=False, use_rf_reference=True, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        window_size=window_size, past_values=past_values, future_values=future_values, n_drop_values=25,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name='OldDataset')
+                        window_size=window_size, past_values=past_values, future_values=future_values, n_drop_values=50,
+                        plot_types=['heatmap', 'prediction_overview'], experiment_name='Data_F_mess')
 
 

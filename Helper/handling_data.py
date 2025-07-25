@@ -1108,7 +1108,16 @@ DataClassV3_Plate_Notch = DataClass('DataV3', '..\\..\\DataSetsV3\\Data',
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
-DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data',
+DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data2',
+                                    ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                                    'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
+                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
+                                                    'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+                                             ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
+                                              'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv'],
+                                             dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"])
+DataClassV3_ST_Plate_Notch_Mes = DataClass('ST_DataV3_Mes', '..\\..\\DataSetsV3\\Data2',
                                     ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
                                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
@@ -1117,6 +1126,14 @@ DataClassV3_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSetsV3\\Data',
                                               'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv'],
                                              dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+DataClass_ST_Plate_Notch = DataClass('ST_Data', '..\\..\\DataSets\\Data',
+                                    ['S235JR_Plate_Normal_1.csv',
+                                                    'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
+
+                                                    'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+                                             ['S235JR_Plate_Normal_2.csv','S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',],
+                                             dataPaths_Test,
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"])
 
 DataClassOld_ST_Plate_Notch = DataClass('ST_DataV3', '..\\..\\DataSets\\OldData_Aligned',
                                     ['S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
@@ -1136,7 +1153,7 @@ DataClass_ST_Plate = DataClass('ST_Data', '..\\..\\DataSets\\Data',
                                 [   'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',],
                                              dataPaths_Test,
-                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim"])
+                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"])
 
 
 DataClass2_Plate_Notch_TrainVal_ContDev = DataclassCombinedTrainVal('DataClass2_Plate_Notch_TrainVal_ContDev', '..\\..\\DataSetsV2\\Data',
@@ -1900,8 +1917,8 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
 
     for pred in predictions_list:
         # Werte kürzen
-        pred_trimmed = pred[:-n_drop_values]
-        true_trimmed = true_values[:-n_drop_values]
+        pred_trimmed = pred[n_drop_values:-n_drop_values]
+        true_trimmed = true_values[n_drop_values:-n_drop_values]
 
         if center_data:
             # Zentrierung

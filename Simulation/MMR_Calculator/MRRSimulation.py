@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.interpolate import CubicSpline
+from scipy.signal import savgol_filter, butter, filtfilt
+from scipy.ndimage import uniform_filter1d, gaussian_filter1d
 from typing import Tuple, Dict, Any
 
 
@@ -46,8 +48,8 @@ def _identify_support_points_jit(positions, velocities, spindle_speeds,
     boundary_transitions = jnp.diff(outside_bounds.astype(jnp.int32)) != 0
     support_points = support_points.at[1:].set(support_points[1:] | boundary_transitions)
 
-    # Regelmäßige Abtastung (alle 50 Punkte)
-    regular_sampling = jnp.arange(n_points) % 50 == 0
+    # Regelmäßige Abtastung (alle 100 Punkte)
+    regular_sampling = jnp.arange(n_points) % 100 == 0
     support_points = support_points | regular_sampling
 
     return support_points
@@ -59,6 +61,7 @@ def _world_to_voxel_jit(world_coords, part_position, voxel_size):
     relative_coords = world_coords - part_position
     voxel_coords = relative_coords / voxel_size
     return jnp.round(voxel_coords).astype(jnp.int32)
+
 
 @jax.jit
 def _get_active_voxels_jit(tool_position, part_position, voxel_size, tool_radius, nx, ny, nz):
@@ -87,9 +90,9 @@ def _get_active_voxels_jit(tool_position, part_position, voxel_size, tool_radius
     voxel_centers_y = active_indices_y * voxel_size + part_position[1] + voxel_size / 2
     voxel_centers_z = active_indices_z * voxel_size + part_position[2] + voxel_size / 2
 
-    distances = jnp.sqrt((voxel_centers_x - tool_position[0])**2 +
-                         (voxel_centers_y - tool_position[1])**2 +
-                         (voxel_centers_z - tool_position[2])**2)
+    distances = jnp.sqrt((voxel_centers_x - tool_position[0]) ** 2 +
+                         (voxel_centers_y - tool_position[1]) ** 2 +
+                         (voxel_centers_z - tool_position[2]) ** 2)
 
     # Safety distance: 2x tool radius
     safety_distance = 2 * tool_radius
@@ -111,11 +114,12 @@ def _get_active_voxels_jit(tool_position, part_position, voxel_size, tool_radius
     active_indices = jnp.stack([active_indices_x, active_indices_y, active_indices_z], axis=1)
 
     # Nur gültige Indizes herausfiltern, indem man `jnp.where` für die Maskierung nutzt
-    # Stattdessen: alle Indices behalten, aber ungültige auf z. B. (-1, -1, -1) setzen
+    # Stattdessen: alle Indices behalten, aber ungültige auf z. B. (-1, -1, -1) setzen
     invalid_voxel = jnp.array([-1, -1, -1], dtype=jnp.int32)
     active_indices = jnp.where(valid_mask[:, None], active_indices, invalid_voxel)
 
     return active_indices
+
 
 @jax.jit
 def _calculate_volume_removal_jit(tool_position, material_grid_state,
@@ -167,6 +171,43 @@ def _calculate_volume_removal_jit(tool_position, material_grid_state,
         return updated_grid, removed_volume
 
     return lax.cond(len(active_voxels) == 0, empty_case, active_case)
+
+
+@jax.jit
+def _scan_mrr_calculation(carry, inputs):
+    """Scan-Funktion für MRR-Berechnung zwischen Stützpunkten."""
+    material_grid, prev_pos, simulation_params = carry
+    curr_pos, velocity, dt = inputs
+
+    part_position, voxel_size, tool_radius, nx, ny, nz = simulation_params
+
+    # Material vor der Bewegung
+    prev_grid, _ = _calculate_volume_removal_jit(
+        prev_pos, material_grid, part_position, voxel_size,
+        tool_radius, nx, ny, nz
+    )
+
+    # Material nach der Bewegung
+    updated_grid, volume_removed = _calculate_volume_removal_jit(
+        curr_pos, prev_grid, part_position, voxel_size,
+        tool_radius, nx, ny, nz
+    )
+
+    # MRR = Volumen / Zeit
+    mrr = lax.cond(
+        dt > 0,
+        lambda: volume_removed / dt,
+        lambda: 0.0
+    )
+
+    # Mit Vorschubgeschwindigkeit gewichten
+    feed_velocity = jnp.linalg.norm(velocity[:2])  # XY-Geschwindigkeit
+    mrr_weighted = mrr * feed_velocity
+
+    # Update carry
+    new_carry = (updated_grid, curr_pos, simulation_params)
+
+    return new_carry, mrr_weighted
 
 
 class CNCMRRSimulation:
@@ -230,6 +271,93 @@ class CNCMRRSimulation:
             self.tool_radius, self.nx, self.ny, self.nz
         )
 
+    def apply_smoothing(self, mrr_values: np.ndarray, method: str = 'savgol', **kwargs) -> np.ndarray:
+        """
+        Wendet verschiedene Glättungsfilter auf die MRR-Werte an.
+
+        Args:
+            mrr_values: Rohe MRR-Werte
+            method: Glättungsmethode ('savgol', 'gaussian', 'uniform', 'butterworth', 'rolling_median')
+            **kwargs: Parameter für die jeweilige Methode
+
+        Returns:
+            Geglättete MRR-Werte
+        """
+        if len(mrr_values) < 10:
+            print("Warnung: Zu wenige Datenpunkte für Glättung")
+            return mrr_values
+
+        if method == 'savgol':
+            # Savitzky-Golay Filter (Standard)
+            window_length = kwargs.get('window_length', min(51, len(mrr_values) // 4))
+            if window_length % 2 == 0:
+                window_length += 1  # Muss ungerade sein
+            window_length = max(5, window_length)  # Mindestens 5
+            polyorder = kwargs.get('polyorder', min(3, window_length - 2))
+
+            return savgol_filter(mrr_values, window_length, polyorder)
+
+        elif method == 'gaussian':
+            # Gaussscher Glättungsfilter
+            sigma = kwargs.get('sigma', len(mrr_values) * 0.01)  # 1% der Datenlänge
+            return gaussian_filter1d(mrr_values, sigma)
+
+        elif method == 'uniform':
+            # Gleichmäßiger gleitender Durchschnitt
+            window_size = kwargs.get('window_size', len(mrr_values) // 20)
+            window_size = max(3, window_size)
+            return uniform_filter1d(mrr_values, size=window_size)
+
+        elif method == 'butterworth':
+            # Butterworth Tiefpassfilter
+            cutoff_freq = kwargs.get('cutoff_freq', 0.1)  # Normalisierte Frequenz (0-1)
+            order = kwargs.get('order', 4)
+
+            # Butterworth Filter Design
+            b, a = butter(order, cutoff_freq, btype='low')
+            return filtfilt(b, a, mrr_values)
+
+        elif method == 'rolling_median':
+            # Gleitender Median (robust gegen Ausreißer)
+            window_size = kwargs.get('window_size', len(mrr_values) // 20)
+            window_size = max(3, window_size)
+
+            # Pandas rolling median
+            df_temp = pd.DataFrame({'mrr': mrr_values})
+            smoothed = df_temp['mrr'].rolling(window=window_size, center=True).median()
+            # NaN-Werte am Rand mit ursprünglichen Werten füllen
+            return smoothed.fillna(method='bfill').fillna(method='ffill').values
+
+        elif method == 'adaptive':
+            # Adaptive Glättung basierend auf lokaler Varianz
+            window_size = kwargs.get('base_window_size', len(mrr_values) // 30)
+            window_size = max(5, window_size)
+
+            smoothed = np.copy(mrr_values)
+
+            for i in range(len(mrr_values)):
+                # Lokales Fenster definieren
+                start = max(0, i - window_size // 2)
+                end = min(len(mrr_values), i + window_size // 2 + 1)
+
+                local_data = mrr_values[start:end]
+                local_std = np.std(local_data)
+
+                # Adaptive Gewichtung basierend auf Standardabweichung
+                if local_std > np.std(mrr_values) * 0.5:  # Hochvariable Bereiche
+                    # Starke Glättung
+                    weight = 0.3
+                else:  # Stabile Bereiche
+                    # Leichte Glättung
+                    weight = 0.8
+
+                smoothed[i] = weight * mrr_values[i] + (1 - weight) * np.mean(local_data)
+
+            return smoothed
+
+        else:
+            raise ValueError(f"Unbekannte Glättungsmethode: {method}")
+
     def calculate_volume_removal(self, tool_position: jnp.ndarray,
                                  material_grid_state: jnp.ndarray) -> Tuple[jnp.ndarray, jnp.float32]:
         """
@@ -244,15 +372,18 @@ class CNCMRRSimulation:
             self.nx, self.ny, self.nz
         )
 
-    def simulate_mrr(self, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+    def simulate_mrr(self, df: pd.DataFrame, smooth_method: str = 'rolling_median',
+                     smooth_params: Dict = None) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Hauptsimulation der Material Removal Rate.
+        Hauptsimulation der Material Removal Rate mit jax.scan und Glättung.
 
         Args:
             df: DataFrame mit Spalten ['pos_x', 'pos_y', 'pos_z', 'pos_sp', 'v_x', 'v_y', 'v_z', 'v_sp']
+            smooth_method: Glättungsmethode ('savgol', 'gaussian', 'uniform', 'butterworth', 'rolling_median', 'adaptive', 'none')
+            smooth_params: Parameter für die Glättungsmethode
 
         Returns:
-            (times, mrr_values)
+            (times, mrr_values_smoothed)
         """
         print("Konvertiere DataFrame zu JAX Arrays...")
 
@@ -270,71 +401,133 @@ class CNCMRRSimulation:
 
         print(f"Gefunden: {len(support_indices)} Stützpunkte von {n_points} Gesamtpunkten")
 
-        # MRR für Stützpunkte berechnen
-        print("Berechne MRR für Stützpunkte...")
-        support_mrr = []
-        current_material_grid = self.material_grid
+        if len(support_indices) < 2:
+            print("Warnung: Zu wenige Stützpunkte gefunden. Verwende alle Punkte.")
+            support_indices = np.arange(n_points)
 
-        for i, idx in enumerate(support_indices):
-            if i == 0:
-                # Erster Punkt: keine Änderung
-                mrr = 0.0
-            else:
-                # Vorherige und aktuelle Position
-                prev_pos = positions[support_indices[i - 1]]
-                curr_pos = positions[idx]
+        # Daten für jax.scan vorbereiten
+        print("Bereite Daten für JAX scan vor...")
 
-                # Material vor der Bewegung
-                prev_grid, _ = self.calculate_volume_removal(prev_pos, current_material_grid)
+        # Aktuelle und vorherige Positionen
+        curr_positions = positions[support_indices[1:]]  # Start ab zweitem Punkt
+        prev_positions = positions[support_indices[:-1]]  # Alle außer letztem
+        curr_velocities = velocities[support_indices[1:]]
 
-                # Material nach der Bewegung
-                updated_grid, volume_removed = self.calculate_volume_removal(curr_pos, prev_grid)
-                current_material_grid = updated_grid
+        # Zeitdifferenzen zwischen Stützpunkten
+        time_diffs = jnp.diff(support_indices.astype(jnp.float32))
 
-                # Zeit zwischen Stützpunkten
-                dt = support_indices[i] - support_indices[i - 1]
+        # Simulation parameter tupel
+        simulation_params = (
+            self.part_position, self.voxel_size, self.tool_radius,
+            self.nx, self.ny, self.nz
+        )
 
-                # MRR = Volumen / Zeit
-                mrr = volume_removed / max(dt, 1) if dt > 0 else 0.0
+        # Initialer Zustand (carry)
+        initial_carry = (
+            self.material_grid,  # Material grid
+            positions[support_indices[0]],  # Erste Position
+            simulation_params
+        )
 
-                # Mit Vorschubgeschwindigkeit gewichten
-                feed_velocity = jnp.linalg.norm(velocities[idx, :2])  # XY-Geschwindigkeit
-                mrr = mrr * feed_velocity
+        # Eingabedaten für scan (xs)
+        scan_inputs = (curr_positions, curr_velocities, time_diffs)
 
-            support_mrr.append(float(mrr))
+        print("Führe JAX scan für MRR-Berechnung aus...")
+        print("Kompiliere JAX-Funktionen (kann beim ersten Mal dauern)...")
 
-            if (i + 1) % 100 == 0:
-                print(f"  Bearbeitet: {i + 1}/{len(support_indices)} Stützpunkte")
+        # Progressbar-Simulation durch Chunking
+        chunk_size = max(1, len(support_indices) // 20)  # 20 Updates
+        total_chunks = (len(support_indices) - 1 + chunk_size - 1) // chunk_size
 
+        all_mrr_values = []
+        current_carry = initial_carry
+
+        for chunk_idx in range(total_chunks):
+            start_idx = chunk_idx * chunk_size
+            end_idx = min(start_idx + chunk_size, len(support_indices) - 1)
+
+            if start_idx >= end_idx:
+                break
+
+            # Chunk-Daten extrahieren
+            chunk_positions = curr_positions[start_idx:end_idx]
+            chunk_velocities = curr_velocities[start_idx:end_idx]
+            chunk_time_diffs = time_diffs[start_idx:end_idx]
+
+            chunk_inputs = (chunk_positions, chunk_velocities, chunk_time_diffs)
+
+            # Scan für diesen Chunk
+            final_carry, chunk_mrr = jax.lax.scan(_scan_mrr_calculation, current_carry, chunk_inputs)
+
+            # Ergebnisse sammeln
+            all_mrr_values.append(chunk_mrr)
+            current_carry = final_carry
+
+            # Fortschritt anzeigen
+            progress = (chunk_idx + 1) / total_chunks * 100
+            print(f"  Fortschritt: {progress:.1f}% ({chunk_idx + 1}/{total_chunks} Chunks)")
+
+        # Alle MRR-Werte zusammenführen
+        if all_mrr_values:
+            support_mrr = jnp.concatenate(all_mrr_values)
+            # Ersten Punkt (MRR=0) hinzufügen
+            support_mrr = jnp.concatenate([jnp.array([0.0]), support_mrr])
+        else:
+            support_mrr = jnp.zeros(len(support_indices))
+
+        # Konvertiere zurück zu numpy für Interpolation
         support_mrr = np.array(support_mrr)
 
         print("Interpoliere MRR-Werte...")
+        '''
         # Spline-Interpolation zwischen Stützpunkten
         if len(support_indices) > 3:
             # Cubic Spline
             cs = CubicSpline(support_indices, support_mrr, bc_type='natural')
             mrr_interpolated = cs(times)
-        else:
-            # Linear interpolation fallback
-            mrr_interpolated = np.interp(times, support_indices, support_mrr)
+        else:'''
+        # Linear interpolation
+        mrr_interpolated = np.interp(times, support_indices, support_mrr)
 
         # Negative Werte auf 0 setzen
         mrr_interpolated = np.maximum(mrr_interpolated, 0.0)
 
+        # Glättung anwenden
+        if smooth_method != 'none':
+            print(f"Wende {smooth_method} Glättung an...")
+            if smooth_params is None:
+                smooth_params = {}
+            mrr_smoothed = self.apply_smoothing(mrr_interpolated, smooth_method, **smooth_params)
+        else:
+            mrr_smoothed = mrr_interpolated
+
         print("Simulation abgeschlossen!")
-        return times, mrr_interpolated
+        return times, mrr_smoothed
 
     def plot_results(self, times: np.ndarray, mrr_values: np.ndarray,
-                     df: pd.DataFrame = None):
-        """Plottet die MRR-Ergebnisse."""
+                     df: pd.DataFrame = None, show_raw: bool = False, raw_mrr: np.ndarray = None):
+        """
+        Plottet die MRR-Ergebnisse.
+
+        Args:
+            times: Zeitarray
+            mrr_values: Geglättete MRR-Werte
+            df: Original DataFrame (optional)
+            show_raw: Ob rohe Daten auch gezeigt werden sollen
+            raw_mrr: Rohe MRR-Werte (optional)
+        """
         fig, axes = plt.subplots(2, 1, figsize=(12, 8))
 
         # MRR über Zeit
-        axes[0].plot(times, mrr_values, 'b-', linewidth=1, alpha=0.8)
+        if show_raw and raw_mrr is not None:
+            axes[0].plot(times, raw_mrr, 'lightgray', linewidth=0.5, alpha=0.7, label='Roh')
+
+        axes[0].plot(times, mrr_values, 'b-', linewidth=1.5, alpha=0.9, label='Geglättet')
         axes[0].set_xlabel('Zeit (Zeitschritte)')
         axes[0].set_ylabel('MRR (mm³/Zeitschritt)')
         axes[0].set_title('Material Removal Rate über Zeit')
         axes[0].grid(True, alpha=0.3)
+        axes[0].legend()
 
         # Statistiken anzeigen
         max_mrr = np.max(mrr_values)
@@ -357,11 +550,81 @@ class CNCMRRSimulation:
         plt.show()
 
         # Statistiken ausgeben
-        print(f"\n=== MRR Statistiken ===")
+        print(f"\n=== MRR Statistiken (Geglättet) ===")
         print(f"Maximum MRR: {max_mrr:.3f} mm³/Zeitschritt")
         print(f"Mittlere MRR: {mean_mrr:.3f} mm³/Zeitschritt")
+        print(f"Standardabweichung: {np.std(mrr_values):.3f} mm³/Zeitschritt")
         print(f"Gesamtvolumen entfernt: {np.sum(mrr_values):.1f} mm³")
 
+        if show_raw and raw_mrr is not None:
+            print(f"\n=== Vergleich Roh vs. Geglättet ===")
+            print(f"Rauschreduktion (Std): {np.std(raw_mrr):.3f} → {np.std(mrr_values):.3f} "
+                  f"({(1 - np.std(mrr_values) / np.std(raw_mrr)) * 100:.1f}% Reduktion)")
+            print(f"Signal-Rausch-Verhältnis: {mean_mrr / np.std(mrr_values):.2f}")
+
+    def analyze_and_plot_smoothing(self, df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, Dict[str, np.ndarray]]:
+        """
+        Führt MRR-Simulation durch und vergleicht verschiedene Glättungsmethoden.
+
+        Returns:
+            (times, raw_mrr, smoothed_methods_dict)
+        """
+        # Erst ohne Glättung simulieren
+        times, raw_mrr = self.simulate_mrr(df, smooth_method='none')
+
+        # Verschiedene Glättungsmethoden vergleichen
+        print("\nVergleiche Glättungsmethoden...")
+        smoothed_methods = self.compare_smoothing_methods(raw_mrr, times)
+
+        return times, raw_mrr, smoothed_methods
+
+    def compare_smoothing_methods(self, raw_mrr: np.ndarray, times: np.ndarray) -> Dict[str, np.ndarray]:
+        """
+        Vergleicht verschiedene Glättungsmethoden auf die Roh-MRR-Daten.
+
+        Args:
+            raw_mrr: Roh-MRR-Werte
+            times: Zeitstempel für die MRR-Werte
+
+        Returns:
+            Ein Dictionary mit den geglätteten MRR-Werten für jede Methode.
+        """
+        smoothing_methods = {
+            'savgol': {'window_length': min(51, len(raw_mrr) // 4), 'polyorder': 3},
+            'gaussian': {'sigma': len(raw_mrr) * 0.01},
+            'uniform': {'window_size': len(raw_mrr) // 20},
+            'butterworth': {'cutoff_freq': 0.1, 'order': 4},
+            'rolling_median': {'window_size': len(raw_mrr) // 100},
+            'adaptive': {'base_window_size': len(raw_mrr) // 30}
+        }
+
+        smoothed_results = {}
+
+        for method, params in smoothing_methods.items():
+            print(f"Anwendung der {method} Glättungsmethode...")
+            smoothed_mrr = self.apply_smoothing(raw_mrr, method, **params)
+            smoothed_results[method] = smoothed_mrr
+
+        return smoothed_results
+
+def choose_best_smoothing_method(smoothed_methods, raw_mrr):
+    best_method = None
+    best_std_reduction = float('inf')
+
+    for method, smoothed_mrr in smoothed_methods.items():
+        # Berechne die Standardabweichung der geglätteten Daten
+        std_smoothed = np.std(smoothed_mrr)
+        std_raw = np.std(raw_mrr)
+
+        # Berechne die Reduktion der Standardabweichung
+        std_reduction = std_smoothed / std_raw
+
+        # Wähle die Methode mit der geringsten Standardabweichungsreduktion
+        if std_reduction < best_std_reduction:
+            best_std_reduction = std_reduction
+            best_method = method
+
+    return best_method
 
 # Beispiel-Nutzung
 if __name__ == "__main__":
@@ -375,21 +638,25 @@ if __name__ == "__main__":
     t = np.linspace(0, 10, n_points)
 
     # Simulierte Toolpath (Spirale)
-    sample_df = pd.DataFrame({
-        'pos_x': part_position[0] + 20 * np.cos(t) * (1 - t / 10),
-        'pos_y': part_position[1] + 20 * np.sin(t) * (1 - t / 10),
-        'pos_z': part_position[2] + 10 - t,  # Z nach unten
-        'pos_sp': 12000 + 1000 * np.sin(t * 2),  # Spindeldrehzahl mit Rauschen
-        'v_x': np.gradient(20 * np.cos(t) * (1 - t / 10)),
-        'v_y': np.gradient(20 * np.sin(t) * (1 - t / 10)),
-        'v_z': -np.ones(n_points),  # Konstante Z-Geschwindigkeit
-        'v_sp': np.gradient(12000 + 1000 * np.sin(t * 2))
-    })
-
+    path_data = '..\\..\\DataSetsV3/DataMerged/S235JR_Plate_Normal.csv'
+    sample_df = pd.read_csv(path_data)
+    n = int(len(sample_df) / 3)
+    sample_df = sample_df[:n]
     # Simulation ausführen
     print("Starte CNC MRR Simulation...")
     simulator = CNCMRRSimulation(part_position, part_dimension, tool_radius)
-    times, mrr_values = simulator.simulate_mrr(sample_df)
 
-    # Ergebnisse plotten
+    # Option 1: Direkt mit Glättung simulieren
+    times, mrr_values = simulator.simulate_mrr(sample_df, smooth_method='savgol')
     simulator.plot_results(times, mrr_values, sample_df)
+
+    # Option 2: Verschiedene Glättungsmethoden vergleichen
+    print("\n" + "=" * 50)
+    print("Vergleiche verschiedene Glättungsmethoden:")
+    times_raw, raw_mrr, smoothed_methods = simulator.analyze_and_plot_smoothing(sample_df)
+
+    # Beste Methode auswählen und nochmal plotten
+    best_method = choose_best_smoothing_method(smoothed_methods, raw_mrr)
+    print(f'Beste Methode: {best_method}')
+    simulator.plot_results(times_raw, smoothed_methods[best_method], sample_df,
+                           show_raw=True, raw_mrr=raw_mrr)

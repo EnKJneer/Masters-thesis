@@ -99,10 +99,10 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = 'Data'
+path_data = 'DataSimulated'
 files = os.listdir(path_data)
 
-files = ['S235JR_Plate_Normal_2.csv']
+files = ['S235JR_Plate_Depth.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -122,11 +122,19 @@ for file in files:
     name = file.replace('.csv', '')
     #t_e = data.index[-1] * 1/500
     #print(t_e)
-
-    plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
+    data['f_x'] = -data['f_x']*200
+    data['f_y'] = data['f_y']*200
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+    plot_time_series(data, name, label='f_y_sim', dpi=300, ylabel='f_y')
     #plot_time_series(data, name, label='f_y', dpi=300, ylabel='curr_y')
     #plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
     #plot_time_series(data, name, label='v_sp', dpi=300, ylabel='curr_sp')
     #plot_time_series(data, name, label='v_x', dpi=300, ylabel='curr_x')
     #plot_time_series(data, name, label='v_y', dpi=300, ylabel='curr_y')
     #plot_time_series(data, name, label='v_z', dpi=300, ylabel='curr_z')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='pos_x')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='pos_y')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='materialremoved_sim')
+    diff = data['f_x'] - data['f_x_sim']
+    plot_2d_with_color(data['pos_x'], data['pos_y'], diff, f'{name}_diff.png', label='diff')
+    plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], f'{name}_diff.png', label='materialremoved_sim')

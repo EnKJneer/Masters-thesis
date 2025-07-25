@@ -86,7 +86,7 @@ def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50,
     if ylabel is not None:
         # Zweite y-Achse für curr_x
         ax2 = ax1.twinx()
-        ax2.plot(time, data[ylabel], label=ylabel, color='tab:red')
+        ax2.plot(time, data[ylabel], label=ylabel, color='tab:red', linestyle='--', alpha=0.8)
         ax2.set_ylabel(ylabel)
         ax2.legend(loc='upper right')
 
@@ -120,23 +120,21 @@ files = ['data.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(file)
-    cutoff = 0.1
-    filter_order = 4
-    #data = apply_lowpass_filter(data, cutoff, filter_order)
-    #n = int(len(data)*1.1/3)
-    #data = data.iloc[500:n, :]
-    #print(data.columns)
-    #print(data.shape)
-
-    #color_values = data['v_x']
-    #max_value = 2#-3 for curr_y # 2 for curr_x
-    #min_value = -2#-7 for curr_y # -2 for curr_x
-    #color_values = np.clip(color_values, min_value, max_value)
 
     name = file.replace('.csv', '')
     #t_e = data.index[-1] * 1/500
     #print(t_e)
     data['f_x'] = -data['f_x']
     data['v_z'] = np.clip(data['v_z'], -1, 1)
-    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x', align_axis=False)
-    #plot_2d_with_color(data['pos_x'], data['pos_y'], data['time'])
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x', align_axis=True)
+
+    data['materialremoved_sim_norm'] = (
+            (data['materialremoved_sim'] - data['materialremoved_sim'].min()) /
+            (data['materialremoved_sim'].max() - data['materialremoved_sim'].min())
+    )
+
+    data['test'] = data['materialremoved_sim_norm'] * data['f_x_sim']
+    plot_time_series(data, name, label='test', dpi=300, ylabel='f_x', align_axis=True)
+
+    data['v_f'] = (data['v_x']**2 + data['v_y']**2)**0.5
+    plot_time_series(data, name, label='v_f', dpi=300, ylabel=None, align_axis=True)

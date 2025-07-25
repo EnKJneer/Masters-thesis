@@ -183,8 +183,8 @@ def detect_peaks_and_split(df, time_col='time', signal_col='curr_z',
 
 
 if __name__ == "__main__":
-    path_data = 'DataMerged'
-    path_target = 'Data'
+    path_data = 'DataSimulated'
+    path_target = 'Data2'
 
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)

@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 import math
 import pandas as pd
@@ -110,7 +112,7 @@ class ProcessState:
         else:
             f_x, f_y, f_z, f_sp = 0, 0, 0, 0
 
-        return round(f_x/ 200, digits), round(f_y/ 200, digits), round(f_z/ 200, digits), round(f_sp/ 200, digits)
+        return round(f_x, digits), round(f_y, digits), round(f_z, digits), round(f_sp, digits)
 
 
 def read_machine_state(data_path: str) -> pd.DataFrame:
@@ -118,50 +120,108 @@ def read_machine_state(data_path: str) -> pd.DataFrame:
 
     return state_df
 
+def load_optimized_parameters_as_dataframe(json_path: str) -> pd.DataFrame:
+    """
+    Lädt optimierte Parameter aus einer JSON-Datei und gibt sie als DataFrame zurück,
+    formatiert wie: Material;k_c1;k_f1;k_p1;x;y;z;machine_coef_x;machine_coef_y;machine_coef_z
 
-def set_machine_state(Setting_parameter: pd.DataFrame, choise: int, tool_diameter: float,
-                      position: list[float, float, float], dimension: list[float, float, float, float]) -> tuple[
+    :param json_path: Pfad zur JSON-Datei mit den Parametern
+    :return: Pandas DataFrame mit den Parametern pro Material
+    """
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    rows = []
+    for material, params in data.items():
+        row = {
+            'Material': material,
+            'k_c1': params['k_c1'],
+            'k_f1': params['k_f1'],
+            'k_p1': params['k_p1'],
+            'x': params['x'],
+            'y': params['y'],
+            'z': params['z'],
+            'machine_coef_x': params['machine_coef_x'],
+            'machine_coef_y': params['machine_coef_y'],
+            'machine_coef_z': params['machine_coef_z']
+        }
+        rows.append(row)
+
+    df = pd.DataFrame(rows, columns=[
+        'Material', 'k_c1', 'k_f1', 'k_p1', 'x', 'y', 'z',
+        'machine_coef_x', 'machine_coef_y', 'machine_coef_z'
+    ])
+    return df
+
+def load_optimized_parameters_as_dict(json_path: str) -> dict:
+    """
+    Lädt optimierte Parameter aus einer JSON-Datei und gibt sie als Dictionary zurück,
+    wobei nur die relevanten Parameter enthalten sind (ohne 'K').
+
+    :param json_path: Pfad zur JSON-Datei mit den Parametern
+    :return: Dictionary im Format {Material: {k_c1, k_f1, k_p1, x, y, z, machine_coef_x, ...}}
+    """
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    result = {}
+
+    for material, params in data.items():
+        result[material] = {
+            'k_c1': params['k_c1'],
+            'k_f1': params['k_f1'],
+            'k_p1': params['k_p1'],
+            'x': params['x'],
+            'y': params['y'],
+            'z': params['z'],
+            'machine_coef_x': params['machine_coef_x'],
+            'machine_coef_y': params['machine_coef_y'],
+            'machine_coef_z': params['machine_coef_z'],
+            'K': params['K']
+        }
+
+    return result
+
+def set_machine_state(setting_dict: dict, material: str, tool_diameter: float,
+                      position: list[float], dimension: list[float]) -> tuple[
     MachineState, voxel_class_numba.Tool, voxel_class_numba.PartialVoxelPart]:
-    # Einstellung
-    # Festdefinierte Werte durch unsere Randbedingung
-    tool_diameter = tool_diameter
-    K_v = 1 # Verschleißkorrekturfaktor
+
+    # Festdefinierte Werte
+    K_v = 1  # Verschleißkorrekturfaktor
     K_kss = 0.9
     tool_radius = tool_diameter / 2
     tooth_amount = 4
 
-    # Start Koordinate von Tool, Part
+    # Startposition von Tool und Werkstück
     x0_tool, y0_tool, z0_tool = 0, 0, 0
-
     x0_part, y0_part, z0_part = position
-
     part_width, part_depth, part_height, voxel_size = dimension
 
-    # Start Koordinate for Platte Part (AL)
-    # x0_part, y0_part, z0_part = -38.64, 174.871, 354.94
+    # Parameter aus dem Dictionary laden
+    if material not in setting_dict:
+        raise ValueError(f"Material '{material}' nicht im Parameter-Dictionary vorhanden.")
 
-    # Startpoint for Notch Part (AL)
-    # x0_part, y0_part, z0_part = -38.6, 249.5, 354.93
+    params = setting_dict[material]
+    K_kss = params['K']
+    k_c1 = params['k_c1']
+    k_f1 = params['k_f1']
+    k_p1 = params['k_p1']
+    x = params['x']
+    y = params['y']
+    z = params['z']
+    machine_coef_x = params['machine_coef_x']
+    machine_coef_y = params['machine_coef_y']
+    machine_coef_z = params['machine_coef_z']
 
-    # Startpoint for gear part (AL)
-    # x0_part, y0_part, z0_part = -33.807, 174.871, 354.78
+    # Maschinenzustand erzeugen
+    new_machine_state = MachineState(
+        k_c1, k_f1, k_p1, K_v, K_kss,
+        x, y, z,
+        tool_radius, tooth_amount,
+        machine_coef_x, machine_coef_y, machine_coef_z
+    )
 
-    # Materialabhaengig:
-    k_c1 = Setting_parameter.loc[choise, 'k_c1']
-    k_f1 = Setting_parameter.loc[choise, 'k_f1']
-    k_p1 = Setting_parameter.loc[choise, 'k_p1']
-    x = Setting_parameter.loc[choise, 'x']
-    y = Setting_parameter.loc[choise, 'y']
-    z = Setting_parameter.loc[choise, 'z']
-    machine_coef_x = Setting_parameter.loc[choise, 'machine_coef_x']
-    machine_coef_y = Setting_parameter.loc[choise, 'machine_coef_y']
-    machine_coef_z = Setting_parameter.loc[choise, 'machine_coef_z']
-
-    new_machine_state = MachineState(k_c1, k_f1, k_p1, K_v, K_kss, x, y, z, tool_radius, tooth_amount, machine_coef_x,
-                                     machine_coef_y, machine_coef_z)
-
-    # Definieren Startkoordinaten von Tool und Part
-
+    # Werkzeug und Werkstück definieren
     tool = voxel_class_numba.Tool(tool_radius, [x0_tool, y0_tool, z0_tool])
     part = voxel_class_numba.PartialVoxelPart(part_width, part_depth, part_height, voxel_size, [x0_part, y0_part, z0_part])
 

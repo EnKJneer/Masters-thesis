@@ -412,15 +412,14 @@ class PredictionPlotter(BasePlotter):
             ground_truth = df_subset['GroundTruth'].iloc[0]
 
             fig, ax = plt.subplots(figsize=(10, 6))
-
+            y_min, y_max = float('inf'), -float('inf')
             # Plot GroundTruth
             ax.plot(ground_truth, label='GroundTruth', color='black', linewidth=2)
 
             for dataset in datasets:
-                # Plot Vorhersagen für jedes Modell
                 for model in models:
                     row = df_subset[
-                        (df_subset['Model']   == model) &
+                        (df_subset['Model'] == model) &
                         (df_subset['DataSet'] == dataset)
                     ].iloc[0]
 
@@ -429,26 +428,40 @@ class PredictionPlotter(BasePlotter):
 
                     # Mittelwert und Standardabweichung über die Runs
                     mean_pred = preds_list.mean(axis=0)
-                    std_pred  = preds_list.std(axis=0)
-
+                    std_pred = preds_list.std(axis=0)
                     t = np.arange(len(mean_pred))
-                    # Konfidenzband
+
+                    # Konfidenzband auf Mittelwert plus/minus vier Standardabweichungen beschränken
                     ax.fill_between(
                         t,
                         mean_pred - std_pred,
                         mean_pred + std_pred,
                         alpha=0.3
                     )
+
                     # Mittelwertkurve
                     ax.plot(
                         t,
                         mean_pred,
                         label=f"{model} ({dataset})"
                     )
+                    # Bestimme die Minimal- und Maximalwerte für die y-Achse
+                    current_min = np.min(mean_pred - 4 * std_pred)
+                    current_max = np.max(mean_pred + 4 * std_pred)
+                    if current_min < y_min:
+                        y_min = current_min
+                    if current_max > y_max:
+                        y_max = current_max
+
+            if -8 > y_min:
+                y_min = -8
+            if 8 < y_max:
+                y_max = 8
 
             ax.set_title(f"Predictions vs GroundTruth for {datapath}")
             ax.set_xlabel("Time")
             ax.set_ylabel("Value")
+            ax.set_ylim(y_min, y_max)
             ax.legend()
             plt.tight_layout()
 
@@ -909,12 +922,12 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
 
             predictions = []
             for pred in nn_preds[j]:
-                predictions.append(pred[:-n_drop_values].tolist())
+                predictions.append(pred[n_drop_values:-n_drop_values].tolist())
 
             # Raw data als Dictionary speichern (JSON-serialisierbar)
             raw_data_dict = {
                 'columns': raw_data[j].columns.tolist(),
-                'data': raw_data[j].iloc[:-n_drop_values].to_dict('records')  # Als Liste von Dictionaries
+                'data': raw_data[j].iloc[n_drop_values:-n_drop_values].to_dict('records')  # Als Liste von Dictionaries
             }
 
             # Ergebnisse speichern mit raw_data
@@ -927,8 +940,8 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                 std_nn,  # StdDev
                 mae_ensemble,
                 predictions,
-                y_test[j].iloc[:-n_drop_values].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j][
-                                                                                                            :-n_drop_values].tolist(),
+                y_test[j].iloc[n_drop_values:-n_drop_values].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j][
+                                                                                                            n_drop_values:-n_drop_values].tolist(),
                 raw_data_dict  # RawData als Dictionary
             ])
             header_list[j].append(name)
