@@ -28,11 +28,12 @@ DataSimulated:
 Data2
     Ergebnis aus SplitData.
     Teilt die Daten basierend auf peaks in curr_z auf.
+    Fiultert nur Prozessdaten heraus.
     Daten in DataSimulation aufgeteilt nach dem Durchlauf.
     0: Aircut (optional)
     1: 1. Durchlauf
     2. 2. Durchlauf
-    3. 3. Durchlauf
+    3. 3. Durchlauf (Ano wenn AL und Depth)
     4. Aircut (optional)
 Data:
     Wie Data2 nur ohne Simulationsdaten.

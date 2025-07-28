@@ -211,7 +211,31 @@ if __name__ == "__main__":
 
         # Save each part as a separate CSV file using correct region names
         for region_name, part in df_parts.items():
-            output_filename = f'{filename}_{region_name}.csv'
+            if not (filename.startswith('AL') and filename.endswith('Depth') and region_name == 3):
+                output_filename = f'{filename}_{region_name}.csv'
+            else:
+                # Bei Alu depth enthält das letzte 3 Anomalien wie fressen und gebrochene Fräser
+                output_filename = f'{filename}_Ano.csv'
+            if not (region_name == 0 or region_name == 4):
+                part = part.reset_index(drop=True)
+                # Filter nur die Prozessdaten raus. -> materialremoved_sim > 0 +/- 5% der Datenlänge
+                indices = part[part['materialremoved_sim'] > 100].index #Problem: MRR Berechnung ist zu ungenau.
+
+                n = indices.max() - indices.min()
+                p = 0.1
+                start_index = max(0, indices.min() - int(p * n))
+                end_index = min(len(part), indices.max() + int(p * n))
+                part = part.iloc[start_index:end_index] #.reset_index(drop=True)
+
+
+                plt.plot(part['materialremoved_sim'], label='Material Removed Sim')
+                plt.plot(part['curr_x'] * 100, label='Current X')
+                plt.axvline(x=start_index, color='r', linestyle='--', label='Start Index')
+                plt.axvline(x=end_index, color='g', linestyle='--', label='End Index')
+                plt.legend()
+                plt.show()
+
+                part = part.reset_index(drop=True)
             part.to_csv(os.path.join(path_target, output_filename), index=False)
             print(f'  Saved {output_filename} with {len(part)} rows')
 

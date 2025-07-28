@@ -26,10 +26,10 @@ if __name__ == "__main__":
     NUMBEROFMODELS = 10
 
     window_size = 1
-    past_values = 0
-    future_values = 0
+    past_values = 2
+    future_values = 2
 
-    dataSet = hdata.DataClassV3_ST_Plate_Notch_noDepth
+    dataSet = hdata.DataClassV3_ST_Plate_Notch
     dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'
     dataclass2 = copy.copy(dataSet)

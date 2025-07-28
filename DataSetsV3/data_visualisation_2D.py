@@ -102,7 +102,7 @@ def apply_lowpass_filter(data, cutoff, order):
 path_data = 'Data2'
 files = os.listdir(path_data)
 
-files = ['S235JR_Plate_Depth_2.csv']
+files = ['S235JR_Plate_Depth_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
