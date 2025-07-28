@@ -107,11 +107,6 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
     if plot_mrr:
         simulator.plot_results(times, mrr_values, segments, process_data)
 
-    '''    
-    simulator = CNCMRRSimulation(part_position, part_dimension, tool.radius)
-    times, mrr_values  = simulator.simulate_mrr(process_data)
-    simulator.plot_results(times, mrr_values, process_data)'''
-
     mrr_mean = mrr_values.mean()
     for i in range(process_data.shape[0]):
         a_p = a_p_array[i]

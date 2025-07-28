@@ -1,0 +1,50 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.144181 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.203484 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest   | 0.099683 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest   | 0.095888 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest_TPESampler | 0.118859 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest_TPESampler | 0.182919 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest_TPESampler | 0.107019 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest_TPESampler | 0.103574 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest_RandomSampler | 0.119830 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest_RandomSampler | 0.177073 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest_RandomSampler | 0.102886 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest_RandomSampler | 0.100989 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest_GridSampler | 0.118574 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest_GridSampler | 0.193953 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest_GridSampler | 0.097772 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest_GridSampler | 0.090450 | 0.000000
+
+
+MODEL IMPROVEMENTS (vs Random_Forest)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest | Random_Forest_TPESampler | +17.56%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest | Random_Forest_RandomSampler | +16.89%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest | Random_Forest_GridSampler | +17.76%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest | Random_Forest_TPESampler | +10.11%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest | Random_Forest_RandomSampler | +12.98%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest | Random_Forest_GridSampler | +4.68%      
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest | Random_Forest_TPESampler | -7.36%      
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest | Random_Forest_RandomSampler | -3.21%      
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest | Random_Forest_GridSampler | +1.92%      
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest | Random_Forest_TPESampler | -8.02%      
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest | Random_Forest_RandomSampler | -5.32%      
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest | Random_Forest_GridSampler | +5.67%      
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

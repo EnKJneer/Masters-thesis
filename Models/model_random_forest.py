@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import Models.model_base as mb
 
 class RandomForestModel(mb.BaseModel):
-    def __init__(self, n_estimators=100, max_features = 1, max_depth =None, min_samples_split = 2, min_samples_leaf = 1, random_state=None, name ="Random_Forest"):
+    def __init__(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2, min_samples_leaf = 1, random_state=42, name ="Random_Forest"):
         """
         Initializes a Random Forest regressor.
 
@@ -30,6 +30,23 @@ class RandomForestModel(mb.BaseModel):
         self.min_samples_leaf = min_samples_leaf
         self.name = name
         self.device = "cpu"
+
+    def reset_hyperparameter(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2, min_samples_leaf = 1):
+        self.n_estimators = n_estimators
+        self.max_features = max_features
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+
+        # Neuinitialisierung des Modells mit den neuen Hyperparametern
+        self.model = RandomForestRegressor(
+            n_estimators=n_estimators,
+            max_features=max_features,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=self.random_state,
+            n_jobs=-1
+        )
 
     def criterion(self, y_target, y_pred):
         """
@@ -81,6 +98,7 @@ class RandomForestModel(mb.BaseModel):
             The validation target values.
         n_epochs : int, optional
             The number of epochs for training. Default is 1 (since Random Forest is not iterative).
+            Only for compatibility reasons.
         trial : optuna.trial.Trial, optional
             An Optuna trial object used for pruning based on intermediate validation errors.
         draw_loss : bool, optional
@@ -100,31 +118,30 @@ class RandomForestModel(mb.BaseModel):
             X_val = pd.concat(X_val, ignore_index=True)
             y_val = pd.concat(y_val, ignore_index=True)
         # Training loop (for compatibility, though Random Forest is not iterative)
-        n_epochs= 1
-        for epoch in range(n_epochs):
-            self.model.fit(X_train, y_train.squeeze())
-            y_val_pred = self.model.predict(X_val)
-            val_error = self.criterion(y_val, y_val_pred)
 
-            # Report intermediate values to the pruner
-            if trial:
-                trial.report(val_error, step=epoch)
-                if trial.should_prune():
-                    raise optuna.exceptions.TrialPruned()
+        self.model.fit(X_train, y_train.squeeze())
+        y_val_pred = self.model.predict(X_val)
+        val_error = self.criterion(y_val, y_val_pred)
 
-            # Update the best validation error
-            if val_error < best_val_error:
-                best_val_error = val_error
+        # Report intermediate values to the pruner
+        if trial:
+            trial.report(val_error, step=1)
+            if trial.should_prune():
+                raise optuna.exceptions.TrialPruned()
 
-            if draw_loss:
-                plt.plot(epoch, val_error, label='Validation Loss')
-                plt.xlabel('Epoch')
-                plt.ylabel('Loss')
-                plt.legend()
-                plt.show()
+        # Update the best validation error
+        if val_error < best_val_error:
+            best_val_error = val_error
 
-            print(
-                f'{self.name}: Epoch {epoch + 1}/{n_epochs},  Val Error: {val_error:.4f}')
+        if draw_loss:
+            plt.plot(1, val_error, label='Validation Loss')
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
+            plt.legend()
+            plt.show()
+
+        print(
+            f'{self.name}: Val Error: {val_error:.4f}')
 
         return best_val_error
 
@@ -158,11 +175,11 @@ class RandomForestModel(mb.BaseModel):
             "min_samples_leaf": self.min_samples_leaf
         }}
         return documentation
+    @staticmethod
+    def get_reference_model():
+        return RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)
 
-def get_reference():
-    return RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)
-
-class ExtraTreesModel:
+class ExtraTreesModel(mb.BaseModel):
     def __init__(self, n_estimators=100, max_features=1, min_samples_split=2, min_samples_leaf=1, random_state=None, name="Extra_Trees"):
         """
         Initializes an Extra Trees regressor.

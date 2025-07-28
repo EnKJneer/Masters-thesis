@@ -1,5 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-Plate_TrainVal,AL_2007_T4_Gear_Normal_3,Neural_Net,Net_optimized,43.557875804697744
-Plate_TrainVal,AL_2007_T4_Plate_Normal_3,Neural_Net,Net_optimized,43.51207299985902
-Plate_TrainVal,S235JR_Gear_Normal_3,Neural_Net,Net_optimized,11.529920309923503
-Plate_TrainVal,S235JR_Plate_Normal_3,Neural_Net,Net_optimized,3.5160567963894653

@@ -1,0 +1,213 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        },
+        {
+            "Random_Forest_TPESampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 314,
+                    "max_features": null,
+                    "min_samples_split": 288,
+                    "min_samples_leaf": 34
+                }
+            }
+        },
+        {
+            "Random_Forest_RandomSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 312,
+                    "max_features": null,
+                    "min_samples_split": 180,
+                    "min_samples_leaf": 46
+                }
+            }
+        },
+        {
+            "Random_Forest_GridSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 5,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "Epochs": 500
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Random_Forest\\2025_07_28_14_35_21\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Random_Forest\\2025_07_28_14_35_21\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\Random_Forest\\2025_07_28_14_35_21\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\Random_Forest\\2025_07_28_14_35_21\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\Random_Forest\\2025_07_28_14_35_21\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_TPESampler",
+                8.027033414045825
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_RandomSampler",
+                5.807100518362097
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                -19.742881798518887
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_TPESampler",
+                5.118283108842313
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_RandomSampler",
+                4.813543962310654
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                -5.8661581604449555
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_TPESampler",
+                -19.108826697784572
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_RandomSampler",
+                -14.876761699600848
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                -5.262913048062366
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_TPESampler",
+                -23.081862948453804
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_RandomSampler",
+                -21.355232293381945
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                -5.140258431050051
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "Random_Forest",
+                "Random_Forest_TPESampler",
+                "Random_Forest_RandomSampler",
+                "Random_Forest_GridSampler"
+            ],
+            "Best_Model_Overall": "Random_Forest",
+            "Worst_Model_Overall": "Random_Forest_GridSampler"
+        }
+    }
+}

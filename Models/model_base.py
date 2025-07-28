@@ -13,6 +13,9 @@ from abc import ABC, abstractmethod
 
 class BaseModel(ABC):
     @abstractmethod
+    def __init__(self, name):
+        self.name = name
+    @abstractmethod
     def criterion(self, y_target, y_pred):
         pass
 
@@ -30,8 +33,11 @@ class BaseModel(ABC):
     @abstractmethod
     def get_documentation(self):
         pass
+    @abstractmethod
+    def reset_hyperparameter(self):
+        pass
 
-class BaseNetModel(BaseModel, nn.Module):
+class BaseTorchModel(BaseModel, nn.Module):
     def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=0.001, optimizer_type='adam'):
         """
         Initializes the base neural network model with common attributes.
@@ -49,15 +55,23 @@ class BaseNetModel(BaseModel, nn.Module):
         optimizer_type : str
             The type of optimizer to use.
         """
-        super(BaseNetModel, self).__init__()
+        BaseModel.__init__(self, name)  # Initialize BaseModel
+        nn.Module.__init__(self)  # Initialize nn.Module
         self.input_size = input_size
         self.output_size = output_size
-        self.name = name
         self.learning_rate = learning_rate
         self.optimizer_type = optimizer_type
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
+
+        # Map the activation function name to the corresponding PyTorch function
+        self.activation_map = {
+            'ReLU': nn.ReLU,
+            'Sigmoid': nn.Sigmoid,
+            'Tanh': nn.Tanh,
+            'ELU': nn.ELU,
+        }
 
     @abstractmethod
     def _initialize(self):
@@ -67,8 +81,12 @@ class BaseNetModel(BaseModel, nn.Module):
     def forward(self, x):
         pass
 
-    def criterion(self, y_target, y_pred, delta = 0.22):
+    def criterion_Huber(self, y_target, y_pred, delta = 0.22):
         criterion = nn.HuberLoss(delta=delta)
+        return criterion(y_target.squeeze(), y_pred.squeeze())
+
+    def criterion(self, y_target, y_pred):
+        criterion = nn.MSELoss()
         return criterion(y_target.squeeze(), y_pred.squeeze())
 
     def predict(self, X):
@@ -150,7 +168,7 @@ class BaseNetModel(BaseModel, nn.Module):
         if flag_initialization or reset_parameters: #
             self._initialize()
 
-        if self.optimizer_type.lower() == 'adam':
+        if self.optimizer_type.lower() == 'adam' or self.optimizer_type.lower() == 'sgd':
             optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
         elif self.optimizer_type.lower() == 'quasi_newton':
             optimizer = optim.LBFGS(self.parameters(), lr=self.learning_rate, max_iter=20, history_size=10)
@@ -215,26 +233,6 @@ class BaseNetModel(BaseModel, nn.Module):
                         loss.backward()
                         optimizer.step()
                         train_losses.append(loss.item())
-                """if is_batched_train:
-                    for batch_x, batch_y in zip(X_train, y_train):
-                        optimizer.zero_grad()
-                        batch_x_tensor = self.scaled_to_tensor(batch_x)
-                        batch_y_tensor = self.to_tensor(batch_y)
-                        output = self(x_tensor)
-                        loss = self.criterion(output, batch_y_tensor)
-                        loss.backward()
-                        optimizer.step()
-                        train_losses.append(loss.item())
-                else:
-                    optimizer.zero_grad()
-                    x_tensor = self.scaled_to_tensor(X_train)
-                    y_tensor = self.to_tensor(y_train)
-                    output = self(x_tensor)
-                    loss = self.criterion(output, y_tensor)
-                    loss.backward()
-                    optimizer.step()
-                    train_losses.append(loss.item())"""
-
 
             self.eval()
             val_losses = []
@@ -262,7 +260,7 @@ class BaseNetModel(BaseModel, nn.Module):
                 best_val_error = avg_val_loss
                 best_model_state = self.state_dict()
                 patience_counter = 0
-            elif epoch > (n_epochs / 10) and epoch > 10:
+            elif epoch > (n_epochs / 100):
                 patience_counter += 1
 
             scheduler.step(avg_val_loss)
@@ -303,6 +301,7 @@ class BaseNetModel(BaseModel, nn.Module):
             "learning_rate": self.learning_rate,
             "n_hidden_size": self.n_hidden_size,
             "n_hidden_layers": self.n_hidden_layers,
-            "n_activation_function": self.activation.__class__.__name__,
+            "activation": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
         }}
         return documentation

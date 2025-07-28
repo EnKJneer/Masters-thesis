@@ -116,7 +116,7 @@ def apply_lowpass_filter(data, cutoff, order):
     return data2
 
 
-files = ['..\\DataSetsV3/Data2/S235JR_Plate_Normal_2.csv']
+files = ['..\\DataSets/Data2/S235JR_Plate_Normal_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(file)

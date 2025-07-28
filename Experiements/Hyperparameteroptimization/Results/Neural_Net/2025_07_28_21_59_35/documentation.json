@@ -1,0 +1,217 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 13,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "adam"
+                }
+            }
+        },
+        {
+            "Neural_Net_TPESampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.08844527029245332,
+                    "n_hidden_size": 37,
+                    "n_hidden_layers": 2,
+                    "activation": "ReLU",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        },
+        {
+            "Neural_Net_RandomSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.031152796332416428,
+                    "n_hidden_size": 45,
+                    "n_hidden_layers": 2,
+                    "activation": "ELU",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        },
+        {
+            "Neural_Net_GridSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 100,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "Epochs": 800
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Neural_Net\\2025_07_28_21_59_35\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Neural_Net\\2025_07_28_21_59_35\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\Neural_Net\\2025_07_28_21_59_35\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\Neural_Net\\2025_07_28_21_59_35\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\Neural_Net\\2025_07_28_21_59_35\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                "Neural_Net_TPESampler",
+                22.815268944953303
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                "Neural_Net_RandomSampler",
+                -10.385102112909019
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                "Neural_Net_GridSampler",
+                -54.53520048433482
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Neural_Net",
+                "Neural_Net_TPESampler",
+                10.976098450533355
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Neural_Net",
+                "Neural_Net_RandomSampler",
+                -34.363109667216946
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Neural_Net",
+                "Neural_Net_GridSampler",
+                -69.59286099783415
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Neural_Net",
+                "Neural_Net_TPESampler",
+                41.08234655857577
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Neural_Net",
+                "Neural_Net_RandomSampler",
+                41.16191123447419
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Neural_Net",
+                "Neural_Net_GridSampler",
+                -197.422740438637
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Neural_Net",
+                "Neural_Net_TPESampler",
+                27.196997889528095
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Neural_Net",
+                "Neural_Net_RandomSampler",
+                23.035417529273325
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Neural_Net",
+                "Neural_Net_GridSampler",
+                -203.89760854588022
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "Neural_Net",
+                "Neural_Net_TPESampler",
+                "Neural_Net_RandomSampler",
+                "Neural_Net_GridSampler"
+            ],
+            "Best_Model_Overall": "Neural_Net_RandomSampler",
+            "Worst_Model_Overall": "Neural_Net_GridSampler"
+        }
+    }
+}

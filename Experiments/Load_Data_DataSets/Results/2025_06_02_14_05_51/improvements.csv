@@ -1,9 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-Plate_TrainVal,AL_2007_T4_Gear_Normal_3,Neural_Net,Random_Forest,31.15051704978416
-Plate_TrainVal,AL_2007_T4_Plate_Normal_3,Neural_Net,Random_Forest,-1.4740008951000438
-Plate_TrainVal,S235JR_Gear_Normal_3,Neural_Net,Random_Forest,44.1049100854175
-Plate_TrainVal,S235JR_Plate_Normal_3,Neural_Net,Random_Forest,46.574315375823886
-PKL_TrainVal,AL_2007_T4_Gear_Normal_3,Neural_Net,Random_Forest,22.650642888655735
-PKL_TrainVal,AL_2007_T4_Plate_Normal_3,Neural_Net,Random_Forest,17.943120537240258
-PKL_TrainVal,S235JR_Gear_Normal_3,Neural_Net,Random_Forest,11.297770815303723
-PKL_TrainVal,S235JR_Plate_Normal_3,Neural_Net,Random_Forest,20.08243301156093

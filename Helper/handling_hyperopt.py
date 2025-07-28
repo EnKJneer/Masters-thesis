@@ -29,10 +29,6 @@ CUTOFF = 4
 NUMBEROFTRIALS = 100
 NUMBEROFEPOCHS = 20
 
-# Function to check if the search_space dictionary is grouped
-def is_grouped(search_space):
-    return all(isinstance(value, dict) for value in search_space.values())
-
 class Objective:
     """
     Objective class for defining and executing hyperparameter optimization with Optuna.
@@ -53,7 +49,7 @@ class Objective:
     n_epochs : int
         Number of epochs for training (default is 20).
     """
-    def __init__(self, search_space, model, data_params=None, data=None, n_epochs=20, pruning = True):
+    def __init__(self, search_space, model:mb.BaseModel, data_params=None, data=None, n_epochs=20, pruning = True):
         """
         Initializes the Objective class with search space, model function, data, and training epochs.
 
@@ -97,25 +93,14 @@ class Objective:
 
         # Extract hyperparameters dynamically from the search space
         params = {}
-        if is_grouped(self.search_space):
-            # If the search space is grouped, iterate through each group
-            for group, values in self.search_space.items():
-                for name, value in values.items():
-                    if isinstance(value, tuple) and all(isinstance(x, int) for x in value):
-                        params[name] = trial.suggest_int(name, value[0], value[1])
-                    elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
-                        params[name] = trial.suggest_float(name, value[0], value[1], log=True if 'learning_rate' in name else False)
-                    else:
-                        params[name] = trial.suggest_categorical(name, value)
-        else:
-            # If the search space is not grouped, iterate through the parameters directly
-            for name, value in self.search_space.items():
-                if isinstance(value, tuple) and all(isinstance(x, int) for x in value):
-                    params[name] = trial.suggest_int(name, value[0], value[1])
-                elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
-                    params[name] = trial.suggest_float(name, value[0], value[1], log=True if 'learning_rate' in name else False)
-                else:
-                    params[name] = trial.suggest_categorical(name, value)
+        # If the search space is not grouped, iterate through the parameters directly
+        for name, value in self.search_space.items():
+            if isinstance(value, tuple) and all(isinstance(x, int) for x in value):
+                params[name] = trial.suggest_int(name, value[0], value[1])
+            elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
+                params[name] = trial.suggest_float(name, value[0], value[1], log=True if 'learning_rate' in name else False)
+            else:
+                params[name] = trial.suggest_categorical(name, value)
 
         # Load or use the data
         if self.data is not None:
@@ -129,7 +114,7 @@ class Objective:
         else:
             trial_prun = None
 
-        # Check if the model is a subclass of mb.BaseModel
+        # Check if model is a subclass of mb.BaseModel
         if isinstance(self.model, type) and issubclass(self.model, mb.BaseModel):
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
             input_size = X_train.shape[1]
@@ -141,7 +126,8 @@ class Objective:
             val_error = model.train_model(X_train, y_train, X_val, y_val, n_epochs=self.n_epochs, trial=trial_prun)
         else:
             # Train the model and get the validation error
-            val_error, _ = self.model(X_train, y_train, X_val, y_val, **params, n_epochs=self.n_epochs, trial=trial_prun)
+            self.model.reset_hyperparameter(**params)
+            val_error = self.model.train_model(X_train, y_train, X_val, y_val, n_epochs=self.n_epochs, trial=trial_prun)
 
         return val_error
 
@@ -157,16 +143,12 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
    ----------
    objective : Objective
        The objective function to be minimized, which includes the model training process.
-   search_space : dict
-       Dictionary defining the search space for hyperparameters, specifying ranges or categories for each parameter.
    folderpath : str
        The directory path where study results and search space details are saved.
    study_name : str
        A unique name for the study, which will be used in naming saved files.
    n_trials : int, optional
        Number of optimization trials to run. Default is 100.
-   n_epochs : int, optional
-       Number of epochs for training the model within each trial. Default is 20.
    n_reduction_factor : int, optional
        Factor by which to reduce resources in the Hyperband pruning strategy. Default is 3.
    sampler : str, optional
@@ -185,7 +167,7 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
    Saves
    -----
    Saves the search space and study results in `folderpath` for later retrieval.
-   
+
    Notes
    -----
    This function uses the `HyperbandPruner` for efficient pruning, and it can visualize the
@@ -202,7 +184,7 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
     elif sampler == "RandomSampler":
         sampler_opt = optuna.samplers.RandomSampler()
     elif sampler == "GridSampler":
-        sampler_opt = optuna.samplers.GridSampler()
+        sampler_opt = optuna.samplers.GridSampler(objective.search_space)
     else:
         print("No valid sampler was selected. TPESampler will be used.")
         sampler_opt = optuna.samplers.TPESampler()
@@ -230,7 +212,7 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
     # Zeige Ergebnisse und Plots an
     best_trial = study.best_trial
     print("Best Hyperparameters:", best_trial.params)
-    print("Best Objective Value:", best_trial.value)
+    #print("Best Objective Value:", best_trial.value)
 
     if show_plots:
         optuna_viz.plot_optimization_history(study).show()
@@ -238,9 +220,9 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
         optuna_viz.plot_slice(study, params=list(objective.search_space.keys())).show()
         optuna_viz.plot_param_importances(study).show()
 
-    return best_trial
+    return best_trial.params
 
-def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search_space = None, plot = False):
+def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', plot = False):
     """
     Retrieves the optimal hyperparameters from saved studies.
  
@@ -248,8 +230,6 @@ def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search
     ----------
     folderpath : str, optional
         The path to the folder where the study results are saved. The default is 'Hyperparameteroptimization'.
-    filter_search_space : dict, optional
-        A dictionary defining the filter criteria for the search space. The default is None.
     plot : bool, optional
         Whether to plot the optimization results. The default is False.
  
@@ -268,7 +248,6 @@ def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search
     for filename in os.listdir(folderpath):
         if filename.endswith('.db'):  # Only load files with the .db extension
             # # Extract the time stamp from the file name
-            # # Extract the time stamp from the file name
             # parts = filename.split('_')
             # time_parts = parts[-6:]  # Take the last 6 parts as the time stamp
             # time = '_'.join(time_parts).split('.')[0]  # Join them and remove the .db extension
@@ -277,13 +256,8 @@ def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search
             storage_name = "sqlite:///{}/{}".format(folderpath, filename)  # Define the storage name using the file path and name
             study = optuna.create_study(study_name=study_name, storage=storage_name, load_if_exists=True)  # Load the study from the file
             best_trial = study.best_trial
-            
-            # # Load the corresponding search space from a file
-            # with open('{folderpath}\\search_space_{time}.json'.format(folderpath=folderpath, time=time), 'r') as f:
-            #     search_space = json.load(f)            
-            
+
             # # Check if the search space contains the filtered key-value pair
-            #if filter_search_space is None or not IsSearchSpaceIsSubset(filter_search_space, best_trial.params):
             # otherwise Skip this search space and move to the next one
             
             # Print the best hyperparameters and the best objective value                
@@ -301,19 +275,10 @@ def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search
                 #plot
                 plt.figure(dpi=1200)
                 # Plot the hyperparameter search space
-                #fig = optuna.visualization.plot_parallel_coordinate(study)
-                #fig.show()
-                #Plot the parameter relationship as slice plot in a study.
-                optuna.visualization.plot_slice(study, params=list(search_space.keys())).show(renderer="browser")
-    
-    default_folder = '{folderpath}\\default_search_space.json'.format(folderpath=folderpath)
-    if os.path.isfile(default_folder):
-        # load the default search space if it exist
-        with open(default_folder, 'r') as f:
-            default_parameter = json.load(f)
-            
-                
-    optimal_search_space = optimal_trial.params #MergeSearchSpace(optimal_trial.params, default_parameter)
+                fig = optuna.visualization.plot_parallel_coordinate(study)
+                fig.show()
+
+    optimal_search_space = optimal_trial.params
             
     print('Optimal Hyperparameters:')
     for name, value in optimal_search_space.items():
@@ -322,57 +287,6 @@ def GetOptimalParameter(folderpath = 'Hyperparameteroptimization', filter_search
     print('Mean Objective Value: {}'.format(np.mean(errors)))
     print('Deviation Objective Value: {}'.format(np.std(errors)))
     return optimal_search_space
-
-def IsSearchSpaceIsSubset(filter_search_space, search_space):
-    """
-    Checks if the filter_search_space is a subset of the search_space.
-    
-    Parameters
-    ----------
-    filter_search_space : dict
-        The filter criteria for the search space.
-    search_space : dict
-        The search space to be checked.
-    
-    Returns
-    -------
-    bool
-        True if filter_search_space is a subset of search_space, False otherwise.
-    """
-    is_subset = True
-    for key, value in filter_search_space.items():
-        if key not in search_space or not all(item in search_space[key] for item in value):
-            is_subset = False
-            break
-    return is_subset 
-
-def MergeSearchSpace(optimal_trial, default_parameter):
-    """
-    Merges the optimal trial parameters with the default parameters.
-
-    Parameters
-    ----------
-    optimal_trial : dict
-        The optimal trial parameters.
-    default_parameter : dict
-        The default parameters.
-
-    Returns
-    -------
-    dict
-        The merged search space.
-    """
-    # Create a copy of optimal_trial to avoid modifying it directly
-    combined_trial = optimal_trial.copy()
-    
-    # Update the combined_trial dictionary with keys and values from default_trial
-    # that are not already in combined_trial
-    for key, value in default_parameter.items():
-        if key not in combined_trial:
-            combined_trial[key] = value
-
-    # Now combined_trial contains all entries from optimal_trial and any missing entries from default_trial
-    return combined_trial
 
 # Schreibt den übergeben search_space in eine default datei
 def WriteAsDefault(folderpath, search_space):

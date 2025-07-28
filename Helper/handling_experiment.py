@@ -14,7 +14,6 @@ from sklearn.metrics import mean_absolute_error
 import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
-import Models.model_physical as mphys
 from matplotlib.colors import LinearSegmentedColormap
 
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
@@ -513,7 +512,7 @@ class PredictionPlotter(BasePlotter):
                     ax.plot(
                         t,
                         mean_pred,
-                        label=f"{model} ({dataset})"
+                        label=f"{model} ({dataset})", alpha=0.8
                     )
                     # Bestimme die Minimal- und Maximalwerte für die y-Achse
                     current_min = np.min(mean_pred - 4 * std_pred)
@@ -522,11 +521,6 @@ class PredictionPlotter(BasePlotter):
                         y_min = current_min
                     if current_max > y_max:
                         y_max = current_max
-
-            if -8 > y_min:
-                y_min = -8
-            if 8 < y_max:
-                y_max = 8
 
             ax.set_title(f"Predictions vs GroundTruth for {datapath}")
             ax.set_xlabel("Time")
@@ -538,108 +532,6 @@ class PredictionPlotter(BasePlotter):
             filename = f"predictions_vs_groundtruth_{datapath.replace('/', '_')}.png"
             plot_path = self.save_plot(fig, filename)
             plot_paths.append(plot_path)
-
-        return plot_paths
-
-class PredictionPlotterPerModel(BasePlotter):
-    """Erstellt Plots mit GroundTruth und Vorhersagen für jeden DataPath und jedes Modell"""
-
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        plot_paths = []
-        datapaths = df['DataPath'].unique()
-
-        for datapath in datapaths:
-            df_subset = df[df['DataPath'] == datapath]
-            datasets = df_subset['DataSet'].unique()
-            models = df_subset['Model'].unique()
-            ground_truth = df_subset['GroundTruth'].iloc[0]
-
-            for model in models:
-                fig, ax = plt.subplots(figsize=(10, 6))
-
-                # Plot GroundTruth
-                ax.plot(ground_truth, label='GroundTruth', color='black', linewidth=2)
-
-                # Plot Vorhersagen für das aktuelle Modell und jedes Dataset
-                for dataset in datasets:
-                    predictions_data = df_subset[(df_subset['Model'] == model) & (df_subset['DataSet'] == dataset)]
-                    if not predictions_data.empty:
-                        row = df_subset[
-                            (df_subset['Model'] == model) &
-                            (df_subset['DataSet'] == dataset)
-                            ].iloc[0]
-
-                        # angenommen: hier steckt ein Array der Form (n_runs, time)
-                        preds_list = np.array(row['Predictions'])
-
-                        # Mittelwert und Standardabweichung über die Runs
-                        mean_pred = preds_list.mean(axis=0)
-                        std_pred = preds_list.std(axis=0)
-
-                        t = np.arange(len(mean_pred))
-                        # Konfidenzband
-                        ax.fill_between(
-                            t,
-                            mean_pred - std_pred,
-                            mean_pred + std_pred,
-                            alpha=0.3
-                        )
-                        # Mittelwertkurve
-                        ax.plot(
-                            t,
-                            mean_pred,
-                            label=f"{model} ({dataset})"
-                        )
-                    else:
-                        print(f"No predictions found for model {model} and dataset {dataset}")
-
-                ax.set_title(f"Predictions vs GroundTruth for {datapath} and {model}")
-                ax.set_xlabel("Time")
-                ax.set_ylabel("Value")
-                ax.legend()
-                plt.tight_layout()
-
-                filename = f"predictions_vs_groundtruth_{datapath.replace('/', '_')}_{model}.png"
-                plot_path = self.save_plot(fig, filename)
-                plot_paths.append(plot_path)
-
-        return plot_paths
-
-class PredictionPlotterPerDataset(BasePlotter):
-    """Erstellt Plots mit GroundTruth und Vorhersagen für jeden DataPath und jedes DataSet"""
-
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        plot_paths = []
-        datasets = df['DataSet'].unique()
-
-        for dataset in datasets:
-            df_subset = df[df['DataSet'] == dataset]
-            datapaths = df_subset['DataPath'].unique()
-
-            for datapath in datapaths:
-                df_datapath = df_subset[df_subset['DataPath'] == datapath]
-                models = df_datapath['Model'].unique()
-                ground_truth = df_datapath['GroundTruth'].iloc[0]
-
-                fig, ax = plt.subplots(figsize=(10, 6))
-
-                # Plot GroundTruth
-                ax.plot(ground_truth, label='GroundTruth', color='black', linewidth=2)
-
-                # Plot Vorhersagen für jedes Modell
-                for model in models:
-                    predictions = df_datapath[df_datapath['Model'] == model]['Prediction'].iloc[0]
-                    ax.plot(predictions, label=model)
-
-                ax.set_title(f"Predictions vs GroundTruth for {dataset} and {datapath}")
-                ax.set_xlabel("Time")
-                ax.set_ylabel("Value")
-                ax.legend()
-                plt.tight_layout()
-
-                filename = f"predictions_vs_groundtruth_{dataset}_{datapath.replace('/', '_')}.png"
-                plot_path = self.save_plot(fig, filename)
-                plot_paths.append(plot_path)
 
         return plot_paths
 
@@ -696,142 +588,6 @@ class MAEPlotterGeometry(BasePlotter):
                             f'{datapath} {dataset} {model} mae'
                         )
                         filename = f"MAE_Geometry_{datapath.replace('/', '_')}_{dataset}_{model}.png"
-                        plot_path = self.save_plot(fig, filename)
-                        plot_paths.append(plot_path)
-                    else:
-                        print(f"No predictions found for model {model} and dataset {dataset}")
-        return plot_paths
-
-class MAEPlotterForce(BasePlotter):
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        plot_paths = []
-        datapaths = df['DataPath'].unique()
-
-        for datapath in datapaths:
-            df_subset = df[df['DataPath'] == datapath]
-
-            datasets = df_subset['DataSet'].unique()
-            models = df_subset['Model'].unique()
-            ground_truth = np.array(df_subset['GroundTruth'].iloc[0])
-
-            # Plot Vorhersagen für das aktuelle Modell und jedes Dataset
-            for dataset in datasets:
-                for model in models:
-                    predictions_data = df_subset[(df_subset['Model'] == model) & (df_subset['DataSet'] == dataset)]
-                    if not predictions_data.empty:
-                        row = df_subset[
-                            (df_subset['Model'] == model) &
-                            (df_subset['DataSet'] == dataset)
-                            ].iloc[0]
-
-                        preds_list = np.array(row['Predictions'])
-                        raw_data_dict = row['RawData']
-                        data_geometry = reconstruct_raw_data(raw_data_dict)
-
-                        key_x_data = 'f_x_sim'
-                        key_y_data = 'f_y_sim'
-                        # Überprüfen, ob benötigte Spalten existieren
-                        if key_x_data not in data_geometry.columns or key_y_data not in data_geometry.columns:
-                            print(
-                                f"Required columns '{key_x_data}' or '{key_y_data}' not found in RawData for {datapath}, {dataset}, {model}")
-                            print(f"Available columns: {data_geometry.columns.tolist()}")
-                            continue
-
-                        # Mittelwert und Standardabweichung über die Runs
-                        mean_pred = preds_list.mean(axis=0)
-                        std_pred = preds_list.std(axis=0)
-                        mae = np.abs(mean_pred.squeeze() - ground_truth.squeeze())
-
-                        # Längen-Check für Sicherheit
-                        min_length = min(len(data_geometry), len(mae))
-                        if min_length < len(data_geometry):
-                            print(f"Warning: Truncating data to length {min_length} for {datapath}, {dataset}, {model}")
-                            data_geometry = data_geometry.iloc[:min_length]
-                            mae = mae[:min_length]
-
-                        # Plot mit Farbe
-                        fig = plot_2d_with_color(
-                            data_geometry[key_x_data].values,
-                            data_geometry[key_y_data].values,
-                            mae,
-                            f'{datapath} {dataset} {model} mae',
-                            xlabel=key_x_data,
-                            ylabel=key_y_data
-                        )
-                        filename = f"MAE_Force_{datapath.replace('/', '_')}_{dataset}_{model}.png"
-                        plot_path = self.save_plot(fig, filename)
-                        plot_paths.append(plot_path)
-                    else:
-                        print(f"No predictions found for model {model} and dataset {dataset}")
-        return plot_paths
-
-class MAEPlotterMRR(BasePlotter):
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        plot_paths = []
-        datapaths = df['DataPath'].unique()
-
-        for datapath in datapaths:
-            df_subset = df[df['DataPath'] == datapath]
-
-            datasets = df_subset['DataSet'].unique()
-            models = df_subset['Model'].unique()
-            ground_truth = np.array(df_subset['GroundTruth'].iloc[0])
-
-            # Plot Vorhersagen für das aktuelle Modell und jedes Dataset
-            for dataset in datasets:
-                for model in models:
-                    predictions_data = df_subset[(df_subset['Model'] == model) & (df_subset['DataSet'] == dataset)]
-                    if not predictions_data.empty:
-                        row = df_subset[
-                            (df_subset['Model'] == model) &
-                            (df_subset['DataSet'] == dataset)
-                            ].iloc[0]
-
-                        preds_list = np.array(row['Predictions'])
-                        raw_data_dict = row['RawData']
-                        data_geometry = reconstruct_raw_data(raw_data_dict)
-
-                        key_x_data = 'materialremoved_sim'
-                        # Überprüfen, ob benötigte Spalten existieren
-                        if key_x_data not in data_geometry.columns:
-                            print(
-                                f"Required columns '{key_x_data}' not found in RawData for {datapath}, {dataset}, {model}")
-                            print(f"Available columns: {data_geometry.columns.tolist()}")
-                            continue
-
-                        # Mittelwert und Standardabweichung über die Runs
-                        mean_pred = preds_list.mean(axis=0)
-                        std_pred = preds_list.std(axis=0)
-                        mae = np.abs(mean_pred.squeeze() - ground_truth.squeeze())
-
-                        # Längen-Check für Sicherheit
-                        min_length = min(len(data_geometry), len(mae))
-                        if min_length < len(data_geometry):
-                            print(f"Warning: Truncating data to length {min_length} for {datapath}, {dataset}, {model}")
-                            data_geometry = data_geometry.iloc[:min_length]
-                            mae = mae[:min_length]
-
-                        fig, ax = plt.subplots(figsize=(10, 6))
-
-                        mrr = data_geometry[key_x_data].values
-                        # Mittelwertkurve
-                        sc = ax.scatter(
-                            mrr,
-                            mae,
-                            label=f"{model} ({dataset})", s=5,
-                            c=ground_truth, cmap='viridis'
-                        )
-
-                        ax.set_title(f"MAE vs MRR for {datapath} and {model}")
-                        ax.set_xlabel("MRR")
-                        ax.set_ylabel("MAE")
-                        ax.legend()
-                        plt.tight_layout()
-
-                        # Hinzufügen einer Farbskala
-                        plt.colorbar(sc, label='ground truth')
-
-                        filename = f"MAE_MRR_{datapath.replace('/', '_')}_{dataset}_{model}.png"
                         plot_path = self.save_plot(fig, filename)
                         plot_paths.append(plot_path)
                     else:
@@ -921,11 +677,7 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
     plot_manager.register_plotter('heatmap', HeatmapPlotter(plots_dir))
     plot_manager.register_plotter('model_heatmap', ModelHeatmapPlotter(plots_dir))
     plot_manager.register_plotter('prediction_overview', PredictionPlotter(plots_dir))
-    plot_manager.register_plotter('prediction_model', PredictionPlotterPerModel(plots_dir))
-    plot_manager.register_plotter('prediction_dataset', PredictionPlotterPerDataset(plots_dir))
     plot_manager.register_plotter('geometry_mae', MAEPlotterGeometry(plots_dir))
-    plot_manager.register_plotter('force_mae', MAEPlotterForce(plots_dir))
-    plot_manager.register_plotter('mrr_mae', MAEPlotterMRR(plots_dir))
     # Plots erstellen
     plot_paths = plot_manager.create_all_plots(df, plot_types)
 
@@ -968,50 +720,50 @@ def debug_results_structure(results: List):
     print(f"Unique models found: {sorted(models)}")
     print("=== END DEBUG ===\n")
 
-def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
-                   NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, window_size=10,
-                   past_values=2, future_values=2, batched_data=False,
-                   n_drop_values=20, patience=5, plot_types=None, use_phys_reference=False,
+# In calculate_and_store_results Funktion:
+def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
+                                raw_data):  # dataSets Parameter hinzufügen
+    """
+    Calculate MAE and standard deviation, and store the results.
+    """
+    for j, path in enumerate(dataClass.testing_data_paths):
+        name = model.name + "_" + path.replace('.csv', '')
+
+        mse_nn, std_nn, mae_ensemble = calculate_mae_and_std(nn_preds[j],
+                                                                   y_test[j].values if isinstance(y_test[j],
+                                                                                                  pd.DataFrame) else
+                                                                   y_test[j])
+
+        predictions = []
+        for pred in nn_preds[j]:
+            predictions.append(pred.tolist())
+
+        # Raw data als Dictionary speichern (JSON-serialisierbar)
+        raw_data_dict = {
+            'columns': raw_data[j].columns.tolist(),
+            'data': raw_data[j].to_dict('records')  # Als Liste von Dictionaries
+        }
+
+        # Ergebnisse speichern mit raw_data
+        df_list_results[j][name] = np.mean(nn_preds[j], axis=0)
+        results.append([
+            dataClass.name,  # dataClass
+            path.replace('.csv', ''),  # DataPath
+            model.name,  # Model
+            mse_nn,  # MAE
+            std_nn,  # StdDev
+            mae_ensemble,
+            predictions,
+            y_test[j].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j].tolist(),
+            raw_data_dict  # RawData als Dictionary
+        ])
+        header_list[j].append(name)
+
+
+def run_experiment(dataSets, models,
+                   NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, batched_data=False,
+                   patience=5, plot_types=None,
                    experiment_name = 'Experiment'):
-    # In calculate_and_store_results Funktion:
-    def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
-                                    n_drop_values, raw_data):  # dataSets Parameter hinzufügen
-        """
-        Calculate MAE and standard deviation, and store the results.
-        """
-        for j, path in enumerate(dataClass.testing_data_paths):
-            name = model.name + "_" + path.replace('.csv', '')
-
-            mse_nn, std_nn, mae_ensemble = hdata.calculate_mae_and_std(nn_preds[j],
-                                                                       y_test[j].values if isinstance(y_test[j],
-                                                                                                      pd.DataFrame) else
-                                                                       y_test[j], n_drop_values)
-
-            predictions = []
-            for pred in nn_preds[j]:
-                predictions.append(pred[n_drop_values:-n_drop_values].tolist())
-
-            # Raw data als Dictionary speichern (JSON-serialisierbar)
-            raw_data_dict = {
-                'columns': raw_data[j].columns.tolist(),
-                'data': raw_data[j].iloc[n_drop_values:-n_drop_values].to_dict('records')  # Als Liste von Dictionaries
-            }
-
-            # Ergebnisse speichern mit raw_data
-            df_list_results[j][name] = np.mean(nn_preds[j], axis=0)
-            results.append([
-                dataClass.name,  # dataClass
-                path.replace('.csv', ''),  # DataPath
-                model.name,  # Model
-                mse_nn,  # MAE
-                std_nn,  # StdDev
-                mae_ensemble,
-                predictions,
-                y_test[j].iloc[n_drop_values:-n_drop_values].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j][
-                                                                                                            n_drop_values:-n_drop_values].tolist(),
-                raw_data_dict  # RawData als Dictionary
-            ])
-            header_list[j].append(name)
 
     if type(dataSets) is not list:
         dataSets = [dataSets]
@@ -1020,7 +772,7 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
 
     # Create directory for results
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    results_dir = os.path.join(experiment_name, timestamp)
+    results_dir = experiment_name +'-'+ timestamp
     results_dir = os.path.join('Results', results_dir)
     os.makedirs(results_dir, exist_ok=True)
 
@@ -1029,26 +781,10 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
         "DataSets": [],
         "Models": [],
         "Data_Preprocessing": {
-            "window_size": window_size,
-            "past_values": past_values,
-            "future_values": future_values,
             "batched_data": batched_data,
-            "n_drop_values": n_drop_values,
             "NUMBEROFEPOCHS": NUMBEROFEPOCHS,
         }
     }
-
-    # Define reference models
-    reference_models = []
-    if use_nn_reference:
-        model_nn = mnn.get_reference()
-        reference_models.append(model_nn)
-    if use_rf_reference:
-        model_rf = mrf.get_reference()
-        reference_models.append(model_rf)
-    if use_phys_reference:
-        model = mphys.get_reference()
-        reference_models.append(model)
 
     # Add datasets to meta information
     for data_params in dataSets:
@@ -1060,7 +796,6 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
     """ Prediction """
     results = []
     models_copy = copy.deepcopy(models)
-    reference_models_copy = copy.deepcopy(reference_models)
     for i, dataClass in enumerate(dataSets):
         print(f"\n===== Verarbeitung: {dataClass.name} =====")
         # Daten laden
@@ -1072,35 +807,10 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
         else:
             df_list_results = [pd.DataFrame()]
             header_list = []
-
-        # Train and test reference models
-        for idx, model in enumerate(reference_models):
-            # Modellvergleich auf neuen Daten
-            nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
-
-            for _ in range(NUMBEROFMODELS):
-                model = reference_models_copy[idx]
-                model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=patience)
-                if isinstance(X_test, list):
-                    for i, (x, y) in enumerate(zip(X_test, y_test)):
-                        mse, pred_nn = model.test_model(x, y)
-                        nn_preds[i].append(pred_nn.flatten())
-                        print(f"{model.name}: Test MAE: {mse}")
-                else:
-                    mse, pred_nn = model.test_model(X_test, y_test)
-                    nn_preds.append(pred_nn.flatten())
-                    print(f"{model.name}: Test MAE: {mse}")
-                reference_models[idx] = model
-
             # Fehlerberechnung
             calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
-                                        n_drop_values, raw_data)
+                                        raw_data)
 
-        if len(reference_models) > 0:
-            criterion = reference_models[0].criterion
-        else:
-            criterion = None
         # Train and test models
         for idx, model in enumerate(models):
             # Modellvergleich auf neuen Daten
@@ -1136,21 +846,9 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
                 models[idx] = model # save for documentation
             # Fehlerberechnung
             calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
-                                        n_drop_values, raw_data)
-
-    #debug_results_structure(results)
-
+                                        raw_data)
 
     # After training to include learned parameters
-    # Add reference models to meta information
-    for model in reference_models:
-        model_info = {
-            model.name: {
-                "NUMBEROFMODELS": NUMBEROFMODELS,
-                **model.get_documentation()
-            },
-        }
-        meta_information["Models"].append(model_info)
     # Add models to meta information
     for model in models:
         model_info = {
@@ -1289,6 +987,30 @@ def run_experiment(dataSets, use_nn_reference, use_rf_reference, models,
         'documentation': documentation,
         'plot_paths': plot_paths
     }
+
+def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, center_data = False):
+    mae_values = []
+
+    for pred in predictions_list:
+        # Werte kürzen
+        pred_trimmed = pred[n_drop_values:-n_drop_values]
+        true_trimmed = true_values[n_drop_values:-n_drop_values]
+
+        if center_data:
+            # Zentrierung
+            mean = np.mean(true_trimmed)
+            pred_centered = pred_trimmed - mean
+            true_centered = true_trimmed - mean
+        else:
+            pred_centered = pred_trimmed
+            true_centered = true_trimmed
+
+        mae = np.mean(np.abs(pred_centered.squeeze() - true_centered.squeeze()))
+        mae_values.append(mae)
+    pred_mean = np.mean(predictions_list, axis=0)
+    mae_ensemble = np.mean(np.abs(pred_mean.squeeze() - true_values.squeeze()))
+
+    return np.mean(mae_values), np.std(mae_values), mae_ensemble
 
 def save_detailed_csv(df, results_dir):
     """

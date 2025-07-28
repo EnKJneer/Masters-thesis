@@ -6,10 +6,7 @@ import torch.jit
 import torch.nn as nn
 import torch.nn.functional as F
 from matplotlib import pyplot as plt
-from numpy.f2py.auxfuncs import throw_error
-from sklearn.preprocessing import QuantileTransformer
 from abc import ABC, abstractmethod
-import Models.model_physical as mphys
 import Models.model_base as mb
 import Models.model_neural_net as mnn
 
@@ -38,7 +35,7 @@ class AbstractGating(nn.Module, ABC):
         pass
 
 # Abstrakte Klasse für das gesamte Modell
-class AbstractMoEModel(mb.BaseNetModel, ABC):
+class AbstractMoEModel(mb.BaseTorchModel, ABC):
     def __init__(self, *args, **kwargs):
         penalty_balance = kwargs.pop('penalty_balance', None)  # Remove 'penalty_balance' from kwargs
 
@@ -375,7 +372,7 @@ class NaiveMoE(AbstractMoEModel):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
 
-class MoEGatingBased(mb.BaseNetModel):
+class MoEGatingBased(mb.BaseTorchModel):
     def __init__(self, input_size=None, output_dim=1, n_experts=10, learning_rate=0.001, name="MoEGatingBased", optimizer_type='adam'):
         super(MoEGatingBased, self).__init__(input_size=input_size, output_size=output_dim, name=name, learning_rate=learning_rate, optimizer_type=optimizer_type)
         self.experts = nn.ModuleList([mnn.Net(input_size, output_dim) for _ in range(n_experts)])
@@ -478,7 +475,7 @@ class MoiraiMoEBlock(nn.Module):
 
         return final_output
 
-class MoiraiMoEModel(mb.BaseNetModel):
+class MoiraiMoEModel(mb.BaseTorchModel):
     """
     Based on: Moirai-MoE: Empowering Time Series Foundation Models with Sparse Mixture of Experts, Liu 2024 https://arxiv.org/abs/2410.10469
     Simplified and adapted for this setting

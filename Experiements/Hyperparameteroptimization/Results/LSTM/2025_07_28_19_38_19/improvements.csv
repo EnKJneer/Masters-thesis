@@ -1,0 +1,13 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,LSTM,LSTM_TPESampler,-31.19589251265688
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,LSTM,LSTM_RandomSampler,-26.939724366978563
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,LSTM,LSTM_GridSampler,-16.162181118138268
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,LSTM,LSTM_TPESampler,-47.419741315578264
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,LSTM,LSTM_RandomSampler,-40.33113525197018
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,LSTM,LSTM_GridSampler,-28.207221102961675
+ST_Plate_Notch,S235JR_Gear_Normal_3,LSTM,LSTM_TPESampler,39.698023354642295
+ST_Plate_Notch,S235JR_Gear_Normal_3,LSTM,LSTM_RandomSampler,39.250014268835024
+ST_Plate_Notch,S235JR_Gear_Normal_3,LSTM,LSTM_GridSampler,37.04787213000375
+ST_Plate_Notch,S235JR_Plate_Normal_3,LSTM,LSTM_TPESampler,19.205159996755896
+ST_Plate_Notch,S235JR_Plate_Normal_3,LSTM,LSTM_RandomSampler,19.3285431807817
+ST_Plate_Notch,S235JR_Plate_Normal_3,LSTM,LSTM_GridSampler,19.668910399317994
