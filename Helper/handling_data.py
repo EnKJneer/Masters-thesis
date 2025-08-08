@@ -42,6 +42,7 @@ class BaseDataClass(ABC):
         self.testing_data_paths = testing_data_paths
 
         self.add_padding = add_padding
+
     @staticmethod
     def create_padding(df, length=10):
         """
@@ -124,6 +125,7 @@ class BaseDataClass(ABC):
             X_val = pd.concat(all_X_val).reset_index(drop=True)
             y_train = pd.concat(all_y_train).reset_index(drop=True)
             y_val = pd.concat(all_y_val).reset_index(drop=True)
+
 
         return X_train, X_val, X_test, y_train, y_val, y_test
 
@@ -224,6 +226,8 @@ class DataClass(BaseDataClass):
         self.filter_order = 4
 
         self.add_sign_hold = False
+        self.add_sign_y = False
+        self.columns_to_integrate = []
 
     def butter_lowpass(self, cutoff, order, nyq_freq=25):
         normal_cutoff = cutoff / nyq_freq
@@ -269,28 +273,34 @@ class DataClass(BaseDataClass):
 
         return output
 
-    def load_data_from_path(self, data_paths):
+    def integrate_columns(self, data):
         """
-        Loads and preprocesses data from given paths.
-
+        Integriert die Spalten in data, falls sie in columns_to_integrate vorhanden sind.
         Parameters
         ----------
-        data_paths : list
-            List of paths to the data files.
-
+        data : pd.DataFrame
+            DataFrame mit den zu integrierenden Spalten.
         Returns
         -------
-        tuple
-            X, Y: Preprocessed data and targets.
+        pd.DataFrame
+            DataFrame mit den integrierten Spalten.
         """
+        for column in self.columns_to_integrate:
+            if column in data.columns:
+                data[column] = data[column].cumsum()
+                print(f'{column} integrated')
+        return data
 
-        # Load data
+    def load_data_from_path(self, data_paths):
         fulldatas = read_fulldata(data_paths, self.folder)
+        datas = apply_action(fulldatas,
+                             lambda data: data[self.header].rolling(window=self.window_size, min_periods=1).mean())
 
+        if self.columns_to_integrate:
+            datas = apply_action(datas, lambda data: self.integrate_columns(data))
 
-        datas = apply_action(fulldatas, lambda data: data[self.header].rolling(window=self.window_size, min_periods=1).mean())
-
-        X = apply_action(datas, lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
+        X = apply_action(datas,
+                         lambda data: create_full_ml_vector_optimized(self.past_values, self.future_values, data))
         targets = apply_action(fulldatas, lambda data: data[self.target_channels])
         Y = apply_action(targets, lambda target: target.rolling(window=self.window_size, min_periods=1).mean())
 
@@ -300,6 +310,13 @@ class DataClass(BaseDataClass):
 
         if self.add_sign_hold:
             X = apply_action(X, lambda data: self.add_z_to_data(data))
+
+        if self.add_sign_y:
+            # Add the sign of the previous y value as a new column in x
+            for x_df, y_df in zip(X, Y):
+                for col in y_df.columns:
+                    y_col_sign = f"{col}_sign"
+                    x_df[y_col_sign] = y_df[col].shift(1).apply(lambda x: 0 if pd.isna(x) else x).fillna(0)
 
         if self.past_values + self.future_values != 0:
             Y = apply_action(Y, lambda target: target.iloc[self.past_values:-self.future_values])
@@ -335,6 +352,14 @@ class DataClass(BaseDataClass):
         return self.prepare_output(X_train, X_val, X_test, y_train, y_val, y_test)
 
     def get_documentation(self):
+        """
+        Gibt eine Dokumentation der Klasse als Dictionary zurück.
+
+        Returns
+        -------
+        dict
+            Ein Dictionary mit den serialisierbaren Attributen der Klasse.
+        """
         documentation = {
             "name": self.name,
             "folder": self.folder,
@@ -342,7 +367,9 @@ class DataClass(BaseDataClass):
             "validation_data_paths": self.validation_data_paths,
             "testing_data_paths": self.testing_data_paths,
             "target_channels": self.target_channels,
-            'input_features': self.header,
+            'input_features': list(self.header) if hasattr(self, 'header') else None,
+            'add_sign_hold': self.add_sign_hold,
+            'columns_to_integrate': list(self.columns_to_integrate) if hasattr(self, 'columns_to_integrate') else None
         }
         return documentation
 
@@ -365,7 +392,7 @@ DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
                                              ["curr_x"],
                                      header = HEADER_x)
 
-DataClassV3_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_data,
+DataClass_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_data,
                                     ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv',
                                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
@@ -375,7 +402,7 @@ DataClassV3_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_
                                              dataPaths_Test,
                                              ["curr_x"], header = HEADER_x)
 
-DataClassV3_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
+DataClass_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
                                                ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv',
                                                 'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv',
                                                 'S235JR_Notch_Depth_3.csv'],
@@ -387,7 +414,7 @@ DataClassV3_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
                                              [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
                                              ["curr_x"], header = HEADER_x)
 
-DataClassV3_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_data,
+DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_data,
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 

@@ -1,0 +1,13 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,GRU,GRU_TPESampler,-16.743234489650362
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,GRU,GRU_RandomSampler,30.316181093108412
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,GRU,GRU_GridSampler,8.74334712586293
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,GRU,GRU_TPESampler,-28.346984093309253
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,GRU,GRU_RandomSampler,18.510856824928055
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,GRU,GRU_GridSampler,0.15252289300152713
+ST_Plate_Notch,S235JR_Gear_Normal_3,GRU,GRU_TPESampler,40.10168683118366
+ST_Plate_Notch,S235JR_Gear_Normal_3,GRU,GRU_RandomSampler,41.251332476585674
+ST_Plate_Notch,S235JR_Gear_Normal_3,GRU,GRU_GridSampler,42.94812231402631
+ST_Plate_Notch,S235JR_Plate_Normal_3,GRU,GRU_TPESampler,28.20521107099004
+ST_Plate_Notch,S235JR_Plate_Normal_3,GRU,GRU_RandomSampler,27.12725180174967
+ST_Plate_Notch,S235JR_Plate_Normal_3,GRU,GRU_GridSampler,28.79481597727243

@@ -144,7 +144,7 @@ class BaseTorchModel(BaseModel, nn.Module):
             # Falls numpy array oder anderes
             return torch.tensor(data, dtype=torch.float32).to(self.device)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=10, draw_loss=False, epsilon=0.00005,
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience_stop=10, patience_lr=3, draw_loss=False, epsilon=0.00005,
                     trial=None, n_outlier=12, reset_parameters=True):
 
         # Prüfen, ob Inputs Listen sind
@@ -168,17 +168,16 @@ class BaseTorchModel(BaseModel, nn.Module):
         if flag_initialization or reset_parameters: #
             self._initialize()
 
-        if self.optimizer_type.lower() == 'adam' or self.optimizer_type.lower() == 'sgd':
+        if self.optimizer_type.lower() == 'adam':
             optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
+        elif self.optimizer_type.lower() == 'sgd':
+            optimizer = optim.SGD(self.parameters(), lr=self.learning_rate)
         elif self.optimizer_type.lower() == 'quasi_newton':
             optimizer = optim.LBFGS(self.parameters(), lr=self.learning_rate, max_iter=20, history_size=10)
-            patience = 4
         else:
             raise ValueError(f"Unknown optimizer_type: {self.optimizer_type}")
 
-        if patience < 4:
-            patience = 4
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=patience_lr)
 
         if draw_loss:
             loss_vals, epochs, loss_train = [], [], []
@@ -189,6 +188,7 @@ class BaseTorchModel(BaseModel, nn.Module):
 
         best_val_error = float('inf')
         patience_counter = 0
+        best_model_state = self.state_dict()
 
         for epoch in range(n_epochs):
             self.train()
@@ -265,7 +265,7 @@ class BaseTorchModel(BaseModel, nn.Module):
 
             scheduler.step(avg_val_loss)
 
-            if patience_counter >= patience:
+            if patience_counter >= patience_stop:
                 print(f"Early stopping at epoch {epoch + 1}")
                 break
 

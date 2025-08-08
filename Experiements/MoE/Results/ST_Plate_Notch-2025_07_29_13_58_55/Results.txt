@@ -1,0 +1,20 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | MemoryEnhancedMoE | 0.397757 | 0.075134
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | MemoryEnhancedMoE | 0.313715 | 0.060407
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | MemoryEnhancedMoE | 0.221076 | 0.035346
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | MemoryEnhancedMoE | 0.181613 | 0.043841
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

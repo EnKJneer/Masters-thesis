@@ -1,0 +1,99 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Friction_Model": {
+                "NUMBEROFMODELS": 10,
+                "description": "This model fits a two-stage friction model: stillstand and movement.",
+                "parameters": {
+                    "name": "Friction_Model",
+                    "velocity_threshold": 0.1,
+                    "F_s": -0.2944908317411948,
+                    "a_x": -0.001038613436407869,
+                    "a_sp": 0,
+                    "b": -1.6672484392183176e-06,
+                    "F_c": -0.5012328913916552,
+                    "sigma_2": -0.007486603265982068,
+                    "a_b": -0.005035015236158804
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 800
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\ST_Plate_Notch-2025_07_29_17_43_23\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\ST_Plate_Notch-2025_07_29_17_43_23\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_07_29_17_43_23\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_07_29_17_43_23\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_07_29_17_43_23\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [],
+        "Summary_Statistics": {
+            "Total_Experiments": 4,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "Friction_Model"
+            ],
+            "Best_Model_Overall": "Friction_Model",
+            "Worst_Model_Overall": "Friction_Model"
+        }
+    }
+}

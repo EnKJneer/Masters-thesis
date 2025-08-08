@@ -1,0 +1,217 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "GRU": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 13,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "adam"
+                }
+            }
+        },
+        {
+            "GRU_TPESampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.099515942700614,
+                    "n_hidden_size": 81,
+                    "n_hidden_layers": 2,
+                    "activation": "Tanh",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        },
+        {
+            "GRU_RandomSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.011152013057507286,
+                    "n_hidden_size": 73,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        },
+        {
+            "GRU_GridSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.1,
+                    "n_hidden_size": 100,
+                    "n_hidden_layers": 1,
+                    "activation": "Sigmoid",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "Epochs": 800
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\GRU\\2025_07_29_07_43_46\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\GRU\\2025_07_29_07_43_46\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\GRU\\2025_07_29_07_43_46\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\GRU\\2025_07_29_07_43_46\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\GRU\\2025_07_29_07_43_46\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "GRU",
+                "GRU_TPESampler",
+                -16.743234489650362
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "GRU",
+                "GRU_RandomSampler",
+                30.316181093108412
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "GRU",
+                "GRU_GridSampler",
+                8.74334712586293
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "GRU",
+                "GRU_TPESampler",
+                -28.346984093309253
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "GRU",
+                "GRU_RandomSampler",
+                18.510856824928055
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "GRU",
+                "GRU_GridSampler",
+                0.15252289300152713
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "GRU",
+                "GRU_TPESampler",
+                40.10168683118366
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "GRU",
+                "GRU_RandomSampler",
+                41.251332476585674
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "GRU",
+                "GRU_GridSampler",
+                42.94812231402631
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "GRU",
+                "GRU_TPESampler",
+                28.20521107099004
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "GRU",
+                "GRU_RandomSampler",
+                27.12725180174967
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "GRU",
+                "GRU_GridSampler",
+                28.79481597727243
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "GRU",
+                "GRU_TPESampler",
+                "GRU_RandomSampler",
+                "GRU_GridSampler"
+            ],
+            "Best_Model_Overall": "GRU_GridSampler",
+            "Worst_Model_Overall": "GRU_TPESampler"
+        }
+    }
+}
