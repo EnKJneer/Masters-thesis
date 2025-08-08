@@ -114,7 +114,6 @@ class ProcessState:
 
         return round(f_x, digits), round(f_y, digits), round(f_z, digits), round(f_sp, digits)
 
-
 def read_machine_state(data_path: str) -> pd.DataFrame:
     state_df = pd.read_csv(data_path, sep=';')
 

@@ -43,6 +43,7 @@ class ModelHeatmapPlotter(BasePlotter):
         self.kit_orange = "#FFC000"
         self.kit_blue = "#0C537E"
         self.kit_magenta = "#A3107C"
+        self.kit_dark_blue = "#002D4C"
 
         # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
         self.custom_cmap = LinearSegmentedColormap.from_list(
@@ -242,9 +243,20 @@ class ModelHeatmapPlotter(BasePlotter):
         """Formatiert die Zellenannotation mit MAE und Standardabweichung"""
         if pd.isna(mae_value) or pd.isna(std_value):
             return ""
-        if std_value == 0:
-            return f"{mae_value:.4f}"
-        return f"{mae_value:.4f}\n±{std_value:.4f}"
+        if std_value == 0 or std_value < 0.001:
+            return f"{mae_value:.3f}"
+        return f"{mae_value:.3f}\n±{std_value:.3f}"
+
+    def get_text_color_for_background(self, mae_value):
+        """Bestimmt die Textfarbe basierend auf dem Hintergrund (dunkel=weiß, hell=kit_dark_blue)"""
+        if pd.isna(mae_value):
+            return self.kit_dark_blue
+
+        # Bei Werten < 0.5 (dunkler Hintergrund) verwende kit_dark_blue, sonst weiß
+        if 0.1 < mae_value < 0.2:
+            return self.kit_dark_blue
+        else:
+            return 'white'
 
     def create_plots(self, folder_path: str, model_columns: list, **kwargs):
         """Erstellt für jedes Modell eine separate Heatmap mit MAE und Standardabweichung"""
@@ -283,13 +295,16 @@ class ModelHeatmapPlotter(BasePlotter):
             mae_pivot = mae_pivot.reindex(index=materials_ordered, columns=geometries_ordered)
             std_pivot = std_pivot.reindex(index=materials_ordered, columns=geometries_ordered)
 
-            # Annotations-Matrix erstellen
+            # Annotations-Matrix und Textfarben-Matrix erstellen
             annotations = np.empty(mae_pivot.shape, dtype=object)
+            text_colors = np.empty(mae_pivot.shape, dtype=object)
+
             for i in range(mae_pivot.shape[0]):
                 for j in range(mae_pivot.shape[1]):
                     mae_val = mae_pivot.iloc[i, j]
                     std_val = std_pivot.iloc[i, j]
                     annotations[i, j] = self.format_cell_annotation(mae_val, std_val)
+                    text_colors[i, j] = self.get_text_color_for_background(mae_val)
 
             # Heatmap erstellen
             fig, ax = plt.subplots(figsize=(14, 12))
@@ -297,6 +312,10 @@ class ModelHeatmapPlotter(BasePlotter):
 
             # Maske für NaN-Werte
             mask = mae_pivot.isna()
+
+            titlesize = 30
+            textsize = 28
+            labelsize = 25
 
             # Heatmap mit seaborn für bessere Optik
             sns.heatmap(
@@ -310,26 +329,45 @@ class ModelHeatmapPlotter(BasePlotter):
                 square=True,
                 vmin=0.04,  # Minimum-Wert für Colorbar
                 vmax=0.31,
-                linewidths=0.5,  # Linien zwischen Zellen
-                linecolor='gray',
-                annot_kws={'size': 16, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
+                linewidths=0.0,  # Linien zwischen Zellen
+                linecolor='white',
+                annot_kws={'size': textsize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
             )
 
+            # Textfarben für jede Zelle individuell setzen
+            for i in range(mae_pivot.shape[0]):
+                for j in range(mae_pivot.shape[1]):
+                    if not pd.isna(mae_pivot.iloc[i, j]):
+                        text = ax.texts[i * mae_pivot.shape[1] + j]
+                        text.set_color(text_colors[i, j])
+
             # Model-Name aufräumen
-            model_clean = model.replace('Plate_TrainVal_', '').replace('ST_Data_', '').replace('ST_Plate_Notch_', '').replace('_', ' ')
+            model_clean = model.replace('Plate_TrainVal_', '').replace('ST_Data_', '').replace('ST_Plate_Notch_',
+                                                                                               '').replace('_', ' ')
 
             # Titel und Labels mit größerer Schrift
-            ax.set_title(f'MAE Heatmap: {model_clean}', fontsize=22, fontweight='bold', pad=20)
-            ax.set_xlabel('Geometry', fontsize=20, fontweight='bold')
-            ax.set_ylabel('Material', fontsize=20, fontweight='bold')
+            ax.set_title(f'MAE Heatmap: {model_clean}', fontsize=titlesize, fontweight='bold', pad=20,
+                         color=self.kit_dark_blue)
+            ax.set_xlabel('Geometry', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
+            ax.set_ylabel('Material', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
 
-            # Achsenbeschriftungen vergrößern
-            ax.tick_params(axis='both', which='major', labelsize=18)
+            # Achsenbeschriftungen vergrößern und Farbe setzen
+            ax.tick_params(axis='both', which='major', labelsize=labelsize, colors=self.kit_dark_blue)
+
+            # Achsenbeschriftungen (Tick-Labels) explizit färben
+            for label in ax.get_xticklabels():
+                label.set_color(self.kit_dark_blue)
+            for label in ax.get_yticklabels():
+                label.set_color(self.kit_dark_blue)
 
             # Colorbar-Label vergrößern
             cbar = ax.collections[0].colorbar
-            cbar.set_label('MAE', fontsize=20, fontweight='bold')
-            cbar.ax.tick_params(labelsize=16)
+            cbar.set_label('MAE', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
+            cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
+
+            # Colorbar Tick-Labels explizit färben
+            for label in cbar.ax.get_yticklabels():
+                label.set_color(self.kit_dark_blue)
 
             plt.tight_layout()
 
@@ -346,14 +384,18 @@ class ModelHeatmapPlotter(BasePlotter):
 if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
-    folder = 'Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    #folder = 'Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
 
     known_material = 'S235JR'
     known_geometry = 'Plate'
 
     # Modelle definieren (Base-Namen ohne _seed_X)
     #models = ['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
-    models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
+    #models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
+    #models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
+    #models = ['ST_Data_Random_Forest']
+    models = ['ST_Data_Neural_Net']
 
     # Plotter erstellen
     plotter = ModelHeatmapPlotter(

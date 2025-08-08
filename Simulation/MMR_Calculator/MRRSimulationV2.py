@@ -30,13 +30,13 @@ def create_circle_mask(tool_radius_voxels: int) -> np.ndarray:
     return circle_mask
 
 
-def remove_material_at_position(workpiece: np.ndarray,
-                                pos_x: float, pos_y: float, pos_z: float,
-                                cut_depth: float,
-                                circle_mask: np.ndarray,
-                                part_position: np.ndarray,
-                                voxel_size: float,
-                                tool_radius_voxels: int) -> Tuple[np.ndarray, float]:
+def remove_material_at_position_old(workpiece: np.ndarray,
+                                    pos_x: float, pos_y: float, pos_z: float,
+                                    cut_depth: float,
+                                    circle_mask: np.ndarray,
+                                    part_position: np.ndarray,
+                                    voxel_size: float,
+                                    tool_radius_voxels: int) -> Tuple[np.ndarray, float]:
     """
     Entfernt Material an einer Werkzeugposition.
     Basiert auf der static_mill_path Logik.
@@ -252,6 +252,87 @@ class SimpleCNCMRRSimulation:
 
     def process_segment(self, segment: MillingSegment,
                         workpiece: np.ndarray) -> Tuple[np.ndarray, float, List[float]]:
+        total_removed = 0.0
+        current_workpiece = workpiece.copy()
+        removed_voxels_per_point = np.zeros(len(segment.positions))  # Nutzung von NumPy Array für bessere Performance
+
+        for i, (position, cut_depth) in enumerate(zip(segment.positions, segment.cut_depths)):
+            pos_x, pos_y, pos_z = position
+            current_workpiece, removed = self.remove_material_at_position(
+                current_workpiece,
+                pos_x, pos_y, pos_z, cut_depth,
+                self.circle_mask,
+                self.part_position,
+                self.voxel_size,
+                self.tool_radius_voxels
+            )
+            removed_voxels_per_point[i] = removed
+            total_removed += removed
+            status = i / len(segment.positions) * 100
+            print(f'Status: {status:.2f}% Removed: {removed:.2f}')
+
+        return current_workpiece, total_removed, removed_voxels_per_point.tolist()
+
+    @staticmethod
+    def remove_material_at_position(workpiece: np.ndarray,
+                                    pos_x: float, pos_y: float, pos_z: float,
+                                    cut_depth: float,
+                                    circle_mask: np.ndarray,
+                                    part_position: np.ndarray,
+                                    voxel_size: float,
+                                    tool_radius_voxels: int) -> Tuple[np.ndarray, float]:
+        nx, ny, nz = workpiece.shape
+        # Voxel-Koordinaten berechnen
+        vx = int(round((pos_x - part_position[0]) / voxel_size))
+        vy = int(round((pos_y - part_position[1]) / voxel_size))
+        vz = int(round((pos_z - part_position[2]) / voxel_size))
+        # Schnitttiefe in Voxel
+        cut_voxels = max(1, int(round(cut_depth / voxel_size)))
+        # Grenzen bestimmen
+        x_min = max(0, vx - tool_radius_voxels)
+        x_max = min(nx, vx + tool_radius_voxels + 1)
+        y_min = max(0, vy - tool_radius_voxels)
+        y_max = min(ny, vy + tool_radius_voxels + 1)
+        z_start = max(0, vz)
+        z_end = min(nz, vz + cut_voxels)
+
+        # Prüfen ob Position im gültigen Bereich
+        if x_min >= x_max or y_min >= y_max or z_start >= z_end:
+            return workpiece, 0.0
+
+        width = x_max - x_min
+        depth = y_max - y_min
+        mask_x_start = max(0, tool_radius_voxels - (vx - x_min))
+        mask_y_start = max(0, tool_radius_voxels - (vy - y_min))
+        mask_x_end = min(circle_mask.shape[1], mask_x_start + width)
+        mask_y_end = min(circle_mask.shape[0], mask_y_start + depth)
+
+        # Lokale Maske extrahieren
+        local_mask = circle_mask[mask_y_start:mask_y_end, mask_x_start:mask_x_end]
+
+        # Größe anpassen falls nötig
+        if local_mask.shape[0] != depth or local_mask.shape[1] != width:
+            local_mask = local_mask[:depth, :width]
+
+        # 3D-Maske erstellen
+        mask_3d = np.tile(local_mask[:, :, np.newaxis], (1, 1, z_end - z_start))
+
+        # Sicherstellen, dass die Dimensionen übereinstimmen
+        mask_3d = mask_3d.T  # Transponieren, um die Dimensionen anzupassen
+        mask_3d = np.transpose(mask_3d, (1, 2, 0))  # Dimensionen anpassen
+
+        # Material über Z-Ebenen entfernen
+        workpiece_region = workpiece[x_min:x_max, y_min:y_max, z_start:z_end]
+        material_to_remove = workpiece_region * mask_3d
+        removed_material = np.sum(material_to_remove)
+        workpiece[x_min:x_max, y_min:y_max, z_start:z_end] = (
+                workpiece_region - material_to_remove
+        )
+
+        return workpiece, removed_material
+
+    def process_segment_old(self, segment: MillingSegment,
+                        workpiece: np.ndarray) -> Tuple[np.ndarray, float, List[float]]:
         """
         Gibt zusätzlich Voxel-Abtragsliste pro Punkt zurück.
         """
@@ -261,24 +342,24 @@ class SimpleCNCMRRSimulation:
 
         for i, (position, cut_depth) in enumerate(zip(segment.positions, segment.cut_depths)):
 
-            if i % 2 == 0:
-                pos_x, pos_y, pos_z = position
+            #if i % 2 == 0:
+            pos_x, pos_y, pos_z = position
 
-                current_workpiece, removed = remove_material_at_position(
-                    current_workpiece,
-                    pos_x, pos_y, pos_z, cut_depth,
-                    self.circle_mask,
-                    self.part_position,
-                    self.voxel_size,
-                    self.tool_radius_voxels
-                )
+            current_workpiece, removed = remove_material_at_position_old(
+                current_workpiece,
+                pos_x, pos_y, pos_z, cut_depth,
+                self.circle_mask,
+                self.part_position,
+                self.voxel_size,
+                self.tool_radius_voxels
+            )
 
-                removed_voxels_per_point.append(removed)
-                total_removed += removed
-                status = i / len(segment.positions) * 100
-                print(f'Status: {status:.2f}% Removed: {removed:.2f}')
-            else:
-                removed_voxels_per_point.append(0)
+            removed_voxels_per_point.append(removed)
+            total_removed += removed
+            status = i / len(segment.positions) * 100
+            print(f'Status: {status:.2f}% Removed: {removed:.2f}')
+            #else:
+            #    removed_voxels_per_point.append(0)
         return current_workpiece, total_removed, removed_voxels_per_point
 
     def simulate_mrr(self, df: pd.DataFrame,
@@ -318,11 +399,6 @@ class SimpleCNCMRRSimulation:
         times, mrr_values = self.calculate_mrr_from_segments(
             segments, removed_voxels_all_points, sampling_frequency
         )
-
-        # Schritt 4: Expotentielles Filer -> Trägheit
-        # Exponential smoothing filter
-        #alpha = 0.95
-        #mrr_values = self.exponential_smoothing(mrr_values, alpha)
 
         print("Simulation abgeschlossen!")
         return times, mrr_values, segments

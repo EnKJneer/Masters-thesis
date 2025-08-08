@@ -76,7 +76,7 @@ def objective_function(params, x, y):
 
     error = np.sum(100*(predicted_forces[:, 0] - y['f_x'].values) ** 2
                    + 100*(predicted_forces[:, 1] - y['f_y'].values) ** 2
-                   + (predicted_forces[:, 2] - y['f_z'].values) ** 2
+                   + (predicted_forces[:, 2] - y['f_z'].values) ** 2 # Kraftmessung der Z-Werte enthalten fehler, werden daher weniger stark gewichtet
                    + 100*(predicted_forces[:, 3] - y['f_sp'].values) ** 2)
     print(error)
     return error
