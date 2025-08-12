@@ -1,3 +1,4 @@
+import copy
 import os
 import numpy as np
 import pandas as pd
@@ -181,10 +182,20 @@ def detect_peaks_and_split(df, time_col='time', signal_col='curr_z',
         'peak_values': signal_data[peaks] if len(peaks) > 0 else []
     }
 
+def correct_force_with_mrr(force, mrr):
+    # Normiere mrr auf den Bereich [0, 1]
+    mrr_min = min(mrr)
+    mrr_max = max(mrr)
+    mrr_normalized = [(x - mrr_min) / (mrr_max - mrr_min) for x in mrr]
+
+    # Multipliziere force mit dem normierten mrr
+    force_new = [f * n for f, n in zip(force, mrr_normalized)]
+
+    return force_new
 
 if __name__ == "__main__":
-    path_data = 'DataSimulated'
-    path_target = 'Data'
+    path_data = 'DataSimulated_low_res'
+    path_target = 'Data_low_res'
 
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
@@ -221,12 +232,16 @@ if __name__ == "__main__":
                 # Filter nur die Prozessdaten raus. -> materialremoved_sim > 0 +/- 5% der Datenlänge
                 indices = part[part['materialremoved_sim'] > 100].index #Problem: MRR Berechnung ist zu ungenau.
 
+                # Korrigiere f mit MRR
+                axes = ['x', 'y', 'z', 'sp']
+                for axis in axes:
+                    part[f'f_{axis}_sim'] = correct_force_with_mrr(part[f'f_{axis}_sim'], part[f'materialremoved_sim'])
+
                 n = indices.max() - indices.min()
                 p = 0.1
                 start_index = max(0, indices.min() - int(p * n))
                 end_index = min(len(part), indices.max() + int(p * n))
                 part = part.iloc[start_index:end_index] #.reset_index(drop=True)
-
 
                 plt.plot(part['materialremoved_sim'], label='Material Removed Sim')
                 plt.plot(part['curr_x'] * 100, label='Current X')
@@ -236,6 +251,9 @@ if __name__ == "__main__":
                 plt.show()
 
                 part = part.reset_index(drop=True)
+
+
+
             part.to_csv(os.path.join(path_target, output_filename), index=False)
             print(f'  Saved {output_filename} with {len(part)} rows')
 

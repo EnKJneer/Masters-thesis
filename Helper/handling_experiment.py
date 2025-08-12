@@ -763,7 +763,7 @@ def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_resu
 
 def run_experiment(dataSets, models,
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, batched_data=False,
-                   patience=5, plot_types=None,
+                   patience=20, patience_lr = 3, plot_types=None,
                    experiment_name = 'Experiment'):
 
     if type(dataSets) is not list:
@@ -826,7 +826,7 @@ def run_experiment(dataSets, models,
                 if hasattr(model, 'scaler'):
                     model.scaler = None
                 model.target_channel = dataClass.target_channels
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
+                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience, patience_lr=patience_lr)
                 if hasattr(model, 'clear_active_experts_log'):
                     model.clear_active_experts_log()  # Clear the log for the next test
                 if isinstance(X_test, list):

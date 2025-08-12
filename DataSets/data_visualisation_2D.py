@@ -116,12 +116,11 @@ def apply_lowpass_filter(data, cutoff, order):
 path_data = 'Data'
 files = os.listdir(path_data)
 
-files = ['S235JR_Plate_Normal_2.csv']
+files = ['S235JR_Plate_Depth_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
-    cutoff = 0.1
-    filter_order = 4
+    data = data.iloc[50:, :].reset_index(drop=True)
     #data = apply_lowpass_filter(data, cutoff, filter_order)
     #n = int(len(data)*1.1/3)
     #data = data.iloc[:2*n, :]
@@ -144,7 +143,8 @@ for file in files:
     data['sign_v_x'] = np.sign(data['v_x'])
 
     data['time'] = data.index
-    plot_time_series(data, name, label='f_x_sim', dpi=300)
+    plot_time_series(data, name, label='v_x', dpi=300, ylabel='curr_x')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='curr_x')
 '''    plot_time_series(data, name, label='z_x', dpi=300, ylabel='sign_curr_x')
     plot_time_series(data, name, label='z_x', dpi=300, ylabel='sign_v_x')
 

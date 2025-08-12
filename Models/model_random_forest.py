@@ -82,7 +82,7 @@ class RandomForestModel(mb.BaseModel):
         """
         return self.model.predict(X)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience=10):
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience_stop=10, **kwargs):
         """
         Train the Random Forest model using the training data and validate it using the validation data.
 
@@ -261,7 +261,7 @@ class ExtraTreesModel(mb.BaseModel):
         """
         return self.model.predict(X)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience=10):
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience_stop=10, **kwargs):
         """
         Train the Extra Trees model using the training data and validate it using the validation data.
 
