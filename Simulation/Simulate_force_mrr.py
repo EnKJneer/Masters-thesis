@@ -131,13 +131,13 @@ if __name__ == '__main__':
     target_frequency = 50
     path_material_constant = 'optimized_parameters.json'
 
-    show_results = True
-    path = '..\\DataSetsV3\\DataMerged'
-    path_target = '..\\DataSetsV3\\DataSimulated'
+    show_results = False
+    path = '..\\DataSets\\DataMerged'
+    path_target = '..\\DataSets\\DataSimulated_low_res'
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
-    files = ['AL_2007_T4_Plate_Depth.csv']
+    #files = ['AL_2007_T4_Plate_Depth.csv']
     for file in files:
         if not file.endswith('.csv'):
             continue

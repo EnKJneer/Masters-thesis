@@ -36,6 +36,7 @@ class RandomForestModel(mb.BaseModel):
         self.max_features = max_features
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
+        self.scaler = None
 
         # Neuinitialisierung des Modells mit den neuen Hyperparametern
         self.model = RandomForestRegressor(

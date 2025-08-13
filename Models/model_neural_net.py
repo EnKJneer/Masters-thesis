@@ -138,8 +138,8 @@ class Net(mb.BaseTorchModel):
         return Net(input_size, 1, input_size)
 
 class RNN(mb.BaseTorchModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
-                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation='ReLU',
+                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False, optimizer_type='adam'):
         """
         Initializes a configurable recurrent neural network.
 
@@ -168,13 +168,14 @@ class RNN(mb.BaseTorchModel):
         self.output_size = output_size
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
-        self.activation = activation()
+        self.activation = activation
         self.learning_rate = learning_rate
         self.name = name
         self.batched_input = batched_input
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
+        self.optimizer_type = optimizer_type
 
         # Initialize layers only if input_size is provided
         if self.input_size is not None:
@@ -186,6 +187,9 @@ class RNN(mb.BaseTorchModel):
         self.learning_rate = learning_rate
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
+        self.scaler = None
+        if self.input_size is not None:
+            self._initialize()
 
     def _initialize(self):
         """Initialize the layers of the neural network."""

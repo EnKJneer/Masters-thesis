@@ -807,9 +807,6 @@ def run_experiment(dataSets, models,
         else:
             df_list_results = [pd.DataFrame()]
             header_list = []
-            # Fehlerberechnung
-            calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
-                                        raw_data)
 
         # Train and test models
         for idx, model in enumerate(models):
@@ -820,6 +817,7 @@ def run_experiment(dataSets, models,
                 model = models_copy[idx]
                 if hasattr(model, 'input_size'):
                     model.input_size = None
+                    model.scaler = None
                 model.target_channel = dataClass.target_channels[0]
                 model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
                 if hasattr(model, 'clear_active_experts_log'):
