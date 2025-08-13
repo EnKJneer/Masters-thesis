@@ -418,15 +418,22 @@ DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_dat
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                              ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
-def sign_hold(v, eps=1e0, n = 3):
-    e = np.zeros(n)
+def sign_hold(v, eps = 1e-1):
+    # Initialisierung des Arrays z mit Nullen
     z = np.zeros(len(v))
-    h = deque(e, maxlen=n)
+
+    # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
+    h = deque([0, 0, 0, 0, 0], maxlen=5)
+
+    # Berechnung von z
     for i in range(len(v)):
         if abs(v[i]) > eps:
             h.append(v[i])
-        if i >= n-1:
+
+        if i >= 4:  # Da wir ab dem 5. Element starten wollen
+            # Berechne zi als Vorzeichen der Summe
             z[i] = np.sign(sum(h))
+
     return z
 
 def create_full_ml_vector_optimized(past_values, future_values, channels_in: pd.DataFrame) -> np.array:
