@@ -1,5 +1,0 @@
-DataSet,DataPath,Model,MAE,StdDev,MAE_Ensemble
-ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,Recurrent_Neural_Net,0.664579797417941,0.0,0.661857649048956
-ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,Recurrent_Neural_Net,0.5853545226373473,0.0,0.5882236050834803
-ST_Plate_Notch,S235JR_Gear_Normal_3,Recurrent_Neural_Net,0.6524687976363163,0.0,0.6479755097873424
-ST_Plate_Notch,S235JR_Plate_Normal_3,Recurrent_Neural_Net,0.13777692053866905,0.0,0.13719023402765776

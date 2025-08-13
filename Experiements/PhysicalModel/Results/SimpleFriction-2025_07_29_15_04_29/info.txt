@@ -1,1 +1,0 @@
-Konstante b wird 1 multipliziert

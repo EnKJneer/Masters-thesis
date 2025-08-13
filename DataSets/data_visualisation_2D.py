@@ -59,7 +59,7 @@ def plot_2d_with_color(x_values, y_values, color_values, filename, label='|v_x +
     # Anzeigen des Plots
     plt.show()
 
-def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x', f_a = 50, align=False):
+def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x', f_a = 50):
     """
     Erstellt einen Zeitverlaufsplan mit zwei y-Achsen.
 
@@ -82,25 +82,11 @@ def plot_time_series(data, title, dpi=300, label = 'v_x', ylabel = 'curr_x', f_a
     if ylabel is not None:
         # Zweite y-Achse für curr_x
         ax2 = ax1.twinx()
-        line, = ax2.plot(time, data[ylabel], label=ylabel, color='tab:red')
+        ax2.plot(time, data[ylabel], label=ylabel, color='tab:red')
         ax2.set_ylabel(ylabel)
         ax2.legend(loc='upper right')
 
-    if align:
-        y1_min, y1_max = ax1.get_ylim()
-        y2_min, y2_max = ax2.get_ylim()
-
-        # Berechnung der Skalierungsfaktoren für die Achsen
-        scaling_factor = y1_max / y2_max
-
-        # Skalieren der zweiten Achse
-        ax2.set_ylim(y2_min * scaling_factor, y2_max * scaling_factor)
-
-        # Anpassen der zweiten Linie an die Skalierung
-        line.set_ydata(data[ylabel] * scaling_factor)
-
     plt.show()
-
 def butter_lowpass(cutoff, order, nyq_freq=0.5):
     normal_cutoff = cutoff / nyq_freq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
@@ -113,10 +99,10 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = 'Data'
+path_data = 'Data2'
 files = os.listdir(path_data)
 
-files = ['S235JR_Plate_Normal_2.csv']
+files = ['S235JR_Plate_Depth_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -138,16 +124,18 @@ for file in files:
     #print(t_e)
     data['f_x'] = -data['f_x']*200
     data['f_y'] = data['f_y']*200
-    data['curr_x'] = - data['curr_x']
-    data['sign_curr_x'] = np.sign(data['curr_x'])
-    data['z_x'] = sign_hold(data['v_x'])
-    data['sign_v_x'] = np.sign(data['v_x'])
-
-    data['time'] = data.index
-    plot_time_series(data, name, label='f_x_sim', dpi=300)
-'''    plot_time_series(data, name, label='z_x', dpi=300, ylabel='sign_curr_x')
-    plot_time_series(data, name, label='z_x', dpi=300, ylabel='sign_v_x')
-
-    plot_time_series(data, name, label='curr_x', dpi=300, ylabel='z_x')
-    plot_time_series(data, name, label='curr_x', dpi=300, ylabel='sign_curr_x')
-    plot_time_series(data, name, label='curr_x', dpi=300, ylabel='sign_v_x')'''
+    plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='curr_x')
+'''    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+    plot_time_series(data, name, label='f_y_sim', dpi=300, ylabel='f_y')
+    #plot_time_series(data, name, label='f_y', dpi=300, ylabel='curr_y')
+    #plot_time_series(data, name, label='f_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='v_sp', dpi=300, ylabel='curr_sp')
+    #plot_time_series(data, name, label='v_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='v_y', dpi=300, ylabel='curr_y')
+    #plot_time_series(data, name, label='v_z', dpi=300, ylabel='curr_z')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='pos_x')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='pos_y')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='materialremoved_sim')
+    diff = data['f_x'] - data['f_x_sim']
+    plot_2d_with_color(data['pos_x'], data['pos_y'], diff, f'{name}_diff.png', label='diff')
+    plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], f'{name}_diff.png', label='materialremoved_sim')'''

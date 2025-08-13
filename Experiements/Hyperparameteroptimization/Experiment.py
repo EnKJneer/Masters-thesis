@@ -18,7 +18,7 @@ from datetime import datetime
 
 def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPESampler", "RandomSampler", "GridSampler"],
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, NUMBEROFTRIALS = 10,
-                   patience=5, plot_types=None, prunning = True,
+                   patience=5, plot_types=None,
                    experiment_name = 'Experiment'):
 
     if type(dataSets) is not list:
@@ -38,8 +38,6 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
         "Models": [],
         "Data_Preprocessing": {
             "Epochs": NUMBEROFEPOCHS,
-            "Trials": NUMBEROFTRIALS,
-            "Pruning": prunning,
         }
     }
 
@@ -81,7 +79,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
                     model=copy.copy(model),
                     data=[X_train, X_val, y_train, y_val],
                     n_epochs=NUMBEROFEPOCHS,
-                    pruning=prunning
+                    pruning=True
                 )
                 best_params = hyperopt.optimize(objective_nn, results_dir, study_name=study_name, n_trials=NUMBEROFTRIALS, sampler=sampler)
                 model_optimized = copy.deepcopy(model)
@@ -97,7 +95,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
             for _ in range(NUMBEROFMODELS):
                 model = reference_models_copy[idx]
                 model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs = NUMBEROFEPOCHS, patience_stop=patience)
+                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=patience)
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
                         mse, pred_nn = model.test_model(x, y)
@@ -123,7 +121,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
                 if hasattr(model, 'input_size'):
                     model.input_size = None
                 model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience)
+                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
                 if hasattr(model, 'clear_active_experts_log'):
                     model.clear_active_experts_log()  # Clear the log for the next test
                 if isinstance(X_test, list):
@@ -303,7 +301,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
 def start_experiment_for(model_str = 'NN'):
     """ Constants """
     NUMBEROFTRIALS = 250
-    NUMBEROFEPOCHS = 1000
+    NUMBEROFEPOCHS = 800
     NUMBEROFMODELS = 10 # Bei RF mit festem random state nicht sinvoll
 
     dataSet = hdata.DataClass_ST_Plate_Notch
@@ -319,20 +317,7 @@ def start_experiment_for(model_str = 'NN'):
             'max_depth': (None, 500),
         }
         model = mrf.RandomForestModel()
-        prunning = True
-        NUMBEROFEPOCHS = 1
-    if model_str == 'ET':
-        #Random Forest
-        search_space = {
-            'n_estimators': (5, 500),
-            'min_samples_split': (2, 500),
-            'min_samples_leaf': (1, 500),
-            'max_features': (None, 500),
-            'max_depth': (None, 500),
-        }
-        model = mrf.ExtraTreesModel()
-        prunning = True
-        NUMBEROFEPOCHS = 1
+
     elif model_str == 'NN':
         search_space = {
             'n_hidden_size': (1, 100), #250
@@ -342,7 +327,7 @@ def start_experiment_for(model_str = 'NN'):
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
         }
         model = mnn.Net()
-        prunning = True
+
     elif model_str == 'RNN':
         search_space = {
             'n_hidden_size': (1, 100), #250
@@ -353,7 +338,7 @@ def start_experiment_for(model_str = 'NN'):
         }
         model = mnn.RNN()
         dataclass.add_padding = True
-        prunning = True
+
     elif model_str == 'LSTM':
         search_space = {
             'n_hidden_size': (1, 100),
@@ -364,7 +349,7 @@ def start_experiment_for(model_str = 'NN'):
         }
         model = mnn.LSTM()
         dataclass.add_padding = True
-        prunning = True
+
     elif model_str == 'GRU':
         search_space = {
             'n_hidden_size': (1, 100),
@@ -375,29 +360,13 @@ def start_experiment_for(model_str = 'NN'):
         }
         model = mnn.GRU()
         dataclass.add_padding = True
-        prunning = True
-    elif model_str == 'PiRNNFriction':
-        search_space = {
-            'n_hidden_size': (1, 100),
-            'n_hidden_layers': (1, 10),
-            'learning_rate': (0.01, 0.9),
-            'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
-            'optimizer_type': ['adam', 'quasi_newton'],
-            'penalty_weight': (1, 100),
-            'penalty_weight_2': (0.0, 2.0),
-
-        }
-        model = mnn.PiRNNFriction()
-        dataclass.add_sign_hold = True
-        dataclass.add_padding = True
-        prunning = True
     else:
         throw_error('string is not a valid model')
 
     # Run the experiment
     run_experiment([dataclass], [model], [search_space],
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, NUMBEROFTRIALS=NUMBEROFTRIALS,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name, prunning=prunning)
+                        plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('RNN')
+    start_experiment_for('NN')

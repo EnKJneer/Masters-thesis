@@ -82,9 +82,6 @@ class Net(mb.BaseTorchModel):
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
 
-        if self.input_size is not None:
-            self._initialize()
-
     def _initialize(self):
         """Initialize the layers of the neural network."""
         self.scaler = None
@@ -141,8 +138,8 @@ class Net(mb.BaseTorchModel):
         return Net(input_size, 1, input_size)
 
 class RNN(mb.BaseTorchModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation='ReLU',
-                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False, **kwargs):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
+                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False):
         """
         Initializes a configurable recurrent neural network.
 
@@ -156,8 +153,8 @@ class RNN(mb.BaseTorchModel):
             The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
         n_hidden_layers : int
             The number of hidden layers in the network.
-        activation : str, optional
-            The activation function to be used in the hidden layers. The default is ReLU.
+        activation : torch.nn.Module, optional
+            The activation function to be used in the hidden layers. The default is nn.ReLU.
         name: str
             The name of the model.
         batched_input : bool
@@ -166,12 +163,12 @@ class RNN(mb.BaseTorchModel):
         -------
         None
         """
-        super(RNN, self).__init__(**kwargs)
+        super(RNN, self).__init__()
         self.input_size = input_size
         self.output_size = output_size
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
-        self.activation = self.activation_map[activation]()
+        self.activation = activation()
         self.learning_rate = learning_rate
         self.name = name
         self.batched_input = batched_input
@@ -189,9 +186,6 @@ class RNN(mb.BaseTorchModel):
         self.learning_rate = learning_rate
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
-
-        if self.input_size is not None:
-            self._initialize()
 
     def _initialize(self):
         """Initialize the layers of the neural network."""
@@ -292,9 +286,6 @@ class LSTM(mb.BaseTorchModel):
         self.learning_rate = learning_rate
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
-
-        if self.input_size is not None:
-            self._initialize()
 
     def _initialize(self):
         """Initialize the layers of the neural network."""
@@ -415,9 +406,6 @@ class GRU(mb.BaseTorchModel):
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
 
-        if self.input_size is not None:
-            self._initialize()
-
     def _initialize(self):
         """Initialize the layers of the neural network."""
         if self.n_hidden_size is None:
@@ -486,6 +474,451 @@ class GRU(mb.BaseTorchModel):
             An instance of the Net class configured with the specified input size.
         """
         return GRU(input_size, 1, input_size)
+
+class TorchAttention(mb.BaseTorchModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, activation=nn.ReLU, learning_rate=0.0001, name="Neural_Net_with_Attention"):
+        """
+        Initializes a neural network with a normal layer, an attention layer, and another normal layer.
+
+        Parameters
+        ----------
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
+        output_size : int
+            The number of output features.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
+        learning_rate : float
+            The learning rate for the optimizer.
+        name : str
+            The name of the model.
+        """
+        super(TorchAttention, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.activation = activation()
+        self.n_hidden_layers = 1
+        self.learning_rate = learning_rate
+        self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize()
+
+    def _initialize(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+
+        # First normal layer
+        self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+
+        # Attention layer
+        self.attention = nn.MultiheadAttention(embed_dim=self.n_hidden_size, num_heads=1)
+
+        # Second normal layer
+        self.fc2 = nn.Linear(self.n_hidden_size, self.n_hidden_size)
+
+        # Output layer
+        self.fc3 = nn.Linear(self.n_hidden_size, self.output_size)
+
+        self.to(self.device)
+
+    def forward(self, x):
+        """
+        Defines the forward pass of the neural network.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor to the neural network.
+
+        Returns
+        -------
+        x : torch.Tensor
+            The output tensor from the neural network.
+        """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize()
+
+        # First normal layer with ReLU activation
+        x = self.activation(self.fc1(x))
+
+        # Reshape for attention layer
+        x = x.unsqueeze(0)  # Add sequence length dimension
+        x, _ = self.attention(x, x, x)
+        x = x.squeeze(0)  # Remove sequence length dimension
+
+        # Second normal layer with ReLU activation
+        x = self.activation(self.fc2(x))
+
+        # Output layer
+        x = self.fc3(x)
+        return x
+
+class TorchTransformer(mb.BaseTorchModel):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, activation=nn.ReLU, learning_rate=0.0001, name="Neural_Net_Transformer"):
+        """
+        Initializes a neural network with a normal layer, a transformer layer, and another normal layer.
+
+        Parameters
+        ----------
+        input_size : int, optional
+            The number of input features. If None, it will be set during the first training call.
+        output_size : int
+            The number of output features.
+        n_hidden_size : int, optional
+            The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
+        learning_rate : float
+            The learning rate for the optimizer.
+        name : str
+            The name of the model.
+        """
+        super(TorchTransformer, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.n_hidden_size = n_hidden_size
+        self.n_hidden_layers = 1
+        self.activation = activation()
+        self.learning_rate = learning_rate
+        self.name = name
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        self.scaler = None
+
+        # Initialize layers only if input_size is provided
+        if self.input_size is not None:
+            self._initialize()
+
+    def _initialize(self):
+        """Initialize the layers of the neural network."""
+        if self.n_hidden_size is None:
+            self.n_hidden_size = self.input_size
+
+        # First normal layer
+        self.fc1 = nn.Linear(self.input_size, self.n_hidden_size)
+
+        # Transformer layer
+        self.transformer = nn.Transformer(
+            d_model=self.n_hidden_size,
+            nhead=1,
+            num_encoder_layers=1,
+            num_decoder_layers=1
+        )
+
+        # Second normal layer
+        self.fc2 = nn.Linear(self.n_hidden_size, self.n_hidden_size)
+
+        # Output layer
+        self.fc3 = nn.Linear(self.n_hidden_size, self.output_size)
+
+        self.to(self.device)
+
+    def forward(self, x):
+        """
+        Defines the forward pass of the neural network.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor to the neural network.
+
+        Returns
+        -------
+        x : torch.Tensor
+            The output tensor from the neural network.
+        """
+        if self.input_size is None:
+            self.input_size = x.shape[1]
+            if self.n_hidden_size is None:
+                self.n_hidden_size = self.input_size
+            self._initialize()
+
+        # First normal layer with ReLU activation
+        x = self.activation(self.fc1(x))
+
+        # Reshape for transformer layer
+        x = x.unsqueeze(0)  # Add sequence length dimension
+        x = self.transformer(x, x)
+        x = x.squeeze(0)  # Remove sequence length dimension
+
+        # Second normal layer with ReLU activation
+        x = self.activation(self.fc2(x))
+
+        # Output layer
+        x = self.fc3(x)
+        return x
+
+class QuantileIdNetModel(Net):
+    def __init__(self, input_size, output_size, n_neurons, n_layers, activation=nn.ReLU, output_distribution='uniform', learning_rate=0.0001, name = 'Net_Q_Id'):
+        """
+        Initializes a configurable neural network with Quantile + Id scaling.
+
+        Parameters
+        ----------
+        input_size : int
+            The number of original input features (before scaling).
+        output_size : int
+            The number of output features.
+        n_neurons : int
+            The number of neurons in each hidden layer.
+        n_layers : int
+            The number of hidden layers in the network.
+        activation : torch.nn.Module, optional
+            The activation function to be used in the hidden layers. The default is nn.ReLU.
+        output_distribution : str, optional
+            The output distribution for the QuantileTransformer. Default is 'uniform'.
+        """
+        # Adjust input size to account for doubled features due to Quantile + Id scaling
+        super(QuantileIdNetModel, self).__init__(input_size * 2, output_size, n_neurons, n_layers, activation, learning_rate, name)
+        self.output_distribution = output_distribution
+
+    def scale_data(self, X):
+        """
+        Scale the input data using QuantileTransformer and keep a copy of each original feature.
+
+        Parameters:
+        X (Tensor): The input data.
+
+        Returns:
+        Tensor: The scaled input data.
+        """
+        if self.scaler is None:
+            self.scaler = QuantileTransformer(output_distribution=self.output_distribution)
+            self.scaler.fit(X)
+        X_quantile = self.scaler.transform(X)
+        X_scaled = np.hstack((X_quantile, X))
+        return X_scaled
+
+class RiemannQuantileClassifierNet(Net):
+    def __init__(self, input_size, output_size=1, n_neurons=64, n_layers=3, activation=nn.ReLU, min_bins=8,
+                 max_bins=64, learning_rate=0.0001, name = 'RiemannQuantileClassifierNet'):
+        super().__init__(input_size, max_bins, n_neurons, n_layers, activation)
+        self.min_bins = min_bins
+        self.max_bins = max_bins
+        self.bins = None
+        self.loss_fn = nn.CrossEntropyLoss()
+        self.name = name
+    def discretize_targets(self, y):
+        if self.bins is None:
+            n_unique = len(np.unique(y))
+            adaptive_bins = min(self.max_bins, max(self.min_bins, n_unique // 2))
+            self.bins = np.quantile(y, q=np.linspace(0, 1, adaptive_bins + 1))
+            self.bins = np.unique(self.bins)
+            self.n_bins = len(self.bins) - 1
+            self.output_size = self.n_bins
+        y_digitized = np.digitize(y, bins=self.bins[1:-1])
+        return y_digitized
+
+    def criterion(self, y_target, y_pred_logits):
+        y_target = y_target.long().squeeze()
+        return self.loss_fn(y_pred_logits, y_target)
+
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, patience=20,
+                    draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
+        print(self.device)
+
+        y_train_discrete = self.discretize_targets(y_train)
+        y_val_discrete = self.discretize_targets(y_val)
+
+        X_train_scaled = self.scale_data(X_train)
+        X_val_scaled = self.scale_data(X_val)
+
+        X_train = torch.tensor(X_train_scaled, dtype=torch.float32).to(self.device)
+        X_val = torch.tensor(X_val_scaled, dtype=torch.float32).to(self.device)
+        y_train_tensor = torch.tensor(y_train_discrete, dtype=torch.long).to(self.device)
+        y_val_tensor = torch.tensor(y_val_discrete, dtype=torch.long).to(self.device)
+
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+
+        best_val_error = float('inf')
+        patience_counter = 0
+
+        for epoch in range(n_epochs):
+            self.train()
+            optimizer.zero_grad()
+            y_pred = self(X_train)
+            # TODO: Prüfen was stimmt
+            # logits = self.predict(X_tensor)
+            # loss = self.loss_fn(logits, torch.tensor(y_target_discrete))
+            loss = self.criterion(y_train_tensor, y_pred)
+            loss.backward()
+            optimizer.step()
+
+            self.eval()
+            with torch.no_grad():
+                y_val_pred = self(X_val)
+                val_error = self.criterion(y_val_tensor, y_val_pred).item()
+
+                if val_error < best_val_error - epsilon:
+                    best_val_error = val_error
+                    best_model_state = self.state_dict()
+                    patience_counter = 0
+                elif epoch > (n_epochs / 10) and epoch > 10:
+                    patience_counter += 1
+
+                scheduler.step(val_error)
+
+                if trial is not None:
+                    trial.report(val_error, step=epoch)
+                    if trial.should_prune():
+                        raise optuna.exceptions.TrialPruned()
+
+            print(
+                f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss; {loss:.4f} Val Error: {val_error:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
+
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch + 1}")
+                break
+
+        self.load_state_dict(best_model_state)
+        return best_val_error
+
+    def test_model(self, X, y_target, criterion_test=None):
+        if criterion_test is None:
+            criterion_test = nn.MSELoss()
+        X_scaled = self.scale_data(X)
+        X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
+
+        self.eval()
+        with torch.no_grad():
+            logits = self.predict(X_tensor)
+            pred_probs = torch.softmax(logits, dim=1).cpu().numpy()
+
+        if self.bins is not None:
+            bin_centers = (self.bins[:-1] + self.bins[1:]) / 2
+            y_pred = np.sum(pred_probs * bin_centers[None, :], axis=1)
+        else:
+            y_pred = np.argmax(pred_probs, axis=1)
+
+        y_target_discrete = self.discretize_targets(y_target)
+        loss = criterion_test(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
+
+        return loss.item(), y_pred
+
+# ToDo: Im gegensatz zu RiemanQuantileClassifier funktioniert das noch nicht, Theoretisch müsste normierung ergebniss aber verbessern
+class QuantileIdRiemannClassifierNet(Net):
+    def __init__(self, input_size, output_size=1, n_neurons=64, n_layers=3, activation=nn.ReLU, min_bins=8, max_bins=64,
+                 output_distribution='uniform'):
+        super().__init__(input_size * 2, max_bins, n_neurons, n_layers, activation)
+        self.min_bins = min_bins
+        self.max_bins = max_bins
+        self.output_distribution = output_distribution
+        self.bins = None
+        self.scaler = None
+        self.loss_fn = nn.CrossEntropyLoss()
+
+    def scale_data(self, X):
+        if isinstance(X, pd.DataFrame):
+            X = X.values
+        if self.scaler is None:
+            from sklearn.preprocessing import QuantileTransformer
+            self.scaler = QuantileTransformer(output_distribution=self.output_distribution)
+            self.scaler.fit(X)
+        X_quantile = self.scaler.transform(X)
+        return np.hstack((X_quantile, X))
+
+    def discretize_targets(self, y):
+        if self.bins is None:
+            n_unique = len(np.unique(y))
+            adaptive_bins = min(self.max_bins, max(self.min_bins, n_unique // 2))
+            self.bins = np.quantile(y, q=np.linspace(0, 1, adaptive_bins + 1))
+            self.bins = np.unique(self.bins)
+            self.n_bins = len(self.bins) - 1
+            self.output_size = self.n_bins
+        y_digitized = np.digitize(y, bins=self.bins[1:-1])
+        return y_digitized
+
+    def criterion(self, y_target, y_pred_logits):
+        return self.loss_fn(y_pred_logits, y_target.long().squeeze())
+
+    def train_model(self, X_train, y_train, X_val, y_val, learning_rate=0.0001, n_epochs=100, patience=20,
+                    draw_loss=False, epsilon=0.0001, trial=None, n_outlier=12):
+        print(self.device)
+
+        y_train_discrete = self.discretize_targets(y_train)
+        y_val_discrete = self.discretize_targets(y_val)
+
+        X_train_scaled = self.scale_data(X_train)
+        X_val_scaled = self.scale_data(X_val)
+
+        X_train = torch.tensor(X_train_scaled, dtype=torch.float32).to(self.device)
+        X_val = torch.tensor(X_val_scaled, dtype=torch.float32).to(self.device)
+        y_train_tensor = torch.tensor(y_train_discrete, dtype=torch.long).to(self.device)
+        y_val_tensor = torch.tensor(y_val_discrete, dtype=torch.long).to(self.device)
+
+        optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+
+        best_val_error = float('inf')
+        patience_counter = 0
+
+        for epoch in range(n_epochs):
+            self.train()
+            optimizer.zero_grad()
+            y_pred = self(X_train)
+            loss = self.criterion(y_train_tensor, y_pred)
+            loss.backward()
+            optimizer.step()
+
+            self.eval()
+            with torch.no_grad():
+                y_val_pred = self(X_val)
+                val_error = self.criterion(y_val_tensor, y_val_pred).item()
+
+                if val_error < best_val_error - epsilon:
+                    best_val_error = val_error
+                    best_model_state = self.state_dict()
+                    patience_counter = 0
+                elif epoch > (n_epochs / 10) and epoch > 10:
+                    patience_counter += 1
+
+                scheduler.step(val_error)
+
+                if trial is not None:
+                    trial.report(val_error, step=epoch)
+                    if trial.should_prune():
+                        raise optuna.exceptions.TrialPruned()
+
+            print(
+                f'Epoch {epoch + 1}/{n_epochs}, Val Error: {val_error:.4f}, LR: {optimizer.param_groups[0]["lr"]:.6f}')
+
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch + 1}")
+                break
+
+        self.load_state_dict(best_model_state)
+        return best_val_error
+
+    def test_model(self, X, y_target, criterion_test=None):
+        if criterion_test is None:
+            criterion_test = self.criterion
+        X_scaled = self.scale_data(X)
+        X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
+
+        self.eval()
+        with torch.no_grad():
+            logits = self.predict(X_tensor)
+            pred_probs = torch.softmax(logits, dim=1).cpu().numpy()
+
+        if self.bins is not None:
+            bin_centers = (self.bins[:-1] + self.bins[1:]) / 2
+            y_pred = np.sum(pred_probs * bin_centers[None, :], axis=1)
+        else:
+            y_pred = np.argmax(pred_probs, axis=1)
+
+        y_target_discrete = self.discretize_targets(y_target)
+        loss = criterion_test(torch.tensor(pred_probs), torch.tensor(y_target_discrete))
+
+        return loss.item(), y_pred
 
 class PiNNErd(Net):
     def __init__(self, *args, name="PiNN_Erd", penalty_weight=1, optimizer_type='adam', theta_init=None, **kwargs):
@@ -768,7 +1201,6 @@ class PiNNFriction(Net):
         self.optimizer_type = optimizer_type
         self.theta_init = theta_init
         self.input_head = hdata.HEADER_x
-        self.target_channels = ['curr_x']
         # Neue Parameter-Matrix für alle Achsen
         if theta_init is not None:
             if theta_init.shape != (4, 5):
@@ -797,8 +1229,8 @@ class PiNNFriction(Net):
                 retain_graph=True,
                 only_inputs=True
             )[0]
-            # ToDo: Flexibler gestalten
-            axis = self.target_channel[0].replace('curr_', '')
+
+            axis = self.target_channel.replace('curr_', '')
 
             # Extrahiere die Indizes und die entsprechenden Daten
             indices_a = self.get_indices_by_prefix(self.input_head, f'a_{axis}')
@@ -884,172 +1316,6 @@ class PiNNFriction(Net):
             "n_activation_function": self.activation.__class__.__name__,
             "optimizer_type": self.optimizer_type,
             "penalty_weight": self.penalty_weight,
-        }}
-        return documentation
-
-class PiRNNFriction(RNN):
-    def __init__(self, *args, name="PiRNNFriction", penalty_weight=1, penalty_weight_2=1, optimizer_type='adam', learning_rate=0.001, theta_init=None,**kwargs):
-        super(PiRNNFriction, self).__init__(*args, learning_rate=learning_rate, **kwargs)
-        self.name = name
-        self.penalty_weight = penalty_weight
-        self.penalty_weight_2 = penalty_weight_2
-        self.optimizer_type = optimizer_type
-        self.theta_init = theta_init
-        self.input_head = hdata.HEADER_x
-        self.target_channels = ['curr_x']
-        # Neue Parameter-Matrix für alle Achsen
-        if theta_init is not None:
-            if theta_init.shape != (4, 5):
-                raise ValueError("theta_init must have shape (4, 5)")
-            self.theta = nn.Parameter(torch.tensor(theta_init, dtype=torch.float32))
-        else:
-            self.theta = nn.Parameter(torch.zeros(4, 5, dtype=torch.float32))  # Achsen: x, y, z, sp
-
-    def get_indices_by_prefix(self, header, prefix):
-        return [index for index, item in enumerate(header) if item.startswith(prefix)]
-
-    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type, penalty_weight, penalty_weight_2):
-        self.n_hidden_size = n_hidden_size
-        self.n_hidden_layers = n_hidden_layers
-        self.learning_rate = learning_rate
-        self.activation = self.activation_map[activation]()
-        self.optimizer_type = optimizer_type
-        self.penalty_weight = penalty_weight
-        self.penalty_weight_2 = penalty_weight_2
-
-        if self.input_size is not None:
-            self._initialize()
-
-    def criterion(self, y_target, y_pred, x_input=None):
-
-        criterion = nn.MSELoss()
-        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
-
-        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
-            x_input = x_input.clone().detach().requires_grad_(True)
-            y_pred_physics = self(x_input)
-
-            # Deaktiviere CuDNN für den Vorwärtsdurchlauf
-            with torch.backends.cudnn.flags(enabled=False):
-                y_pred_physics = self(x_input)
-
-            dy_dx = torch.autograd.grad(
-                outputs=y_pred_physics,
-                inputs=x_input,
-                grad_outputs=torch.ones_like(y_pred_physics),
-                create_graph=True,
-                retain_graph=True,
-                only_inputs=True
-            )[0]
-            # ToDo: Flexibler gestalten
-            axis = self.target_channels[0].replace('curr_', '')
-
-            # Extrahiere die Indizes und die entsprechenden Daten
-            indices_a = self.get_indices_by_prefix(self.input_head, f'a_{axis}')
-            indices_f = self.get_indices_by_prefix(self.input_head, f'f_{axis}')
-            indices_v = self.get_indices_by_prefix(self.input_head, f'v_{axis}')
-            indices_z = self.get_indices_by_prefix(self.input_head, f'z_{axis}')#
-
-            # Kombiniere alle Indizes, die wir nicht in dy_remaining wollen
-            all_excluded_indices = set(indices_a + indices_f + indices_v + indices_z)
-
-            # Erstelle eine Maske für die verbleibenden Indizes
-            remaining_indices = [i for i in range(dy_dx.shape[1]) if i not in all_excluded_indices]
-
-            # Extrahiere die verbleibenden Teile von dy_dx
-            dy_remaining = dy_dx[:, remaining_indices]
-
-            # Die bereits extrahierten Teile
-            dy_da = dy_dx[:, indices_a]
-            dy_df = dy_dx[:, indices_f]
-            dy_dv = dy_dx[:, indices_v]
-            dy_dz = dy_dx[:, indices_z]
-
-            a = x_input[:, indices_a]
-            f = x_input[:, indices_f]
-            v = x_input[:, indices_v]
-            z = x_input[:, indices_z]
-
-            # Constraint-Berechnung für jede Achse separat
-            constraint = []
-            deriv =  dy_dv + dy_df + dy_da + dy_dz
-            dim = v.shape[1]
-            influences = (
-                    self.theta[1, 0] +
-                    v * self.theta[:dim, 1] +
-                    f * self.theta[:dim, 2] +
-                    a * self.theta[:dim, 3] +
-                    z * self.theta[:dim, 4]
-            )
-            constraint_i = deriv - influences
-            constraint.append(constraint_i.unsqueeze(1))
-
-            constraint = torch.cat(constraint, dim=1)  # (N, 4)
-            penalty = torch.mean(constraint ** 2)  + self.penalty_weight_2 * torch.mean(dy_remaining ** 2)
-            return mse_loss + self.penalty_weight * penalty
-
-        return mse_loss
-
-
-    def scaled_to_tensor(self, data):
-        if isinstance(data, torch.Tensor):
-            return data.to(self.device)
-        elif hasattr(data, 'values'):
-            data_scaled = self.scale_data(data.values)
-            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
-        else:
-            data_scaled = self.scale_data(data)
-            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
-
-    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
-        original_criterion = self.criterion
-
-        self.input_head = [col for col in X_train.columns if "_1_current" in col]
-        current_input = self.scaled_to_tensor(X_train)
-
-        def custom_train_model(*args, **kwargs):
-            nonlocal current_input
-            original_train_model = super(PiRNNFriction, self).train_model
-
-            def patched_criterion(y_target, y_pred):
-                return original_criterion(y_target, y_pred)#, x_input=current_input
-
-            self.criterion = patched_criterion
-            result = original_train_model(*args, **kwargs)
-            self.criterion = original_criterion
-            return result
-
-        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
-
-    @staticmethod
-    def get_reference_model(input_size=None):
-        """
-        Get a reference neural network with specified input size.
-
-        This function initializes and returns a neural network model with the given input size.
-        The output size and hidden size are set to 1 and the input size, respectively.
-
-        Parameters
-        ----------
-        input_size : int
-            The number of input features for the neural network.
-            Default is None. -> Input will be set at runtime.
-        Returns
-        -------
-        Net
-            An instance of the Net class configured with the specified input size.
-        """
-        return PiRNNFriction(input_size =input_size, n_hidden_layers=1, n_hidden_size=input_size)
-
-    def get_documentation(self):
-        documentation = {"hyperparameters": {
-            "learning_rate": self.learning_rate,
-            "n_hidden_size": self.n_hidden_size,
-            "n_hidden_layers": self.n_hidden_layers,
-            "n_activation_function": self.activation.__class__.__name__,
-            "optimizer_type": self.optimizer_type,
-            "penalty_weight": self.penalty_weight,
-            "penalty_weight_2": self.penalty_weight_2,
         }}
         return documentation
 

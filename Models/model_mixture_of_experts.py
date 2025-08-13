@@ -7,9 +7,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from matplotlib import pyplot as plt
 from abc import ABC, abstractmethod
-
-from numpy.f2py.auxfuncs import throw_error
-
 import Models.model_base as mb
 import Models.model_neural_net as mnn
 
@@ -246,7 +243,6 @@ class MoiraiGating(AbstractRouting):
         topk_vals, topk_indices = torch.topk(logits, self.k, dim=-1)
         gate_probs = F.softmax(topk_vals, dim=-1)
         return gate_probs, topk_indices
-
 # Explizites deterministisches Routing
 class DeterministicRouting(AbstractRouting):
     def __init__(self, input_dim, n_experts, k=1):
@@ -549,6 +545,7 @@ class MoiraiMoEModel(mb.BaseTorchModel):
             "learning_rate": self.learning_rate,
         }}
 
+
 # LÖSUNG 4: Aktualisierte NaiveMoE
 class TrulyNaiveMoE(AbstractMoEModel):
     def __init__(self, input_size=13, output_size=1, embed_dim=1, n_experts=4, k=1,
@@ -613,6 +610,7 @@ class MemoryEnhancedRouting(AbstractRouting):
         weights = torch.ones(B, 1, device=x.device)
 
         return weights, topk_indices
+
 
 # Memory-Enhanced Gating Network
 class MemoryEnhancedGating(AbstractGating):
@@ -685,9 +683,53 @@ class MemoryEnhancedGating(AbstractGating):
 
         return filled
 
+    """def forward(self, x, topk_idx, weights):
+        B, D = x.shape
+        out = torch.zeros(B, self.experts[0].output_size).to(x.device)
+
+        for i in range(self.k):
+            idx_i = topk_idx[:, i]
+
+            # Experte 0: Velocity ≠ 0 (normaler Input)
+            sel_expert_0 = (idx_i == 0)
+            if sel_expert_0.any():
+                x_expert_0 = x[sel_expert_0]
+                out_0 = self.experts[0](x_expert_0)
+                out[sel_expert_0] += weights[sel_expert_0, i].unsqueeze(1) * out_0
+
+                # Speichere die Vorhersage für späteren Gebrauch
+                # Nehme die letzte Vorhersage aus dem Batch
+                self.last_nonzero_prediction = out_0[-1:].detach().clone()
+
+            # Experte 1: Velocity ≈ 0 (erweiteter Input mit letzter Vorhersage)
+            sel_expert_1 = (idx_i == 1)
+            if sel_expert_1.any():
+                x_expert_1 = x[sel_expert_1]
+
+                # Erweitere Input um die letzte bekannte Vorhersage
+                if self.last_nonzero_prediction is None:
+                    # Fallback am Anfang: y = 0
+                    last_pred = torch.zeros(1, self.experts[1].output_size).to(x.device)
+                else:
+                    last_pred = self.last_nonzero_prediction
+
+                # Erweitere jeden Sample im Batch um die letzte Vorhersage
+                batch_size_expert_1 = x_expert_1.shape[0]
+                last_pred_expanded = last_pred.expand(batch_size_expert_1, -1)
+
+                # Konkateniere Original-Input mit letzter Vorhersage
+                x_expert_1_enhanced = torch.cat([x_expert_1, last_pred_expanded], dim=1)
+
+                out_1 = self.experts[1](x_expert_1_enhanced)
+                out[sel_expert_1] += weights[sel_expert_1, i].unsqueeze(1) * out_1
+
+        # Einfache Addition (kein gewichtetes Gating zwischen Experten)
+        return out"""
+
     def reset_memory(self):
         """Reset der gespeicherten Vorhersage für neue Sequenzen"""
         self.last_nonzero_prediction = None
+
 
 # Lineare Regression als Experte
 class LinearRegressionExpert(nn.Module):
@@ -755,6 +797,3 @@ class MemoryEnhancedMoE(AbstractMoEModel):
             },
             "description": "Memory-Enhanced MoE with velocity-based routing and prediction memory"
         }
-    @staticmethod
-    def reset_hyperparameter():
-        throw_error('Not implemented yet')

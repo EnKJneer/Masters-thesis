@@ -1,9 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-mit z,AL_2007_T4_Gear_Normal_3,Neural_Net,PiNNFriction,-139.10701960227811
-mit z,AL_2007_T4_Gear_Normal_3,Neural_Net,PiRNNFriction,-73.41469873507381
-mit z,AL_2007_T4_Plate_Normal_3,Neural_Net,PiNNFriction,-96.7179135147101
-mit z,AL_2007_T4_Plate_Normal_3,Neural_Net,PiRNNFriction,-51.33159320456508
-mit z,S235JR_Gear_Normal_3,Neural_Net,PiNNFriction,-57.30999627654256
-mit z,S235JR_Gear_Normal_3,Neural_Net,PiRNNFriction,-17.76214922603024
-mit z,S235JR_Plate_Normal_3,Neural_Net,PiNNFriction,-59.17110454784867
-mit z,S235JR_Plate_Normal_3,Neural_Net,PiRNNFriction,-23.072154384551965

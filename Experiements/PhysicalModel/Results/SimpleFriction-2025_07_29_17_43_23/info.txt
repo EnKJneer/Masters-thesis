@@ -1,1 +1,0 @@
-Konstante b wird mit v_sp multipliziert

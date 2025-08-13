@@ -22,10 +22,10 @@ DataMerged:
     Zusammengeführte daten von Sinumerik und DT98363.
 
 DataSimulated:
-    Ergebnis von Simulation.Simulate_force_MRR.
+    Ergebnis von Simulation.Simulate_force_MRR
     Enthält zusätzlich die Daten aus der Simulation.
 
-Data
+Data2
     Ergebnis aus SplitData.
     Teilt die Daten basierend auf peaks in curr_z auf.
     Fiultert nur Prozessdaten heraus.
@@ -35,3 +35,5 @@ Data
     2. 2. Durchlauf
     3. 3. Durchlauf (Ano wenn AL und Depth)
     4. Aircut (optional)
+Data:
+    Wie Data2 nur ohne Simulationsdaten.
