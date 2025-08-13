@@ -26,7 +26,7 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    dataSet.folder = '..\\..\\DataSets\\Data_low_res'
+    dataSet.folder = '..\\..\\DataSets\\Data'
     #dataSet.header =["v_sp", "v_x", "v_y", "a_x", "a_y", "a_sp", "f_x_sim", "f_y_sim", "f_sp_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'

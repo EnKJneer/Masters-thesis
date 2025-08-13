@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import machine_state as ms
 
 from MMR_Calculator import voxel_class_numba as vc
-from Simulation.MMR_Calculator.MRRSimulationV2 import SimpleCNCMRRSimulation
+from Simulation.MMR_Calculator.MRRSimulationV3 import SimpleCNCMRRSimulation
 
 def check_and_correct_values(vector):
     valid_values = {0, 3, 6, 12}
@@ -102,10 +102,12 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
     new_part_volume = part.get_total_volume()
     print(f'Volumen vorher: {new_part_volume}')
 
-    simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius)
-    times, mrr_values, segments  = simulator.simulate_mrr(process_data, frequence)
-    if plot_mrr:
-        simulator.plot_results(times, mrr_values, segments, process_data)
+    #simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius)
+    #times, mrr_values, segments  = simulator.simulate_mrr(process_data, frequence)
+    #if plot_mrr:
+    #    simulator.plot_results(times, mrr_values, segments, process_data)
+    simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius, frequence)
+    times, mrr_values  = simulator.simulate_mrr(process_data)
 
     mrr_mean = mrr_values.mean()
     for i in range(process_data.shape[0]):

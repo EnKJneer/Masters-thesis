@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
     show_results = False
     path = '..\\DataSets\\DataMerged'
-    path_target = '..\\DataSets\\DataSimulated_low_res'
+    path_target = '..\\DataSets\\DataSimulated'
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
