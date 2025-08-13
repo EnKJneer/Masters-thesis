@@ -3,9 +3,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 import machine_state as ms
+import value_plot as vp
 from MMR_Calculator import voxel_class_numba as vc
 from Simulation.MMR_Calculator.MRRSimulationV2 import SimpleCNCMRRSimulation
-
+from Simulation.MMR_Calculator.MRRSimulation import CNCMRRSimulation
 def check_and_correct_values(vector):
     valid_values = {0, 3, 6, 12}
     corrected_vector = []

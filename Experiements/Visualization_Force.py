@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.ndimage import variance
-from xarray import align
 
 
 def plot_time_series(data, title, filename, dpi=300, col_name = 'v_x', label = 'Messwerte',
@@ -61,8 +60,8 @@ def plot_time_series(data, title, filename, dpi=300, col_name = 'v_x', label = '
 
 # Beispielaufruf der Funktion
 material = 'S235JR'
-geometry = 'Notch'
-variant = 'Depth'
+geometry = 'Plate'
+variant = 'Normal'
 version = '3'
 path_data = '..\\DataSets\\Data' #'..\\Archiv\\DataSets\\OldData_Aligned'
 file = f'{material}_{geometry}_{variant}_{version}.csv'
@@ -70,6 +69,6 @@ file = f'{material}_{geometry}_{variant}_{version}.csv'
 data = pd.read_csv(f'{path_data}/{file}')
 data['f_x'] = -200*data['f_x']
 
-plot_time_series(data, f'{material} {geometry} {variant}: Stromverlauf', f'Kräfte_{material}_{geometry}_{variant}',
+plot_time_series(data, f'{material} {geometry}: Stromverlauf', f'Kräfte_{material}_{geometry}_{variant}',
                  col_name = 'f_x', label='Messwerte', label_axis='Kraft in N', dpi=1200,
                  col_name1='f_x_sim', label1='Simulation')
