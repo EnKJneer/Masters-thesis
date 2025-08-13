@@ -385,9 +385,9 @@ class ModelComparisonHeatmapPlotter(BasePlotter):
 if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
-    # folder = '..\\Experiment\\Controller_Input/Results/ST_Plate_Notch-2025_07_29_18_25_46/Predictions'
-    # folder = '..\\Experiment\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
-    folder = '..\\Experiment\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
+    # folder = '..\\Experiements\\Controller_Input/Results/ST_Plate_Notch-2025_07_29_18_25_46/Predictions'
+    # folder = '..\\Experiements\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    folder = '..\\Experiements/Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
 
     known_material = 'S235JR'
     known_geometry = 'Plate'

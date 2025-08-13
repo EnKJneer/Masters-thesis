@@ -128,7 +128,7 @@ material = 'AL_2007_T4'
 geometry = 'Gear'
 variant = 'Normal'
 version = '3'
-path_data = '..\\DataSets\\Data' #'..\\Archiv\\DataSets\\OldData_Aligned'
+path_data = '..\\DataSets\\Data_3' #'..\\Archiv\\DataSets\\OldData_Aligned'
 file = f'{material}_{geometry}_{variant}_{version}.csv'
 
 data = pd.read_csv(f'{path_data}/{file}')

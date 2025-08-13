@@ -36,7 +36,6 @@ class RandomForestModel(mb.BaseModel):
         self.max_features = max_features
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
-        self.scaler = None
 
         # Neuinitialisierung des Modells mit den neuen Hyperparametern
         self.model = RandomForestRegressor(
@@ -83,7 +82,7 @@ class RandomForestModel(mb.BaseModel):
         """
         return self.model.predict(X)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience=10):
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience_stop=10, **kwargs):
         """
         Train the Random Forest model using the training data and validate it using the validation data.
 
@@ -181,7 +180,7 @@ class RandomForestModel(mb.BaseModel):
         return RandomForestModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)
 
 class ExtraTreesModel(mb.BaseModel):
-    def __init__(self, n_estimators=100, max_features=1, min_samples_split=2, min_samples_leaf=1, random_state=None, name="Extra_Trees"):
+    def __init__(self, n_estimators=100, max_features=1, min_samples_split=2, min_samples_leaf=1, random_state=42, name="Extra_Trees"):
         """
         Initializes an Extra Trees regressor.
 
@@ -210,6 +209,23 @@ class ExtraTreesModel(mb.BaseModel):
         self.min_samples_leaf = min_samples_leaf
         self.name = name
         self.device = "cpu"
+
+    def reset_hyperparameter(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2, min_samples_leaf = 1):
+        self.n_estimators = n_estimators
+        self.max_features = max_features
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+
+        # Neuinitialisierung des Modells mit den neuen Hyperparametern
+        self.model = ExtraTreesRegressor(
+            n_estimators=n_estimators,
+            max_features=max_features,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=self.random_state,
+            n_jobs=-1
+        )
 
     def criterion(self, y_target, y_pred):
         """
@@ -245,7 +261,7 @@ class ExtraTreesModel(mb.BaseModel):
         """
         return self.model.predict(X)
 
-    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience=10):
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience_stop=10, **kwargs):
         """
         Train the Extra Trees model using the training data and validate it using the validation data.
 
@@ -334,3 +350,6 @@ class ExtraTreesModel(mb.BaseModel):
             }
         }
         return documentation
+    @staticmethod
+    def get_reference_model():
+        return ExtraTreesModel(n_estimators=10, max_features = None, min_samples_split = 2, min_samples_leaf = 1)

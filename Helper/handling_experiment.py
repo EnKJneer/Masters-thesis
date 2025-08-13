@@ -201,7 +201,7 @@ class HeatmapPlotter(BasePlotter):
 
         fig, ax = plt.subplots(figsize=(max(10, len(pivot_mae.columns) * 0.8), max(6, len(pivot_mae.index) * 0.5)))
 
-        im = ax.imshow(pivot_mae.values, cmap=self.custom_cmap, aspect='auto')
+        im = ax.imshow(pivot_mae.values, cmap=self.custom_cmap, aspect='auto', vmin=0.04, vmax=0.31,)
 
         # Achsenbeschriftungen
         ax.set_xticks(np.arange(len(pivot_mae.columns)))
@@ -224,9 +224,9 @@ class HeatmapPlotter(BasePlotter):
                                    color="white" if mae_value > pivot_mae.values.mean() else "black",
                                    fontsize=9)
 
-        ax.set_title("MAE Heatmap: DataPath vs Model_DataSet")
-        ax.set_xlabel("Model + DataSet")
-        ax.set_ylabel("DataPath")
+        ax.set_title("MAE Heatmap")
+        ax.set_xlabel("Model")
+        ax.set_ylabel("DataSet")
         fig.colorbar(im, ax=ax, label='MAE')
         plt.tight_layout()
 
@@ -426,6 +426,7 @@ class ModelHeatmapPlotter(BasePlotter):
             # Maske für NaN-Werte
             mask = pivot_df.isna()
 
+            '''            
             # Heatmap mit seaborn für bessere Optik
             sns.heatmap(
                 pivot_df,
@@ -437,10 +438,27 @@ class ModelHeatmapPlotter(BasePlotter):
                 ax=ax,
                 square=True,
                 vmin=0,  # Minimum-Wert für Colorbar
-                linewidths=0.5,  # Linien zwischen Zellen
+                linewidths=0,  # Linien zwischen Zellen
                 linecolor='gray',
-                annot_kws={'size': 20, 'weight': 'bold'}  # Größere Schrift für Werte
+                annot_kws={'size': 20, 'weight': 'bold', 'ha': 'center', 'va': 'center'}  # Größere Schrift für Werte
+            )'''
+
+            sns.heatmap(
+                pivot_df,
+                annot=True,
+                fmt='',  # Leerer Format-String, da wir custom annotations verwenden
+                cmap=self.custom_cmap,
+                mask=mask,
+                cbar_kws={'label': 'MAE'},
+                ax=ax,
+                square=False,  # Nicht quadratisch, da verschiedene Anzahl von Zeilen/Spalten
+                vmin=0.04,  # Minimum-Wert für Colorbar
+                vmax=0.31,
+                linewidths=0,  # Linien zwischen Zellen
+                linecolor='white',
+                annot_kws={'size': 20, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
             )
+
             model = model.replace('Plate_TrainVal_', '')
             model = model.replace('_', ' ')
             # Titel und Labels mit größerer Schrift
@@ -514,18 +532,19 @@ class PredictionPlotter(BasePlotter):
                         mean_pred,
                         label=f"{model} ({dataset})", alpha=0.8
                     )
+                    """                    
                     # Bestimme die Minimal- und Maximalwerte für die y-Achse
                     current_min = np.min(mean_pred - 4 * std_pred)
                     current_max = np.max(mean_pred + 4 * std_pred)
                     if current_min < y_min:
                         y_min = current_min
                     if current_max > y_max:
-                        y_max = current_max
+                        y_max = current_max"""
 
             ax.set_title(f"Predictions vs GroundTruth for {datapath}")
             ax.set_xlabel("Time")
             ax.set_ylabel("Value")
-            ax.set_ylim(y_min, y_max)
+            #ax.set_ylim(y_min, y_max)
             ax.legend()
             plt.tight_layout()
 
@@ -819,7 +838,7 @@ def run_experiment(dataSets, models,
                     model.input_size = None
                     model.scaler = None
                 model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
+                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience)
                 if hasattr(model, 'clear_active_experts_log'):
                     model.clear_active_experts_log()  # Clear the log for the next test
                 if isinstance(X_test, list):

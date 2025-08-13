@@ -26,7 +26,7 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    dataSet.folder = '..\\..\\DataSets\\Data'
+    dataSet.folder = '..\\..\\DataSets\\Data_konst'
     #dataSet.header =["v_sp", "v_x", "v_y", "a_x", "a_y", "a_sp", "f_x_sim", "f_y_sim", "f_sp_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'
@@ -45,8 +45,7 @@ if __name__ == '__main__':
                     min_samples_leaf= 4)
     model_rnn = mnn.RNN(learning_rate= 0.04834201195017264, n_hidden_size= 94, n_hidden_layers= 1,
                     activation= 'Sigmoid', optimizer_type= 'quasi_newton')
-    #model_rnn = mnn.RNN(learning_rate= 0.08443525299608749, n_hidden_size= 98, n_hidden_layers= 1,
-    #                activation= 'ReLU', optimizer_type= 'quasi_newton')
+
     models = [model_rnn, model_rf]
 
     # Run the experiment

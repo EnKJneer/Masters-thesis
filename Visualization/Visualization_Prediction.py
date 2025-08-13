@@ -11,6 +11,7 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Gesc
     :param title: Titel des Plots
     :param dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
     """
+    # ToDo: Umgang mit mehreren Vorhersagen -> Mittel und std mit plotten
     kit_red = "#D30015"
     kit_green = "#009682"
     kit_yellow = "#FFFF00"
@@ -104,19 +105,33 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Gesc
     fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
 
+'''
 # Beispielaufruf der Funktion
 material = 'S235JR'
-path_data = '..\\Experiment\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+path_data = '..\\Experiements\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
 file = f'{material}_Plate_Normal_3.csv'
 df = pd.DataFrame()
 data = pd.read_csv(f'{path_data}/{file}')
 df['curr_x'] = data['curr_x']
 df['Random Forest'] = data['ST_Plate_Notch_Random_Forest_RandomSampler']
 
-path_data = '..\\Experiment\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
+path_data = '..\\Experiements\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
 data = pd.read_csv(f'{path_data}/{file}')
 df['Rekurrentes neuronales Netz'] = data['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
 
-plot_time_series(df, f'{material} Plate: Stromverlauf', f'Verlauf_{material}_Plate',
+plot_time_series(df, f'{material} Plate: Stromverlauf', f'Verlauf_{material}_Plate_signHold',
                  col_name = 'curr_x', label='Strom in A', dpi=1200,
-                 ylabel1='Random Forest', ylabel2='Rekurrentes neuronales Netz')
+                 ylabel1='Random Forest', ylabel2='Rekurrentes neuronales Netz')'''
+
+
+# Beispielaufruf der Funktion
+material = 'AL_2007_T4'
+path_data = '..\\Experiements/Sign_hold/Results/ST_Plate_Notch-2025_08_13_13_41_05/Predictions'
+file = f'{material}_Plate_Normal_3.csv'
+
+data = pd.read_csv(f'{path_data}/{file}')
+
+
+plot_time_series(data, f'{material} Plate: Stromverlauf', f'Verlauf_{material}_Plate_RF_signHold',
+                 col_name = 'curr_x', label='Strom in A', dpi=1200,
+                 ylabel1='ohne z_Random_Forest', ylabel2='mit z_Random_Forest')

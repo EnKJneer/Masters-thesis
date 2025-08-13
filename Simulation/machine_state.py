@@ -33,7 +33,7 @@ class MachineState:
             self.teeth[i] = (self.teeth[i] + n) % (2 * math.pi)
 
 class ProcessState:
-    def __init__(self, x_pos: float, y_pos: float, z_pos: float, v_x: float, v_y: float, v_z: float, v_sp: float, a_p: float, a_e: float) -> None:
+    def __init__(self, x_pos: float, y_pos: float, z_pos: float, v_x: float, v_y: float, v_z: float, v_sp: float, a_p: float, a_e: float, phi: float) -> None:
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.z_pos = z_pos
@@ -47,6 +47,7 @@ class ProcessState:
         self.v_sp = v_sp
         self.a_e = a_e
         self.a_p = a_p
+        self.phi = phi
 
     def calculate_theta(self, v_x, v_y):
         if v_x == 0 and v_y == 0:
@@ -78,7 +79,7 @@ class ProcessState:
             tool_radius = machine_state.tool_radius
             tooth_amount = machine_state.tooth_amount
             kappa = math.radians(90) # kappe = 90 da Umfangfräsen
-            phi_s = math.radians(180) #Schnittwinkel beim volle fraesen ist das 180 Grad
+            phi_s = math.radians(self.phi) #Schnittwinkel beim volle fraesen ist das 180 Grad
             teeth = machine_state.teeth
             machine_coef_x = machine_state.machine_coef_x
             machine_coef_y = machine_state.machine_coef_y

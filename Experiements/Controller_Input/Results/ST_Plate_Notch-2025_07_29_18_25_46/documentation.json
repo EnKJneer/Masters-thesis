@@ -1,0 +1,221 @@
+{
+    "DataSets": [
+        {
+            "name": "ohne cont_dev",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ],
+            "add_sign_hold": false,
+            "columns_to_integrate": []
+        },
+        {
+            "name": "mit cont_dev",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "cont_dev_x",
+                "cont_dev_y",
+                "cont_dev_z",
+                "materialremoved_sim"
+            ],
+            "add_sign_hold": false,
+            "columns_to_integrate": [
+                "cont_dev_x",
+                "cont_dev_y",
+                "cont_dev_z"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Recurrent_Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.04834201195017264,
+                    "n_hidden_size": 94,
+                    "n_hidden_layers": 1,
+                    "activation": "Sigmoid",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 52,
+                    "max_features": 500,
+                    "min_samples_split": 67,
+                    "min_samples_leaf": 4
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 500
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\ST_Plate_Notch-2025_07_29_18_25_46\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\ST_Plate_Notch-2025_07_29_18_25_46\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_07_29_18_25_46\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_07_29_18_25_46\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_07_29_18_25_46\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ohne cont_dev",
+                "AL_2007_T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                23.515297939075204
+            ],
+            [
+                "ohne cont_dev",
+                "AL_2007_T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                -12.050069922273368
+            ],
+            [
+                "ohne cont_dev",
+                "S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                18.194976746261883
+            ],
+            [
+                "ohne cont_dev",
+                "S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                22.22924914233414
+            ],
+            [
+                "mit cont_dev",
+                "AL_2007_T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                84.02946535977165
+            ],
+            [
+                "mit cont_dev",
+                "AL_2007_T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                21.716570732538784
+            ],
+            [
+                "mit cont_dev",
+                "S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                82.15870108266658
+            ],
+            [
+                "mit cont_dev",
+                "S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                52.31291669869894
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 2,
+            "DataPaths_per_Dataset": {
+                "ohne cont_dev": 4,
+                "mit cont_dev": 4
+            },
+            "Models_Compared": [
+                "Recurrent_Neural_Net",
+                "Random_Forest"
+            ],
+            "Best_Model_Overall": "Random_Forest",
+            "Worst_Model_Overall": "Recurrent_Neural_Net"
+        }
+    }
+}

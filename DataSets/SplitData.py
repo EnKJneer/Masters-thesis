@@ -183,8 +183,8 @@ def detect_peaks_and_split(df, time_col='time', signal_col='curr_z',
 
 
 if __name__ == "__main__":
-    path_data = 'DataSimulated'
-    path_target = 'Data'
+    path_data = 'DataSimulated_konst'
+    path_target = 'Data_konst'
 
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
@@ -200,7 +200,7 @@ if __name__ == "__main__":
         filename = file.split('.')[0]
 
         # Detect peaks and split data
-        result = detect_peaks_and_split(df, plot=True, filename=filename)
+        result = detect_peaks_and_split(df, plot=False, filename=filename)
 
         df_parts = result['df_parts']  # Now a dictionary with region names as keys
         peaks = result['peaks']

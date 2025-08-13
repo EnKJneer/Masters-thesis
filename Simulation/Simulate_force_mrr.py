@@ -33,22 +33,22 @@ def get_part_properties(material_geometry):
                 part_position = [-33.15, 174.482, 354.1599]
             else:
                 part_position = [-33.807, 174.871, 354.78]
-            part_dimension = [70, 70, 50, 0.2]
+            part_dimension = [70, 70, 50, 0.1]
         elif "Notch" in geometry:
             part_position = [-38.6, 249.5, 354.93]
-            part_dimension = [70, 70, 50, 0.2]
+            part_dimension = [70, 70, 50, 0.1]
         elif "Plate" in geometry:
             part_position = [-38.64, 175, 354.94]
-            part_dimension = [75.0, 75.0 * 2, 49.6, 0.2]
+            part_dimension = [75.0, 75.0 * 2, 49.6, 0.1]
         elif "Kühlgrill" in geometry:
             part_position = [-39.243, 176.407, 351.205]
-            part_dimension = [75.0, 75.0 * 2, 50.0, 0.2]
+            part_dimension = [75.0, 75.0 * 2, 50.0, 0.1]
         elif "Laufrad" in geometry:
             part_position = [-76.69, 175.4, 360]
-            part_dimension = [150, 150, 30, 0.2]
+            part_dimension = [150, 150, 30, 0.1]
         elif "Bauteil_1" in geometry:
             part_position = [-37.8, 269.27, 339.69]
-            part_dimension = [70, 70, 50, 0.2]
+            part_dimension = [70, 70, 50, 0.1]
 
     elif material == "AL" and geometry[:2] == ["2007", "T4"]:
         material = "AL_2007_T4"
@@ -57,22 +57,22 @@ def get_part_properties(material_geometry):
                 part_position = [-33.24875, 174.482, 355.1599]
             else:
                 part_position = [-33.807, 174.871, 354.78]
-            part_dimension = [70, 70, 50, 0.2]
+            part_dimension = [70, 70, 50, 0.1]
         elif "Notch" in geometry:
             part_position = [-38.6, 249.5, 354.93]
-            part_dimension = [70, 70, 50, 0.2]
+            part_dimension = [70, 70, 50, 0.1]
         elif "Plate" in geometry:
             part_position = [-35.64, 175, 354.94]
-            part_dimension = [75.0, 75.0 * 2, 50.0, 0.2]
+            part_dimension = [75.0, 75.0 * 2, 50.0, 0.1]
         elif "Kühlgrill" in geometry:
             part_position = [-39.243, 176.407, 351.205]
-            part_dimension = [75.0, 75.0 * 2, 50.0, 0.2]
+            part_dimension = [75.0, 75.0 * 2, 50.0, 0.1]
         elif "Laufrad" in geometry:
             part_position = [-76.69, 175.4, 360]
-            part_dimension = [150, 150, 30, 0.2]
+            part_dimension = [150, 150, 30, 0.1]
         elif "Bauteil_1" in geometry:
             part_position = [-37.8, 269.27, 339.69]
-            part_dimension = [70, 70, 50, 0.2]
+            part_dimension = [70, 70, 50, 0.1]
 
     if part_position is not None and part_dimension is not None and material is not None:
         return material,part_position, part_dimension
@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
     show_results = False
     path = '..\\DataSets\\DataMerged'
-    path_target = '..\\DataSets\\DataSimulated'
+    path_target = '..\\DataSets\\DataSimulated_konst'
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
