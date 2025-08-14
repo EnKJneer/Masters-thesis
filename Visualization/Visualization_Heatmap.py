@@ -342,7 +342,7 @@ class ModelHeatmapPlotter(BasePlotter):
                         text.set_color(text_colors[i, j])
 
             # Model-Name aufräumen
-            model_clean = model.replace('Plate_TrainVal_', '').replace('ST_Data_', '').replace('ST_Plate_Notch_',
+            model_clean = model.replace('Plate_TrainVal_', '').replace('Reference_','').replace('ST_Data_', '').replace('ST_Plate_Notch_',
                                                                                                '').replace('_', ' ')
 
             # Titel und Labels mit größerer Schrift
@@ -385,7 +385,8 @@ if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
     #folder = '..\\Experiment\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
-    folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
+    #folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
+    folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
 
     known_material = 'S235JR'
     known_geometry = 'Plate'
@@ -395,7 +396,8 @@ if __name__ == '__main__':
     #models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
     #models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
     #models = ['ST_Data_Random_Forest']
-    models = ['ST_Data_Neural_Net']
+    models = ['Reference_Random_Forest']
+    #models = ['Reference_Neural_Net']
 
     # Plotter erstellen
     plotter = ModelHeatmapPlotter(

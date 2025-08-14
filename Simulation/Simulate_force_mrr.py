@@ -79,6 +79,7 @@ def get_part_properties(material_geometry):
     else:
         print(f"Unknown material and geometry combination: {material_geometry}")
         return "Unknown material and geometry combination"
+
 def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50, align_axis=False):
     """
     Erstellt einen Zeitverlaufsplan mit zwei y-Achsen.
@@ -131,13 +132,13 @@ if __name__ == '__main__':
     target_frequency = 50
     path_material_constant = 'optimized_parameters.json'
 
-    show_results = False
+    show_results = True
     path = '..\\DataSets\\DataMerged'
-    path_target = '..\\DataSets\\DataSimulated_konst'
+    path_target = '..\\DataSets\\DataSimulated_test'
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
-    #files = ['AL_2007_T4_Plate_Depth.csv']
+    files = ['S235JR_Plate_Depth.csv']
     for file in files:
         if not file.endswith('.csv'):
             continue

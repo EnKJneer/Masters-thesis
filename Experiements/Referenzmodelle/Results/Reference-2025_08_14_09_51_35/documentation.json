@@ -1,0 +1,129 @@
+{
+    "DataSets": [
+        {
+            "name": "Reference",
+            "folder": "..\\..\\Archiv\\DataSets\\DataFiltered",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 64,
+                    "n_hidden_layers": 2,
+                    "activation": "ReLU",
+                    "optimizer_type": "Adam"
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": 20,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1000
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Reference-2025_08_14_09_51_35\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Reference-2025_08_14_09_51_35\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\Reference-2025_08_14_09_51_35\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\Reference-2025_08_14_09_51_35\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\Reference-2025_08_14_09_51_35\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "Reference",
+                "AL_2007_T4_Gear_Normal_3",
+                "Neural_Net",
+                "Random_Forest",
+                16.72831644572952
+            ],
+            [
+                "Reference",
+                "AL_2007_T4_Plate_Normal_3",
+                "Neural_Net",
+                "Random_Forest",
+                31.40326838295075
+            ],
+            [
+                "Reference",
+                "S235JR_Gear_Normal_3",
+                "Neural_Net",
+                "Random_Forest",
+                20.59774845354833
+            ],
+            [
+                "Reference",
+                "S235JR_Plate_Normal_3",
+                "Neural_Net",
+                "Random_Forest",
+                45.446317211103946
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 8,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "Reference": 4
+            },
+            "Models_Compared": [
+                "Neural_Net",
+                "Random_Forest"
+            ],
+            "Best_Model_Overall": "Random_Forest",
+            "Worst_Model_Overall": "Neural_Net"
+        }
+    }
+}

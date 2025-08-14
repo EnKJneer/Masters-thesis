@@ -1032,6 +1032,7 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
 def save_detailed_csv(df, results_dir):
     """
     Speichert detaillierte Daten für jeden DataPath in separaten CSV-Dateien.
+    Jede Zeitreihe (Seed/Run) wird einzeln gespeichert anstatt als Mittelwert.
 
     Args:
         df (pd.DataFrame): DataFrame mit den Ergebnissen.
@@ -1053,14 +1054,19 @@ def save_detailed_csv(df, results_dir):
         ground_truth = df_subset['GroundTruth'].iloc[0]
         ground_truth_df = pd.DataFrame(ground_truth, columns=['GroundTruth'])
 
-        # Erstelle einen DataFrame für die mittleren Vorhersagen jeder DataSet-Modell-Kombination
+        # Erstelle einen DataFrame für alle individuellen Vorhersagen
         predictions_dict = {}
-        for _, row in df_subset.iterrows():
-            predictions = row['Predictions']
-            mean_predictions = np.mean(predictions, axis=0)
-            predictions_dict[f'{row["DataSet"]}_{row["Model"]}'] = mean_predictions
 
-        # Erstelle einen DataFrame aus dem Wörterbuch der mittleren Vorhersagen
+        for _, row in df_subset.iterrows():
+            predictions = row['Predictions']  # Shape: (n_seeds, n_timesteps)
+            dataset_model = f'{row["DataSet"]}_{row["Model"]}'
+
+            # Füge jede einzelne Zeitreihe hinzu
+            for seed_idx in range(len(predictions)):
+                column_name = f'{dataset_model}_seed_{seed_idx}'
+                predictions_dict[column_name] = predictions[seed_idx]
+
+        # Erstelle einen DataFrame aus dem Wörterbuch der individuellen Vorhersagen
         predictions_df = pd.DataFrame(predictions_dict)
 
         # Kombiniere die DataFrames
@@ -1070,7 +1076,7 @@ def save_detailed_csv(df, results_dir):
         csv_file = os.path.join(detailed_csv_dir, f'{datapath.replace("/", "_")}.csv')
         combined_df.to_csv(csv_file, index=False)
 
-    print(f"Detaillierte CSV-Dateien wurden in {detailed_csv_dir} gespeichert.")
+    print(f"Detaillierte CSV-Dateien mit individuellen Zeitreihen wurden in {detailed_csv_dir} gespeichert.")
 
 def reconstruct_results_dataframe(json_file_path):
     """

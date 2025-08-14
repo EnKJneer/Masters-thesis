@@ -265,7 +265,7 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
         a_e, phi = calculate_ae_and_angle_for_tool(tool, part_position, part_dimension)
 
         process_data.loc[i, 'a_e'] = a_e
-        process_data.loc[i, 'cut_angle'] = phi
+        process_data.loc[i, 'phi'] = phi
 
         current_process_state = ms.ProcessState(pos_x, pos_y, pos_z, v_x, v_y, v_z, v_sp, a_p, a_e, phi)
         tool.set_new_position(new_tool_coordinates)
@@ -274,7 +274,7 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
         if materialremoved_sim < 0:
             materialremoved_sim = 0
 
-        if materialremoved_sim > mrr_mean/10 and a_p > 0 and a_e > 2:
+        if a_p > 0 and a_e > 2: #materialremoved_sim > mrr_mean/10 and a_p > 0 and a_e > 2:
             f_x_sim, f_y_sim, f_z_sim, f_sp_sim = force_calculate(machine_state, current_process_state, frequence)
         else:
             f_x_sim, f_y_sim, f_z_sim, f_sp_sim = 0.0, 0.0, 0.0, 0.0
@@ -286,6 +286,12 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
     if plot_mrr:
         plt.plot(process_data['a_p'])
         plt.title('a_p')
+        plt.show()
+        plt.plot(process_data['a_e'])
+        plt.title('a_e')
+        plt.show()
+        plt.plot(process_data['phi'])
+        plt.title('phi')
         plt.show()
 
     data_df = pd.concat([process_data, true_curr, force_df], axis=1)

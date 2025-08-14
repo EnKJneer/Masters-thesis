@@ -358,15 +358,22 @@ dataPaths_Train = ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
 dataPaths_Val = ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
                                               'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv']
 
-
+DataClass_Reference = DataClass('Reference', '..\\..\\Archiv\\DataSets\\DataFiltered',
+                                ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                                 'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
+                                                 'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
+                                ['S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',],
+                                dataPaths_Test,
+                                             ["curr_x"],
+                                     header = HEADER_x)
 
 DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                              ["curr_x"],
                                      header = HEADER_x)
 
-DataClassV3_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_data,
-                                    ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+DataClass_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_data,
+                                             ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv',
                                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
                                                     'S235JR_Plate_SF_3.csv', ],
@@ -375,35 +382,38 @@ DataClassV3_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_
                                              dataPaths_Test,
                                              ["curr_x"], header = HEADER_x)
 
-DataClassV3_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
-                                               ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv',
+DataClass_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
+                                     ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv',
                                                 'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv',
                                                 'S235JR_Notch_Depth_3.csv'],
-                                    ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
+                                     ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
                                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
                                                     'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
 
-                                             [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
-                                             ["curr_x"], header = HEADER_x)
+                                     [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
+                                     ["curr_x"], header = HEADER_x)
 
-DataClassV3_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_data,
-                                    dataPaths_Train, dataPaths_Val, dataPaths_Test,
-                                             ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
+DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_data,
+                                         dataPaths_Train, dataPaths_Val, dataPaths_Test,
+                                         ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
-def sign_hold(v, eps = 1e-1):
+def sign_hold(v, eps = 1e-1, n=5):
     # Initialisierung des Arrays z mit Nullen
     z = np.zeros(len(v))
+    h_init = np.zeros(n)
+
+    assert n > 1
 
     # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
-    h = deque([0, 0, 0, 0, 0], maxlen=5)
+    h = deque(h_init, maxlen=n)
 
     # Berechnung von z
     for i in range(len(v)):
         if abs(v[i]) > eps:
             h.append(v[i])
 
-        if i >= 4:  # Da wir ab dem 5. Element starten wollen
+        if i >= n-1:  # Da wir ab dem 5. Element starten wollen
             # Berechne zi als Vorzeichen der Summe
             z[i] = np.sign(sum(h))
 

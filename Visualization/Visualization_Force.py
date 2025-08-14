@@ -120,20 +120,22 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
     ax1.set_ylim(bottom=min(y_label_pos, ymin), top=ymax * 1.05)
 
     # Speicherpfad erstellen und Plot speichern
-    plot_path = os.path.join(path, filename)
-    fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    #plot_path = os.path.join(path, filename)
+    #fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+
+    plt.show()
 
 # Beispielaufruf der Funktion
-material = 'AL_2007_T4'
-geometry = 'Gear'
-variant = 'Normal'
+material = 'S235JR'
+geometry = 'Plate'
+variant = 'Depth'
 version = '3'
-path_data = '..\\DataSets\\Data_3' #'..\\Archiv\\DataSets\\OldData_Aligned'
-file = f'{material}_{geometry}_{variant}_{version}.csv'
+path_data = '..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
+file = f'{material}_{geometry}_{variant}.csv' #_{version}
 
 data = pd.read_csv(f'{path_data}/{file}')
 data['f_x'] = -200*data['f_x']
 
 plot_time_series(data, f'{material} {geometry} {variant}: Verlauf der Prozesskraft', f'Kräfte_{material}_{geometry}_{variant}_new',
-                 col_name = 'f_x', label='Messwerte', label_axis='$F$ in N', dpi=1200,
+                 col_name = 'f_x', label='Messwerte', label_axis='$F$ in N', dpi=300,
                  col_name1='f_x_sim', label1='Simulation')
