@@ -69,54 +69,74 @@ def calculate_ae_and_angle_for_tool(tool, part_position, part_dimension):
     part_position: [x_min, y_min, z_min] untere linke Ecke des Bauteils
     part_dimension: [width, height, depth] Bauteilmaße
     """
-    # Werte extrahieren
+    radius = tool.radius
     tool_x = tool.x_position
     tool_y = tool.y_position
-    radius = tool.radius
+    tool_z = tool.z_position
+
+    D = 2.0 * radius
 
     x_min = part_position[0]
     y_min = part_position[1]
+    z_min = part_position[2]
     x_max = x_min + part_dimension[0]
     y_max = y_min + part_dimension[1]
+    z_max = z_min + part_dimension[2]
 
-    # Vollständig draußen?
+    # Wenn der Bohrer komplett über dem Werkstück ist → kein Eingriff
+    if tool_z <= z_min or tool_z >= z_max:
+        return 0.0, 0.0
+
+    # Vollständig draußen in XY
     if (tool_x + radius <= x_min or tool_x - radius >= x_max or
         tool_y + radius <= y_min or tool_y - radius >= y_max):
         return 0.0, 0.0
 
-    # Vollständig drin?
+    # Vollständig drin in XY
     if (tool_x - radius >= x_min and tool_x + radius <= x_max and
         tool_y - radius >= y_min and tool_y + radius <= y_max):
-        return 2 * radius, 180.0
+        return D, 180.0
 
-    # Teilweise drin -> Geometrische Berechnung
+    # Teilweise drin → max. Schnittlänge a_e bestimmen
     max_chord = 0.0
-    step = radius / 180.0  # Scan-Auflösung in Y
+    step = max(radius / 180.0, 1e-6)
     for y in frange(max(y_min, tool_y - radius), min(y_max, tool_y + radius), step):
         dy = y - tool_y
-        dx = math.sqrt(max(radius**2 - dy**2, 0))
+        r2_minus_dy2 = radius * radius - dy * dy
+        if r2_minus_dy2 <= 0:
+            continue
+        dx = math.sqrt(r2_minus_dy2)
         x_left = tool_x - dx
         x_right = tool_x + dx
         chord_left = max(x_left, x_min)
         chord_right = min(x_right, x_max)
-        chord_length = max(chord_right - chord_left, 0)
-        max_chord = max(max_chord, chord_length)
+        chord_length = max(chord_right - chord_left, 0.0)
+        if chord_length > max_chord:
+            max_chord = chord_length
 
     a_e = max_chord
 
-    # Schnittwinkel berechnen (aus Geradenlänge in Kreis)
-    if a_e > 0:
-        angle = math.degrees(2 * math.asin(min(a_e / (2 * radius), 1.0)))
-    else:
-        angle = 0.0
+    # Literaturformel für Schnittwinkel
+    u = max(D - a_e, 0.0)
 
-    return a_e, angle
+    def clamp_cos_arg(x):
+        return max(-1.0, min(1.0, x))
+
+    c2 = clamp_cos_arg(1.0 - (2.0 * (u + a_e)) / D)
+    c1 = clamp_cos_arg(1.0 - (2.0 * u) / D)
+
+    phi2 = math.acos(c2)
+    phi1 = math.acos(c1)
+    phi_s = phi2 - phi1
+    angle_deg = math.degrees(max(0.0, phi_s))
+
+    return a_e, angle_deg
 
 def frange(start, stop, step):
-    """Float range generator."""
-    while start <= stop:
-        yield start
-        start += step
+    v = start
+    while v <= stop + 1e-12:
+        yield v
+        v += step
 
 def check_and_correct_values(vector):
     valid_values = {0, 3, 6, 12}
@@ -274,7 +294,7 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
         if materialremoved_sim < 0:
             materialremoved_sim = 0
 
-        if a_p > 0 and a_e > 2: #materialremoved_sim > mrr_mean/10 and a_p > 0 and a_e > 2:
+        if materialremoved_sim > mrr_mean/10 and a_p > 0:
             f_x_sim, f_y_sim, f_z_sim, f_sp_sim = force_calculate(machine_state, current_process_state, frequence)
         else:
             f_x_sim, f_y_sim, f_z_sim, f_sp_sim = 0.0, 0.0, 0.0, 0.0

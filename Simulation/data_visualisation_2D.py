@@ -116,7 +116,7 @@ def apply_lowpass_filter(data, cutoff, order):
     return data2
 
 
-files = ['..\\DataSets/Data2/S235JR_Plate_Normal_2.csv']
+files = ['..\\DataSets/Data/S235JR_Plate_Normal_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(file)
@@ -137,4 +137,5 @@ for file in files:
     plot_time_series(data, name, label='test', dpi=300, ylabel='f_x', align_axis=True)
 
     data['v_f'] = (data['v_x']**2 + data['v_y']**2)**0.5
-    plot_time_series(data, name, label='v_f', dpi=300, ylabel=None, align_axis=True)
+    plot_time_series(data, name, label='f_x', dpi=300, ylabel=None, align_axis=True)
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel=None, align_axis=True)

@@ -22,6 +22,7 @@ def get_part_properties(material_geometry):
     part_position = None
     part_dimension = None
 
+    material_geometry = material_geometry.replace('.csv', '')
     # Split the material_geometry string into components
     material, *geometry = material_geometry.split('_')
 
@@ -138,7 +139,7 @@ if __name__ == '__main__':
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
-    files = ['S235JR_Plate_Depth.csv']
+    files = ['S235JR_Gear_Depth.csv']
     for file in files:
         if not file.endswith('.csv'):
             continue
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         path_data = os.path.join(path, file)
         raw_data = pd.read_csv(path_data)
 
-        material, part_position, part_dimension = get_part_properties(file)
+        material, part_position, part_dimension = get_part_properties(file.replace('.csv', ''))
 
         material_setting = machine_state.load_optimized_parameters_as_dict(path_material_constant)
 

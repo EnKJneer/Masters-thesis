@@ -127,7 +127,7 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
 
 # Beispielaufruf der Funktion
 material = 'S235JR'
-geometry = 'Plate'
+geometry = 'Gear'
 variant = 'Depth'
 version = '3'
 path_data = '..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'

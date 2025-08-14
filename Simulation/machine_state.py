@@ -6,15 +6,15 @@ import pandas as pd
 from MMR_Calculator import voxel_class_numba
 
 class MachineState:
-    def __init__(self, k_c1, k_f1, k_p1, K_v, K_kss, x: float, y: float, z: float, tool_radius: float, tooth_amount: int, machine_coef_x: float, machine_coef_y: float, machine_coef_z: float) -> None:
+    def __init__(self, k_c1, k_f1, k_p1, K_v, K_kss, m_f: float, m_p: float, m_c: float, tool_radius: float, tooth_amount: int, machine_coef_x: float, machine_coef_y: float, machine_coef_z: float) -> None:
         self.k_c1 = k_c1
         self.k_f1 = k_f1
         self.k_p1 = k_p1
         self.K_v = K_v
         self.K_kss = K_kss
-        self.x = x
-        self.y = y
-        self.z = z
+        self.m_f = m_f
+        self.m_p = m_p
+        self.m_c = m_c
         self.tool_radius = tool_radius
         self.tooth_amount = tooth_amount
         self.machine_coef_x = machine_coef_x
@@ -68,9 +68,9 @@ class ProcessState:
             v_x = self.v_x
             v_y = self.v_y
             v_z = self.v_z
-            x = machine_state.x
-            y = machine_state.y
-            z = machine_state.z
+            m_f = machine_state.m_f
+            m_p = machine_state.m_p
+            m_c = machine_state.m_c
             k_c1 = machine_state.k_c1
             k_f1 = machine_state.k_f1
             k_p1 = machine_state.k_p1
@@ -92,13 +92,19 @@ class ProcessState:
             fz = v_ges / (v_sp * tooth_amount) # Vorschub pro Zahn
             angle_update = v_sp / (60 * frequence) * (2*math.pi)
             machine_state.set_theeth_angle(angle_update)
-            h = 114.6 / math.degrees(phi_s) * fz * (a_e / (tool_radius * 2)) * math.sin(kappa) # Formel 3.11 nach Neugebauer seite 41
+            #h = 114.6 / math.degrees(phi_s) * fz * (a_e / (tool_radius * 2)) * math.sin(kappa) # Formel 3.11 nach Neugebauer seite 41
+
+            if math.degrees(phi_s) != 0:
+                h = 114.6 / math.degrees(phi_s) * fz * (a_e / (tool_radius * 2)) * math.sin(kappa)
+            else:
+                h = 0
+
             b = a_p / math.sin(kappa)
             h = max(h, 0)
 
-            F_c = b * h ** (1-z) * k_c1 * K_v * K_kss
-            F_cn = b * h ** (1-x) * k_f1 * K_v * K_kss
-            F_pz = b * h ** (1-y) * k_p1 * K_v * K_kss
+            F_c = b * h ** (1-m_c) * k_c1 * K_v * K_kss
+            F_cn = b * h ** (1-m_f) * k_f1 * K_v * K_kss
+            F_pz = b * h ** (1-m_p) * k_p1 * K_v * K_kss
 
             F_c_matrix = np.array([[F_c], [F_cn], [F_pz]])
 
