@@ -398,10 +398,10 @@ DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_dat
                                          dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                          ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
-def sign_hold(v, eps = 1e-1, n=5):
+def sign_hold(v, eps = 1e-1, n=3, init=-1):
     # Initialisierung des Arrays z mit Nullen
     z = np.zeros(len(v))
-    h_init = np.zeros(n)
+    h_init = np.ones(n)*init
 
     assert n > 1
 

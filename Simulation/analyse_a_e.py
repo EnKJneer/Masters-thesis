@@ -79,6 +79,7 @@ def get_part_properties(material_geometry):
     part_position = None
     part_dimension = None
 
+    material_geometry = material_geometry.replace('.csv', '')
     # Split the material_geometry string into components
     material, *geometry = material_geometry.split('_')
 
@@ -141,7 +142,7 @@ path = '..\\DataSets\\DataMerged'
 # Create target directory if it doesn't exist
 
 files = os.listdir(path)
-files = ['S235JR_Plate_Depth.csv']
+files = ['S235JR_Plate_Normal.csv']
 for file in files:
     if not file.endswith('.csv'):
         continue
@@ -169,6 +170,7 @@ for file in files:
 
     for index, row in data.iterrows():
         a_e, phi_s = calculate_ae_and_angle_for_tool(row['pos_x'], row['pos_y'], row['pos_z'], tool_radius, part_position, part_dimension)
+        phi_s = 180
         if math.degrees(phi_s) != 0:
             h = 114.6 / math.degrees(phi_s) * fz[index] * (a_e / (tool_radius * 2)) * math.sin(kappa)
         else:

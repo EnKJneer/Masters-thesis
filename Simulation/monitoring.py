@@ -282,8 +282,8 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
         v_z = process_data.loc[i, 'v_z']
         v_sp = process_data.loc[i, 'v_sp']
 
-        a_e, phi = calculate_ae_and_angle_for_tool(tool, part_position, part_dimension)
-
+        #a_e, phi = calculate_ae_and_angle_for_tool(tool, part_position, part_dimension)
+        phi = 180
         process_data.loc[i, 'a_e'] = a_e
         process_data.loc[i, 'phi'] = phi
 

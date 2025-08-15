@@ -31,7 +31,7 @@ def get_part_properties(material_geometry):
         material = "S235JR"
         if "Gear" in geometry:
             if "Depth" in geometry:
-                part_position = [-33.15, 174.482, 354.1599]
+                part_position = [-33.15, 174.482, 354.1599] #[-40, 174.871, 354.78]
             else:
                 part_position = [-33.807, 174.871, 354.78]
             part_dimension = [70, 70, 50, 0.1]
@@ -81,50 +81,117 @@ def get_part_properties(material_geometry):
         print(f"Unknown material and geometry combination: {material_geometry}")
         return "Unknown material and geometry combination"
 
-def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50, align_axis=False):
+def plot_time_series(data, title, dpi=300, col_name='v_x', label='Messwerte',
+                     label_axis='Geschwindigkeit in m/s',
+                     col_name1=None, label1='Simulation', col_name2=None, label2='Simulation 2',
+                     f_a=50):
     """
-    Erstellt einen Zeitverlaufsplan mit zwei y-Achsen.
-
+    Erstellt einen DIN 461 konformen Zeitverlaufsplan.
     :param data: DataFrame mit den Daten
     :param title: Titel des Plots
     :param dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
-    :param label: Bezeichnung der ersten y-Achse
-    :param ylabel: Bezeichnung der zweiten y-Achse
-    :param f_a: Abtastrate
     """
-    fig, ax1 = plt.subplots(figsize=(10, 6), dpi=dpi)
+    kit_red = "#D30015"
+    kit_green = "#009682"
+    kit_yellow = "#FFFF00"
+    kit_orange = "#FFC000"
+    kit_blue = "#0C537E"
+    kit_dark_blue = "#002D4C"
+    kit_magenta = "#A3107C"
 
-    if 'time' in data.columns:
-        time = data['time']
-    else:
-        time = data.index * (1/f_a)
+    time = data.index / f_a
 
-    ax1.plot(time, data[label], label=label, color='tab:green')
-    ax1.set_xlabel('Time in s')
-    ax1.set_ylabel(label)
-    ax1.set_title(title)
-    ax1.legend(loc='upper left')
+    # DIN 461 konforme Figur erstellen (Seitenverhältnis ca. 3:2)
+    fig, ax1 = plt.subplots(figsize=(12, 8), dpi=dpi)
 
-    if ylabel is not None:
-        # Zweite y-Achse für curr_x
-        ax2 = ax1.twinx()
-        ax2.plot(time, data[ylabel], label=ylabel, color='tab:red', linestyle='--', alpha=0.8)
-        ax2.set_ylabel(ylabel)
-        ax2.legend(loc='upper right')
+    # DIN 461: Achsen müssen durch den Nullpunkt gehen
+    ax1.spines['left'].set_position('zero')
+    ax1.spines['bottom'].set_position('zero')
+    ax1.spines['top'].set_visible(False)
+    ax1.spines['right'].set_visible(False)
 
-        if align_axis:
-            # Berechne den maximalen absoluten Wert für jede Achse separat
-            y1_min, y1_max = ax1.get_ylim()
-            y2_min, y2_max = ax2.get_ylim()
+    # DIN 461: Achsen in kit_dark_blue
+    ax1.spines['left'].set_color(kit_dark_blue)
+    ax1.spines['bottom'].set_color(kit_dark_blue)
+    ax1.spines['left'].set_linewidth(1.0)
+    ax1.spines['bottom'].set_linewidth(1.0)
 
-            abs_max1 = max(abs(y1_min), abs(y1_max))
-            abs_max2 = max(abs(y2_min), abs(y2_max))
+    # Plot der Hauptdaten
+    line0, = ax1.plot(time, data[col_name], label=label, color=kit_blue, linewidth=1.5)
 
-            ax1.set_ylim(-abs_max1, abs_max1)
-            ax2.set_ylim(-abs_max2, abs_max2)
-            lim = 1000
-            ax1.set_ylim(-lim, lim)
-            ax2.set_ylim(-lim, lim)
+    # DIN 461: Beschriftungen in kit_dark_blue
+    ax1.tick_params(axis='x', colors=kit_dark_blue, direction='inout', length=6)
+    ax1.tick_params(axis='y', colors=kit_dark_blue, direction='inout', length=6)
+
+    # Grid nach DIN 461 (optional, aber empfohlen)
+    ax1.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5, linestyle='-')
+    ax1.set_axisbelow(True)
+
+    # Achsenbeschriftungen mit Pfeilen bei der Beschriftung
+    xmin, xmax = ax1.get_xlim()
+    ymin, ymax = ax1.get_ylim()
+
+    # Pfeillängen für Beschriftung
+    arrow_length = 0.03 * (xmax - xmin)
+    arrow_height = 0.04 * (ymax - ymin)
+
+    # X-Achse: Pfeil bei der Beschriftung (rechts zeigend)
+    x_label_pos = xmax# * 0.95
+    y_label_pos = -0.08 * (ymax - ymin)
+
+    ax1.annotate('', xy=(x_label_pos + arrow_length, y_label_pos),
+                 xytext=(x_label_pos , y_label_pos),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue,
+                                 lw=1.5, shrinkA=0, shrinkB=0,
+                                 mutation_scale=15))
+
+    ax1.text(x_label_pos - 0.06 * (xmax - xmin), y_label_pos, r'$t$ in s',
+             ha='left', va='center', color=kit_dark_blue, fontsize=12)
+
+    # Y-Achse: Pfeil bei der Beschriftung (oben zeigend)
+    x_label_pos_y = -0.06 * (xmax - 0)
+    y_label_pos_y = ymax * 0.85
+
+    ax1.annotate('', xy=(x_label_pos_y, y_label_pos_y + arrow_height),
+                 xytext=(x_label_pos_y, y_label_pos_y),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue,
+                                 lw=1.5, shrinkA=0, shrinkB=0,
+                                 mutation_scale=15))
+
+    ax1.text(x_label_pos_y, y_label_pos_y - 0.04 * (ymax - ymin), label_axis,
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+
+    # Titel mit DIN 461 konformer Positionierung
+    ax1.set_title(title, color=kit_dark_blue, fontsize=14, fontweight='bold', pad=20)
+
+    # Legende vorläufige Liste erstellen
+    lines = [line0]
+    labels = [line0.get_label()]
+
+    # Weitere Datenreihen hinzufügen, falls vorhanden
+    if col_name1 is not None:
+        line1, = ax1.plot(time, data[col_name1], label=label1, color=kit_red, linewidth=1.5)
+        lines.append(line1)
+        labels.append(line1.get_label())
+
+        if col_name2 is not None:
+            line2, = ax1.plot(time, data[col_name2], label=label2, color=kit_orange, linewidth=1.5)
+            lines.append(line2)
+            labels.append(line2.get_label())
+
+    # DIN 461: Legende mit Rahmen und korrekter Positionierung (oben rechts)
+    legend = ax1.legend(lines, labels, loc='upper right',
+                        frameon=True, fancybox=False, shadow=False,
+                        framealpha=1.0, facecolor='white', edgecolor=kit_dark_blue)
+    legend.get_frame().set_linewidth(1.0)
+
+    # Schriftfarbe der Legende
+    for text in legend.get_texts():
+        text.set_color(kit_dark_blue)
+
+    # DIN 461: Achsenbegrenzungen anpassen, damit Nullpunkt sichtbar ist
+    ax1.set_xlim(left=min(x_label_pos_y, xmin), right=xmax * 1.05)
+    ax1.set_ylim(bottom=min(y_label_pos, ymin), top=ymax * 1.05)
 
     plt.show()
 
@@ -165,5 +232,9 @@ if __name__ == '__main__':
         data_df.to_csv(path_data)
         if show_results:
             data_df['f_x'] = -data_df['f_x']*200
-            plot_time_series(data_df, file, label='f_x_sim', dpi=300, ylabel='f_x', align_axis=True)
-            plot_time_series(data_df, file, label='f_x_sim', dpi=300, ylabel='materialremoved_sim', align_axis=False)
+            plot_time_series(data_df, f'Verlauf der Prozesskraft',
+                             col_name='f_x', label='Messwerte', label_axis='$F$ in N', dpi=300,
+                             col_name1='f_x_sim', label1='Simulation')
+            plot_time_series(data_df, f'Verlauf der Prozesskraft',
+                             col_name='f_x', label='Messwerte', label_axis='$F$ in N', dpi=300,
+                             col_name1='materialremoved_sim', label1='materialremoved')
