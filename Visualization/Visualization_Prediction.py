@@ -22,6 +22,7 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x',
     kit_blue = "#0C537E"
     kit_dark_blue = "#002D4C"
     kit_magenta = "#A3107C"
+
     time = data.index / f_a
     fig, ax1 = plt.subplots(figsize=(12, 8), dpi=dpi)
 

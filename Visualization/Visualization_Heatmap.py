@@ -314,8 +314,9 @@ class ModelHeatmapPlotter(BasePlotter):
             mask = mae_pivot.isna()
 
             titlesize = 40
+            maesize = 45
             textsize = 35
-            labelsize = 30
+            labelsize = 35
 
             # Heatmap mit seaborn für bessere Optik
             sns.heatmap(
@@ -331,7 +332,7 @@ class ModelHeatmapPlotter(BasePlotter):
                 vmax=0.31,
                 linewidths=0.0,  # Linien zwischen Zellen
                 linecolor='white',
-                annot_kws={'size': titlesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
+                annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
             )
 
             # Textfarben für jede Zelle individuell setzen
@@ -363,7 +364,7 @@ class ModelHeatmapPlotter(BasePlotter):
 
             # Colorbar-Label vergrößern
             cbar = ax.collections[0].colorbar
-            cbar.set_label('MAE', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
+            cbar.set_label('MAE $I$ in A', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
             cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
 
             # Colorbar Tick-Labels explizit färben
@@ -385,9 +386,9 @@ class ModelHeatmapPlotter(BasePlotter):
 if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
-    folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    #folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
     #folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
-    #folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
+    folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
     #folder = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
     #folder = '..\\Experiements\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
 
@@ -396,9 +397,10 @@ if __name__ == '__main__':
 
     # Modelle definieren (Base-Namen ohne _seed_X)
     #models = ['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
-    models = ['ST_Plate_Notch_Random_Forest_TPESampler']
+    #models = ['ST_Plate_Notch_Random_Forest_TPESampler']
     #models = ['ST_Data_Random_Forest']
     #models = ['Reference_Random_Forest']
+    models = ['Reference_Neural_Net']
     #models = ['Reference_Ref Random Forest_TPESampler']
 
     # Plotter erstellen

@@ -251,6 +251,7 @@ def is_tool_in_part(tool_radius, a_p, pos_x, pos_y, pos_z, part_position, part_d
             y_min >= part_y_min and y_max <= part_y_max and
             z_min >= part_z_min and z_max <= part_z_max
     )
+
 def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.PartialVoxelPart,
                      process_data: pd.DataFrame, true_curr: pd.DataFrame, frequence: int, part_position, part_dimension, plot_mrr = False) -> pd.DataFrame:
 
