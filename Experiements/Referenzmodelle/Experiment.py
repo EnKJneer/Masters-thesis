@@ -41,8 +41,9 @@ if __name__ == '__main__':
                     min_samples_leaf= 1)
     model_nn = mnn.Net(learning_rate= 0.001, n_hidden_size= 64, n_hidden_layers= 2,
                     activation= 'ReLU', optimizer_type= 'Adam')
-
-    models = [model_nn, model_rf]
+    model_rnn = mnn.RNN(learning_rate= 0.04834201195017264, n_hidden_size= 94, n_hidden_layers= 1,
+                    activation= 'Sigmoid', optimizer_type= 'quasi_newton')
+    models = [model_nn, model_rf,model_rnn]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

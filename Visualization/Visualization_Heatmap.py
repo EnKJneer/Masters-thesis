@@ -23,7 +23,7 @@ class BasePlotter(ABC):
     def save_plot(self, fig, filename: str):
         """Speichert einen Plot"""
         plot_path = os.path.join(self.output_dir, filename)
-        fig.savefig(plot_path, dpi=300, bbox_inches='tight')
+        fig.savefig(plot_path, dpi=1200, bbox_inches='tight')
         plt.close(fig)
         return plot_path
 
@@ -72,11 +72,11 @@ class ModelHeatmapPlotter(BasePlotter):
         if len(parts) >= 4:
             # AL_2007_T4 Fall
             if parts[0] == 'AL' and parts[1] == '2007' and parts[2] == 'T4':
-                material = 'AL_2007_T4'
+                material = 'Aluminium'#'AL_2007_T4'
                 geometry = parts[3]  # Gear oder Plate
             # S235JR Fall
             elif parts[0] == 'S235JR':
-                material = 'S235JR'
+                material = 'Stahl'#'S235JR'
                 geometry = parts[1]  # Gear oder Plate
             else:
                 # Fallback: Versuche erste 3 Teile als Material
@@ -313,9 +313,9 @@ class ModelHeatmapPlotter(BasePlotter):
             # Maske für NaN-Werte
             mask = mae_pivot.isna()
 
-            titlesize = 30
-            textsize = 28
-            labelsize = 25
+            titlesize = 40
+            textsize = 35
+            labelsize = 30
 
             # Heatmap mit seaborn für bessere Optik
             sns.heatmap(
@@ -331,7 +331,7 @@ class ModelHeatmapPlotter(BasePlotter):
                 vmax=0.31,
                 linewidths=0.0,  # Linien zwischen Zellen
                 linecolor='white',
-                annot_kws={'size': textsize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
+                annot_kws={'size': titlesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
             )
 
             # Textfarben für jede Zelle individuell setzen
@@ -343,6 +343,7 @@ class ModelHeatmapPlotter(BasePlotter):
 
             # Model-Name aufräumen
             model_clean = model.replace('Plate_TrainVal_', '').replace('Reference_','').replace('ST_Data_', '').replace('ST_Plate_Notch_',
+                                                                                               '').replace('Ref',
                                                                                                '').replace('_', ' ')
 
             # Titel und Labels mit größerer Schrift
@@ -384,20 +385,21 @@ class ModelHeatmapPlotter(BasePlotter):
 if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
-    #folder = '..\\Experiment\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
     #folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
-    folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
+    #folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
+    #folder = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
+    #folder = '..\\Experiements\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
 
-    known_material = 'S235JR'
+    known_material = 'Stahl'
     known_geometry = 'Plate'
 
     # Modelle definieren (Base-Namen ohne _seed_X)
     #models = ['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
-    #models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
-    #models = ['ST_Plate_Notch_Random_Forest_RandomSampler']
+    models = ['ST_Plate_Notch_Random_Forest_TPESampler']
     #models = ['ST_Data_Random_Forest']
-    models = ['Reference_Random_Forest']
-    #models = ['Reference_Neural_Net']
+    #models = ['Reference_Random_Forest']
+    #models = ['Reference_Ref Random Forest_TPESampler']
 
     # Plotter erstellen
     plotter = ModelHeatmapPlotter(

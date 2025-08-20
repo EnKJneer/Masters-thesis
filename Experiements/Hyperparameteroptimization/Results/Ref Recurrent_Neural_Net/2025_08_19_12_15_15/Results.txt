@@ -1,0 +1,50 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.432884 | 0.014410
+Reference            | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.386996 | 0.011102
+Reference            | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.242783 | 0.004786
+Reference            | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.225326 | 0.003012
+Reference            | AL_2007_T4_Gear_Normal_3 | Ref Recurrent_Neural_Net_TPESampler | 0.416422 | 0.092492
+Reference            | AL_2007_T4_Plate_Normal_3 | Ref Recurrent_Neural_Net_TPESampler | 0.409245 | 0.083421
+Reference            | S235JR_Gear_Normal_3 | Ref Recurrent_Neural_Net_TPESampler | 0.221595 | 0.022853
+Reference            | S235JR_Plate_Normal_3 | Ref Recurrent_Neural_Net_TPESampler | 0.129457 | 0.004009
+Reference            | AL_2007_T4_Gear_Normal_3 | Ref Recurrent_Neural_Net_RandomSampler | 97.760117 | 292.106688
+Reference            | AL_2007_T4_Plate_Normal_3 | Ref Recurrent_Neural_Net_RandomSampler | 96.696291 | 288.967053
+Reference            | S235JR_Gear_Normal_3 | Ref Recurrent_Neural_Net_RandomSampler | 97.791464 | 292.687234
+Reference            | S235JR_Plate_Normal_3 | Ref Recurrent_Neural_Net_RandomSampler | 93.743801 | 280.809133
+Reference            | AL_2007_T4_Gear_Normal_3 | Ref Recurrent_Neural_Net_GridSampler | 0.400624 | 0.108208
+Reference            | AL_2007_T4_Plate_Normal_3 | Ref Recurrent_Neural_Net_GridSampler | 0.400400 | 0.090995
+Reference            | S235JR_Gear_Normal_3 | Ref Recurrent_Neural_Net_GridSampler | 0.219873 | 0.023701
+Reference            | S235JR_Plate_Normal_3 | Ref Recurrent_Neural_Net_GridSampler | 0.129726 | 0.003997
+
+
+MODEL IMPROVEMENTS (vs Recurrent_Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Reference            | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_TPESampler | +3.80%      
+Reference            | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_RandomSampler | -22483.45%  
+Reference            | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_GridSampler | +7.45%      
+Reference            | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_TPESampler | -5.75%      
+Reference            | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_RandomSampler | -24886.39%  
+Reference            | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_GridSampler | -3.46%      
+Reference            | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_TPESampler | +8.73%      
+Reference            | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_RandomSampler | -40179.34%  
+Reference            | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_GridSampler | +9.44%      
+Reference            | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_TPESampler | +42.55%     
+Reference            | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_RandomSampler | -41503.66%  
+Reference            | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Ref Recurrent_Neural_Net_GridSampler | +42.43%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

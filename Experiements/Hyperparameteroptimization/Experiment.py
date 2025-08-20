@@ -95,7 +95,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
             for _ in range(NUMBEROFMODELS):
                 model = reference_models_copy[idx]
                 model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience=patience)
+                model.train_model(X_train, y_train, X_val, y_val, NUMBEROFEPOCHS, patience_stop=patience)
                 if isinstance(X_test, list):
                     for i, (x, y) in enumerate(zip(X_test, y_test)):
                         mse, pred_nn = model.test_model(x, y)
@@ -121,7 +121,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
                 if hasattr(model, 'input_size'):
                     model.input_size = None
                 model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience=patience)
+                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience)
                 if hasattr(model, 'clear_active_experts_log'):
                     model.clear_active_experts_log()  # Clear the log for the next test
                 if isinstance(X_test, list):
@@ -313,8 +313,8 @@ def start_experiment_for(model_str = 'NN'):
             'n_estimators': (5, 500),
             'min_samples_split': (2, 500),
             'min_samples_leaf': (1, 500),
-            'max_features': (None, 500),
-            'max_depth': (None, 500),
+            'max_features': (1, 500),
+            'max_depth': (1, 500),
         }
         model = mrf.RandomForestModel()
 
@@ -360,6 +360,45 @@ def start_experiment_for(model_str = 'NN'):
         }
         model = mnn.GRU()
         dataclass.add_padding = True
+
+    elif model_str == 'Ref_RF':
+        #Random Forest
+        search_space = {
+            'n_estimators': (5, 500),
+            'min_samples_split': (2, 500),
+            'min_samples_leaf': (1, 500),
+            'max_features': (1, 500),
+            'max_depth': (1, 500),
+        }
+        model = mrf.RandomForestModel()
+        model.name = 'Ref Random Forest'
+        dataclass = hdata.DataClass_Reference
+
+    elif model_str == 'Ref_NN':
+        search_space = {
+            'n_hidden_size': (1, 100), #250
+            'n_hidden_layers': (1, 50), #250
+            'learning_rate': (0.001, 0.1),
+            'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
+            'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
+        }
+        model = mnn.Net()
+        model.name = 'Ref ' + model.name
+        dataclass = hdata.DataClass_Reference
+
+    elif model_str == 'Ref_RNN':
+        search_space = {
+            'n_hidden_size': (1, 100), #250
+            'n_hidden_layers': (1, 50), #250
+            'learning_rate': (0.001, 0.1),
+            'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
+            'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
+        }
+        model = mnn.RNN()
+        model.name = 'Ref ' + model.name
+        dataclass = hdata.DataClass_Reference
+        dataclass.add_padding = True
+
     else:
         throw_error('string is not a valid model')
 
@@ -369,4 +408,4 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('NN')
+    start_experiment_for('Ref_NN')

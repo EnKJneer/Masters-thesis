@@ -183,14 +183,14 @@ def detect_peaks_and_split(df, time_col='time', signal_col='curr_z',
 
 
 if __name__ == "__main__":
-    path_data = 'DataSimulated_konst'
-    path_target = 'Data_konst'
+    path_data = 'DataSimulated'
+    path_target = 'Data'
 
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
 
     files = os.listdir(path_data)
-
+    #files = ['S235JR_Plate_Normal.csv']
     for file in files:
         if not file.endswith('.csv'):
             continue
@@ -218,11 +218,11 @@ if __name__ == "__main__":
                 output_filename = f'{filename}_Ano.csv'
             if not (region_name == 0 or region_name == 4):
                 part = part.reset_index(drop=True)
-                # Filter nur die Prozessdaten raus. -> materialremoved_sim > 0 +/- 5% der Datenlänge
+                # Filter nur die Prozessdaten raus. -> materialremoved_sim > 0 +/- 2% der Datenlänge
                 indices = part[part['materialremoved_sim'] > 100].index #Problem: MRR Berechnung ist zu ungenau.
 
                 n = indices.max() - indices.min()
-                p = 0.1
+                p = 0.02
                 start_index = max(0, indices.min() - int(p * n))
                 end_index = min(len(part), indices.max() + int(p * n))
                 part = part.iloc[start_index:end_index] #.reset_index(drop=True)

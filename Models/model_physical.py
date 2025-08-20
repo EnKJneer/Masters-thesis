@@ -754,19 +754,22 @@ class FrictionModel(mb.BaseModel):
         self.theta_a = a_b
         self.target_channel = target_channel
 
-    def sign_hold(self, v, eps=1e-1):
+    def sign_hold(self, v, eps=1e-1, n=3, init=-1):
         # Initialisierung des Arrays z mit Nullen
         z = np.zeros(len(v))
+        h_init = np.ones(n) * init
+
+        assert n > 1
 
         # Initialisierung des FiFo h mit Länge 5 und Initialwerten 0
-        h = deque([0, 0, 0, 0, 0], maxlen=5)
+        h = deque(h_init, maxlen=n)
 
         # Berechnung von z
         for i in range(len(v)):
             if abs(v[i]) > eps:
                 h.append(v[i])
 
-            if i >= 4:  # Da wir ab dem 5. Element starten wollen
+            if i >= n - 1:  # Da wir ab dem 5. Element starten wollen
                 # Berechne zi als Vorzeichen der Summe
                 z[i] = np.sign(sum(h))
 
@@ -822,6 +825,8 @@ class FrictionModel(mb.BaseModel):
         return validation_loss
 
     def fit_friction_model(self, data):
+        if type(self.target_channel) is not list:
+            self.target_channel = [self.target_channel]
         for target in self.target_channel:
             axis = target.replace('curr_', '')
             v_x = data[f'v_{axis}_1_current'].values
