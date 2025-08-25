@@ -26,8 +26,18 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    dataSet.folder = '..\\..\\DataSets\\Data'
-    #dataSet.header =["v_sp", "v_x", "v_y", "a_x", "a_y", "a_sp", "f_x_sim", "f_y_sim", "f_sp_sim"]
+
+    dataSet.folder = '..\\..\\Data'#'..\\..\\DataSets\\Data'
+    dataSet.training_data_paths =  ['DMC_S235JR_Plate_Normal_1.csv', 'DMC_S235JR_Plate_Normal_2.csv',
+                                                    'DMC_S235JR_Plate_SF_1.csv', 'DMC_S235JR_Plate_Depth_1.csv',
+                                                    'DMC_S235JR_Plate_SF_2.csv', 'DMC_S235JR_Plate_Depth_2.csv',
+                                                    'DMC_S235JR_Plate_SF_3.csv', 'DMC_S235JR_Plate_Depth_3.csv']
+    dataSet.validation_data_paths = ['DMC_S235JR_Notch_Normal_1.csv', 'DMC_S235JR_Notch_Normal_2.csv', 'DMC_S235JR_Notch_Normal_3.csv',
+                                              'DMC_S235JR_Notch_Depth_1.csv', 'DMC_S235JR_Notch_Depth_2.csv', 'DMC_S235JR_Notch_Depth_3.csv']
+    dataSet.testing_data_paths = [  'DMC_AL2007T4_Gear_Normal_3.csv','DMC_AL2007T4_Plate_Normal_3.csv',
+                                    'DMC_S235JR_Gear_Normal_3.csv','DMC_S235JR_Plate_Normal_3.csv']
+
+    #dataSet.header =["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'
     dataclass2 = copy.copy(dataSet)

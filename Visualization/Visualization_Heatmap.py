@@ -228,7 +228,6 @@ class ModelHeatmapPlotter(BasePlotter):
         for mat in sorted(materials):
             if mat != self.known_material:
                 materials_ordered.append(mat)
-
         # Geometrie-Reihenfolge: known zuerst, dann alphabetisch
         geometries_ordered = []
         if self.known_geometry in geometries:
@@ -236,7 +235,6 @@ class ModelHeatmapPlotter(BasePlotter):
         for geo in sorted(geometries):
             if geo != self.known_geometry:
                 geometries_ordered.append(geo)
-
         return materials_ordered, geometries_ordered
 
     def format_cell_annotation(self, mae_value, std_value):
@@ -262,20 +260,15 @@ class ModelHeatmapPlotter(BasePlotter):
         """Erstellt für jedes Modell eine separate Heatmap mit MAE und Standardabweichung"""
         # MAE-Daten erstellen
         mae_df = self.create_mae_dataframe(folder_path, model_columns)
-
         # Unique Materialien und Geometrien ermitteln
         materials = mae_df['Material'].unique()
         geometries = mae_df['Geometry'].unique()
-
-        # Kategorien ordnen
+        # Kategorien ordnen (ohne (Bekannt)/(Unbekannt) in den Pivot-Tabellen)
         materials_ordered, geometries_ordered = self.create_ordered_categories(materials, geometries)
-
         plot_paths = []
-
         # Für jedes Modell eine separate Heatmap erstellen
         for model in model_columns:
             model_data = mae_df[mae_df['Model'] == model]
-
             # Pivot-Tabellen für MAE und STD erstellen
             mae_pivot = model_data.pivot_table(
                 values='MAE',
@@ -283,112 +276,114 @@ class ModelHeatmapPlotter(BasePlotter):
                 columns='Geometry',
                 aggfunc='mean'
             )
-
             std_pivot = model_data.pivot_table(
-                values='STD_PREDICTIONS',  # Verwende STD_PREDICTIONS statt STD_MAE
+                values='STD_PREDICTIONS',
                 index='Material',
                 columns='Geometry',
                 aggfunc='mean'
             )
-
             # Reorder basierend auf der gewünschten Reihenfolge
             mae_pivot = mae_pivot.reindex(index=materials_ordered, columns=geometries_ordered)
             std_pivot = std_pivot.reindex(index=materials_ordered, columns=geometries_ordered)
-
             # Annotations-Matrix und Textfarben-Matrix erstellen
             annotations = np.empty(mae_pivot.shape, dtype=object)
             text_colors = np.empty(mae_pivot.shape, dtype=object)
-
             for i in range(mae_pivot.shape[0]):
                 for j in range(mae_pivot.shape[1]):
                     mae_val = mae_pivot.iloc[i, j]
                     std_val = std_pivot.iloc[i, j]
                     annotations[i, j] = self.format_cell_annotation(mae_val, std_val)
                     text_colors[i, j] = self.get_text_color_for_background(mae_val)
-
             # Heatmap erstellen
             fig, ax = plt.subplots(figsize=(14, 12))
             fig.set_dpi(1200)
-
             # Maske für NaN-Werte
             mask = mae_pivot.isna()
-
             titlesize = 40
             maesize = 45
             textsize = 35
             labelsize = 35
-
             # Heatmap mit seaborn für bessere Optik
             sns.heatmap(
                 mae_pivot,
                 annot=annotations,
-                fmt='',  # Leerer Format-String, da wir custom annotations verwenden
+                fmt='',
                 cmap=self.custom_cmap,
                 mask=mask,
                 cbar_kws={'label': 'MAE'},
                 ax=ax,
                 square=True,
-                vmin=0.04,  # Minimum-Wert für Colorbar
+                vmin=0.04,
                 vmax=0.31,
-                linewidths=0.0,  # Linien zwischen Zellen
+                linewidths=0.0,
                 linecolor='white',
                 annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
             )
-
             # Textfarben für jede Zelle individuell setzen
             for i in range(mae_pivot.shape[0]):
                 for j in range(mae_pivot.shape[1]):
                     if not pd.isna(mae_pivot.iloc[i, j]):
                         text = ax.texts[i * mae_pivot.shape[1] + j]
                         text.set_color(text_colors[i, j])
-
             # Model-Name aufräumen
-            model_clean = model.replace('Plate_TrainVal_', '').replace('Reference_','').replace('ST_Data_', '').replace('ST_Plate_Notch_',
-                                                                                               '').replace('Ref',
-                                                                                               '').replace('_', ' ')
-
+            model_clean = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_',
+                                                                                                 '').replace(
+                'ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
             # Titel und Labels mit größerer Schrift
             ax.set_title(f'MAE Heatmap: {model_clean}', fontsize=titlesize, fontweight='bold', pad=20,
                          color=self.kit_dark_blue)
             ax.set_xlabel('Geometry', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
             ax.set_ylabel('Material', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
-
-            # Achsenbeschriftungen vergrößern und Farbe setzen
-            ax.tick_params(axis='both', which='major', labelsize=labelsize, colors=self.kit_dark_blue)
+            # Achsenbeschriftungen anpassen: (Bekannt)/(Unbekannt) hinzufügen
+            x_labels = [f"{geo}\n(Bekannt)" if geo == self.known_geometry else f"{geo}\n(Unbekannt)" for geo in
+                        geometries_ordered]
+            y_labels = [f"{mat}\n(Bekannt)" if mat == self.known_material else f"{mat}\n(Unbekannt)" for mat in
+                        materials_ordered]
+            # Tick-Labels setzen und zentrieren
+            ax.set_xticklabels(
+                x_labels,
+                fontsize=labelsize,
+                color=self.kit_dark_blue,
+                ha='center',  # Horizontal zentrieren
+                va='center',  # Vertikal zentrieren
+            )
+            ax.set_yticklabels(
+                y_labels,
+                fontsize=labelsize,
+                color=self.kit_dark_blue,
+                ha='center',  # Horizontal zentrieren
+                va='center',  # Vertikal zentrieren
+            )
+            ax.tick_params(axis='x', pad=35)  # Abstand für x-Achse
+            ax.tick_params(axis='y', pad=35)  # Abstand für y-Achse
 
             # Achsenbeschriftungen (Tick-Labels) explizit färben
             for label in ax.get_xticklabels():
                 label.set_color(self.kit_dark_blue)
             for label in ax.get_yticklabels():
                 label.set_color(self.kit_dark_blue)
-
             # Colorbar-Label vergrößern
             cbar = ax.collections[0].colorbar
             cbar.set_label('MAE $I$ in A', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
             cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
-
             # Colorbar Tick-Labels explizit färben
             for label in cbar.ax.get_yticklabels():
                 label.set_color(self.kit_dark_blue)
-
             plt.tight_layout()
-
             # Speichern
             filename = f'heatmap_{model_clean.replace(" ", "_")}_with_std.png'
             plot_path = self.save_plot(fig, filename)
             plot_paths.append(plot_path)
-
             print(f"Heatmap mit Standardabweichung für {model_clean} erstellt: {plot_path}")
-
         return plot_paths
 
 
 if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
-    #folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
     #folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
-    folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
+    #folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
     #folder = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
     #folder = '..\\Experiements\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
 
@@ -397,10 +392,10 @@ if __name__ == '__main__':
 
     # Modelle definieren (Base-Namen ohne _seed_X)
     #models = ['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
-    #models = ['ST_Plate_Notch_Random_Forest_TPESampler']
+    models = ['ST_Plate_Notch_Random_Forest_TPESampler']
     #models = ['ST_Data_Random_Forest']
     #models = ['Reference_Random_Forest']
-    models = ['Reference_Neural_Net']
+    #models = ['Reference_Neural_Net']
     #models = ['Reference_Ref Random Forest_TPESampler']
 
     # Plotter erstellen

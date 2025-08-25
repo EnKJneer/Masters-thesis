@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import Models.model_base as mb
 
 class RandomForestModel(mb.BaseModel):
-    def __init__(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2, min_samples_leaf = 1, random_state=42, name ="Random_Forest"):
+    def __init__(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2,
+                 min_samples_leaf = 1, random_state=42, name ="Random_Forest"):
         """
         Initializes a Random Forest regressor.
 
@@ -19,7 +20,9 @@ class RandomForestModel(mb.BaseModel):
         random_state : int, optional
             Controls the randomness of the estimator. The default is None.
         """
-        self.model = RandomForestRegressor(n_estimators=n_estimators, max_features = max_features, max_depth = max_depth, min_samples_split = min_samples_split, min_samples_leaf = min_samples_leaf, random_state=random_state, n_jobs = -1)
+        self.model = RandomForestRegressor(n_estimators=n_estimators, max_features = max_features,
+                                           max_depth = max_depth, min_samples_split = min_samples_split,
+                                           min_samples_leaf = min_samples_leaf, random_state=random_state, n_jobs = -1)
         self.scaler = None
 
         # Save Parameter for documentation

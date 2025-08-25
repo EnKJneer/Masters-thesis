@@ -1,0 +1,7 @@
+Daten wurden mit Optimierten Parametern berechnet.
+Bei der Optimierung wurden die bekannten Parrameter von S235JR festeghalte und eine feste Skalierung verwendet (machine_coef gleich)
+Parameter:
+Material	m_c	m_f	m_p	k_c1	k_f1	k_p1	K	machine_coef_x	machine_coef_y	machine_coef_z
+S235JR	0,17	0,49310822	0,386546051	1780	989,8066343	374,1375312	1,373016226	0,498253789	0,498253789	0,498253789	2,007009323
+AL2007T4	0,21384492	0,440881514	0,21376528	577,3864827	352,6353547	303,5723397	1,827927853	0,498253789	0,498253789	0,498253789	2,007009323
+

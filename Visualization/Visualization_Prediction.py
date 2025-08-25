@@ -36,6 +36,26 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x',
     ax1.spines['left'].set_linewidth(1.0)
     ax1.spines['bottom'].set_linewidth(1.0)
 
+    # Umgang mit mehreren Vorhersagen (z. B. ylabel1_seed_1, ylabel1_seed_2, ...)
+    def plot_prediction_with_std(data, base_label, color, label=''):
+        # Suche alle Spalten, die mit base_label beginnen
+        cols = [col for col in data.columns if col.startswith(base_label)]
+        if not cols:
+            return None, None
+        # Berechne Mittelwert und Standardabweichung
+        mean = data[cols].mean(axis=1)
+        std = data[cols].std(axis=1)
+        # Plot Mittelwert
+        line, = ax1.plot(time, mean, label=label, color=color, linewidth=2)
+        # Plot Standardabweichung als schattierten Bereich
+        ax1.fill_between(time, mean - std, mean + std, color=color, alpha=0.2)
+        return line, mean
+
+    # Plot für ylabel1 (z. B. Abweichung RF)
+    line1, mean1 = plot_prediction_with_std(data, ycolname_1, kit_red, ylabel_1)
+    # Plot für ylabel2 (z. B. Abweichung RNN)
+    line2, mean2 = plot_prediction_with_std(data, ycolname_2, kit_orange, ylabel_2)
+
     # Plot der Hauptdaten
     line0, = ax1.plot(time, data[col_name], label='Messwerte', color=kit_blue, linewidth=2)
 
@@ -77,26 +97,6 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x',
 
     # Titel mit DIN 461 konformer Positionierung
     ax1.set_title(title, color=kit_dark_blue, fontsize=14, fontweight='bold', pad=20)
-
-    # Umgang mit mehreren Vorhersagen (z. B. ylabel1_seed_1, ylabel1_seed_2, ...)
-    def plot_prediction_with_std(data, base_label, color, label=''):
-        # Suche alle Spalten, die mit base_label beginnen
-        cols = [col for col in data.columns if col.startswith(base_label)]
-        if not cols:
-            return None, None
-        # Berechne Mittelwert und Standardabweichung
-        mean = data[cols].mean(axis=1)
-        std = data[cols].std(axis=1)
-        # Plot Mittelwert
-        line, = ax1.plot(time, mean, label=label, color=color, linewidth=2)
-        # Plot Standardabweichung als schattierten Bereich
-        ax1.fill_between(time, mean - std, mean + std, color=color, alpha=0.2)
-        return line, mean
-
-    # Plot für ylabel1 (z. B. Abweichung RF)
-    line1, mean1 = plot_prediction_with_std(data, ycolname_1, kit_red, ylabel_1)
-    # Plot für ylabel2 (z. B. Abweichung RNN)
-    line2, mean2 = plot_prediction_with_std(data, ycolname_2, kit_orange, ylabel_2)
 
     # Kombinierte Legende für die Achsen
     lines = [line for line in [line0, line1, line2] if line is not None]
@@ -148,14 +148,14 @@ geometry = 'Plate'
 #path_data = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
 #path_data = '..\\Experiements\\Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
 #path_data = '..\\Experiements\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
-#path_data = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
-path_data = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_18_20_02_44/Predictions'
+path_data = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
+#path_data = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_18_20_02_44/Predictions'
 
 file = f'{material}_{geometry}_Normal_3.csv'
 
 data = pd.read_csv(f'{path_data}/{file}')
 
-plot_time_series(data, f'Aluminium {geometry}: Stromverlauf', f'Verlauf_{material}_{geometry}_Ref_RF',
+plot_time_series(data, f'Aluminium {geometry}: Stromverlauf der Vorschubachse in x-Richtung', f'Verlauf_{material}_{geometry}_Ref_RF_opt',
                  col_name = 'curr_x', label='Strom in A', dpi=1200,
                  ycolname_1='Reference_Random_Forest', ylabel_1 = 'Random Forest')
 

@@ -13,8 +13,11 @@ import Helper.handling_hyperopt as hyperopt
 import Helper.handling_experiment as hexp
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
+from Experiements.ExpertModels.Experts import Experts
 #import Models.model_mixture_of_experts as mmix
 from datetime import datetime
+
+
 
 def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPESampler", "RandomSampler", "GridSampler"],
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, NUMBEROFTRIALS = 10,
@@ -79,7 +82,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
                     model=copy.copy(model),
                     data=[X_train, X_val, y_train, y_val],
                     n_epochs=NUMBEROFEPOCHS,
-                    pruning=True
+                    pruning=True,
                 )
                 best_params = hyperopt.optimize(objective_nn, results_dir, study_name=study_name, n_trials=NUMBEROFTRIALS, sampler=sampler)
                 model_optimized = copy.deepcopy(model)
@@ -307,6 +310,8 @@ def start_experiment_for(model_str = 'NN'):
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataclass = copy.copy(dataSet)
 
+    optimization_samplers = ["TPESampler", "RandomSampler", "GridSampler"]
+
     if model_str == 'RF':
         #Random Forest
         search_space = {
@@ -317,6 +322,7 @@ def start_experiment_for(model_str = 'NN'):
             'max_depth': (1, 500),
         }
         model = mrf.RandomForestModel()
+
 
     elif model_str == 'NN':
         search_space = {
@@ -399,13 +405,71 @@ def start_experiment_for(model_str = 'NN'):
         dataclass = hdata.DataClass_Reference
         dataclass.add_padding = True
 
+    elif model_str == 'Experts_RNN':
+        search_space = {
+            'n_hidden_size_e1': (1, 100), #250
+            'n_hidden_layers_e1': (1, 10), #250
+            'learning_rate_e1': (0.01, 1.0),
+            'activation_e1': ['ReLU', 'Sigmoid'],
+
+            'n_hidden_size_e2': (1, 100),  # 250
+            'n_hidden_layers_e2': (1, 10),  # 250
+            'learning_rate_e2': (0.01, 1.0),
+            'activation_e2': ['ReLU', 'Sigmoid'],
+
+            'n_hidden_size_e3': (1, 100),  # 250
+            'n_hidden_layers_e3': (1, 10),  # 250
+            'learning_rate_e3': (0.01, 1.0),
+            'activation_e3': ['ReLU', 'Sigmoid'],
+
+            'optimizer_type': ['quasi_newton'],
+        }
+        model = Experts(name= 'Experts_RNN')
+        model.expert1 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
+        model.expert2 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
+        model.expert3 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
+
+        dataclass.add_padding = True
+        dataclass.add_sign_hold = True
+
+        optimization_samplers = ["TPESampler"]
+
+    elif model_str == 'Experts_Mixed':
+        search_space = {
+            'n_estimators_e1': (5, 500),
+            'min_samples_split_e1': (2, 500),
+            'min_samples_leaf_e1': (1, 500),
+            'max_features_e1': (1, 500),
+            'max_depth_e1': (1, 500),
+
+            'n_estimators_e2': (5, 500),
+            'min_samples_split_e2': (2, 500),
+            'min_samples_leaf_e2': (1, 500),
+            'max_features_e2': (1, 500),
+            'max_depth_e2': (1, 500),
+
+            'n_hidden_size_e3': (1, 100),  # 250
+            'n_hidden_layers_e3': (1, 10),  # 250
+            'learning_rate_e3': (0.01, 1.0),
+            'activation_e3': ['ReLU', 'Sigmoid'],
+
+            'optimizer_type_e3': ['quasi_newton'],
+        }
+        model = Experts(name='Experts_Mixed')
+        model.expert3 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
+
+        dataclass.add_padding = True
+        dataclass.add_sign_hold = True
+
+        optimization_samplers = ["TPESampler"]
+
     else:
         throw_error('string is not a valid model')
 
     # Run the experiment
-    run_experiment([dataclass], [model], [search_space],
+    run_experiment([dataclass], [model], [search_space],optimization_samplers = optimization_samplers,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, NUMBEROFTRIALS=NUMBEROFTRIALS,
                         plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('Ref_NN')
+    start_experiment_for('Experts_Mixed')

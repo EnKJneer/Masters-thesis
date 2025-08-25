@@ -1,0 +1,210 @@
+{
+    "DataSets": [
+        {
+            "name": "ohne z",
+            "folder": "..\\..\\Data",
+            "training_data_paths": [
+                "DMC_S235JR_Plate_Normal_1.csv",
+                "DMC_S235JR_Plate_Normal_2.csv",
+                "DMC_S235JR_Plate_SF_1.csv",
+                "DMC_S235JR_Plate_Depth_1.csv",
+                "DMC_S235JR_Plate_SF_2.csv",
+                "DMC_S235JR_Plate_Depth_2.csv",
+                "DMC_S235JR_Plate_SF_3.csv",
+                "DMC_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC_S235JR_Notch_Normal_1.csv",
+                "DMC_S235JR_Notch_Normal_2.csv",
+                "DMC_S235JR_Notch_Normal_3.csv",
+                "DMC_S235JR_Notch_Depth_1.csv",
+                "DMC_S235JR_Notch_Depth_2.csv",
+                "DMC_S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC_AL2007T4_Gear_Normal_3.csv",
+                "DMC_AL2007T4_Plate_Normal_3.csv",
+                "DMC_S235JR_Gear_Normal_3.csv",
+                "DMC_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        },
+        {
+            "name": "mit z",
+            "folder": "..\\..\\Data",
+            "training_data_paths": [
+                "DMC_S235JR_Plate_Normal_1.csv",
+                "DMC_S235JR_Plate_Normal_2.csv",
+                "DMC_S235JR_Plate_SF_1.csv",
+                "DMC_S235JR_Plate_Depth_1.csv",
+                "DMC_S235JR_Plate_SF_2.csv",
+                "DMC_S235JR_Plate_Depth_2.csv",
+                "DMC_S235JR_Plate_SF_3.csv",
+                "DMC_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC_S235JR_Notch_Normal_1.csv",
+                "DMC_S235JR_Notch_Normal_2.csv",
+                "DMC_S235JR_Notch_Normal_3.csv",
+                "DMC_S235JR_Notch_Depth_1.csv",
+                "DMC_S235JR_Notch_Depth_2.csv",
+                "DMC_S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC_AL2007T4_Gear_Normal_3.csv",
+                "DMC_AL2007T4_Plate_Normal_3.csv",
+                "DMC_S235JR_Gear_Normal_3.csv",
+                "DMC_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Recurrent_Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.04834201195017264,
+                    "n_hidden_size": 94,
+                    "n_hidden_layers": 1,
+                    "activation": "str",
+                    "optimizer_type": "quasi_newton"
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 52,
+                    "max_features": 500,
+                    "min_samples_split": 67,
+                    "min_samples_leaf": 4
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1000
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\ST_Plate_Notch-2025_08_24_10_55_23\\plots\\heatmap_mae_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\ST_Plate_Notch-2025_08_24_10_55_23\\plots\\predictions_vs_groundtruth_DMC_AL2007T4_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_08_24_10_55_23\\plots\\predictions_vs_groundtruth_DMC_AL2007T4_Plate_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_08_24_10_55_23\\plots\\predictions_vs_groundtruth_DMC_S235JR_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_08_24_10_55_23\\plots\\predictions_vs_groundtruth_DMC_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ohne z",
+                "DMC_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                35.4298011998811
+            ],
+            [
+                "ohne z",
+                "DMC_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                8.602744857875482
+            ],
+            [
+                "ohne z",
+                "DMC_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                15.712028490101474
+            ],
+            [
+                "ohne z",
+                "DMC_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                25.030086220012578
+            ],
+            [
+                "mit z",
+                "DMC_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                24.60314945018963
+            ],
+            [
+                "mit z",
+                "DMC_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                -6.388436312006843
+            ],
+            [
+                "mit z",
+                "DMC_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                -3.1455620412498346
+            ],
+            [
+                "mit z",
+                "DMC_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                17.967741844081143
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 2,
+            "DataPaths_per_Dataset": {
+                "ohne z": 4,
+                "mit z": 4
+            },
+            "Models_Compared": [
+                "Recurrent_Neural_Net",
+                "Random_Forest"
+            ],
+            "Best_Model_Overall": "Random_Forest",
+            "Worst_Model_Overall": "Recurrent_Neural_Net"
+        }
+    }
+}

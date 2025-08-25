@@ -545,7 +545,6 @@ class MoiraiMoEModel(mb.BaseTorchModel):
             "learning_rate": self.learning_rate,
         }}
 
-
 # LÖSUNG 4: Aktualisierte NaiveMoE
 class TrulyNaiveMoE(AbstractMoEModel):
     def __init__(self, input_size=13, output_size=1, embed_dim=1, n_experts=4, k=1,
@@ -610,7 +609,6 @@ class MemoryEnhancedRouting(AbstractRouting):
         weights = torch.ones(B, 1, device=x.device)
 
         return weights, topk_indices
-
 
 # Memory-Enhanced Gating Network
 class MemoryEnhancedGating(AbstractGating):
@@ -730,7 +728,6 @@ class MemoryEnhancedGating(AbstractGating):
         """Reset der gespeicherten Vorhersage für neue Sequenzen"""
         self.last_nonzero_prediction = None
 
-
 # Lineare Regression als Experte
 class LinearRegressionExpert(nn.Module):
     def __init__(self, input_size, output_size=1):
@@ -797,3 +794,4 @@ class MemoryEnhancedMoE(AbstractMoEModel):
             },
             "description": "Memory-Enhanced MoE with velocity-based routing and prediction memory"
         }
+

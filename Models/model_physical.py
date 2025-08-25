@@ -17,10 +17,186 @@ from scipy.integrate import solve_ivp, trapezoid
 from scipy.optimize import minimize, curve_fit
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 from sympy.physics.units import acceleration, velocity
 from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 import Models.model_base as mb
+
+class LinearModel(mb.BaseModel):
+    def __init__(self, fit_intercept=True, normalize=False, copy_X=True, n_jobs=None, name="Linear_Regression"):
+        """
+        Initializes a Linear Regression model.
+
+        Parameters
+        ----------
+        fit_intercept : bool, optional
+            Whether to calculate the intercept for this model. The default is True.
+        normalize : bool, optional
+            This parameter is deprecated and will be removed in 1.4. The default is False.
+        copy_X : bool, optional
+            If True, X will be copied; else, it may be overwritten. The default is True.
+        n_jobs : int, optional
+            The number of jobs to use for the computation. The default is None.
+        """
+        self.model = LinearRegression(fit_intercept=fit_intercept, copy_X=copy_X, n_jobs=n_jobs)
+        self.scaler = None
+        # Save Parameter for documentation
+        self.fit_intercept = fit_intercept
+        self.normalize = normalize
+        self.copy_X = copy_X
+        self.name = name
+        self.device = "cpu"
+
+    def reset_hyperparameter(self, fit_intercept=True, normalize=False, copy_X=True, n_jobs=None):
+        """
+        Reset the hyperparameters of the Linear Regression model.
+        """
+        self.fit_intercept = fit_intercept
+        self.normalize = normalize
+        self.copy_X = copy_X
+        # Reinitialize the model with new hyperparameters
+        self.model = LinearRegression(
+            fit_intercept=fit_intercept,
+            normalize=normalize,
+            copy_X=copy_X,
+            n_jobs=n_jobs
+        )
+
+    def criterion(self, y_target, y_pred):
+        """
+        Compute the Mean Squared Error (MSE) loss between the target and predicted values.
+
+        Parameters
+        ----------
+        y_target : array-like
+            The target values.
+        y_pred : array-like
+            The predicted values.
+
+        Returns
+        -------
+        float
+            The computed MSE loss.
+        """
+        return mean_squared_error(y_target, y_pred)
+
+    def predict(self, X):
+        """
+        Make predictions based on the input data using the Linear Regression model.
+
+        Parameters
+        ----------
+        X : array-like
+            The input data.
+
+        Returns
+        -------
+        numpy.ndarray
+            The predicted values.
+        """
+        return self.model.predict(X)
+
+    def train_model(self, X_train, y_train, X_val, y_val, n_epochs=1, trial=None, draw_loss=False, n_outlier=12, patience_stop=10, **kwargs):
+        """
+        Train the Linear Regression model using the training data and validate it using the validation data.
+
+        Parameters
+        ----------
+        X_train : array-like
+            The training input data.
+        y_train : array-like
+            The training target values.
+        X_val : array-like
+            The validation input data.
+        y_val : array-like
+            The validation target values.
+        n_epochs : int, optional
+            The number of epochs for training. Default is 1 (for compatibility).
+        trial : optuna.trial.Trial, optional
+            An Optuna trial object used for pruning based on intermediate validation errors.
+        draw_loss : bool, optional
+            If True, plots training and validation loss after each epoch. Default is False.
+        n_outlier: int, optional
+            Number of std used to filter out outliers. Default is 12.
+
+        Returns
+        -------
+        best_val_error : float
+            The best validation error achieved during training.
+        """
+        best_val_error = float('inf')
+        if type(X_train) is list:
+            X_train = pd.concat(X_train, ignore_index=True)
+            y_train = pd.concat(y_train, ignore_index=True)
+        if type(X_val) is list:
+            X_val = pd.concat(X_val, ignore_index=True)
+            y_val = pd.concat(y_val, ignore_index=True)
+
+        # Training loop (for compatibility, though Linear Regression is not iterative)
+        self.model.fit(X_train, y_train.squeeze())
+        y_val_pred = self.model.predict(X_val)
+        val_error = self.criterion(y_val, y_val_pred)
+
+        # Report intermediate values to the pruner
+        if trial:
+            trial.report(val_error, step=1)
+            if trial.should_prune():
+                raise optuna.exceptions.TrialPruned()
+
+        # Update the best validation error
+        if val_error < best_val_error:
+            best_val_error = val_error
+
+        if draw_loss:
+            plt.plot(1, val_error, label='Validation Loss')
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
+            plt.legend()
+            plt.show()
+
+        print(f'{self.name}: Val Error: {val_error:.4f}')
+        return best_val_error
+
+    def test_model(self, X, y_target, criterion_test=None):
+        """
+        Test the model using the test data and compute the loss.
+
+        Parameters
+        ----------
+        X : array-like
+            The test input data.
+        y_target : array-like
+            The test target values.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the loss and the predicted values.
+        """
+        if criterion_test is None:
+            criterion_test = self.criterion
+        y_pred = self.predict(X)
+        loss = criterion_test(y_target, y_pred)
+        return loss, y_pred
+
+    def get_documentation(self):
+        """
+        Returns the documentation of the current hyperparameters.
+        """
+        documentation = {"hyperparameters": {
+            "fit_intercept": self.fit_intercept,
+            "normalize": self.normalize,
+            "copy_X": self.copy_X
+        }}
+        return documentation
+
+    @staticmethod
+    def get_reference_model():
+        """
+        Returns a reference model with default hyperparameters.
+        """
+        return LinearModel(fit_intercept=True, normalize=False, copy_X=True)
 
 class BasePhysicalModel(mb.BaseModel, nn.Module, ABC):
     def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=1, optimizer_type='quasi_newton', target_channel = 'curr_x'):

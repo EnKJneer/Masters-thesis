@@ -1,0 +1,12 @@
+Daten wurden mit Optimierten Parametern berechnet.
+Bei der Optimierung wurden Regularisierung verwendet.
+penalty_weight=1000, # Bezogen auf alles
+penalty_weight_c=100, # c ist am bekantesten
+penalty_weight_m=100 # Skalierung
+
+Parameter:
+Material	m_c	m_f	m_p	k_c1	k_f1	k_p1	K	machine_coef_x	machine_coef_y	machine_coef_z
+S235JR	0,12	0,53	0,29	1779,99	732,63	335,15	1,08	0,75	0,75	0,99
+AL2007T4	0,19	0,50	0,09	487,01	203,08	313,33	0,65	1,87	1,85	2,28
+
+

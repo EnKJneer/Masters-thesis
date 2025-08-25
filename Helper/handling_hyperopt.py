@@ -98,7 +98,7 @@ class Objective:
             if isinstance(value, tuple) and all(isinstance(x, int) for x in value):
                 params[name] = trial.suggest_int(name, value[0], value[1])
             elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
-                params[name] = trial.suggest_float(name, value[0], value[1], log=True if 'learning_rate' in name else False)
+                params[name] = trial.suggest_float(name, value[0], value[1], log=True if name.startswith('learning_rate') else False)
             else:
                 params[name] = trial.suggest_categorical(name, value)
 

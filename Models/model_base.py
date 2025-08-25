@@ -11,6 +11,9 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
 
+import matplotlib
+matplotlib.use('tkagg')
+
 class BaseModel(ABC):
     @abstractmethod
     def __init__(self, name):
@@ -89,10 +92,10 @@ class BaseTorchModel(BaseModel, nn.Module):
         criterion = nn.MSELoss()
         return criterion(y_target.squeeze(), y_pred.squeeze())
 
-    def predict(self, X):
+    def predict(self, X) -> np.ndarray:
         if type(X) is not torch.Tensor:
             X = self.scaled_to_tensor(X)
-        return self(X)
+        return self(X).cpu().detach().numpy().squeeze()
 
     def scale_data(self, X):
         """
@@ -117,12 +120,15 @@ class BaseTorchModel(BaseModel, nn.Module):
             criterion_test = self.criterion
         X_scaled = self.scale_data(X)
         X = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
-        if not isinstance(y_target, np.ndarray):
-            y_target = y_target.to_numpy()
+
+        y_pred_num = self.predict(X)
+        y_pred = torch.tensor(y_pred_num, dtype=torch.float32).to(self.device)
+        if type(y_target) is not np.array:
+            y_target = np.array(y_target)
         y_target = torch.tensor(y_target, dtype=torch.float32).to(self.device)
-        y_pred = self.predict(X)
+
         loss = criterion_test(y_target, y_pred)
-        return loss.item(), y_pred.detach().cpu().numpy()
+        return loss.item(), y_pred_num
 
     def scaled_to_tensor(self, data):
         if isinstance(data, torch.Tensor):
@@ -145,7 +151,9 @@ class BaseTorchModel(BaseModel, nn.Module):
             return torch.tensor(data, dtype=torch.float32).to(self.device)
 
     def train_model(self, X_train, y_train, X_val, y_val, n_epochs=100, draw_loss=False, epsilon=0.00005,
-                    trial=None, n_outlier=12, reset_parameters=True, patience_stop=10, patience_lr=3):
+                    trial=None, n_outlier=12, reset_parameters=True, patience_stop=10, patience_lr=3, **kwargs):
+
+        draw_loss = False
 
         # Prüfen, ob Inputs Listen sind
         is_batched_train = isinstance(X_train, list) and isinstance(y_train, list)
@@ -178,6 +186,8 @@ class BaseTorchModel(BaseModel, nn.Module):
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=patience_lr)
 
         if draw_loss:
+            plt.ion()  # Interaktiven Modus aktivieren
+
             loss_vals, epochs, loss_train = [], [], []
             fig, ax = plt.subplots()
             line_val, = ax.plot(epochs, loss_vals, 'r-', label='validation')
@@ -275,22 +285,30 @@ class BaseTorchModel(BaseModel, nn.Module):
                 epochs.append(epoch)
                 loss_vals.append(avg_val_loss)
                 loss_train.append(loss.item())
-                line_val.set_xdata(epochs)
-                line_val.set_ydata(loss_vals)
-                line_train.set_xdata(epochs)
-                line_train.set_ydata(loss_train)
-                ax.relim()
-                ax.autoscale_view()
-                plt.draw()
-                plt.pause(0.001)
+
+                if draw_loss:
+                    epochs.append(epoch)
+                    loss_vals.append(avg_val_loss)
+                    loss_train.append(loss.item())
+                    if epoch == 1 or epoch % 5 == 0 or epoch == n_epochs - 1:  # Nur alle 5 Epochen oder am Ende aktualisieren
+                        line_val.set_xdata(epochs)
+                        line_val.set_ydata(loss_vals)
+                        line_train.set_xdata(epochs)
+                        line_train.set_ydata(loss_train)
+                        ax.relim()
+                        ax.autoscale_view()
+                        plt.draw()
+                        plt.pause(0.001)  # Kurze Pause, um das Fenster zu aktualisieren
 
             print(f'{self.name}: Epoch {epoch + 1}/{n_epochs}, Train Loss: {avg_train_loss:.4f} Val Error: {avg_val_loss:.4f}, Learning Rate: {optimizer.param_groups[0]["lr"]:.6f}')
 
         if draw_loss:
-            plt.ioff()
             plt.show()
+            plt.pause(1)  # 1 Sekunden warten
+            plt.close(fig)  # Plot explizit schließen
 
         self.load_state_dict(best_model_state)
+
         return best_val_error
 
     def get_documentation(self):
