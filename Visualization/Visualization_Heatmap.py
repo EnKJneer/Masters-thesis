@@ -23,7 +23,7 @@ class BasePlotter(ABC):
     def save_plot(self, fig, filename: str):
         """Speichert einen Plot"""
         plot_path = os.path.join(self.output_dir, filename)
-        fig.savefig(plot_path, dpi=1200, bbox_inches='tight')
+        fig.savefig(plot_path, dpi=600, bbox_inches='tight')
         plt.close(fig)
         return plot_path
 
@@ -381,10 +381,10 @@ class ModelHeatmapPlotter(BasePlotter):
 if __name__ == '__main__':
     # Konfiguration
     folder_result = 'Plots'
-    folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
+    #folder = '..\\Experiements/Hyperparameteroptimization/Results/Random_Forest/2025_07_28_14_40_41/Predictions'
     #folder = '..\\Archiv/Experiments/NeuralNet/Results/ST_Data/2025_08_04_13_53_49/Predictions'
     #folder = '..\\Experiements/Referenzmodelle/Results/Reference-2025_08_14_09_51_35/Predictions'
-    #folder = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
+    folder = '..\\Experiements/Hyperparameteroptimization/Results/Ref Random Forest/2025_08_19_10_56_44/Predictions'
     #folder = '..\\Experiements\\Hyperparameteroptimization/Results/Recurrent_Neural_Net/2025_07_28_19_20_29/Predictions'
 
     known_material = 'Stahl'
@@ -392,11 +392,11 @@ if __name__ == '__main__':
 
     # Modelle definieren (Base-Namen ohne _seed_X)
     #models = ['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
-    models = ['ST_Plate_Notch_Random_Forest_TPESampler']
+    #models = ['ST_Plate_Notch_Random_Forest_TPESampler']
     #models = ['ST_Data_Random_Forest']
     #models = ['Reference_Random_Forest']
     #models = ['Reference_Neural_Net']
-    #models = ['Reference_Ref Random Forest_TPESampler']
+    models = ['Reference_Ref Random Forest_TPESampler']
 
     # Plotter erstellen
     plotter = ModelHeatmapPlotter(

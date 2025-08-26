@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
+from numpy.f2py.auxfuncs import throw_error
+
 
 def plot_time_series(
     data, title, filename, dpi=300, col_name='curr_x', label='Messwerte', axis_name='$I$ in A',
@@ -145,9 +147,16 @@ data = pd.read_csv(f'{path_data}/{file}')
 df['Rekurrentes neuronales Netz'] = data['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
 df['v_x'] = data['v_x']
 
+if material == 'S235JR':
+    material_name = 'Stahl'
+elif material == 'AL_2007_T4':
+    material_name = 'Aluminium'
+else:
+    throw_error('material unknown')
+
 plot_time_series(
     df,
-    f'Aluminium {geometry}: Vorschubgeschwindigkeit und Stromverlauf der Vorschubachse in x-Richtung',
+    f'{material_name} {geometry}: Vorschubgeschwindigkeit und Stromverlauf der Vorschubachse in x-Richtung',
     f'Verlauf_{material}_{geometry}_Ref_RF_mit_Geschwindigkeit',
     col_name='curr_x', label='Messwerte', axis_name='$I$ in A',
     col_name_vel='v_x', label_vel='$v$ in m/s',

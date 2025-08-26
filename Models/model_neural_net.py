@@ -1053,7 +1053,7 @@ class PiNNErd(Net):
                 return mse_loss + self.penalty_weight * penalty
 
             else:
-                throw_error(self, 'x_input hat die falsche Größe')
+                throw_error('x_input hat die falsche Größe')
 
         return mse_loss
 
@@ -1065,7 +1065,7 @@ class PiNNErd(Net):
             "n_activation_function": self.activation.__class__.__name__,
             "optimizer_type": self.optimizer_type,
             "penalty_weight": self.penalty_weight,
-            "theta_init": self.theta_init.tolist(),
+            #"theta_init": self.theta_init.tolist(),
         }}
         return documentation
 

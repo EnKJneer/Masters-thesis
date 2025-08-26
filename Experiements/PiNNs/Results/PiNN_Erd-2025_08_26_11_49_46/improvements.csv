@@ -1,0 +1,5 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,Neural_Net,PiNN_Erd,-24.435106284696616
+ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,Neural_Net,PiNN_Erd,-21.69778896716494
+ST_Plate_Notch,S235JR_Gear_Normal_3,Neural_Net,PiNN_Erd,-11.012984709113844
+ST_Plate_Notch,S235JR_Plate_Normal_3,Neural_Net,PiNN_Erd,-1.5373210519124068
