@@ -17,6 +17,7 @@ import Models.model_random_forest as mrf
 from matplotlib.colors import LinearSegmentedColormap
 
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
+SAMPLINGRATE = 50
 
 def plot_2d_with_color(x_values, y_values, color_values, titel='|error|', label_colour = 'mae', dpi=300, xlabel = 'pos_x', ylabel = 'pos_y'):
     """
@@ -489,6 +490,18 @@ class PredictionPlotter(BasePlotter):
     """Erstellt Plots mit GroundTruth und Vorhersagen für jeden DataPath"""
 
     def create_plots(self, df: pd.DataFrame, **kwargs):
+        # KIT Farbpalette
+        kit_red = "#D30015"
+        kit_green = "#009682"
+        kit_yellow = "#FFFF00"
+        kit_orange = "#FFC000"
+        kit_blue = "#0C537E"
+        kit_dark_blue = "#002D4C"
+        kit_magenta = "#A3107C"
+
+        # Zusätzliche Farben für mehr Modelle
+        colors = [kit_red, kit_orange, kit_green, kit_magenta, kit_blue]
+
         plot_paths = []
         datapaths = df['DataPath'].unique()
 
@@ -498,17 +511,27 @@ class PredictionPlotter(BasePlotter):
             models = df_subset['Model'].unique()
             ground_truth = df_subset['GroundTruth'].iloc[0]
 
-            fig, ax = plt.subplots(figsize=(10, 6))
-            y_min, y_max = float('inf'), -float('inf')
-            # Plot GroundTruth
-            ax.plot(ground_truth, label='GroundTruth', color='black', linewidth=2)
+            fig, ax = plt.subplots(figsize=(12, 8), dpi=300)
 
+            # DIN 461: Achsen müssen durch den Nullpunkt gehen
+            ax.spines['left'].set_position('zero')
+            ax.spines['bottom'].set_position('zero')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_color(kit_dark_blue)
+            ax.spines['bottom'].set_color(kit_dark_blue)
+            ax.spines['left'].set_linewidth(1.0)
+            ax.spines['bottom'].set_linewidth(1.0)
+
+            time = np.arange(len(ground_truth)) / SAMPLINGRATE
+
+            color_idx = 0
             for dataset in datasets:
                 for model in models:
                     row = df_subset[
                         (df_subset['Model'] == model) &
                         (df_subset['DataSet'] == dataset)
-                    ].iloc[0]
+                        ].iloc[0]
 
                     # angenommen: hier steckt ein Array der Form (n_runs, time)
                     preds_list = np.array(row['Predictions'])
@@ -516,37 +539,90 @@ class PredictionPlotter(BasePlotter):
                     # Mittelwert und Standardabweichung über die Runs
                     mean_pred = preds_list.mean(axis=0)
                     std_pred = preds_list.std(axis=0)
-                    t = np.arange(len(mean_pred))
 
-                    # Konfidenzband auf Mittelwert plus/minus vier Standardabweichungen beschränken
+                    # Farbe für dieses Modell/Dataset
+                    color = colors[color_idx % len(colors)]
+
+                    # Konfidenzband
                     ax.fill_between(
-                        t,
+                        time,
                         mean_pred - std_pred,
                         mean_pred + std_pred,
-                        alpha=0.3
+                        color=color,
+                        alpha=0.2
                     )
+
+                    if len(datasets) == 1:
+                        label = f"{model}"
+                    else:
+                        label = f"{model} ({dataset})"
 
                     # Mittelwertkurve
                     ax.plot(
-                        t,
+                        time,
                         mean_pred,
-                        label=f"{model} ({dataset})", alpha=0.8
+                        label=label,
+                        color=color,
+                        linewidth=2
                     )
-                    """                    
-                    # Bestimme die Minimal- und Maximalwerte für die y-Achse
-                    current_min = np.min(mean_pred - 4 * std_pred)
-                    current_max = np.max(mean_pred + 4 * std_pred)
-                    if current_min < y_min:
-                        y_min = current_min
-                    if current_max > y_max:
-                        y_max = current_max"""
 
-            ax.set_title(f"Predictions vs GroundTruth for {datapath}")
-            ax.set_xlabel("Time")
-            ax.set_ylabel("Value")
-            #ax.set_ylim(y_min, y_max)
-            ax.legend()
-            plt.tight_layout()
+                    color_idx += 1
+
+            # Plot GroundTruth
+            time = np.arange(len(ground_truth)) / SAMPLINGRATE
+            ax.plot(time, ground_truth, label='Messwerte', color=kit_dark_blue, linewidth=2)
+
+            # DIN 461: Beschriftungen in kit_dark_blue
+            ax.tick_params(axis='x', colors=kit_dark_blue, direction='inout', length=6)
+            ax.tick_params(axis='y', colors=kit_dark_blue, direction='inout', length=6)
+
+            # Grid nach DIN 461
+            ax.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5, linestyle='-')
+            ax.set_axisbelow(True)
+
+            # Achsenbeschriftungen mit Pfeilen
+            xmin, xmax = ax.get_xlim()
+            ymin, ymax = ax.get_ylim()
+            arrow_length = 0.03 * (xmax - xmin)
+            arrow_height = 0.04 * (ymax - ymin)
+
+            # X-Achse: Pfeil bei der Beschriftung
+            x_label_pos = xmax
+            y_label_pos = -0.08 * (ymax - ymin)
+            ax.annotate('', xy=(x_label_pos + arrow_length, y_label_pos),
+                        xytext=(x_label_pos, y_label_pos),
+                        arrowprops=dict(arrowstyle='->', color=kit_dark_blue,
+                                        lw=1.5, shrinkA=0, shrinkB=0,
+                                        mutation_scale=15))
+            ax.text(x_label_pos - 0.06 * (xmax - xmin), y_label_pos, r'$t$ in s',
+                    ha='left', va='center', color=kit_dark_blue, fontsize=12)
+
+            # Y-Achse: Pfeil bei der Beschriftung
+            x_label_pos_y = -0.06 * (xmax - 0)
+            y_label_pos_y = ymax * 0.85
+            ax.annotate('', xy=(x_label_pos_y, y_label_pos_y + arrow_height),
+                        xytext=(x_label_pos_y, y_label_pos_y),
+                        arrowprops=dict(arrowstyle='->', color=kit_dark_blue,
+                                        lw=1.5, shrinkA=0, shrinkB=0,
+                                        mutation_scale=15))
+            ax.text(x_label_pos_y, y_label_pos_y - 0.04 * (ymax - ymin), '$I$ in A',
+                    ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+
+            # Titel mit DIN 461 konformer Positionierung
+            ax.set_title(f"Stromvorhersage für {datapath}",
+                         color=kit_dark_blue, fontsize=14, fontweight='bold', pad=20)
+
+            # Legende
+            legend = ax.legend(loc='upper right',
+                               frameon=True, fancybox=False, shadow=False,
+                               framealpha=1.0, facecolor='white', edgecolor=kit_dark_blue)
+            legend.get_frame().set_linewidth(1.0)
+            for text in legend.get_texts():
+                text.set_color(kit_dark_blue)
+
+            # DIN 461: Achsenbegrenzungen anpassen
+            ax.set_xlim(left=min(x_label_pos_y, xmin), right=xmax * 1.05)
+            ax.set_ylim(bottom=min(y_label_pos, ymin), top=ymax * 1.05)
 
             filename = f"predictions_vs_groundtruth_{datapath.replace('/', '_')}.png"
             plot_path = self.save_plot(fig, filename)
