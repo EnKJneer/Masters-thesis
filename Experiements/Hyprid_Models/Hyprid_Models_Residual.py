@@ -13,8 +13,10 @@ import Models.model_random_forest as mrf
 from sklearn.preprocessing import StandardScaler
 
 class HybridModelResidual(mb.BaseModel):
-    def __init__(self, physical_model : mb.BaseModel=mphys.ModelErd(), ml_model : mb.BaseModel=mnn.Net(), name="Hybrid_Model"):
-        super(HybridModelResidual, self).__init__(name=name +'_Phys_' + physical_model.name +'_ML_' + ml_model.name)
+    def __init__(self, physical_model : mb.BaseModel=mphys.ModelErd(), ml_model : mb.BaseModel=mnn.Net(), name=None):
+        if name is None:
+            name = name +'_Phys_' + physical_model.name +'_ML_' + ml_model.name
+        super(HybridModelResidual, self).__init__(name=name)
         self.physical_model = physical_model
         self.ml_model = ml_model
 
@@ -62,7 +64,6 @@ class HybridModelResidual(mb.BaseModel):
     def reset_hyperparameter(self):
         throw_error('Not implemented')
 
-
 if __name__ == "__main__":
     """ Constants """
     NUMBEROFTRIALS = 250
@@ -78,9 +79,9 @@ if __name__ == "__main__":
     model_phys = mphys.ModelErd()
     model_rf = mrf.RandomForestModel()
     model_nn = mnn.Net()
-    model_hybrid_nn = HybridModelResidual(physical_model=model_phys, ml_model=model_nn)
-    model_hybrid_rf = HybridModelResidual(physical_model=model_phys, ml_model=model_rf)
+    model_hybrid_nn = HybridModelResidual(physical_model=model_phys, ml_model=model_nn, name = 'Hybrid Erd Neuronales Netz')
+    model_hybrid_rf = HybridModelResidual(physical_model=model_phys, ml_model=model_rf, name = 'Hybrid Erd Random Forest')
 
-    models = [model_phys, model_nn, model_rf, model_hybrid_nn, model_hybrid_rf] # , model_net, model_rf
+    models = [model_phys, model_rf, model_hybrid_rf] # , model_nn, model_hybrid_nn
     # Run the experiment
-    hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, experiment_name=model_phys.name)
+    hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, experiment_name=model_phys.name+'_Residual')

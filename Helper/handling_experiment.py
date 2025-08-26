@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import datetime
 import seaborn as sns
+from numpy.exceptions import AxisError
 from sklearn.metrics import mean_absolute_error
 
 import Helper.handling_data as hdata
@@ -18,6 +19,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
 SAMPLINGRATE = 50
+AXIS = 'x'
 
 def plot_2d_with_color(x_values, y_values, color_values, titel='|error|', label_colour = 'mae', dpi=300, xlabel = 'pos_x', ylabel = 'pos_y'):
     """
@@ -59,10 +61,20 @@ class BasePlotter(ABC):
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
 
-        # KIT-Farben definieren
-        self.kit_red = "#B2372C"
+        self.known_material = known_material
+        self.known_geometry = known_geometry
+
+        # KIT Farbpalette
+        self.kit_red = "#D30015"
         self.kit_green = "#009682"
-        self.kit_yellow = "#EEB70D"
+        self.kit_yellow = "#FFFF00"
+        self.kit_orange = "#FFC000"
+        self.kit_blue = "#0C537E"
+        self.kit_dark_blue = "#002D4C"
+        self.kit_magenta = "#A3107C"
+
+        # Zusätzliche Farben für mehr Modelle
+        self.colors = [self.kit_red, self.kit_yellow, self.kit_orange, self.kit_magenta, self.kit_green]
 
         # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
         self.custom_cmap = LinearSegmentedColormap.from_list(
@@ -70,6 +82,34 @@ class BasePlotter(ABC):
             [self.kit_green, self.kit_yellow, self.kit_red],
             N=256
         )
+
+
+        # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
+        self.custom_cmap = LinearSegmentedColormap.from_list(
+            'kit_colors',
+            [self.kit_green, self.kit_yellow, self.kit_red],
+            N=256
+        )
+
+        # Dictionary für Modell-Schlüsselwörter und zugehörige Farben
+        self.model_color_mapping = {
+            "Random Forest": self.kit_red,
+            "RNN": self.kit_yellow,
+            "NN": self.kit_orange,
+            "Erd": self.kit_magenta,
+            "Friction": self.kit_magenta,
+            # Weitere Schlüsselwörter und Farben können hier hinzugefügt werden
+        }
+
+    def get_model_color(self, model_name: str):
+        """
+        Liefert die Farbe für ein Modell basierend auf Schlüsselwörtern im Modellnamen.
+        Standardmäßig wird None zurückgegeben, wenn kein Schlüsselwort gefunden wird.
+        """
+        for keyword, color in self.model_color_mapping.items():
+            if keyword.lower() in model_name.lower():
+                return color
+        return None
 
     @abstractmethod
     def create_plots(self, df: pd.DataFrame, **kwargs):
@@ -79,7 +119,7 @@ class BasePlotter(ABC):
     def save_plot(self, fig, filename: str):
         """Speichert einen Plot"""
         plot_path = os.path.join(self.output_dir, filename)
-        fig.savefig(plot_path, dpi=300, bbox_inches='tight')
+        fig.savefig(plot_path, dpi=600, bbox_inches='tight')
         plt.close(fig)
         return plot_path
 
@@ -91,7 +131,7 @@ class BasePlotter(ABC):
         # Split nach Unterstrichen
         parts = name_without_ext.split('_')
 
-        print(f"Debug: Parsing '{filename}' -> Parts: {parts}")
+        #print(f"Debug: Parsing '{filename}' -> Parts: {parts}")
 
         # Für deine spezifischen Dateinamen:
         # AL_2007_T4_Gear_Normal_3.csv -> ['AL', '2007', 'T4', 'Gear', 'Normal', '3']
@@ -123,251 +163,44 @@ class BasePlotter(ABC):
             material = parts[0]
             geometry = parts[1]
 
-        print(f"Debug: '{filename}' -> Material: '{material}', Geometry: '{geometry}'")
+        #print(f"Debug: '{filename}' -> Material: '{material}', Geometry: '{geometry}'")
         return material, geometry
 
-class ModelComparisonPlotter(BasePlotter):
-    """Erstellt eine Übersichtsplot aller Modelle über alle Dataset/DataPath Kombinationen"""
-
-    def create_plots(self, df: pd.DataFrame, **kwargs):
+    def extract_material_and_geometry(self, df, datapath_column='DataPath'):
         """
-        # Debug: DataFrame-Struktur prüfen
-        print("DEBUG - DataFrame Spalten:", df.columns.tolist())
-        print("DEBUG - Erste Zeilen:")
-        print(df.head())
-        print("DEBUG - Modelle gefunden:", df['Model'].unique())
+        Extrahiere Material und Geometrie aus der DataPath-Spalte und füge sie als neue Spalten hinzu.
+
+        Parameter:
+        - df: DataFrame mit der Spalte 'DataPath'
+        - datapath_column: Name der Spalte, die die DataPath-Informationen enthält (Standard: 'DataPath')
+
+        Rückgabe:
+        - DataFrame mit den zusätzlichen Spalten 'Material' und 'Geometry'
         """
-        models = df['Model'].unique()
+        # Kopie des DataFrames, um das Original nicht zu verändern
+        df = df.copy()
 
-        # Erstelle eine kombinierte Kategorie aus DataSet und DataPath
-        df = df.copy()  # Kopie erstellen um Original nicht zu verändern
-        df['Dataset_Path'] = df['DataSet'].astype(str) + '_' + df['DataPath'].astype(str).str.replace('.csv', '')
-        categories = sorted(df['Dataset_Path'].unique())
-
-        fig, ax = plt.subplots(figsize=(15, 8))
-
-        x = np.arange(len(categories))
-        bar_width = 0.8 / len(models) if len(models) > 0 else 0.8
-
-        colors = plt.cm.Set3(np.linspace(0, 1, len(models)))  # Eindeutige Farben
-
-        for i, model in enumerate(models):
-            print(f"DEBUG - Verarbeite Modell: {model} (Typ: {type(model)})")
-
-            df_model = df[df['Model'] == model].copy()
-
-            # Stelle sicher, dass alle Kategorien vertreten sind
-            df_model = df_model.set_index('Dataset_Path').reindex(categories).reset_index()
-
-            y = pd.to_numeric(df_model['MAE'], errors='coerce').values
-            yerr = pd.to_numeric(df_model['StdDev'], errors='coerce').values
-
-            x_pos = x + i * bar_width
-            bars = ax.bar(x_pos, y, width=bar_width, label=str(model),
-                          yerr=yerr, capsize=4, color=colors[i], alpha=0.8)
-
-            # Text über jedem Balken (nur bei wenigen Kategorien)
-            if len(categories) <= 10:
-                for bar, value in zip(bars, y):
-                    if not np.isnan(value) and value > 0:
-                        height = bar.get_height()
-                        ax.text(bar.get_x() + bar.get_width() / 2,
-                                height + 0.01 * np.nanmax(y[y > 0]) if np.any(y > 0) else height + 0.01,
-                                f'{value:.3f}', ha='center', va='bottom', fontsize=7)
-
-        ax.set_title('Complete Model Comparison Overview')
-        ax.set_xlabel('Dataset_DataPath Combinations')
-        ax.set_ylabel('MAE')
-        ax.set_xticks(x + bar_width * (len(models) - 1) / 2)
-        ax.set_xticklabels(categories, rotation=90, ha='right')
-        ax.legend(title='Models', bbox_to_anchor=(1.05, 1), loc='upper left')
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-
-        filename = 'complete_model_comparison.png'
-        plot_path = self.save_plot(fig, filename)
-
-        return [plot_path]
-
-class HeatmapPlotter(BasePlotter):
-    """Erstellt eine Heatmap der MAE-Werte mit MAE und Standardabweichung"""
-
-    def create_plots(self, df: pd.DataFrame, **kwargs):
-        # Model + DataSet Kombination erstellen
-        df['Model_Dataset'] = df['Model'] + '_' + df['DataSet']
-
-        # Pivot-Tabellen für MAE und StdDev erstellen
-        pivot_mae = df.pivot_table(values='MAE', index='DataPath', columns='Model_Dataset', aggfunc='mean')
-        pivot_std = df.pivot_table(values='StdDev', index='DataPath', columns='Model_Dataset', aggfunc='mean')
-
-        fig, ax = plt.subplots(figsize=(max(10, len(pivot_mae.columns) * 0.8), max(6, len(pivot_mae.index) * 0.5)))
-
-        im = ax.imshow(pivot_mae.values, cmap=self.custom_cmap, aspect='auto', vmin=0.04, vmax=0.31,)
-
-        # Achsenbeschriftungen
-        ax.set_xticks(np.arange(len(pivot_mae.columns)))
-        ax.set_yticks(np.arange(len(pivot_mae.index)))
-        ax.set_xticklabels(pivot_mae.columns)
-        ax.set_yticklabels([path.replace('.csv', '') for path in pivot_mae.index])
-
-        # Rotiere die x-Achsenbeschriftungen
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
-
-        # Werte in die Zellen schreiben (MAE ± StdDev)
-        for i in range(len(pivot_mae.index)):
-            for j in range(len(pivot_mae.columns)):
-                mae_value = pivot_mae.iloc[i, j]
-                std_value = pivot_std.iloc[i, j]
-
-                if not np.isnan(mae_value) and not np.isnan(std_value):
-                    text = ax.text(j, i, f'{mae_value:.3f}\n±{std_value:.3f}',
-                                   ha="center", va="center",
-                                   color="white" if mae_value > pivot_mae.values.mean() else "black",
-                                   fontsize=9)
-
-        ax.set_title("MAE Heatmap")
-        ax.set_xlabel("Model")
-        ax.set_ylabel("DataSet")
-        fig.colorbar(im, ax=ax, label='MAE')
-        plt.tight_layout()
-
-        filename = 'heatmap_mae_with_std.png'
-        plot_path = self.save_plot(fig, filename)
-
-        return [plot_path]
-
-class ModelHeatmapPlotter(BasePlotter):
-    """Erstellt separate Heatmaps für jedes ML-Modell"""
-
-    def __init__(self, output_dir: str, known_material: str = 'AL_2007_T4', known_geometry: str = 'Plate'):
-        super().__init__(output_dir)
-        self.known_material = known_material
-        self.known_geometry = known_geometry
-
-        # KIT-Farben definieren
-        self.kit_red = "#B2372C"
-        self.kit_green = "#009682"
-        self.kit_yellow = "#EEB70D"
-
-        # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
-        self.custom_cmap = LinearSegmentedColormap.from_list(
-            'kit_colors',
-            [self.kit_green, self.kit_yellow, self.kit_red],
-            N=256
+        # Extrahiere Material und Geometrie für jeden Eintrag in der DataPath-Spalte
+        df[['Material', 'Geometry']] = df[datapath_column].apply(
+            lambda x: pd.Series(self.parse_filename(x))
         )
 
-    def parse_filename(self, filename: str):
-        """Parst den Dateinamen und extrahiert Material und Geometrie"""
-        # Entferne .csv Extension
-        name_without_ext = filename.replace('.csv', '')
-
-        # Split nach Unterstrichen
-        parts = name_without_ext.split('_')
-
-        print(f"Debug: Parsing '{filename}' -> Parts: {parts}")
-
-        # Für deine spezifischen Dateinamen:
-        # AL_2007_T4_Gear_Normal_3.csv -> ['AL', '2007', 'T4', 'Gear', 'Normal', '3']
-        # S235JR_Plate_Normal_3.csv -> ['S235JR', 'Plate', 'Normal', '3']
-
-        material = 'Unknown'
-        geometry = 'Unknown'
-
-        if len(parts) >= 4:
-            # AL_2007_T4 Fall
-            if parts[0] == 'AL' and parts[1] == '2007' and parts[2] == 'T4':
-                material = 'AL_2007_T4'
-                geometry = parts[3]  # Gear oder Plate
-            # S235JR Fall
-            elif parts[0] == 'S235JR':
-                material = 'S235JR'
-                geometry = parts[1]  # Gear oder Plate
-            else:
-                # Fallback: Versuche erste 3 Teile als Material
-                potential_material = '_'.join(parts[:3])
-                if potential_material in ['AL_2007_T4']:
-                    material = potential_material
-                    geometry = parts[3]
-                else:
-                    # Versuche ersten Teil als Material
-                    material = parts[0]
-                    geometry = parts[1] if len(parts) > 1 else 'Unknown'
-        elif len(parts) >= 2:
-            material = parts[0]
-            geometry = parts[1]
-
-        print(f"Debug: '{filename}' -> Material: '{material}', Geometry: '{geometry}'")
-        return material, geometry
-
-    def calculate_mae_for_file(self, file_path: str, model_columns: list):
-        """Berechnet MAE für alle Modelle in einer Datei"""
-        try:
-            df = pd.read_csv(file_path)
-            print(f"Debug: Spalten in {os.path.basename(file_path)}: {df.columns.tolist()}")
-
-            mae_results = {}
-
-            for model_col in model_columns:
-                if model_col in df.columns and 'GroundTruth' in df.columns:
-                    # Entferne NaN-Werte
-                    valid_indices = ~(df['GroundTruth'].isna() | df[model_col].isna())
-                    valid_count = valid_indices.sum()
-
-                    print(f"Debug: {model_col} - Gültige Werte: {valid_count}/{len(df)}")
-
-                    if valid_count > 0:
-                        mae = mean_absolute_error(
-                            df.loc[valid_indices, 'GroundTruth'],
-                            df.loc[valid_indices, model_col]
-                        )
-                        mae_results[model_col] = mae
-                        print(f"Debug: {model_col} MAE: {mae}")
-                    else:
-                        mae_results[model_col] = np.nan
-                        print(f"Debug: {model_col} - Keine gültigen Werte")
-                else:
-                    mae_results[model_col] = np.nan
-                    missing_cols = []
-                    if model_col not in df.columns:
-                        missing_cols.append(model_col)
-                    if 'GroundTruth' not in df.columns:
-                        missing_cols.append('GroundTruth')
-                    print(f"Debug: {model_col} - Fehlende Spalten: {missing_cols}")
-
-        except Exception as e:
-            print(f"Debug: Fehler beim Lesen von {file_path}: {e}")
-            mae_results = {model_col: np.nan for model_col in model_columns}
-
-        return mae_results
-
-    def create_mae_dataframe(self, folder_path: str, model_columns: list):
-        """Erstellt einen DataFrame mit MAE-Werten für alle Dateien"""
-        files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
-        results = []
-
-        print(f"Debug: Gefundene Dateien: {files}")
-
-        for file in files:
-            file_path = os.path.join(folder_path, file)
-            material, geometry = self.parse_filename(file)
-            mae_results = self.calculate_mae_for_file(file_path, model_columns)
-
-            for model, mae in mae_results.items():
-                results.append({
-                    'Filename': file,
-                    'Material': material,
-                    'Geometry': geometry,
-                    'Model': model,
-                    'MAE': mae
-                })
-                print(f"Debug: {file} -> {material}/{geometry}/{model} -> MAE: {mae}")
-
-        df = pd.DataFrame(results)
-        print(f"Debug: MAE DataFrame shape: {df.shape}")
-        print(f"Debug: Unique Materials: {df['Material'].unique()}")
-        print(f"Debug: Unique Geometries: {df['Geometry'].unique()}")
-
         return df
+
+    def replace_material_names(self, materials: list) -> list:
+        materials = materials.copy()
+        for idx, mat in enumerate(materials):
+            materials[idx] = self.replace_material_name(mat)
+        return materials
+
+    def replace_material_name(self, material: str) -> str:
+        material_mapping = {
+            'S235JR': 'Stahl',
+            'AL_2007_T4': 'Aluminium',
+            'AL2007T4': 'Aluminium',
+            # Weitere Zuordnungen hier
+        }
+        return material_mapping.get(material, material)
 
     def create_ordered_categories(self, materials: list, geometries: list):
         """Ordnet die Kategorien so, dass known oben links und unknown unten rechts sind"""
@@ -378,7 +211,6 @@ class ModelHeatmapPlotter(BasePlotter):
         for mat in sorted(materials):
             if mat != self.known_material:
                 materials_ordered.append(mat)
-
         # Geometrie-Reihenfolge: known zuerst, dann alphabetisch
         geometries_ordered = []
         if self.known_geometry in geometries:
@@ -386,103 +218,502 @@ class ModelHeatmapPlotter(BasePlotter):
         for geo in sorted(geometries):
             if geo != self.known_geometry:
                 geometries_ordered.append(geo)
-
         return materials_ordered, geometries_ordered
 
-    def create_plots(self, folder_path: str, model_columns: list, **kwargs):
-        """Erstellt für jedes Modell eine separate Heatmap"""
+    def create_ordered_categories_from_datapath(self, dataset_paths: list):
+        """Ordnet die Kategorien so, dass known oben links und unknown unten rechts sind"""
+        materials, geometries = set(), set()
+
+        # Material und Geometrie aus Dataset_Path extrahieren
+        for path in dataset_paths:
+            material, geometry = self.parse_filename(path)
+            materials.add(material)
+            geometries.add(geometry)
+
+        # Verwende create_ordered_categories, um die sortierten Listen zu erhalten
+        materials_ordered, geometries_ordered = self.create_ordered_categories(list(materials), list(geometries))
+
+        # Dataset_Paths in gewünschter Reihenfolge erstellen
+        ordered_datasets = []
+        for material in materials_ordered:
+            for geometry in geometries_ordered:
+                dataset_name = f"{material}_{geometry}"
+                if dataset_name in dataset_paths:
+                    ordered_datasets.append(dataset_name)
+
+        return ordered_datasets
+
+    def get_model_seed_columns(self, df_columns: list, model_base_name: str):
+        """Findet alle Seed-Spalten für ein bestimmtes Modell"""
+        seed_columns = [col for col in df_columns if col.startswith(f'{model_base_name}')]
+        if len(seed_columns) == 0:
+            seed_columns = [col for col in df_columns if col == model_base_name]
+        return seed_columns
+
+class ModelComparisonPlotter(BasePlotter):
+    """Erstellt eine Übersichtsplot aller Modelle über alle Dataset/DataPath Kombinationen"""
+
+
+    def create_plots(self, df: pd.DataFrame, title: str = 'Model Vergleich', model_names=None, **kwargs):
+        """
+        Erstellt einen Balkenplot-Vergleich für alle Modelle mit MAE und Standardabweichung.
+        Args:
+            df: DataFrame mit den Daten
+            title: Titel des Plots
+            model_names: Dictionary für benutzerdefinierte Modellnamen
+            **kwargs: Weitere Parameter
+        """
+        # Daten vorbereiten
+        df = df.copy()
+        df[['Material', 'Geometry']] = df['DataPath'].apply(lambda x: pd.Series(self.parse_filename(x)))
+        df['Dataset'] = df['Material'] + '_' + df['Geometry']
+
+        # Kategorien ordnen
+        dataset_paths = df['Dataset'].unique()
+
+        materials, geometries = set(), set()
+
+        # Material und Geometrie aus Dataset_Path extrahieren
+        for path in dataset_paths:
+            material, geometry = self.parse_filename(path)
+            materials.add(material)
+            geometries.add(geometry)
+
+        ordered_datasets = self.create_ordered_categories_from_datapath(dataset_paths)
+
+        # Modelle bereinigen
+        models = df['Model'].unique()
+        model_clean_names = {}
+        for model in models:
+            clean_name = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
+                             .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
+            model_clean_names[model] = clean_name
+
+        # Pivot-Tabellen für MAE und STD erstellen
+        mae_pivot = df.pivot_table(values='MAE', index='Dataset', columns='Model', aggfunc='mean')
+        std_pivot = df.pivot_table(values='StdDev', index='Dataset', columns='Model', aggfunc='mean')
+
+        # Reorder basierend auf der gewünschten Reihenfolge
+        mae_pivot = mae_pivot.reindex(index=ordered_datasets)
+        std_pivot = std_pivot.reindex(index=ordered_datasets)
+
+        # Spalten umbenennen
+        if model_names is None:
+            mae_pivot.columns = [model_clean_names.get(col, col) for col in mae_pivot.columns]
+            std_pivot.columns = [model_clean_names.get(col, col) for col in std_pivot.columns]
+        else:
+            mae_pivot.columns = [model_names.get(col, col) for col in mae_pivot.columns]
+            std_pivot.columns = [model_names.get(col, col) for col in std_pivot.columns]
+
+        # Plot erstellen
+        fig, ax = plt.subplots(figsize=(14, 12))
+        fig.set_dpi(1200)
+
+        # Balkenbreite und Positionen
+        x = np.arange(len(ordered_datasets))
+        bar_width = 0.8 / len(models) if len(models) > 0 else 0.8
+
+        # Farben zuweisen
+        colors = [self.get_model_color(model) or self.colors[i % len(self.colors)] for i, model in enumerate(models)]
+
+        # Balken plotten
+        for i, model in enumerate(mae_pivot.columns):
+            y = mae_pivot[model].values
+            yerr = std_pivot[model].values
+            x_pos = x + i * bar_width
+            bars = ax.bar(x_pos, y, width=bar_width, label=model, yerr=yerr, capsize=4,
+                          color=colors[i], alpha=0.8, edgecolor='black', linewidth=0.5)
+
+            # Annotationen hinzufügen
+            for bar, mae_val, std_val in zip(bars, y, yerr):
+                if not pd.isna(mae_val):
+                    height = bar.get_height()
+                    ax.text(bar.get_x() + bar.get_width() / 2, height + 0.01,
+                            f"{mae_val:.3f}\n±{std_val:.3f}" if std_val > 0.001 else f"{mae_val:.3f}",
+                            ha='center', va='bottom', fontsize=10, fontweight='bold', color=self.kit_dark_blue)
+
+        # Titel und Labels
+        titlesize = 30
+        labelsize = 25
+        textsize = 18
+
+        ax.set_title(f'MAE Vergleich: {title}', fontsize=titlesize, fontweight='bold', pad=20, color=self.kit_dark_blue)
+        ax.set_xlabel('Datensatz', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+        ax.set_ylabel('MAE $I$ in A', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+
+        # x-Achsen-Tick-Labels anpassen
+        y_labels = []
+        for dataset in ordered_datasets:
+            material, geometry = self.parse_filename(dataset)
+            material = self.replace_material_name(material)
+            y_labels.append(f"{material}\n{geometry}")
+
+        ax.set_xticks(x + bar_width * (len(models) - 1) / 2)
+        ax.set_xticklabels(y_labels, fontsize=textsize, color=self.kit_dark_blue, rotation=45, ha='right')
+
+        # Legende und Grid
+        ax.legend(title='Modelle', bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=textsize)
+        ax.grid(True, alpha=0.3, linestyle='--', color='gray')
+
+        # Achsenbeschriftungen färben
+        ax.tick_params(axis='both', which='major', labelsize=textsize, colors=self.kit_dark_blue)
+
+        plt.tight_layout()
+
+        # Speichern
+        filename = 'model_comparison_bars.png'
+        plot_path = self.save_plot(fig, filename)
+        print(f"Model Comparison Bars erstellt: {plot_path}")
+        return [plot_path]
+
+class HeatmapPlotter(BasePlotter):
+    """Erstellt Heatmaps für den Vergleich mehrerer ML-Modelle mit MAE und Standardabweichung"""
+
+    def format_cell_annotation(self, mae_value, std_value):
+        """Formatiert die Zellenannotation mit MAE und Standardabweichung"""
+        if pd.isna(mae_value) or pd.isna(std_value):
+            return ""
+        if std_value == 0 or std_value < 0.001:
+            return f"{mae_value:.3f}"
+        return f"{mae_value:.3f}\n±{std_value:.3f}"
+
+    def get_text_color_for_background(self, mae_value):
+        """Bestimmt die Textfarbe basierend auf dem Hintergrund (dunkel=weiß, hell=self.kit_dark_blue)"""
+        if pd.isna(mae_value):
+            return self.kit_dark_blue
+        if 0.1 < mae_value < 0.2:
+            return self.kit_dark_blue
+        else:
+            return 'white'
+
+    def create_dataset_names(self, mae_df):
+        """Erstellt kombinierte Dataset-Namen aus Material und Geometrie"""
+        # Materialnamen ersetzen (z.B. für bessere Lesbarkeit)
+        #mae_df['Material'] = self.replace_material_names(mae_df['Material'])
+        # Dataset-Namen kombinieren
+        mae_df['Dataset'] = mae_df['Material'] + '_' + mae_df['Geometry']
+        return mae_df
+
+    def create_plots(self, df: pd.DataFrame = None, title: str = 'Model Vergleich', model_names=None, **kwargs):
+        """
+        Erstellt eine Vergleichs-Heatmap für alle Modelle mit MAE und Standardabweichung
+
+        Args:
+            df: DataFrame mit den Daten
+            title: Titel der Heatmap
+            model_names: Dictionary für benutzerdefinierte Modellnamen
+            **kwargs: Weitere Parameter
+        """
         # MAE-Daten erstellen
-        mae_df = self.create_mae_dataframe(folder_path, model_columns)
+        mae_df = self.extract_material_and_geometry(df)
+        # Dataset-Namen erstellen
+        mae_df = self.create_dataset_names(mae_df)
+        # Unique Materialien, Geometrien und Modelle ermitteln
+        materials = mae_df['Material'].unique()
+        geometries = mae_df['Geometry'].unique()
+        models = mae_df['Model'].unique()
+        # Kategorien ordnen
+        materials_ordered, geometries_ordered = self.create_ordered_categories(materials, geometries)
+        # Datasets in gewünschter Reihenfolge erstellen
+        ordered_datasets = []
+        for material in materials_ordered:
+            for geometry in geometries_ordered:
+                dataset_name = f"{material}_{geometry}"
+                if dataset_name in mae_df['Dataset'].unique():
+                    ordered_datasets.append(dataset_name)
+        # Model-Namen für bessere Lesbarkeit bereinigen
+        model_clean_names = {}
+        for model in models:
+            clean_name = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
+                             .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
+            model_clean_names[model] = clean_name
+        # Pivot-Tabellen für MAE und STD erstellen
+        mae_pivot = mae_df.pivot_table(
+            values='MAE',
+            index='Dataset',
+            columns='Model',
+            aggfunc='mean'
+        )
+        std_pivot = mae_df.pivot_table(
+            values='StdDev',
+            index='Dataset',
+            columns='Model',
+            aggfunc='mean'
+        )
+        # Reorder basierend auf der gewünschten Reihenfolge
+        mae_pivot = mae_pivot.reindex(index=ordered_datasets)
+        std_pivot = std_pivot.reindex(index=ordered_datasets)
+        # Spalten umbenennen für bessere Lesbarkeit
+        if model_names is None:
+            mae_pivot.columns = [model_clean_names.get(col, col) for col in mae_pivot.columns]
+            std_pivot.columns = [model_clean_names.get(col, col) for col in std_pivot.columns]
+        else:
+            mae_pivot.columns = [model_names.get(col, col) for col in mae_pivot.columns]
+            std_pivot.columns = [model_names.get(col, col) for col in std_pivot.columns]
+        # Annotations-Matrix und Textfarben-Matrix erstellen
+        annotations = np.empty(mae_pivot.shape, dtype=object)
+        text_colors = np.empty(mae_pivot.shape, dtype=object)
+        for i in range(mae_pivot.shape[0]):
+            for j in range(mae_pivot.shape[1]):
+                mae_val = mae_pivot.iloc[i, j]
+                std_val = std_pivot.iloc[i, j]
+                annotations[i, j] = self.format_cell_annotation(mae_val, std_val)
+                text_colors[i, j] = self.get_text_color_for_background(mae_val)
+        # Heatmap erstellen
+        fig, ax = plt.subplots(figsize=(14, 12))
+        fig.set_dpi(1200)
+        # Maske für NaN-Werte
+        mask = mae_pivot.isna()
+        titlesize = 40
+        maesize = 40
+        textsize = 25
+        labelsize = 35
+        # Heatmap mit seaborn für bessere Optik
+        sns.heatmap(
+            mae_pivot,
+            annot=annotations,
+            fmt='',
+            cmap=self.custom_cmap,
+            mask=mask,
+            cbar_kws={'label': 'MAE'},
+            ax=ax,
+            square=False,
+            vmin=0.04,
+            vmax=0.31,
+            linewidths=0.0,
+            linecolor='white',
+            annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
+        )
+        # Textfarben für jede Zelle individuell setzen
+        for i in range(mae_pivot.shape[0]):
+            for j in range(mae_pivot.shape[1]):
+                if not pd.isna(mae_pivot.iloc[i, j]):
+                    text = ax.texts[i * mae_pivot.shape[1] + j]
+                    text.set_color(text_colors[i, j])
+        # Titel und Labels mit größerer Schrift
+        ax.set_title(f'MAE Heatmap: {title}', fontsize=titlesize, fontweight='bold', pad=20, color=self.kit_dark_blue)
+        ax.set_xlabel('Model', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+        ax.set_ylabel('Datensatz', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+
+        # Achsenbeschriftungen vergrößern und Farbe setzen
+        ax.tick_params(axis='both', which='major', labelsize=textsize, colors=self.kit_dark_blue)
+
+        # Hier: y-Achsen-Tick-Labels anpassen
+        y_labels = []
+        for dataset in ordered_datasets:
+            material, geometry = self.parse_filename(dataset)
+            # Materialnamen ersetzen (z. B. S235JR -> Stahl)
+            material = self.replace_material_name(material)
+            y_labels.append(f"{material}\n{geometry}")
+
+        ax.set_yticklabels(y_labels, fontsize=textsize, color=self.kit_dark_blue, ha='center', va='center')
+
+
+        # x-Achsen-Tick-Labels anpassen (Zeilenumbrüche hinzufügen)
+        x_labels = []
+        for model in mae_pivot.columns:
+            parts = model.split()
+            if len(parts) > 2:
+                new_parts = []
+                for i in range(0, len(parts), 2):
+                    new_parts.append(' '.join(parts[i:i + 2]))
+                model = '\n'.join(new_parts)
+            x_labels.append(model)
+
+        # Schriftgröße der x-Achsen-Tick-Labels reduzieren
+        #x_labelsize = min(labelsize, 12)  # Dynamische Anpassung der Schriftgröße
+        ax.set_xticklabels(x_labels, fontsize=textsize, color=self.kit_dark_blue, ha='center')
+
+        ax.tick_params(axis='x', pad=15)  # Abstand für x-Achse
+        ax.tick_params(axis='y', pad=35)  # Abstand für y-Achse
+
+        # Achsenbeschriftungen (Tick-Labels) explizit färben
+        for label in ax.get_xticklabels():
+            label.set_color(self.kit_dark_blue)
+        for label in ax.get_yticklabels():
+            label.set_color(self.kit_dark_blue)
+        # Colorbar-Label vergrößern
+        cbar = ax.collections[0].colorbar
+        cbar.set_label('MAE $I$ in A', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+        cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
+        # Colorbar Tick-Labels explizit färben
+        for label in cbar.ax.get_yticklabels():
+            label.set_color(self.kit_dark_blue)
+        plt.tight_layout()
+        # Speichern mit der save_plot Methode der Basisklasse
+        filename = f'heatmap_model_comparison_with_std.png'
+        plot_path = self.save_plot(fig, filename)
+        print(f"Model Comparison Heatmap mit Standardabweichung erstellt: {plot_path}")
+        return [plot_path]
+
+class ModelHeatmapPlotter(BasePlotter):
+    """Erstellt separate Heatmaps für jedes ML-Modell mit MAE und Standardabweichung"""
+
+    def format_cell_annotation(self, mae_value, std_value):
+        """Formatiert die Zellenannotation mit MAE und Standardabweichung"""
+        if pd.isna(mae_value) or pd.isna(std_value):
+            return ""
+        if std_value == 0 or std_value < 0.001:
+            return f"{mae_value:.3f}"
+        return f"{mae_value:.3f}\n±{std_value:.3f}"
+
+    def get_text_color_for_background(self, mae_value):
+        """Bestimmt die Textfarbe basierend auf dem Hintergrund (dunkel=weiß, hell=self.kit_dark_blue)"""
+        # Verwende die KIT-Farben aus der Basisklasse
+        kit_dark_blue = "#002D4C"
+
+        if pd.isna(mae_value):
+            return kit_dark_blue
+
+        # Bei Werten < 0.5 (dunkler Hintergrund) verwende kit_dark_blue, sonst weiß
+        if 0.1 < mae_value < 0.2:
+            return kit_dark_blue
+        else:
+            return 'white'
+
+    def create_plots(self, df: pd.DataFrame = None, **kwargs):
+        """
+        Erstellt für jedes Modell eine separate Heatmap mit MAE und Standardabweichung
+
+        Args:
+            df: DataFrame
+            **kwargs: Weitere Parameter
+        """
+        # KIT-Farben aus der Basisklasse verwenden
+        kit_dark_blue = "#002D4C"
+
+        # MAE-Daten erstellen
+        mae_df = self.extract_material_and_geometry(df)
 
         # Unique Materialien und Geometrien ermitteln
         materials = mae_df['Material'].unique()
         geometries = mae_df['Geometry'].unique()
+        models = mae_df['Model'].unique()
 
-        # Kategorien ordnen
+        # Kategorien ordnen (ohne (Bekannt)/(Unbekannt) in den Pivot-Tabellen)
         materials_ordered, geometries_ordered = self.create_ordered_categories(materials, geometries)
-
         plot_paths = []
 
         # Für jedes Modell eine separate Heatmap erstellen
-        for model in model_columns:
+        for model in models:
             model_data = mae_df[mae_df['Model'] == model]
-
-            # Pivot-Tabelle für dieses Modell erstellen
-            pivot_df = model_data.pivot_table(
+            # Pivot-Tabellen für MAE und STD erstellen
+            mae_pivot = model_data.pivot_table(
                 values='MAE',
                 index='Material',
                 columns='Geometry',
                 aggfunc='mean'
             )
-
-            # Reorder basierend auf der gewünschten Reihenfolge
-            pivot_df = pivot_df.reindex(
-                index=materials_ordered,
-                columns=geometries_ordered
+            std_pivot = model_data.pivot_table(
+                values='StdDev',
+                index='Material',
+                columns='Geometry',
+                aggfunc='mean'
             )
+            # Reorder basierend auf der gewünschten Reihenfolge
+            mae_pivot = mae_pivot.reindex(index=materials_ordered, columns=geometries_ordered)
+            std_pivot = std_pivot.reindex(index=materials_ordered, columns=geometries_ordered)
+            # Annotations-Matrix und Textfarben-Matrix erstellen
+            annotations = np.empty(mae_pivot.shape, dtype=object)
+            text_colors = np.empty(mae_pivot.shape, dtype=object)
+            for i in range(mae_pivot.shape[0]):
+                for j in range(mae_pivot.shape[1]):
+                    mae_val = mae_pivot.iloc[i, j]
+                    std_val = std_pivot.iloc[i, j]
+                    annotations[i, j] = self.format_cell_annotation(mae_val, std_val)
+                    text_colors[i, j] = self.get_text_color_for_background(mae_val)
 
             # Heatmap erstellen
-            fig, ax = plt.subplots(figsize=(12, 10))
+            fig, ax = plt.subplots(figsize=(14, 12))
             fig.set_dpi(1200)
             # Maske für NaN-Werte
-            mask = pivot_df.isna()
+            mask = mae_pivot.isna()
+            titlesize = 40
+            maesize = 45
+            textsize = 35
+            labelsize = 35
 
-            '''            
             # Heatmap mit seaborn für bessere Optik
             sns.heatmap(
-                pivot_df,
-                annot=True,
-                fmt='.4f',
+                mae_pivot,
+                annot=annotations,
+                fmt='',
                 cmap=self.custom_cmap,
                 mask=mask,
                 cbar_kws={'label': 'MAE'},
                 ax=ax,
                 square=True,
-                vmin=0,  # Minimum-Wert für Colorbar
-                linewidths=0,  # Linien zwischen Zellen
-                linecolor='gray',
-                annot_kws={'size': 20, 'weight': 'bold', 'ha': 'center', 'va': 'center'}  # Größere Schrift für Werte
-            )'''
-
-            sns.heatmap(
-                pivot_df,
-                annot=True,
-                fmt='',  # Leerer Format-String, da wir custom annotations verwenden
-                cmap=self.custom_cmap,
-                mask=mask,
-                cbar_kws={'label': 'MAE'},
-                ax=ax,
-                square=False,  # Nicht quadratisch, da verschiedene Anzahl von Zeilen/Spalten
-                vmin=0.04,  # Minimum-Wert für Colorbar
+                vmin=0.04,
                 vmax=0.31,
-                linewidths=0,  # Linien zwischen Zellen
+                linewidths=0.0,
                 linecolor='white',
-                annot_kws={'size': 20, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
+                annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
             )
 
-            model = model.replace('Plate_TrainVal_', '')
-            model = model.replace('_', ' ')
-            # Titel und Labels mit größerer Schrift
-            ax.set_title(f'MAE Heatmap: {model}', fontsize=20, fontweight='bold', pad=20)
-            ax.set_xlabel('Geometry', fontsize=20, fontweight='bold')
-            ax.set_ylabel('Material', fontsize=20, fontweight='bold')
+            # Textfarben für jede Zelle individuell setzen
+            for i in range(mae_pivot.shape[0]):
+                for j in range(mae_pivot.shape[1]):
+                    if not pd.isna(mae_pivot.iloc[i, j]):
+                        text = ax.texts[i * mae_pivot.shape[1] + j]
+                        text.set_color(text_colors[i, j])
 
-            # Achsenbeschriftungen vergrößern
-            ax.tick_params(axis='both', which='major', labelsize=20)
+            # Model-Name aufräumen
+            model_clean = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_',
+                                                                                                 '').replace(
+                'ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
+
+            # Titel und Labels mit größerer Schrift
+            ax.set_title(f'MAE Heatmap: {model_clean}', fontsize=titlesize, fontweight='bold', pad=20,
+                         color=self.kit_dark_blue)
+            ax.set_xlabel('Geometry', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+            ax.set_ylabel('Material', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+
+            materials_ordered = self.replace_material_names(materials_ordered)
+            # Achsenbeschriftungen anpassen: (Bekannt)/(Unbekannt) hinzufügen
+            x_labels = [f"{geo}\n(Bekannt)" if geo == self.known_geometry else f"{geo}\n(Unbekannt)" for geo in
+                        geometries_ordered]
+            y_labels = [f"{mat}\n(Bekannt)" if mat == self.known_material else f"{mat}\n(Unbekannt)" for mat in
+                        materials_ordered]
+
+            # Tick-Labels setzen und zentrieren
+            ax.set_xticklabels(
+                x_labels,
+                fontsize=textsize,
+                color=self.kit_dark_blue,
+                ha='center',  # Horizontal zentrieren
+                va='center',  # Vertikal zentrieren
+            )
+            ax.set_yticklabels(
+                y_labels,
+                fontsize=textsize,
+                color=self.kit_dark_blue,
+                ha='center',  # Horizontal zentrieren
+                va='center',  # Vertikal zentrieren
+            )
+            ax.tick_params(axis='x', pad=35)  # Abstand für x-Achse
+            ax.tick_params(axis='y', pad=35)  # Abstand für y-Achse
+
+            # Achsenbeschriftungen (Tick-Labels) explizit färben
+            for label in ax.get_xticklabels():
+                label.set_color(kit_dark_blue)
+            for label in ax.get_yticklabels():
+                label.set_color(kit_dark_blue)
 
             # Colorbar-Label vergrößern
             cbar = ax.collections[0].colorbar
-            cbar.set_label('MAE', fontsize=20, fontweight='bold')
-            cbar.ax.tick_params(labelsize=16)
+            cbar.set_label('MAE $I$ in A', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
+            cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
+            # Colorbar Tick-Labels explizit färben
+            for label in cbar.ax.get_yticklabels():
+                label.set_color(kit_dark_blue)
 
             plt.tight_layout()
 
-            # Speichern
-            filename = f'heatmap_{model.replace(" ", "_")}.png'
+            # Speichern mit der save_plot Methode der Basisklasse
+            filename = f'heatmap_{model_clean.replace(" ", "_")}_with_std.png'
             plot_path = self.save_plot(fig, filename)
             plot_paths.append(plot_path)
-
-            print(f"Heatmap für {model} erstellt: {plot_path}")
+            print(f"Heatmap mit Standardabweichung für {model_clean} erstellt: {plot_path}")
 
         return plot_paths
 
@@ -490,17 +721,6 @@ class PredictionPlotter(BasePlotter):
     """Erstellt Plots mit GroundTruth und Vorhersagen für jeden DataPath"""
 
     def create_plots(self, df: pd.DataFrame, **kwargs):
-        # KIT Farbpalette
-        kit_red = "#D30015"
-        kit_green = "#009682"
-        kit_yellow = "#FFFF00"
-        kit_orange = "#FFC000"
-        kit_blue = "#0C537E"
-        kit_dark_blue = "#002D4C"
-        kit_magenta = "#A3107C"
-
-        # Zusätzliche Farben für mehr Modelle
-        colors = [kit_red, kit_orange, kit_green, kit_magenta, kit_blue]
 
         plot_paths = []
         datapaths = df['DataPath'].unique()
@@ -510,7 +730,6 @@ class PredictionPlotter(BasePlotter):
             datasets = df_subset['DataSet'].unique()
             models = df_subset['Model'].unique()
             ground_truth = df_subset['GroundTruth'].iloc[0]
-
             fig, ax = plt.subplots(figsize=(12, 8), dpi=300)
 
             # DIN 461: Achsen müssen durch den Nullpunkt gehen
@@ -518,14 +737,14 @@ class PredictionPlotter(BasePlotter):
             ax.spines['bottom'].set_position('zero')
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
-            ax.spines['left'].set_color(kit_dark_blue)
-            ax.spines['bottom'].set_color(kit_dark_blue)
+            ax.spines['left'].set_color(self.kit_dark_blue)
+            ax.spines['bottom'].set_color(self.kit_dark_blue)
             ax.spines['left'].set_linewidth(1.0)
             ax.spines['bottom'].set_linewidth(1.0)
 
             time = np.arange(len(ground_truth)) / SAMPLINGRATE
-
             color_idx = 0
+
             for dataset in datasets:
                 for model in models:
                     row = df_subset[
@@ -533,15 +752,16 @@ class PredictionPlotter(BasePlotter):
                         (df_subset['DataSet'] == dataset)
                         ].iloc[0]
 
+                    # Farbzuweisung basierend auf Schlüsselwörtern
+                    color = self.get_model_color(model)
+                    if color is None:
+                        color = self.colors[color_idx % len(self.colors)]
+
                     # angenommen: hier steckt ein Array der Form (n_runs, time)
                     preds_list = np.array(row['Predictions'])
-
                     # Mittelwert und Standardabweichung über die Runs
                     mean_pred = preds_list.mean(axis=0)
                     std_pred = preds_list.std(axis=0)
-
-                    # Farbe für dieses Modell/Dataset
-                    color = colors[color_idx % len(colors)]
 
                     # Konfidenzband
                     ax.fill_between(
@@ -565,19 +785,18 @@ class PredictionPlotter(BasePlotter):
                         color=color,
                         linewidth=2
                     )
-
                     color_idx += 1
 
             # Plot GroundTruth
             time = np.arange(len(ground_truth)) / SAMPLINGRATE
-            ax.plot(time, ground_truth, label='Messwerte', color=kit_dark_blue, linewidth=2)
+            ax.plot(time, ground_truth, label='Messwerte', color=self.kit_dark_blue, linewidth=2)
 
             # DIN 461: Beschriftungen in kit_dark_blue
-            ax.tick_params(axis='x', colors=kit_dark_blue, direction='inout', length=6)
-            ax.tick_params(axis='y', colors=kit_dark_blue, direction='inout', length=6)
+            ax.tick_params(axis='x', colors=self.kit_dark_blue, direction='inout', length=6)
+            ax.tick_params(axis='y', colors=self.kit_dark_blue, direction='inout', length=6)
 
             # Grid nach DIN 461
-            ax.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5, linestyle='-')
+            ax.grid(True, color=self.kit_dark_blue, alpha=0.3, linewidth=0.5, linestyle='-')
             ax.set_axisbelow(True)
 
             # Achsenbeschriftungen mit Pfeilen
@@ -591,34 +810,37 @@ class PredictionPlotter(BasePlotter):
             y_label_pos = -0.08 * (ymax - ymin)
             ax.annotate('', xy=(x_label_pos + arrow_length, y_label_pos),
                         xytext=(x_label_pos, y_label_pos),
-                        arrowprops=dict(arrowstyle='->', color=kit_dark_blue,
+                        arrowprops=dict(arrowstyle='->', color=self.kit_dark_blue,
                                         lw=1.5, shrinkA=0, shrinkB=0,
                                         mutation_scale=15))
             ax.text(x_label_pos - 0.06 * (xmax - xmin), y_label_pos, r'$t$ in s',
-                    ha='left', va='center', color=kit_dark_blue, fontsize=12)
+                    ha='left', va='center', color=self.kit_dark_blue, fontsize=12)
 
             # Y-Achse: Pfeil bei der Beschriftung
             x_label_pos_y = -0.06 * (xmax - 0)
             y_label_pos_y = ymax * 0.85
             ax.annotate('', xy=(x_label_pos_y, y_label_pos_y + arrow_height),
                         xytext=(x_label_pos_y, y_label_pos_y),
-                        arrowprops=dict(arrowstyle='->', color=kit_dark_blue,
+                        arrowprops=dict(arrowstyle='->', color=self.kit_dark_blue,
                                         lw=1.5, shrinkA=0, shrinkB=0,
                                         mutation_scale=15))
             ax.text(x_label_pos_y, y_label_pos_y - 0.04 * (ymax - ymin), '$I$ in A',
-                    ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+                    ha='center', va='bottom', color=self.kit_dark_blue, fontsize=12)
+
+            material, geometry = self.parse_filename(datapath)
+            material = self.replace_material_name(material)
 
             # Titel mit DIN 461 konformer Positionierung
-            ax.set_title(f"Stromvorhersage für {datapath}",
-                         color=kit_dark_blue, fontsize=14, fontweight='bold', pad=20)
+            ax.set_title(f"{material} {geometry}: Stromverlauf der Vorschubachse in {AXIS}-Richtung",
+                         color=self.kit_dark_blue, fontsize=14, fontweight='bold', pad=20)
 
             # Legende
             legend = ax.legend(loc='upper right',
                                frameon=True, fancybox=False, shadow=False,
-                               framealpha=1.0, facecolor='white', edgecolor=kit_dark_blue)
+                               framealpha=1.0, facecolor='white', edgecolor=self.kit_dark_blue)
             legend.get_frame().set_linewidth(1.0)
             for text in legend.get_texts():
-                text.set_color(kit_dark_blue)
+                text.set_color(self.kit_dark_blue)
 
             # DIN 461: Achsenbegrenzungen anpassen
             ax.set_xlim(left=min(x_label_pos_y, xmin), right=xmax * 1.05)
@@ -709,12 +931,12 @@ class PlotManager:
 
         for plotter_name in selected_plotters:
             if plotter_name in self.plotters:
-                try:
-                    plot_paths = self.plotters[plotter_name].create_plots(df)
-                    all_plot_paths[plotter_name] = plot_paths
-                    print(f"✓ {plotter_name}: {len(plot_paths)} plots created")
-                except Exception as e:
-                    print(f"✗ Error creating {plotter_name}: {str(e)}")
+                #try:
+                plot_paths = self.plotters[plotter_name].create_plots(df)
+                all_plot_paths[plotter_name] = plot_paths
+                print(f"✓ {plotter_name}: {len(plot_paths)} plots created")
+                #except Exception as e:
+                #    print(f"✗ Error creating {plotter_name}: {str(e)}")
 
         return all_plot_paths
 

@@ -127,15 +127,15 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
 
 # Beispielaufruf der Funktion
 material = 'DMC_S235JR'
-geometry = 'Plate'
-variant = 'Normal'
-version = '2'
+geometry = 'Gear'
+variant = 'Depth'
+version = '3'
 path_data = '..\\Data'#'..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
 file = f'{material}_{geometry}_{variant}_{version}.csv' #
 
 data = pd.read_csv(f'{path_data}/{file}')
 data['f_x'] = -200*data['f_x']
 
-plot_time_series(data, f'{material} {geometry} {variant}: Verlauf der Prozesskraft', f'Kräfte_{material}_{geometry}_{variant}_new',
+plot_time_series(data, f'{material} {geometry} {variant}: Verlauf der Prozesskraft (Plate Normal)', f'Kräfte_{material}_{geometry}_{variant}_new',
                  col_name = 'f_x', label='Messwerte', label_axis='$F$ in N', dpi=300,
                  col_name1='f_x_sim', label1='Simulation')
