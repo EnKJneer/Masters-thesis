@@ -1,9 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-ohne z,DMC_AL2007T4_Gear_Normal_3,Recurrent_Neural_Net,Random_Forest,15.570337147602178
-ohne z,DMC_AL2007T4_Plate_Normal_3,Recurrent_Neural_Net,Random_Forest,-6.986013994989978
-ohne z,DMC_S235JR_Gear_Normal_3,Recurrent_Neural_Net,Random_Forest,12.370445323803239
-ohne z,DMC_S235JR_Plate_Normal_3,Recurrent_Neural_Net,Random_Forest,27.267811377928137
-mit z,DMC_AL2007T4_Gear_Normal_3,Recurrent_Neural_Net,Random_Forest,12.901947650583523
-mit z,DMC_AL2007T4_Plate_Normal_3,Recurrent_Neural_Net,Random_Forest,-20.989243268361523
-mit z,DMC_S235JR_Gear_Normal_3,Recurrent_Neural_Net,Random_Forest,-11.084911039779342
-mit z,DMC_S235JR_Plate_Normal_3,Recurrent_Neural_Net,Random_Forest,19.52602068294926

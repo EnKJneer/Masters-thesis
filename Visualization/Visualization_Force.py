@@ -43,7 +43,7 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
     ax1.spines['bottom'].set_linewidth(1.0)
 
     # Plot der Hauptdaten
-    line0, = ax1.plot(time, data[col_name], label=label, color=kit_blue, linewidth=1.5)
+    line0 = ax1.scatter(time, data[col_name], label=label, color=kit_blue, s=1.5)
 
     # DIN 461: Beschriftungen in kit_dark_blue
     ax1.tick_params(axis='x', colors=kit_dark_blue, direction='inout', length=6)
@@ -96,12 +96,12 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
 
     # Weitere Datenreihen hinzufügen, falls vorhanden
     if col_name1 is not None:
-        line1, = ax1.plot(time, data[col_name1], label=label1, color=kit_red, linewidth=1.5)
+        line1 = ax1.scatter(time, data[col_name1], label=label1, color=kit_red, s=1.5)
         lines.append(line1)
         labels.append(line1.get_label())
 
         if col_name2 is not None:
-            line2, = ax1.plot(time, data[col_name2], label=label2, color=kit_orange, linewidth=1.5)
+            line2 = ax1.scatter(time, data[col_name2], label=label2, color=kit_orange, s=1.5)
             lines.append(line2)
             labels.append(line2.get_label())
 
@@ -126,15 +126,18 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
     plt.show()
 
 # Beispielaufruf der Funktion
-material = 'DMC_S235JR'
-geometry = 'Gear'
-variant = 'Depth'
+material = 'DMC_AL2007T4'
+geometry = 'Plate'
+variant = 'Normal'
 version = '3'
 path_data = '..\\Data'#'..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
 file = f'{material}_{geometry}_{variant}_{version}.csv' #
 
 data = pd.read_csv(f'{path_data}/{file}')
 data['f_x'] = -200*data['f_x']
+
+mask = (abs(data['v_x']) < 1)
+data = data[mask]
 
 plot_time_series(data, f'{material} {geometry} {variant}: Verlauf der Prozesskraft (Plate Normal)', f'Kräfte_{material}_{geometry}_{variant}_new',
                  col_name = 'f_x', label='Messwerte', label_axis='$F$ in N', dpi=300,

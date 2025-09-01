@@ -128,6 +128,8 @@ class BasePlotter(ABC):
         # Entferne .csv Extension
         name_without_ext = filename.replace('.csv', '')
 
+        # Entferne Maschinen Bezeichung
+        name_without_ext = name_without_ext.replace('DMC_', '')
         # Split nach Unterstrichen
         parts = name_without_ext.split('_')
 
@@ -465,7 +467,7 @@ class HeatmapPlotter(BasePlotter):
         # Maske für NaN-Werte
         mask = mae_pivot.isna()
         titlesize = 40
-        maesize = 40
+        maesize = 35
         textsize = 25
         labelsize = 35
         # Heatmap mit seaborn für bessere Optik
@@ -753,9 +755,9 @@ class PredictionPlotter(BasePlotter):
                         ].iloc[0]
 
                     # Farbzuweisung basierend auf Schlüsselwörtern
-                    color = self.get_model_color(model)
-                    if color is None:
-                        color = self.colors[color_idx % len(self.colors)]
+                    #color = self.get_model_color(model)
+                    #if color is None:
+                    color = self.colors[color_idx % len(self.colors)]
 
                     # angenommen: hier steckt ein Array der Form (n_runs, time)
                     preds_list = np.array(row['Predictions'])

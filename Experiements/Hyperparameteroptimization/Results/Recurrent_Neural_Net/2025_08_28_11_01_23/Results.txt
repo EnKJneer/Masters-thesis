@@ -1,0 +1,50 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.270032 | 0.027018
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.292881 | 0.031487
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.197586 | 0.008665
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.199800 | 0.014599
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net_TPESampler | 0.247137 | 0.151439
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net_TPESampler | 0.270134 | 0.165835
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net_TPESampler | 0.107955 | 0.004129
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net_TPESampler | 0.127300 | 0.003004
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net_RandomSampler | 0.229170 | 0.052171
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net_RandomSampler | 0.231051 | 0.032049
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net_RandomSampler | 0.187957 | 0.034222
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net_RandomSampler | 0.180240 | 0.028834
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net_GridSampler | 0.121063 | 0.012903
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net_GridSampler | 0.157416 | 0.007852
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net_GridSampler | 0.111579 | 0.003321
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net_GridSampler | 0.129227 | 0.000797
+
+
+MODEL IMPROVEMENTS (vs Recurrent_Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_TPESampler | +8.48%      
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_RandomSampler | +15.13%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_GridSampler | +55.17%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_TPESampler | +7.77%      
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_RandomSampler | +21.11%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_GridSampler | +46.25%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_TPESampler | +45.36%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_RandomSampler | +4.87%      
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_GridSampler | +43.53%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_TPESampler | +36.29%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_RandomSampler | +9.79%      
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Recurrent_Neural_Net_GridSampler | +35.32%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

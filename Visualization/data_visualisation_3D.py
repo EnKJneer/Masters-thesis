@@ -54,9 +54,9 @@ def plot_3d_with_color(
             s=1, edgecolor='none', label=mat
         )
 
-        '''        
+
         # Pfeile für die Gradienten (nur jeden zweiten Punkt)
-        ax.quiver(
+        '''ax.quiver(
             x_values[mat_mask][::quiver_stride],
             y_values[mat_mask][::quiver_stride],
             z_values[mat_mask][::quiver_stride],
@@ -108,14 +108,24 @@ for file in files:
             break
 
 data = pd.concat(df)
-mask = (abs(data['v_x']) < 10)
+mask = (abs(data['v_x']) < 1)
 data = data[mask]
 
-plot_3d_with_color(
-    data['v_x'], -data['f_x_sim'], data['curr_x'], data['z_x'],
-    material_values=data['material'],
-    u_grad=data['u_grad'], v_grad=data['v_grad'], w_grad=data['w_grad'],
-    xlabel='$v$ in m/s', ylabel='$F_{sim}$ in N', zlabel='$I$ in A',
-    title='3D-Trajektorie mit Kraft und Gradienten (Colormap pro Material)',
-    filename='3d_trajectory_by_material.png'
-)
+mask = (data['z_x'] < 0)
+data1 = data[mask]
+mask = (data['z_x'] > 0)
+data2 = data[mask]
+
+for idx, data in enumerate([data1, data2]):
+    if idx == 0:
+        z = 'z_x < 0'
+    else:
+        z = 'z_x > 0'
+    plot_3d_with_color(
+        data['v_x'], -data['f_x_sim'], data['curr_x'], data['a_x'],
+        material_values=data['material'], colorbar_label='$a$ in mm/s²',
+        u_grad=data['u_grad'], v_grad=data['v_grad'], w_grad=data['w_grad'],
+        xlabel='$v$ in m/s', ylabel='$F_{sim}$ in N', zlabel='$I$ in A',
+        title=f'3D-Trajektorie für {z}',
+        filename='3d_trajectory_by_material.png'
+    )

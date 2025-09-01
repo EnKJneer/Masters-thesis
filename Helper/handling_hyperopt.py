@@ -98,7 +98,7 @@ class Objective:
             if isinstance(value, tuple) and all(isinstance(x, int) for x in value):
                 params[name] = trial.suggest_int(name, value[0], value[1])
             elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
-                params[name] = trial.suggest_float(name, value[0], value[1], log=True if name.startswith('learning_rate') else False)
+                params[name] = trial.suggest_float(name, value[0], value[1], log=True if name.startswith('learning_rate') or name.startswith('log_') else False)
             else:
                 params[name] = trial.suggest_categorical(name, value)
 
@@ -131,7 +131,150 @@ class Objective:
 
         return val_error
 
-def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor=3, sampler = "	TPESampler", show_plots=True):
+
+def get_minimum_trials_for_grid_search(search_space):
+    """
+    Berechnet die minimale Anzahl an Trials die für Grid Search benötigt wird,
+    um alle Randbereiche (Min/Max) abzudecken.
+
+    Parameters
+    ----------
+    search_space : dict
+        Dictionary mit Parameternamen als Keys und Bereichen/Listen als Values
+
+    Returns
+    -------
+    int
+        Minimale Anzahl Trials für Grid Search mit Randbereich-Abdeckung
+    """
+    min_trials = 1
+
+    for name, value in search_space.items():
+        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
+                (isinstance(value, tuple) and len(value) > 2):
+            # Kategorische Parameter - alle Werte müssen getestet werden
+            min_trials *= len(value)
+        elif isinstance(value, tuple) and len(value) == 2:
+            # Parameter mit Bereichen - mindestens Min/Max (2 Werte)
+            min_trials *= 2
+        else:
+            # Einzelwert - 1 Wert
+            min_trials *= 1
+
+    return min_trials
+
+def _create_grid_search_space(search_space, n_trials):
+    """
+    Konvertiert einen Suchraum mit Bereichen zu einem Grid Search Suchraum mit expliziten Werten.
+    Stellt sicher, dass Randwerte (Min/Max) immer getestet werden und verteilt restliche Trials gleichmäßig.
+
+    Parameters
+    ----------
+    search_space : dict
+        Dictionary mit Parameternamen als Keys und Bereichen/Listen als Values
+    n_trials : int
+        Gewünschte Anzahl der Trials (wird nur für Randwerte überschritten)
+
+    Returns
+    -------
+    dict
+        Grid Search Suchraum mit expliziten Werten für jeden Parameter
+    """
+    grid_search_space = {}
+
+    # Zähle Parameter die Bereiche haben (nicht kategorische)
+    range_params = []
+    categorical_params = []
+
+    for name, value in search_space.items():
+        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
+                (isinstance(value, tuple) and len(value) > 2):
+            # Kategorische Parameter
+            categorical_params.append(name)
+        elif isinstance(value, tuple) and len(value) == 2:
+            # Parameter mit Bereichen
+            range_params.append(name)
+        else:
+            # Einzelwert
+            categorical_params.append(name)
+
+    # Berechne verfügbare Trials für Bereichsparameter
+    categorical_combinations = 1
+    for name in categorical_params:
+        value = search_space[name]
+        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
+                (isinstance(value, tuple) and len(value) > 2):
+            categorical_combinations *= len(value)
+        else:
+            categorical_combinations *= 1
+
+    available_trials_for_ranges = n_trials / categorical_combinations if categorical_combinations > 0 else n_trials
+
+    # Berechne Werte pro Bereichsparameter
+    if len(range_params) > 0:
+        # Für jeden Bereichsparameter: mindestens 2 Werte (Min/Max), dann gleichmäßig verteilen
+        values_per_range_param = max(2, int(available_trials_for_ranges ** (1.0 / len(range_params))))
+    else:
+        values_per_range_param = 2
+
+    for name, value in search_space.items():
+        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
+                (isinstance(value, tuple) and len(value) > 2):
+            # Kategorische Parameter - verwende alle gegebenen Werte
+            grid_search_space[name] = list(value)
+
+        elif isinstance(value, tuple) and len(value) == 2:
+            min_val, max_val = value
+
+            if all(isinstance(x, int) for x in value):
+                # Integer Parameter
+                available_int_values = max_val - min_val + 1
+                if available_int_values <= values_per_range_param:
+                    # Wenn der Bereich klein genug ist, verwende alle Integer-Werte
+                    grid_search_space[name] = list(range(min_val, max_val + 1))
+                else:
+                    # Erstelle Werte: immer Min/Max, dann gleichmäßig dazwischen
+                    if values_per_range_param == 2:
+                        values = [min_val, max_val]
+                    else:
+                        # Erstelle Zwischenwerte
+                        step = (max_val - min_val) / (values_per_range_param - 1)
+                        values = [min_val]
+                        for i in range(1, values_per_range_param - 1):
+                            values.append(min_val + round(i * step))
+                        values.append(max_val)
+                        # Entferne Duplikate aber behalte Reihenfolge
+                        values = sorted(list(set(values)))
+                    grid_search_space[name] = values
+
+            elif all(isinstance(x, float) for x in value):
+                if name.startswith('learning_rate') or name.startswith('log_') or 'lr' in name.lower():
+                    # Logarithmische Parameter
+                    if values_per_range_param == 2:
+                        grid_search_space[name] = [min_val, max_val]
+                    else:
+                        log_min = np.log10(min_val)
+                        log_max = np.log10(max_val)
+                        log_values = np.linspace(log_min, log_max, values_per_range_param)
+                        grid_search_space[name] = [10 ** log_val for log_val in log_values]
+                else:
+                    # Lineare Float Parameter
+                    if values_per_range_param == 2:
+                        grid_search_space[name] = [min_val, max_val]
+                    else:
+                        grid_search_space[name] = list(np.linspace(min_val, max_val, values_per_range_param))
+            else:
+                # Gemischte Typen - behandle als kategorisch
+                grid_search_space[name] = list(value)
+        else:
+            # Einzelwert - behandle als kategorisch mit einem Wert
+            grid_search_space[name] = [value]
+
+    return grid_search_space
+
+
+def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor=3, sampler="TPESampler",
+             show_plots=True):
     """
    Optimizes the hyperparameters of a model using Optuna's hyperparameter optimization framework.
 
@@ -156,13 +299,11 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
        For more information see https://optuna.readthedocs.io/en/stable/reference/samplers/index.html#module-optuna.samplers
    show_plots : bool, optional
        Whether to display optimization and hyperparameter search visualizations. Default is True.
-   **kwargs : dict
-       Additional keyword arguments that are passed to the objective function.
 
    Returns
    -------
-   optuna.trial.FrozenTrial
-       The trial with the best objective value (lowest validation error) found during the optimization.
+   dict
+       The best hyperparameters found during the optimization.
 
    Saves
    -----
@@ -179,40 +320,62 @@ def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor
     study_name = study_name + time
     storage_name = f"sqlite:///{folderpath}\\{study_name}.db"
 
+    # Erstelle den entsprechenden Sampler
     if sampler == "TPESampler":
         sampler_opt = optuna.samplers.TPESampler()
     elif sampler == "RandomSampler":
         sampler_opt = optuna.samplers.RandomSampler()
     elif sampler == "GridSampler":
-        sampler_opt = optuna.samplers.GridSampler(objective.search_space)
+        # Konvertiere den Suchraum für Grid Search
+        grid_search_space = _create_grid_search_space(objective.search_space, n_trials)
+        sampler_opt = optuna.samplers.GridSampler(grid_search_space)
+
+        # Berechne die tatsächliche Anzahl der Trials für Grid Search
+        actual_trials = 1
+        for param_values in grid_search_space.values():
+            actual_trials *= len(param_values)
+
+        print(f"Grid Search konfiguriert:")
+        print(f"  Gewünschte Trials: {n_trials}")
+        print(f"  Tatsächliche Trials: {actual_trials}")
+        print(f"  Grid Search Space:")
+        for name, values in grid_search_space.items():
+            print(f"    {name}: {len(values)} Werte -> {values[:3]}{'...' if len(values) > 3 else ''}")
+
+        # Aktualisiere n_trials für Grid Search
+        n_trials = actual_trials
     else:
         print("No valid sampler was selected. TPESampler will be used.")
         sampler_opt = optuna.samplers.TPESampler()
-    if(objective.pruning):
+
+    # Erstelle die Studie
+    if objective.pruning and sampler != "GridSampler":
+        # Pruning funktioniert nicht gut mit Grid Search
         study = optuna.create_study(
-            direction='minimize', 
-            study_name=study_name, 
+            direction='minimize',
+            study_name=study_name,
             storage=storage_name,
             sampler=sampler_opt,
             pruner=optuna.pruners.HyperbandPruner(
-                min_resource=1, 
-                max_resource=n_trials, 
+                min_resource=1,
+                max_resource=n_trials,
                 reduction_factor=n_reduction_factor
             )
         )
     else:
         study = optuna.create_study(
-            direction='minimize', 
-            study_name=study_name, 
+            direction='minimize',
+            study_name=study_name,
             storage=storage_name,
-        )    
+            sampler=sampler_opt
+        )
 
     study.optimize(objective, n_trials=n_trials)
 
     # Zeige Ergebnisse und Plots an
     best_trial = study.best_trial
     print("Best Hyperparameters:", best_trial.params)
-    #print("Best Objective Value:", best_trial.value)
+    print("Best Objective Value:", best_trial.value)
 
     if show_plots:
         optuna_viz.plot_optimization_history(study).show()

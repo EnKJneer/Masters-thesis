@@ -258,7 +258,7 @@ if __name__ == '__main__':
                                      'S235JR_Notch_Depth_3.csv', 'S235JR_Notch_Depth_4.csv',]
     dataSet.testing_data_paths = [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv',
                                     'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
-
+    dataSet.header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.add_sign_hold = True
 
@@ -285,4 +285,4 @@ if __name__ == '__main__':
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name=dataSet.name)
+                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name=dataSet.name)

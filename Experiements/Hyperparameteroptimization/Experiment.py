@@ -17,8 +17,6 @@ from Experiements.ExpertModels.Experts import Experts
 #import Models.model_mixture_of_experts as mmix
 from datetime import datetime
 
-
-
 def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPESampler", "RandomSampler", "GridSampler"],
                    NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, NUMBEROFTRIALS = 10,
                    patience=5, plot_types=None,
@@ -466,10 +464,14 @@ def start_experiment_for(model_str = 'NN'):
     else:
         throw_error('string is not a valid model')
 
+    n_trials_min = hyperopt.get_minimum_trials_for_grid_search(search_space)
+    if n_trials_min > NUMBEROFTRIALS:
+        print(f'Achtung die minimale anzahl an empfohlenen trials wurde unterschritten.')
+    print(f'Minamale anzahl an empfohlenen trials: {n_trials_min}')
     # Run the experiment
     run_experiment([dataclass], [model], [search_space],optimization_samplers = optimization_samplers,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, NUMBEROFTRIALS=NUMBEROFTRIALS,
                         plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('Experts_Mixed')
+    start_experiment_for('RNN')

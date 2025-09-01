@@ -1,0 +1,20 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC_AL2007T4_Gear_Normal_3 | Friction_Model  | 0.066977 | 0.000000
+ST_Plate_Notch       | DMC_AL2007T4_Plate_Normal_3 | Friction_Model  | 0.061723 | 0.000000
+ST_Plate_Notch       | DMC_S235JR_Gear_Normal_3 | Friction_Model  | 0.066479 | 0.000000
+ST_Plate_Notch       | DMC_S235JR_Plate_Normal_3 | Friction_Model  | 0.075513 | 0.000000
+
+
+GENERATED PLOTS
+========================================
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC_AL2007T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC_AL2007T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_DMC_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC_S235JR_Plate_Normal_3.png
+Model_Heatmap: 1 plots
+  - heatmap_Friction_Model_with_std.png

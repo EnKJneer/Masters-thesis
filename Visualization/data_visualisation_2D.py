@@ -113,18 +113,18 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = '..\\DataSets\\Data_without_force_correction'
+path_data = '..\\Archiv/DataSets/DataFiltered'#'..\\DataSets\\Data_without_force_correction'
 files = os.listdir(path_data)
 
-files = ['AL_2007_T4_Plate_Normal_2.csv']
+files = ['Kühlgrill_Mat_S3800_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
     cutoff = 0.1
     filter_order = 4
     #data = apply_lowpass_filter(data, cutoff, filter_order)
-    n = int(len(data)*1/3)
-    data = data.iloc[int(1*n):int(2*n), :].reset_index(drop=True)
+    #n = int(len(data)*1/3)
+    #data = data.iloc[int(1*n):int(2*n), :].reset_index(drop=True)
     #print(data.columns)
     #print(data.shape)
 
@@ -136,21 +136,21 @@ for file in files:
     name = file.replace('.csv', '')
     #t_e = data.index[-1] * 1/500
     #print(t_e)
-    data['f_x'] = -data['f_x']*200
-    data['f_y'] = data['f_y']*200
+    #data['f_x'] = -data['f_x']*200
+    #data['f_y'] = data['f_y']*200
     data['curr_x'] = - data['curr_x']
     data['sign_curr_x'] = np.sign(data['curr_x'])
     data['z_x'] = sign_hold(data['v_x'])
     data['sign_v_x'] = np.sign(data['v_x'])
     data['v'] = (data['v_x']**2 + data['v_y']**2)**0.5
 
-    data['f_sp'] = (data['f_x']**2 + data['f_y']**2)**0.5
+    #data['f_sp'] = (data['f_x']**2 + data['f_y']**2)**0.5
 
     data['time'] = data.index
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], label='materialremoved_sim', title=f'{name}')
-    #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x'], label='f_x', title=f'{name}')
+    plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_sp'], label='f_sp', title=f'{name}')
-    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+    #plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='f_sp')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='curr_x')

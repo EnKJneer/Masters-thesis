@@ -1,0 +1,20 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | RF_Experts      | 0.082478 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | RF_Experts      | 0.096988 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | RF_Experts      | 0.091418 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | RF_Experts      | 0.062736 | 0.000000
+
+
+GENERATED PLOTS
+========================================
+Model_Heatmap: 1 plots
+  - heatmap_RF_Experts_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png
