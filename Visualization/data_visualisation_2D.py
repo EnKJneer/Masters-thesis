@@ -113,10 +113,10 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = '..\\Archiv/DataSets/DataFiltered'#'..\\DataSets\\Data_without_force_correction'
+path_data = '..\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
 files = os.listdir(path_data)
 
-files = ['Kühlgrill_Mat_S3800_2.csv']
+files = ['DMC_S235JR_Plate_Depth_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -143,14 +143,16 @@ for file in files:
     data['z_x'] = sign_hold(data['v_x'])
     data['sign_v_x'] = np.sign(data['v_x'])
     data['v'] = (data['v_x']**2 + data['v_y']**2)**0.5
-
+    data['f_corr'] = data['f_x_sim'] * data['materialremoved_sim'] / (data['v_sp'] + 1e-6)
+    data['f_x'] = -data['f_x']
     #data['f_sp'] = (data['f_x']**2 + data['f_y']**2)**0.5
 
     data['time'] = data.index
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], label='materialremoved_sim', title=f'{name}')
-    plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
+    #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_sp'], label='f_sp', title=f'{name}')
-    #plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+    plot_time_series(data, name, label='f_corr', dpi=300, ylabel='f_x')
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='f_sp')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='curr_x')

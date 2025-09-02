@@ -129,7 +129,7 @@ class BasePlotter(ABC):
         name_without_ext = filename.replace('.csv', '')
 
         # Entferne Maschinen Bezeichung
-        name_without_ext = name_without_ext.replace('DMC_', '')
+        name_without_ext = name_without_ext.replace('DMC_', '').replace('DMC600V_', '')
         # Split nach Unterstrichen
         parts = name_without_ext.split('_')
 
@@ -399,6 +399,7 @@ class HeatmapPlotter(BasePlotter):
     def create_plots(self, df: pd.DataFrame = None, title: str = 'Model Vergleich', model_names=None, **kwargs):
         """
         Erstellt eine Vergleichs-Heatmap für alle Modelle mit MAE und Standardabweichung
+        Berücksichtigt jetzt auch verschiedene Trainingsdatasets (DataSet)
 
         Args:
             df: DataFrame mit den Daten
@@ -410,66 +411,109 @@ class HeatmapPlotter(BasePlotter):
         mae_df = self.extract_material_and_geometry(df)
         # Dataset-Namen erstellen
         mae_df = self.create_dataset_names(mae_df)
-        # Unique Materialien, Geometrien und Modelle ermitteln
+
+        # Unique Materialien, Geometrien, Modelle und TrainingsDatasets ermitteln
         materials = mae_df['Material'].unique()
         geometries = mae_df['Geometry'].unique()
         models = mae_df['Model'].unique()
+        train_datasets = mae_df['DataSet'].unique()
+
         # Kategorien ordnen
         materials_ordered, geometries_ordered = self.create_ordered_categories(materials, geometries)
-        # Datasets in gewünschter Reihenfolge erstellen
-        ordered_datasets = []
+
+        # Test-Datasets in gewünschter Reihenfolge erstellen (für y-Achse)
+        ordered_test_datasets = []
         for material in materials_ordered:
             for geometry in geometries_ordered:
                 dataset_name = f"{material}_{geometry}"
                 if dataset_name in mae_df['Dataset'].unique():
-                    ordered_datasets.append(dataset_name)
-        # Model-Namen für bessere Lesbarkeit bereinigen
-        model_clean_names = {}
-        for model in models:
-            clean_name = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
-                             .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
-            model_clean_names[model] = clean_name
-        # Pivot-Tabellen für MAE und STD erstellen
+                    ordered_test_datasets.append(dataset_name)
+
+        # Modell + TrainingsDataSet Kombinationen erstellen (für x-Achse)
+        model_dataset_combinations = []
+        model_dataset_labels = {}
+
+        for model in sorted(models):  # Modelle sortieren für konsistente Reihenfolge
+            for train_dataset in sorted(train_datasets):  # TrainingsDatasets sortieren
+                combination = f"{model}|{train_dataset}"
+                model_dataset_combinations.append(combination)
+
+                # Labels für bessere Lesbarkeit erstellen
+                clean_model = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
+                    .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
+                clean_dataset = train_dataset.replace('_', ' ')
+                model_dataset_labels[combination] = f"{clean_model}\n({clean_dataset})"
+
+        # Neue Spalte für Kombination erstellen
+        mae_df['Model_DataSet'] = mae_df['Model'] + '|' + mae_df['DataSet']
+
+        # Pivot-Tabellen für MAE und STD erstellen (ohne Aggregation, da jede Kombination einzigartig sein sollte)
         mae_pivot = mae_df.pivot_table(
             values='MAE',
             index='Dataset',
-            columns='Model',
-            aggfunc='mean'
+            columns='Model_DataSet',
+            aggfunc='first'  # 'first' statt 'mean', da jede Kombination eindeutig sein sollte
         )
         std_pivot = mae_df.pivot_table(
             values='StdDev',
             index='Dataset',
-            columns='Model',
-            aggfunc='mean'
+            columns='Model_DataSet',
+            aggfunc='first'
         )
+
         # Reorder basierend auf der gewünschten Reihenfolge
-        mae_pivot = mae_pivot.reindex(index=ordered_datasets)
-        std_pivot = std_pivot.reindex(index=ordered_datasets)
+        mae_pivot = mae_pivot.reindex(index=ordered_test_datasets)
+        std_pivot = std_pivot.reindex(index=ordered_test_datasets)
+
+        # Spalten in der gewünschten Reihenfolge sortieren
+        available_combinations = [combo for combo in model_dataset_combinations if combo in mae_pivot.columns]
+        mae_pivot = mae_pivot.reindex(columns=available_combinations)
+        std_pivot = std_pivot.reindex(columns=available_combinations)
+
         # Spalten umbenennen für bessere Lesbarkeit
         if model_names is None:
-            mae_pivot.columns = [model_clean_names.get(col, col) for col in mae_pivot.columns]
-            std_pivot.columns = [model_clean_names.get(col, col) for col in std_pivot.columns]
+            mae_pivot.columns = [model_dataset_labels.get(col, col) for col in mae_pivot.columns]
+            std_pivot.columns = [model_dataset_labels.get(col, col) for col in std_pivot.columns]
         else:
-            mae_pivot.columns = [model_names.get(col, col) for col in mae_pivot.columns]
-            std_pivot.columns = [model_names.get(col, col) for col in std_pivot.columns]
+            # Bei benutzerdefinierten Namen: Modellnamen anwenden und TrainingsDataSet anhängen
+            new_labels = []
+            for col in mae_pivot.columns:
+                model_part, dataset_part = col.split('|')
+                model_name = model_names.get(model_part, model_part)
+                clean_dataset = dataset_part.replace('_', ' ')
+                new_labels.append(f"{model_name}\n({clean_dataset})")
+            mae_pivot.columns = new_labels
+            std_pivot.columns = new_labels
+
         # Annotations-Matrix und Textfarben-Matrix erstellen
         annotations = np.empty(mae_pivot.shape, dtype=object)
         text_colors = np.empty(mae_pivot.shape, dtype=object)
+
         for i in range(mae_pivot.shape[0]):
             for j in range(mae_pivot.shape[1]):
                 mae_val = mae_pivot.iloc[i, j]
                 std_val = std_pivot.iloc[i, j]
                 annotations[i, j] = self.format_cell_annotation(mae_val, std_val)
                 text_colors[i, j] = self.get_text_color_for_background(mae_val)
+
+        # Dynamische Figurengröße basierend auf Anzahl der Kombinationen
+        n_combinations = len(mae_pivot.columns)
+        fig_width = max(14, n_combinations * 1.5)  # Mindestens 14, aber skaliert mit Anzahl Kombinationen
+        fig_height = max(12, len(mae_pivot.index) * 0.8)  # Skaliert mit Anzahl Test-Datasets
+
         # Heatmap erstellen
-        fig, ax = plt.subplots(figsize=(14, 12))
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
         fig.set_dpi(1200)
+
         # Maske für NaN-Werte
         mask = mae_pivot.isna()
+
+        # Schriftgrößen anpassen basierend auf Anzahl der Kombinationen
         titlesize = 40
-        maesize = 35
-        textsize = 25
+        maesize = max(20, min(35, 800 // n_combinations))  # Dynamische Anpassung
+        textsize = max(15, min(20, 300 // n_combinations))
         labelsize = 35
+
         # Heatmap mit seaborn für bessere Optik
         sns.heatmap(
             mae_pivot,
@@ -482,27 +526,30 @@ class HeatmapPlotter(BasePlotter):
             square=False,
             vmin=0.04,
             vmax=0.31,
-            linewidths=0.0,
+            linewidths=0.5,  # Leichte Linien zur besseren Abgrenzung
             linecolor='white',
             annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
         )
+
         # Textfarben für jede Zelle individuell setzen
         for i in range(mae_pivot.shape[0]):
             for j in range(mae_pivot.shape[1]):
                 if not pd.isna(mae_pivot.iloc[i, j]):
                     text = ax.texts[i * mae_pivot.shape[1] + j]
                     text.set_color(text_colors[i, j])
+
         # Titel und Labels mit größerer Schrift
         ax.set_title(f'MAE Heatmap: {title}', fontsize=titlesize, fontweight='bold', pad=20, color=self.kit_dark_blue)
-        ax.set_xlabel('Model', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
-        ax.set_ylabel('Datensatz', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+        ax.set_xlabel('Modell', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+        ax.set_ylabel('Test-Datensatz', fontsize=labelsize, fontweight='bold',
+                      color=self.kit_dark_blue)
 
         # Achsenbeschriftungen vergrößern und Farbe setzen
         ax.tick_params(axis='both', which='major', labelsize=textsize, colors=self.kit_dark_blue)
 
-        # Hier: y-Achsen-Tick-Labels anpassen
+        # Y-Achsen-Tick-Labels anpassen (Test-Datasets)
         y_labels = []
-        for dataset in ordered_datasets:
+        for dataset in ordered_test_datasets:
             material, geometry = self.parse_filename(dataset)
             # Materialnamen ersetzen (z. B. S235JR -> Stahl)
             material = self.replace_material_name(material)
@@ -510,21 +557,11 @@ class HeatmapPlotter(BasePlotter):
 
         ax.set_yticklabels(y_labels, fontsize=textsize, color=self.kit_dark_blue, ha='center', va='center')
 
-
-        # x-Achsen-Tick-Labels anpassen (Zeilenumbrüche hinzufügen)
-        x_labels = []
-        for model in mae_pivot.columns:
-            parts = model.split()
-            if len(parts) > 2:
-                new_parts = []
-                for i in range(0, len(parts), 2):
-                    new_parts.append(' '.join(parts[i:i + 2]))
-                model = '\n'.join(new_parts)
-            x_labels.append(model)
-
-        # Schriftgröße der x-Achsen-Tick-Labels reduzieren
-        #x_labelsize = min(labelsize, 12)  # Dynamische Anpassung der Schriftgröße
-        ax.set_xticklabels(x_labels, fontsize=textsize, color=self.kit_dark_blue, ha='center')
+        # X-Achsen-Tick-Labels sind bereits durch die Spaltenumbenennung gesetzt
+        # Labels rotieren für bessere Lesbarkeit bei vielen Kombinationen
+        rotation_angle = 45 if n_combinations > 8 else 0
+        ax.set_xticklabels(mae_pivot.columns, fontsize=textsize, color=self.kit_dark_blue,
+                           ha='right' if rotation_angle > 0 else 'center', rotation=rotation_angle)
 
         ax.tick_params(axis='x', pad=15)  # Abstand für x-Achse
         ax.tick_params(axis='y', pad=35)  # Abstand für y-Achse
@@ -534,18 +571,22 @@ class HeatmapPlotter(BasePlotter):
             label.set_color(self.kit_dark_blue)
         for label in ax.get_yticklabels():
             label.set_color(self.kit_dark_blue)
+
         # Colorbar-Label vergrößern
         cbar = ax.collections[0].colorbar
         cbar.set_label('MAE $I$ in A', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
         cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
+
         # Colorbar Tick-Labels explizit färben
         for label in cbar.ax.get_yticklabels():
             label.set_color(self.kit_dark_blue)
+
         plt.tight_layout()
+
         # Speichern mit der save_plot Methode der Basisklasse
-        filename = f'heatmap_model_comparison_with_std.png'
+        filename = f'heatmap_model_comparison_with_datasets_and_std.png'
         plot_path = self.save_plot(fig, filename)
-        print(f"Model Comparison Heatmap mit Standardabweichung erstellt: {plot_path}")
+        print(f"Erweiterte Model Comparison Heatmap mit TrainingsDatasets und Standardabweichung erstellt: {plot_path}")
         return [plot_path]
 
 class ModelHeatmapPlotter(BasePlotter):
@@ -674,7 +715,7 @@ class ModelHeatmapPlotter(BasePlotter):
             # Achsenbeschriftungen anpassen: (Bekannt)/(Unbekannt) hinzufügen
             x_labels = [f"{geo}\n(Bekannt)" if geo == self.known_geometry else f"{geo}\n(Unbekannt)" for geo in
                         geometries_ordered]
-            y_labels = [f"{mat}\n(Bekannt)" if mat == self.known_material else f"{mat}\n(Unbekannt)" for mat in
+            y_labels = [f"{mat}\n(Bekannt)" if mat == self.replace_material_name(self.known_material) else f"{mat}\n(Unbekannt)" for mat in
                         materials_ordered]
 
             # Tick-Labels setzen und zentrieren

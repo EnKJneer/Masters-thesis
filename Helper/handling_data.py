@@ -346,17 +346,17 @@ class DataClass(BaseDataClass):
         }
         return documentation
 
-folder_data = '..\\..\\DataSets\\Data'
+folder_data = '..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data'
 
-dataPaths_Test = [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Plate_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Plate_Normal_3.csv']
+dataPaths_Test = [  'DMC60H_AL2007T4_Gear_Normal_3.csv','DMC60H_AL2007T4_Plate_Normal_3.csv', 'DMC60H_S235JR_Gear_Normal_3.csv','DMC60H_S235JR_Plate_Normal_3.csv']
 
-dataPaths_Train = ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
-                                                    'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
-                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
-                                                    'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv']
+dataPaths_Train = ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',
+                                                    'DMC60H_S235JR_Plate_SF_1.csv', 'DMC60H_S235JR_Plate_Depth_1.csv',
+                                                    'DMC60H_S235JR_Plate_SF_2.csv', 'DMC60H_S235JR_Plate_Depth_2.csv',
+                                                    'DMC60H_S235JR_Plate_SF_3.csv', 'DMC60H_S235JR_Plate_Depth_3.csv']
 
-dataPaths_Val = ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
-                                              'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv', 'S235JR_Notch_Depth_3.csv']
+dataPaths_Val = ['DMC60H_S235JR_Notch_Normal_1.csv', 'DMC60H_S235JR_Notch_Normal_2.csv', 'DMC60H_S235JR_Notch_Normal_3.csv',
+                                              'DMC60H_S235JR_Notch_Depth_1.csv', 'DMC60H_S235JR_Notch_Depth_2.csv', 'DMC60H_S235JR_Notch_Depth_3.csv']
 
 DataClass_Reference = DataClass('Reference', '..\\..\\Archiv\\DataSets\\DataFiltered',
                                 ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
@@ -391,7 +391,7 @@ DataClass_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
                                                     'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
                                                     'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv'],
 
-                                     [  'AL_2007_T4_Gear_Normal_3.csv','AL_2007_T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
+                                     [  'DMC60H_AL2007T4_Gear_Normal_3.csv','DMC60H_AL2007T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
                                      ["curr_x"], header = HEADER_x)
 
 DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_data,

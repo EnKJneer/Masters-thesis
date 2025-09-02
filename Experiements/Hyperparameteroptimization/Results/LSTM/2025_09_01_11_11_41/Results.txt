@@ -1,0 +1,50 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM            | 0.274140 | 0.049368
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM            | 0.257845 | 0.040907
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM            | 0.204745 | 0.030069
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM            | 0.184767 | 0.024800
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM_TPESampler | 0.205211 | 0.079118
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM_TPESampler | 0.231879 | 0.088228
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM_TPESampler | 0.109833 | 0.007349
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM_TPESampler | 0.125184 | 0.004279
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM_RandomSampler | 0.226698 | 0.095758
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM_RandomSampler | 0.279190 | 0.146765
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM_RandomSampler | 0.107624 | 0.007843
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM_RandomSampler | 0.122162 | 0.004276
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM_GridSampler | 0.291229 | 0.088481
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM_GridSampler | 0.345926 | 0.110208
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM_GridSampler | 0.107969 | 0.003758
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM_GridSampler | 0.117405 | 0.002494
+
+
+MODEL IMPROVEMENTS (vs LSTM)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM         | LSTM_TPESampler | +25.14%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM         | LSTM_RandomSampler | +17.31%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | LSTM         | LSTM_GridSampler | -6.23%      
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM         | LSTM_TPESampler | +10.07%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM         | LSTM_RandomSampler | -8.28%      
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | LSTM         | LSTM_GridSampler | -34.16%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM         | LSTM_TPESampler | +46.36%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM         | LSTM_RandomSampler | +47.44%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | LSTM         | LSTM_GridSampler | +47.27%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM         | LSTM_TPESampler | +32.25%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM         | LSTM_RandomSampler | +33.88%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | LSTM         | LSTM_GridSampler | +36.46%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

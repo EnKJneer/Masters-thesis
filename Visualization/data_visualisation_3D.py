@@ -36,8 +36,8 @@ def plot_3d_with_color(
     kit_dark_blue = "#002D4C"
     kit_magenta = "#A3107C"
     material_colormaps = {
-        'AL_2007_T4': 'bwr',
-        'S235JR': 'seismic',
+        'AL_2007_T4': 'plasma',
+        'S235JR': 'plasma',
     }
     fig = plt.figure(figsize=(12, 8), dpi=dpi)
     ax = fig.add_subplot(111, projection='3d')
@@ -50,7 +50,7 @@ def plot_3d_with_color(
             y_values[mat_mask],
             z_values[mat_mask],
             c=color_values[mat_mask],
-            cmap=material_colormaps.get(mat, 'viridis'),
+            cmap=material_colormaps.get(mat, 'plasma'),
             s=1, edgecolor='none', label=mat
         )
 
@@ -108,7 +108,7 @@ for file in files:
             break
 
 data = pd.concat(df)
-mask = (abs(data['v_x']) < 1)
+mask = (abs(data['v_x']) < 1) & (abs(data['a_x']) < 25)
 data = data[mask]
 
 mask = (data['z_x'] < 0)

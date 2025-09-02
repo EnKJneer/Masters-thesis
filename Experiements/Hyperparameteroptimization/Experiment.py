@@ -13,7 +13,7 @@ import Helper.handling_hyperopt as hyperopt
 import Helper.handling_experiment as hexp
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
-from Experiements.ExpertModels.Experts import Experts
+from Experiements.ExpertModels.Experts_3 import Experts_3
 #import Models.model_mixture_of_experts as mmix
 from datetime import datetime
 
@@ -422,7 +422,7 @@ def start_experiment_for(model_str = 'NN'):
 
             'optimizer_type': ['quasi_newton'],
         }
-        model = Experts(name= 'Experts_RNN')
+        model = Experts_3(name='Experts_RNN')
         model.expert1 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
         model.expert2 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
         model.expert3 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
@@ -453,7 +453,7 @@ def start_experiment_for(model_str = 'NN'):
 
             'optimizer_type_e3': ['quasi_newton'],
         }
-        model = Experts(name='Experts_Mixed')
+        model = Experts_3(name='Experts_Mixed')
         model.expert3 = copy.deepcopy(mnn.RNN(optimizer_type='quasi_newton'))
 
         dataclass.add_padding = True

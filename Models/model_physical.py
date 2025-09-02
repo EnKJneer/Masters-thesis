@@ -23,8 +23,6 @@ from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 import Models.model_base as mb
 
-
-
 class LinearModel(mb.BaseModel):
     def __init__(self, fit_intercept=True, normalize=False, copy_X=True, n_jobs=None, name="Linear_Regression"):
         """
@@ -919,6 +917,9 @@ class LuGreModelSciPy(mb.BaseModel):
         }
         return documentation
 
+    def reset_hyperparameter(self):
+        throw_error('not implemented')
+
 class FrictionModel(mb.BaseModel):
     def __init__(self, name="Friction_Model",
                  f_s = 0, a_x = 0, a_sp = 0, b = 0, f_c = 0, sigma_2 = 0,a_b =0,
@@ -1205,7 +1206,6 @@ class ModelErd(mb.BaseModel):
     def reset_hyperparameter(self):
         throw_error('Not implemented')
 
-
 class ThermodynamicModel(mb.BaseModel):
     def __init__(self, name="Thermodynamic_Model",
                  theta_v = 0, theta_a = 0, theta_f = 0,
@@ -1217,6 +1217,7 @@ class ThermodynamicModel(mb.BaseModel):
         self.theta_f = theta_f
         self.theta_a = theta_a
         self.target_channel = target_channel
+        self.epsilon = 1e-3
 
     def criterion(self, y_target, y_pred):
         return np.mean(np.abs(y_target - y_pred))
@@ -1225,10 +1226,11 @@ class ThermodynamicModel(mb.BaseModel):
         for target in self.target_channel:
             axis = target.replace('curr_', '')
             v_x = X[f'v_{axis}_1_current'].values
+            v_sp = X[f'v_sp_1_current'].values
             a_x = X[f'a_{axis}_1_current'].values
             f_x_sim = X[f'f_{axis}_sim_1_current'].values
             mrr = X[f'materialremoved_sim_1_current'].values
-            y_pred = self.theta_v * v_x + self.theta_f * f_x_sim * mrr / v_x + self.theta_a * a_x
+            y_pred = self.theta_v * v_x + self.theta_f * f_x_sim * mrr / (v_sp + self.epsilon) + self.theta_a * a_x
 
         return y_pred
 
@@ -1239,13 +1241,14 @@ class ThermodynamicModel(mb.BaseModel):
         for target in self.target_channel:
             axis = target.replace('curr_', '')
             v_x = X_train[f'v_{axis}_1_current'].values
+            v_sp = X_train[f'v_sp_1_current'].values
             a_x = X_train[f'a_{axis}_1_current'].values
             f_x_sim = X_train[f'f_{axis}_sim_1_current'].values
             mrr = X_train[f'materialremoved_sim_1_current'].values
 
             params = {}
 
-            data = np.array([a_x, v_x, f_x_sim * mrr / v_x ]).T # , np.ones(len(v_x))
+            data = np.array([a_x, v_x, f_x_sim * mrr / (v_sp + self.epsilon) ]).T # , np.ones(len(v_x))
 
             reg = LinearRegression(fit_intercept=False)
             reg.fit(data, y_train[target].values)
@@ -1286,7 +1289,6 @@ class ThermodynamicModel(mb.BaseModel):
 
     def reset_hyperparameter(self):
         throw_error('Not implemented')
-
 
 class FrictionModelAdvanced(mb.BaseModel):
     def __init__(self, name="Friction_Model", f_s=0, a_x=0, a_y=0, a_z=0, a_sp=0, b=0, f_c=0, sigma_2=0, a_b=0,

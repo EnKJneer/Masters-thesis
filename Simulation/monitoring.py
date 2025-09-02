@@ -7,8 +7,9 @@ from matplotlib import pyplot as plt
 import machine_state as ms
 
 from MMR_Calculator import voxel_class_numba as vc
-from Simulation.MMR_Calculator.MRRSimulationV3 import SimpleCNCMRRSimulation
+from MMR_Calculator.MRRSimulationV3 import SimpleCNCMRRSimulation
 
+VALID_AP ={0, 3, 6, 12}# {0, 2.5, 5, 10} #
 '''def check_and_correct_values(vector):
     valid_values = {0, 3, 6, 12}
     corrected_vector = []
@@ -139,7 +140,7 @@ def frange(start, stop, step):
         v += step
 
 def check_and_correct_values(vector):
-    valid_values = {0, 3, 6, 12}
+    valid_values = VALID_AP
     corrected_vector = []
 
     for value in vector:
@@ -154,7 +155,7 @@ def check_and_correct_values(vector):
     return np.array(corrected_vector)
 
 def check_and_correct_values_2(vector):
-    valid_values = {0, 3, 6, 12}
+    valid_values = VALID_AP
     corrected_vector = []
     previous_value = None
     for value in vector:

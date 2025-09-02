@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     dataSet = hdata.DataClass_ST_Plate_Notch
 
+
     dataSet.folder = '..\\..\\Data'#'..\\..\\DataSets\\Data'
     dataSet.training_data_paths =  ['DMC_S235JR_Plate_Normal_1.csv', 'DMC_S235JR_Plate_Normal_2.csv',
                                                     'DMC_S235JR_Plate_SF_1.csv', 'DMC_S235JR_Plate_Depth_1.csv',

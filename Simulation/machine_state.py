@@ -6,15 +6,15 @@ import pandas as pd
 from MMR_Calculator import voxel_class_numba
 
 class MachineState:
-    def __init__(self, k_c1, k_f1, k_p1, K_v, K_kss, m_f: float, m_p: float, m_c: float, tool_radius: float, tooth_amount: int, machine_coef_x: float, machine_coef_y: float, machine_coef_z: float) -> None:
+    def __init__(self, k_c1, k_f1, k_p1, K_v, K_kss, m_c: float, m_f: float, m_p: float, tool_radius: float, tooth_amount: int, machine_coef_x: float, machine_coef_y: float, machine_coef_z: float) -> None:
         self.k_c1 = k_c1
         self.k_f1 = k_f1
         self.k_p1 = k_p1
         self.K_v = K_v
         self.K_kss = K_kss
+        self.m_c = m_c
         self.m_f = m_f
         self.m_p = m_p
-        self.m_c = m_c
         self.tool_radius = tool_radius
         self.tooth_amount = tooth_amount
         self.machine_coef_x = machine_coef_x
@@ -92,13 +92,7 @@ class ProcessState:
             fz = v_ges / (v_sp * tooth_amount) # Vorschub pro Zahn
             angle_update = v_sp / (60 * frequence) * (2*math.pi)
             machine_state.set_theeth_angle(angle_update)
-            #h = 114.6 / math.degrees(phi_s) * fz * (a_e / (tool_radius * 2)) * math.sin(kappa) # Formel 3.11 nach Neugebauer seite 41
-
-            if math.degrees(phi_s) != 0:
-                h = 114.6 / math.degrees(phi_s) * fz * (a_e / (tool_radius * 2)) * math.sin(kappa)
-            else:
-                h = 0
-
+            h = 114.6 / math.degrees(phi_s) * fz * (a_e / (tool_radius * 2)) * math.sin(kappa) # Formel 3.11 nach Neugebauer seite 41
             b = a_p / math.sin(kappa)
             h = max(h, 0)
 
@@ -145,9 +139,9 @@ def load_optimized_parameters_as_dataframe(json_path: str) -> pd.DataFrame:
             'k_c1': params['k_c1'],
             'k_f1': params['k_f1'],
             'k_p1': params['k_p1'],
-            'x': params['x'],
-            'y': params['y'],
-            'z': params['z'],
+            'm_c': params['m_c'],
+            'm_f': params['m_f'],
+            'm_p': params['m_p'],
             'machine_coef_x': params['machine_coef_x'],
             'machine_coef_y': params['machine_coef_y'],
             'machine_coef_z': params['machine_coef_z']
@@ -155,7 +149,7 @@ def load_optimized_parameters_as_dataframe(json_path: str) -> pd.DataFrame:
         rows.append(row)
 
     df = pd.DataFrame(rows, columns=[
-        'Material', 'k_c1', 'k_f1', 'k_p1', 'x', 'y', 'z',
+        'Material', 'k_c1', 'k_f1', 'k_p1', 'm_c', 'm_f', 'm_p',
         'machine_coef_x', 'machine_coef_y', 'machine_coef_z'
     ])
     return df
@@ -172,15 +166,15 @@ def load_optimized_parameters_as_dict(json_path: str) -> dict:
         data = json.load(f)
 
     result = {}
-
+    
     for material, params in data.items():
         result[material] = {
             'k_c1': params['k_c1'],
             'k_f1': params['k_f1'],
             'k_p1': params['k_p1'],
-            'x': params['x'],
-            'y': params['y'],
-            'z': params['z'],
+            'm_c': params['m_c'],
+            'm_f': params['m_f'],
+            'm_p': params['m_p'],
             'machine_coef_x': params['machine_coef_x'],
             'machine_coef_y': params['machine_coef_y'],
             'machine_coef_z': params['machine_coef_z'],
@@ -213,9 +207,9 @@ def set_machine_state(setting_dict: dict, material: str, tool_diameter: float,
     k_c1 = params['k_c1']
     k_f1 = params['k_f1']
     k_p1 = params['k_p1']
-    x = params['x']
-    y = params['y']
-    z = params['z']
+    m_f = params['m_f']
+    m_p = params['m_p']
+    m_c = params['m_c']
     machine_coef_x = params['machine_coef_x']
     machine_coef_y = params['machine_coef_y']
     machine_coef_z = params['machine_coef_z']
@@ -223,7 +217,7 @@ def set_machine_state(setting_dict: dict, material: str, tool_diameter: float,
     # Maschinenzustand erzeugen
     new_machine_state = MachineState(
         k_c1, k_f1, k_p1, K_v, K_kss,
-        x, y, z,
+        m_c, m_f, m_p,
         tool_radius, tooth_amount,
         machine_coef_x, machine_coef_y, machine_coef_z
     )

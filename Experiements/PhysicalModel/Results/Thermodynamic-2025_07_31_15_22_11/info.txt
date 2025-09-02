@@ -1,0 +1,2 @@
+Korrektur des Models von Erd
+Hier wird MRR / v_x verwendet

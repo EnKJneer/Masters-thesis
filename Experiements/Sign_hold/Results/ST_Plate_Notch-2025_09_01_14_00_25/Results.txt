@@ -1,0 +1,46 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ohne z               | DMC_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.157933 | 0.018031
+ohne z               | DMC_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.167084 | 0.010863
+ohne z               | DMC_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.125551 | 0.006424
+ohne z               | DMC_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.134788 | 0.002026
+ohne z               | DMC_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.133103 | 0.000000
+ohne z               | DMC_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.179991 | 0.000000
+ohne z               | DMC_S235JR_Gear_Normal_3 | Random_Forest   | 0.108546 | 0.000000
+ohne z               | DMC_S235JR_Plate_Normal_3 | Random_Forest   | 0.097834 | 0.000000
+mit z                | DMC_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.108844 | 0.016824
+mit z                | DMC_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.091311 | 0.014952
+mit z                | DMC_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.104540 | 0.004395
+mit z                | DMC_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.074978 | 0.001086
+mit z                | DMC_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.094921 | 0.000000
+mit z                | DMC_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.104365 | 0.000000
+mit z                | DMC_S235JR_Gear_Normal_3 | Random_Forest   | 0.114322 | 0.000000
+mit z                | DMC_S235JR_Plate_Normal_3 | Random_Forest   | 0.060617 | 0.000000
+
+
+MODEL IMPROVEMENTS (vs Recurrent_Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ohne z               | DMC_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | +15.72%     
+ohne z               | DMC_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | -7.72%      
+ohne z               | DMC_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | +13.54%     
+ohne z               | DMC_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | +27.42%     
+mit z                | DMC_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | +12.79%     
+mit z                | DMC_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | -14.30%     
+mit z                | DMC_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | -9.36%      
+mit z                | DMC_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | +19.15%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_datasets_and_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC_AL2007T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC_AL2007T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_DMC_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC_S235JR_Plate_Normal_3.png
