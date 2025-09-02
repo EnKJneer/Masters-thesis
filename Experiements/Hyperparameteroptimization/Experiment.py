@@ -73,6 +73,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
         models_optimized = []
         for idx, model in enumerate(models):
             for sampler in optimization_samplers:
+
                 study_name = experiment_name + '_' + sampler +'_'
                 search_space = search_spaces[idx]
                 objective_nn = hyperopt.Objective(
@@ -301,7 +302,7 @@ def run_experiment(dataSets, models, search_spaces, optimization_samplers=["TPES
 
 def start_experiment_for(model_str = 'NN'):
     """ Constants """
-    NUMBEROFTRIALS = 250
+    NUMBEROFTRIALS = 350
     NUMBEROFEPOCHS = 800
     NUMBEROFMODELS = 10 # Bei RF mit festem random state nicht sinvoll
 
@@ -474,4 +475,4 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('RNN')
+    start_experiment_for('RF')

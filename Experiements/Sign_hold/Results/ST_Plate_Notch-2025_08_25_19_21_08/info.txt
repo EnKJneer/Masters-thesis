@@ -1,7 +1,0 @@
-Daten wurden mit Optimierten Parametern berechnet.
-Bei der Optimierung wurden die bekannten Parrameter von S235JR festeghalten.
-Optimiert wurde nur auf Plate, alle variationen.
-Parameter:
-Material	m_c	m_f	m_p	k_c1	k_f1	k_p1	K	machine_coef_x	machine_coef_y	machine_coef_z
-S235JR	0,17	0,494232467	0,567588495	1780	984,263455	337,8134116	0,690262944	0,994821048	0,989027639	0,57582951
-AL2007T4	0,167729281	0,502837667	0,477284444	688,7221543	265,9465106	131,6529845	0,525101397	1,774138352	1,762499608	1,312748615

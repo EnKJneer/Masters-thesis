@@ -74,7 +74,7 @@ class BasePlotter(ABC):
         self.kit_magenta = "#A3107C"
 
         # Zusätzliche Farben für mehr Modelle
-        self.colors = [self.kit_red, self.kit_yellow, self.kit_orange, self.kit_magenta, self.kit_green]
+        self.colors = [self.kit_red, self.kit_orange, self.kit_magenta, self.kit_green, self.kit_yellow]
 
         # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
         self.custom_cmap = LinearSegmentedColormap.from_list(
@@ -82,7 +82,6 @@ class BasePlotter(ABC):
             [self.kit_green, self.kit_yellow, self.kit_red],
             N=256
         )
-
 
         # Benutzerdefinierte Farbpalette erstellen (grün=gut, gelb=mittel, rot=schlecht)
         self.custom_cmap = LinearSegmentedColormap.from_list(
@@ -129,7 +128,7 @@ class BasePlotter(ABC):
         name_without_ext = filename.replace('.csv', '')
 
         # Entferne Maschinen Bezeichung
-        name_without_ext = name_without_ext.replace('DMC_', '').replace('DMC600V_', '')
+        name_without_ext = name_without_ext.replace('DMC_', '').replace('DMC60H_', '')
         # Split nach Unterstrichen
         parts = name_without_ext.split('_')
 
@@ -510,8 +509,8 @@ class HeatmapPlotter(BasePlotter):
 
         # Schriftgrößen anpassen basierend auf Anzahl der Kombinationen
         titlesize = 40
-        maesize = max(20, min(35, 800 // n_combinations))  # Dynamische Anpassung
-        textsize = max(15, min(20, 300 // n_combinations))
+        maesize = max(20, min(35, 400 // n_combinations))  # Dynamische Anpassung
+        textsize = max(10, min(20, 100 // n_combinations))
         labelsize = 35
 
         # Heatmap mit seaborn für bessere Optik

@@ -27,17 +27,6 @@ if __name__ == '__main__':
 
     dataSet = hdata.DataClass_ST_Plate_Notch
 
-
-    dataSet.folder = '..\\..\\Data'#'..\\..\\DataSets\\Data'
-    dataSet.training_data_paths =  ['DMC_S235JR_Plate_Normal_1.csv', 'DMC_S235JR_Plate_Normal_2.csv',
-                                                    'DMC_S235JR_Plate_SF_1.csv', 'DMC_S235JR_Plate_Depth_1.csv',
-                                                    'DMC_S235JR_Plate_SF_2.csv', 'DMC_S235JR_Plate_Depth_2.csv',
-                                                    'DMC_S235JR_Plate_SF_3.csv', 'DMC_S235JR_Plate_Depth_3.csv']
-    dataSet.validation_data_paths = ['DMC_S235JR_Notch_Normal_1.csv', 'DMC_S235JR_Notch_Normal_2.csv', 'DMC_S235JR_Notch_Normal_3.csv',
-                                              'DMC_S235JR_Notch_Depth_1.csv', 'DMC_S235JR_Notch_Depth_2.csv', 'DMC_S235JR_Notch_Depth_3.csv']
-    dataSet.testing_data_paths = [  'DMC_AL2007T4_Gear_Normal_3.csv','DMC_AL2007T4_Plate_Normal_3.csv',
-                                    'DMC_S235JR_Gear_Normal_3.csv','DMC_S235JR_Plate_Normal_3.csv']
-
     #dataSet.header =["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'
@@ -54,8 +43,9 @@ if __name__ == '__main__':
 
     model_rf = mrf.RandomForestModel(n_estimators= 52,max_features= 500, min_samples_split= 67,
                     min_samples_leaf= 4)
-    model_rnn = mnn.RNN(learning_rate= 0.04834201195017264, n_hidden_size= 94, n_hidden_layers= 1,
-                    activation= 'Sigmoid', optimizer_type= 'quasi_newton')
+
+    model_rnn = mnn.RNN(learning_rate= 0.07767273410029314, n_hidden_size= 86, n_hidden_layers= 1,
+                    activation= 'ELU', optimizer_type= 'quasi_newton')
 
     models = [model_rnn, model_rf]
 
