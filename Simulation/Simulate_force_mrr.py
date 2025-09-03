@@ -22,51 +22,6 @@ def get_part_properties(material_geometry, df=None):
     # Split the material_geometry string into components
     material, *geometry = material_geometry.split('_')
 
-    if df is not None:
-        df_copy = df.copy()
-
-        # Median für x, y, z berechnen
-        median_x = np.median(df_copy['pos_x'])
-        median_y = np.median(df_copy['pos_y'])
-        median_z = np.median(df_copy['pos_z'])
-
-        # MAD für x, y, z berechnen
-        mad_x = np.median(np.abs(df_copy['pos_x'] - median_x))
-        mad_y = np.median(np.abs(df_copy['pos_y'] - median_y))
-        mad_z = np.median(np.abs(df_copy['pos_z'] - median_z))
-
-        # Modifizierten Z-Score für x, y, z berechnen
-        df_copy['mod_z_score_x'] = 0.6745 * (df_copy['pos_x'] - median_x) / mad_x
-        df_copy['mod_z_score_y'] = 0.6745 * (df_copy['pos_y'] - median_y) / mad_y
-        df_copy['mod_z_score_z'] = 0.6745 * (df_copy['pos_z'] - median_z) / mad_z
-
-        # Schwellenwert für Ausreißer
-        threshold = 3
-
-        # Ausreißer entfernen
-        df_copy_cleaned = df_copy[
-            (df_copy['mod_z_score_x'].abs() < threshold) &
-            (df_copy['mod_z_score_y'].abs() < threshold) &
-            (df_copy['mod_z_score_z'].abs() < threshold)
-        ]
-
-        # Median der bereinigten Positionen (inkl. z)
-        part_position = [
-            np.median(df_copy_cleaned['pos_x']),
-            np.median(df_copy_cleaned['pos_y']),
-            np.max(df_copy_cleaned['pos_z'])
-        ]
-
-        part_position = [
-            -325,
-            -300,
-            -367.56
-        ]
-        print(part_position)
-    else:
-        # Standardposition, falls kein DataFrame übergeben wurde
-        part_position = [0, 0, 0]
-
     # Determine part properties based on material and geometry
     if material == "S235JR":
         material = "S235JR"

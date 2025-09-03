@@ -964,7 +964,7 @@ class FrictionModel(mb.BaseModel):
             axis = target.replace('curr_', '')
             v_x = X[f'v_{axis}_1_current'].values
             a_x = X[f'a_{axis}_1_current'].values
-            f_x_sim = X[f'f_{axis}_1_current'].values #_sim
+            f_x_sim = X[f'f_{axis}_sim_1_current'].values #_sim
             v_sp = X[f'v_sp_1_current'].values
 
             stillstand_mask = (np.abs(v_x) <= self.velocity_threshold)
@@ -1012,7 +1012,7 @@ class FrictionModel(mb.BaseModel):
             axis = target.replace('curr_', '')
             v_x = data[f'v_{axis}_1_current'].values
             a_x = data[f'a_{axis}_1_current'].values
-            f_x_sim = data[f'f_{axis}_1_current'].values #_sim
+            f_x_sim = data[f'f_{axis}_sim_1_current'].values #_sim
             v_s = self.sign_hold(v_x)
             v_sp = data[f'v_sp_1_current'].values
 

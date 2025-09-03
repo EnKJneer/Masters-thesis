@@ -322,7 +322,6 @@ def start_experiment_for(model_str = 'NN'):
         }
         model = mrf.RandomForestModel()
 
-
     elif model_str == 'NN':
         search_space = {
             'n_hidden_size': (1, 100), #250
@@ -475,4 +474,4 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('RF')
+    start_experiment_for('Ref_RNN')

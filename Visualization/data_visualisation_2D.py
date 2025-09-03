@@ -113,10 +113,10 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = '..\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
+path_data = '..\\DataSets_CMX_Plate_Notch_Gear\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
 files = os.listdir(path_data)
 
-files = ['DMC_S235JR_Plate_Depth_3.csv']
+files = ['DMC60H_S235JR_Plate_Depth_3.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
@@ -151,8 +151,13 @@ for file in files:
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], label='materialremoved_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_sp'], label='f_sp', title=f'{name}')
-    plot_time_series(data, name, label='f_corr', dpi=300, ylabel='f_x')
-    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+
+    plot_time_series(data, name, label='v_x', dpi=300, ylabel='v_x')
+    plot_time_series(data, name, label='v_y', dpi=300, ylabel='v_y')
+    plot_time_series(data, name, label='v_x', dpi=300, ylabel='v_x')
+
+    #plot_time_series(data, name, label='f_corr', dpi=300, ylabel='f_x')
+    #plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='f_sp')
     #plot_time_series(data, name, label='materialremoved_sim', dpi=300, ylabel='curr_x')

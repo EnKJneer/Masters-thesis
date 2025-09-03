@@ -251,10 +251,23 @@ class BasePlotter(ABC):
             seed_columns = [col for col in df_columns if col == model_base_name]
         return seed_columns
 
+    @staticmethod
+    def replace_space(text):
+        zaehler = 0
+        ergebnis = []
+        for zeichen in text:
+            if zeichen == ' ':
+                zaehler += 1
+                if zaehler % 2 == 0:
+                    ergebnis.append('\n')
+                else:
+                    ergebnis.append(' ')
+            else:
+                ergebnis.append(zeichen)
+        return ''.join(ergebnis)
+
 class ModelComparisonPlotter(BasePlotter):
     """Erstellt eine Übersichtsplot aller Modelle über alle Dataset/DataPath Kombinationen"""
-
-
     def create_plots(self, df: pd.DataFrame, title: str = 'Model Vergleich', model_names=None, **kwargs):
         """
         Erstellt einen Balkenplot-Vergleich für alle Modelle mit MAE und Standardabweichung.
@@ -441,7 +454,11 @@ class HeatmapPlotter(BasePlotter):
                 clean_model = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
                     .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
                 clean_dataset = train_dataset.replace('_', ' ')
-                model_dataset_labels[combination] = f"{clean_model}\n({clean_dataset})"
+                if len(train_datasets) == 1:
+                    model_dataset_labels[combination] = f"{clean_model}"
+                else:
+                    model_dataset_labels[combination] = f"{clean_model}\n({clean_dataset})"
+                model_dataset_labels[combination] = self.replace_space(model_dataset_labels[combination])
 
         # Neue Spalte für Kombination erstellen
         mae_df['Model_DataSet'] = mae_df['Model'] + '|' + mae_df['DataSet']
@@ -510,7 +527,7 @@ class HeatmapPlotter(BasePlotter):
         # Schriftgrößen anpassen basierend auf Anzahl der Kombinationen
         titlesize = 40
         maesize = max(20, min(35, 400 // n_combinations))  # Dynamische Anpassung
-        textsize = max(10, min(20, 100 // n_combinations))
+        textsize = max(15, min(25, 100 // n_combinations))
         labelsize = 35
 
         # Heatmap mit seaborn für bessere Optik
@@ -710,12 +727,12 @@ class ModelHeatmapPlotter(BasePlotter):
             ax.set_xlabel('Geometry', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
             ax.set_ylabel('Material', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
 
-            materials_ordered = self.replace_material_names(materials_ordered)
+            materials_ordered_renamed = self.replace_material_names(materials_ordered)
             # Achsenbeschriftungen anpassen: (Bekannt)/(Unbekannt) hinzufügen
             x_labels = [f"{geo}\n(Bekannt)" if geo == self.known_geometry else f"{geo}\n(Unbekannt)" for geo in
                         geometries_ordered]
             y_labels = [f"{mat}\n(Bekannt)" if mat == self.replace_material_name(self.known_material) else f"{mat}\n(Unbekannt)" for mat in
-                        materials_ordered]
+                        materials_ordered_renamed]
 
             # Tick-Labels setzen und zentrieren
             ax.set_xticklabels(
@@ -994,7 +1011,7 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
     """
 
     if plot_types is None:
-        plot_types = ['heatmap', 'overview', 'prediction_overview']
+        plot_types = ['heatmap', 'prediction_overview', 'model_heatmap']
 
     if DEBUG:
         # DataFrame erstellen mit expliziter Validierung

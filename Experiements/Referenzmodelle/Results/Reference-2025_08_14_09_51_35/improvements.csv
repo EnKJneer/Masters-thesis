@@ -1,5 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-Reference,AL_2007_T4_Gear_Normal_3,Neural_Net,Random_Forest,16.72831644572952
-Reference,AL_2007_T4_Plate_Normal_3,Neural_Net,Random_Forest,31.40326838295075
-Reference,S235JR_Gear_Normal_3,Neural_Net,Random_Forest,20.59774845354833
-Reference,S235JR_Plate_Normal_3,Neural_Net,Random_Forest,45.446317211103946

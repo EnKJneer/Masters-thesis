@@ -48,4 +48,4 @@ if __name__ == '__main__':
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name=dataSet.name)
+                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name=dataSet.name)

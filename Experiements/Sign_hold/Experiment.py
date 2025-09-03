@@ -26,7 +26,6 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-
     #dataSet.header =["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.name = 'ohne z'
