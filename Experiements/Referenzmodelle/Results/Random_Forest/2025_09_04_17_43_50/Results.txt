@@ -1,0 +1,37 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 1.278362 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 1.612123 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.094108 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.092915 | 0.000000
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_GridSampler | 1.274481 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_GridSampler | 1.627541 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_GridSampler | 0.091150 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_GridSampler | 0.088526 | 0.000000
+
+
+MODEL IMPROVEMENTS (vs Random_Forest)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest | Random_Forest_GridSampler | +0.30%      
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest | Random_Forest_GridSampler | -0.96%      
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest | Random_Forest_GridSampler | +3.14%      
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest | Random_Forest_GridSampler | +4.72%      
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_datasets_and_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png
+Model_Heatmap: 2 plots
+  - heatmap_Random_Forest_with_std.png
+  - heatmap_Random_Forest_GridSampler_with_std.png

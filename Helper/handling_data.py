@@ -372,6 +372,11 @@ DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
                                              ["curr_x"],
                                      header = HEADER_x)
 
+DataClass_ST_Plate_Notch_Reference = DataClass('Reference', '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data',
+                                    dataPaths_Train, dataPaths_Val, dataPaths_Test,
+                                             ["curr_x"], header = HEADER_x)
+
+
 DataClass_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_data,
                                              ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
                                                     'S235JR_Plate_SF_1.csv',

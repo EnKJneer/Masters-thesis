@@ -43,47 +43,78 @@ def get_reference(input_size=None):
 # Defines a configurable neural network
 class Net(mb.BaseTorchModel):
     def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation='ReLU',
-                 learning_rate=0.001, name="Neural_Net", optimizer_type='adam'):
+                 learning_rate=0.001, name="Neural_Net", optimizer_type='adam', dropout_rate=0.0):
         """
-        Initializes a configurable neural network.
+        Initializes a configurable neural network with optional dropout for regularization.
 
         Parameters
         ----------
         input_size : int, optional
             The number of input features. If None, it will be set during the first training call.
-        output_size : int
-            The number of output features.
+        output_size : int, optional
+            The number of output features. Default is 1.
         n_hidden_size : int, optional
             The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
-        n_hidden_layers : int
-            The number of hidden layers in the network.
-        activation : torch.nn.Module, optional
-            The activation function to be used in the hidden layers. The default is nn.ReLU.
-        learning_rate : float
-            The learning rate for the optimizer.
-        name : str
-            The name of the model.
+        n_hidden_layers : int, optional
+            The number of hidden layers in the network. Default is 1.
+        activation : str, optional
+            The activation function to be used in the hidden layers. Default is 'ReLU'.
+        learning_rate : float, optional
+            The learning rate for the optimizer. Default is 0.001.
+        name : str, optional
+            The name of the model. Default is "Neural_Net".
+        optimizer_type : str, optional
+            The type of optimizer to use. Default is 'adam'.
+        dropout_rate : float, optional
+            The dropout rate for regularization. If 0.0, dropout is not applied. Default is 0.0.
         """
-        super(Net, self).__init__(input_size=input_size, output_size=output_size, name=name, learning_rate=learning_rate, optimizer_type=optimizer_type)
-
+        super(Net, self).__init__(
+            input_size=input_size,
+            output_size=output_size,
+            name=name,
+            learning_rate=learning_rate,
+            optimizer_type=optimizer_type
+        )
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
-
         self.activation = self.activation_map[activation]()
-
-        # Initialize layers only if input_size is provided
+        self.dropout_rate = dropout_rate
+        self.dropout = nn.Dropout(dropout_rate)
         if self.input_size is not None:
             self._initialize()
 
-    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type):
+    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type, dropout_rate=0.0):
+        """
+        Resets the hyperparameters of the neural network and reinitializes the model.
+
+        Parameters
+        ----------
+        n_hidden_size : int
+            The number of features in each hidden layer.
+        n_hidden_layers : int
+            The number of hidden layers in the network.
+        learning_rate : float
+            The learning rate for the optimizer.
+        activation : str
+            The activation function to be used in the hidden layers.
+        optimizer_type : str
+            The type of optimizer to use.
+        dropout_rate : float, optional
+            The dropout rate for regularization. If 0.0, dropout is not applied. Default is 0.0.
+        """
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
         self.learning_rate = learning_rate
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
+        self.dropout_rate = dropout_rate
+        self.dropout = nn.Dropout(dropout_rate)
 
     def _initialize(self):
-        """Initialize the layers of the neural network."""
+        """
+        Initializes the layers of the neural network.
+        This method is called automatically during the first forward pass if the input size is not set.
+        """
         self.scaler = None
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
@@ -103,7 +134,7 @@ class Net(mb.BaseTorchModel):
 
         Returns
         -------
-        x : torch.Tensor
+        torch.Tensor
             The output tensor from the neural network.
         """
         if self.input_size is None:
@@ -111,111 +142,158 @@ class Net(mb.BaseTorchModel):
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
             self._initialize()
-
-        x = self.activation(self.fc1(x))  # apply the activation function
+        x = self.activation(self.fc1(x))
+        if self.dropout_rate > 0:
+            x = self.dropout(x)
         for fc in self.fcs:
-            x = self.activation(fc(x))  # apply the activation function
+            x = self.activation(fc(x))
+            if self.dropout_rate > 0:
+                x = self.dropout(x)
         x = self.fc3(x)
         return x
+
     @staticmethod
     def get_reference_model(input_size=None):
         """
-        Get a reference neural network with specified input size.
-
-        This function initializes and returns a neural network model with the given input size.
-        The output size and hidden size are set to 1 and the input size, respectively.
+        Returns a reference neural network model with default parameters.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features for the neural network.
-            Default is None. -> Input will be set at runtime.
+        input_size : int, optional
+            The number of input features for the neural network. If None, the input size will be set at runtime.
+
         Returns
         -------
         Net
-            An instance of the Net class configured with the specified input size.
+            An instance of the Net class configured with default parameters.
         """
-        return Net(input_size, 1, input_size)
+        return Net(input_size, 1, input_size, dropout_rate=0.0)
 
 class RNN(mb.BaseTorchModel):
     def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation='ReLU',
-                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False, optimizer_type='adam'):
+                 learning_rate=0.001, name="Recurrent_Neural_Net", batched_input=False, optimizer_type='adam', dropout_rate=0.0):
         """
-        Initializes a configurable recurrent neural network.
+        Initializes a configurable recurrent neural network with optional dropout for regularization.
 
         Parameters
         ----------
         input_size : int, optional
             The number of input features. If None, it will be set during the first training call.
-        output_size : int
-            The number of output features.
+        output_size : int, optional
+            The number of output features. Default is 1.
         n_hidden_size : int, optional
             The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
-        n_hidden_layers : int
-            The number of hidden layers in the network.
-        activation : torch.nn.Module, optional
-            The activation function to be used in the hidden layers. The default is nn.ReLU.
-        name: str
-            The name of the model.
-        batched_input : bool
-            Is the input batched or not (3D or 2D input). Default is False.
-        Returns
-        -------
-        None
+        n_hidden_layers : int, optional
+            The number of hidden layers in the network. Default is 1.
+        activation : str, optional
+            The activation function to be used in the hidden layers. Default is 'ReLU'.
+        learning_rate : float, optional
+            The learning rate for the optimizer. Default is 0.001.
+        name : str, optional
+            The name of the model. Default is "Recurrent_Neural_Net".
+        batched_input : bool, optional
+            Indicates whether the input is batched (3D) or not (2D). Default is False.
+        optimizer_type : str, optional
+            The type of optimizer to use. Default is 'adam'.
+        dropout_rate : float, optional
+            The dropout rate for regularization. If 0.0, dropout is not applied. Default is 0.0.
         """
-        super(RNN, self).__init__()
+        super(RNN, self).__init__(
+            input_size=input_size,
+            output_size=output_size,
+            name=name,
+            learning_rate=learning_rate,
+            optimizer_type=optimizer_type
+        )
         self.input_size = input_size
         self.output_size = output_size
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
-        self.activation = activation
+        self.activation_name = activation
+        self.activation = self.activation_map[activation]()
         self.learning_rate = learning_rate
         self.name = name
         self.batched_input = batched_input
+        self.dropout_rate = dropout_rate
+        self.dropout = nn.Dropout(dropout_rate)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-        self.optimizer_type = optimizer_type
-
-        # Initialize layers only if input_size is provided
         if self.input_size is not None:
             self._initialize()
 
-    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type):
+    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type, dropout_rate=0.0):
+        """
+        Resets the hyperparameters of the recurrent neural network and reinitializes the model.
+
+        Parameters
+        ----------
+        n_hidden_size : int
+            The number of features in each hidden layer.
+        n_hidden_layers : int
+            The number of hidden layers in the network.
+        learning_rate : float
+            The learning rate for the optimizer.
+        activation : str
+            The activation function to be used in the hidden layers.
+        optimizer_type : str
+            The type of optimizer to use.
+        dropout_rate : float, optional
+            The dropout rate for regularization. If 0.0, dropout is not applied. Default is 0.0.
+        """
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
         self.learning_rate = learning_rate
+        self.activation_name = activation
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
+        self.dropout_rate = dropout_rate
+        self.dropout = nn.Dropout(dropout_rate)
         self.scaler = None
         if self.input_size is not None:
             self._initialize()
 
     def _initialize(self):
-        """Initialize the layers of the neural network."""
+        """Initializes the layers of the recurrent neural network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
-        self.rnn = nn.RNN(self.input_size, self.n_hidden_size, self.n_hidden_layers, batch_first=self.batched_input)
+        self.rnn = nn.RNN(
+            self.input_size,
+            self.n_hidden_size,
+            self.n_hidden_layers,
+            batch_first=self.batched_input,
+            dropout=self.dropout_rate if self.n_hidden_layers > 1 else 0.0  # Dropout only applies between RNN layers
+        )
         self.fc = nn.Linear(self.n_hidden_size, self.output_size)
         self.to(self.device)
 
     def forward(self, x):
+        """
+        Defines the forward pass of the recurrent neural network.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor to the recurrent neural network.
+
+        Returns
+        -------
+        torch.Tensor
+            The output tensor from the recurrent neural network.
+        """
         if self.input_size is None:
             self.input_size = x.shape[-1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
             self._initialize()
             self.to(self.device)
-
         if x.dim() == 2:
             x = x.unsqueeze(0)  # Add batch dimension
         x = x.to(self.device)
         if not x.is_contiguous():
             x = x.contiguous()
-
         batch_size = x.size(1)
         h0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
-
         out, _ = self.rnn(x, h0)
         out = self.fc(out)
         return out
@@ -223,85 +301,118 @@ class RNN(mb.BaseTorchModel):
     @staticmethod
     def get_reference_model(input_size=None):
         """
-        Get a reference neural network with specified input size.
-
-        This function initializes and returns a neural network model with the given input size.
-        The output size and hidden size are set to 1 and the input size, respectively.
+        Returns a reference recurrent neural network model with default parameters.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features for the neural network.
-            Default is None. -> Input will be set at runtime.
+        input_size : int, optional
+            The number of input features for the neural network. If None, the input size will be set at runtime.
+
         Returns
         -------
-        Net
-            An instance of the Net class configured with the specified input size.
+        RNN
+            An instance of the RNN class configured with default parameters.
         """
-        return RNN(input_size, 1, input_size)
+        return RNN(input_size, 1, input_size, dropout_rate=0.0)
 
 class LSTM(mb.BaseTorchModel):
-    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,
-                 learning_rate=0.001, name="LSTM", batched_input=False):
+    def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation='ReLU',
+                 learning_rate=0.001, name="LSTM", batched_input=False, optimizer_type='adam', dropout_rate=0.0):
         """
-        Initializes a configurable recurrent neural network.
+        Initializes a configurable Long Short-Term Memory (LSTM) network with optional dropout for regularization.
 
         Parameters
         ----------
         input_size : int, optional
             The number of input features. If None, it will be set during the first training call.
-        output_size : int
-            The number of output features.
+        output_size : int, optional
+            The number of output features. Default is 1.
         n_hidden_size : int, optional
             The number of features in each hidden layer. If None, it will be set to the input size during the first training call.
-        n_hidden_layers : int
-            The number of hidden layers in the network.
-        activation : torch.nn.Module, optional
-            The activation function to be used in the hidden layers. The default is nn.ReLU.
-        name: str
-            The name of the model.
-        batched_input : bool
-            Is the input batched or not (3D or 2D input). Default is False.
-        Returns
-        -------
-        None
+        n_hidden_layers : int, optional
+            The number of hidden layers in the network. Default is 1.
+        activation : str, optional
+            The activation function to be used in the hidden layers. Default is 'ReLU'.
+        learning_rate : float, optional
+            The learning rate for the optimizer. Default is 0.001.
+        name : str, optional
+            The name of the model. Default is "LSTM".
+        batched_input : bool, optional
+            Indicates whether the input is batched (3D) or not (2D). Default is False.
+        optimizer_type : str, optional
+            The type of optimizer to use. Default is 'adam'.
+        dropout_rate : float, optional
+            The dropout rate for regularization. If 0.0, dropout is not applied. Default is 0.0.
         """
-        super(LSTM, self).__init__()
+        super(LSTM, self).__init__(
+            input_size=input_size,
+            output_size=output_size,
+            name=name,
+            learning_rate=learning_rate,
+            optimizer_type=optimizer_type
+        )
         self.input_size = input_size
         self.output_size = output_size
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
-        self.activation = activation()
+        self.activation_name = activation
+        self.activation = self.activation_map[activation]()
         self.learning_rate = learning_rate
         self.name = name
-
+        self.batched_input = batched_input
+        self.dropout_rate = dropout_rate
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
-        self.batched_input = False
-
-        # Initialize layers only if input_size is provided
         if self.input_size is not None:
             self._initialize()
 
-    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type):
+    def reset_hyperparameter(self, n_hidden_size, n_hidden_layers, learning_rate, activation, optimizer_type, dropout_rate=0.0):
+        """
+        Resets the hyperparameters of the LSTM network and reinitializes the model.
+
+        Parameters
+        ----------
+        n_hidden_size : int
+            The number of features in each hidden layer.
+        n_hidden_layers : int
+            The number of hidden layers in the network.
+        learning_rate : float
+            The learning rate for the optimizer.
+        activation : str
+            The activation function to be used in the hidden layers.
+        optimizer_type : str
+            The type of optimizer to use.
+        dropout_rate : float, optional
+            The dropout rate for regularization. If 0.0, dropout is not applied. Default is 0.0.
+        """
         self.n_hidden_size = n_hidden_size
         self.n_hidden_layers = n_hidden_layers
         self.learning_rate = learning_rate
+        self.activation_name = activation
         self.activation = self.activation_map[activation]()
         self.optimizer_type = optimizer_type
+        self.dropout_rate = dropout_rate
+        if self.input_size is not None:
+            self._initialize()
 
     def _initialize(self):
-        """Initialize the layers of the neural network."""
+        """Initializes the layers of the LSTM network."""
         if self.n_hidden_size is None:
             self.n_hidden_size = self.input_size
-        self.rnn = nn.LSTM(self.input_size, self.n_hidden_size, self.n_hidden_layers, batch_first=self.batched_input)
+        self.rnn = nn.LSTM(
+            self.input_size,
+            self.n_hidden_size,
+            self.n_hidden_layers,
+            batch_first=self.batched_input,
+            dropout=self.dropout_rate if self.n_hidden_layers > 1 else 0.0  # Dropout only applies between LSTM layers
+        )
         self.fc = nn.Linear(self.n_hidden_size, self.output_size)
         self.to(self.device)
 
     def forward(self, x):
         """
-        Defines the forward pass of the recurrent neural network (e.g. LSTM).
+        Defines the forward pass of the LSTM network.
 
         Parameters
         ----------
@@ -311,54 +422,41 @@ class LSTM(mb.BaseTorchModel):
         Returns
         -------
         torch.Tensor
-            Output tensor from the neural network.
+            Output tensor from the LSTM network.
         """
-        # Initialize model parameters if not yet initialized
         if self.input_size is None:
             self.input_size = x.shape[-1]
             if self.n_hidden_size is None:
                 self.n_hidden_size = self.input_size
             self._initialize()
             self.to(self.device)
-
-        # If input is 2D (single sample), add batch dimension
         if x.dim() == 2:  # [seq_len, input_size]
             x = x.unsqueeze(0)  # → [1, seq_len, input_size]
-
         x = x.to(self.device)
         x = x.contiguous()  # Important for cuDNN
-
         batch_size = x.size(1)
-
         h0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
         c0 = torch.zeros(self.n_hidden_layers, batch_size, self.n_hidden_size, device=self.device)
-
-        # Forward pass through LSTM
         out, _ = self.rnn(x, (h0, c0))
-
-        # Decode the hidden state of the last time step
         out = self.fc(out)
-
         return out
+
     @staticmethod
     def get_reference_model(input_size=None):
         """
-        Get a reference neural network with specified input size.
-
-        This function initializes and returns a neural network model with the given input size.
-        The output size and hidden size are set to 1 and the input size, respectively.
+        Returns a reference LSTM model with default parameters.
 
         Parameters
         ----------
-        input_size : int
-            The number of input features for the neural network.
-            Default is None. -> Input will be set at runtime.
+        input_size : int, optional
+            The number of input features for the LSTM network. If None, the input size will be set at runtime.
+
         Returns
         -------
         LSTM
-            An instance of the Net class configured with the specified input size.
+            An instance of the LSTM class configured with default parameters.
         """
-        return LSTM(input_size, 1, input_size)
+        return LSTM(input_size, 1, input_size, dropout_rate=0.0)
 
 class GRU(mb.BaseTorchModel):
     def __init__(self, input_size=None, output_size=1, n_hidden_size=None, n_hidden_layers=1, activation=nn.ReLU,

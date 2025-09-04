@@ -126,15 +126,15 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
     plt.show()
 
 # Beispielaufruf der Funktion
-material = 'DMC_S235JR'
-geometry = 'Gear'
+material = 'DMC60H_S235JR'
+geometry = 'Plate'
 variant = 'Normal'
 version = '3'
-path_data = '..\\Data'#'..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
+path_data = '..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data'#'..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
 file = f'{material}_{geometry}_{variant}_{version}.csv' #
 
 data = pd.read_csv(f'{path_data}/{file}')
-data['f_x'] = -200*data['f_x']
+data['f_x'] = -150*data['f_x'] # Bei Referenz 150 sonst 200
 
 #mask = (abs(data['v_x']) < 1)
 #data = data[mask]

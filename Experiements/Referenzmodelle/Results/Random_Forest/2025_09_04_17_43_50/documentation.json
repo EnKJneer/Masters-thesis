@@ -1,0 +1,137 @@
+{
+    "DataSets": [
+        {
+            "name": "Reference",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 1,
+                "hyperparameters": {
+                    "n_estimators": 10,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        },
+        {
+            "Random_Forest_GridSampler": {
+                "NUMBEROFMODELS": 1,
+                "hyperparameters": {
+                    "n_estimators": 60,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "Epochs": 50
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\heatmap_model_comparison_with_datasets_and_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png",
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png",
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png",
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png"
+        ],
+        "model_heatmap": [
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\heatmap_Random_Forest_with_std.png",
+            "Results\\Random_Forest\\2025_09_04_17_43_50\\plots\\heatmap_Random_Forest_GridSampler_with_std.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "Reference",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                0.30359842180826974
+            ],
+            [
+                "Reference",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                -0.956415238263853
+            ],
+            [
+                "Reference",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                3.143321480290135
+            ],
+            [
+                "Reference",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "Random_Forest",
+                "Random_Forest_GridSampler",
+                4.723873297902506
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 8,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "Reference": 4
+            },
+            "Models_Compared": [
+                "Random_Forest",
+                "Random_Forest_GridSampler"
+            ],
+            "Best_Model_Overall": "Random_Forest_GridSampler",
+            "Worst_Model_Overall": "Random_Forest_GridSampler"
+        }
+    }
+}

@@ -113,18 +113,16 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = '..\\DataSets_CMX_Plate_Notch_Gear\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
+path_data = '..\\DataSets_CMX_Plate_Notch_Gear/DataSinumerik_50Hz_2'#'..\\DataSets_Reference\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
 files = os.listdir(path_data)
 
-files = ['DMC60H_S235JR_Plate_Depth_3.csv']
+files = ['S235JR_Plate_Normal.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
-    cutoff = 0.1
-    filter_order = 4
-    #data = apply_lowpass_filter(data, cutoff, filter_order)
-    #n = int(len(data)*1/3)
-    #data = data.iloc[int(1*n):int(2*n), :].reset_index(drop=True)
+
+    n = int(len(data)*1/3)
+    data = data.iloc[int(1*n):int(2*n), :].reset_index(drop=True)
     #print(data.columns)
     #print(data.shape)
 
@@ -142,9 +140,9 @@ for file in files:
     data['sign_curr_x'] = np.sign(data['curr_x'])
     data['z_x'] = sign_hold(data['v_x'])
     data['sign_v_x'] = np.sign(data['v_x'])
-    data['v'] = (data['v_x']**2 + data['v_y']**2)**0.5
-    data['f_corr'] = data['f_x_sim'] * data['materialremoved_sim'] / (data['v_sp'] + 1e-6)
-    data['f_x'] = -data['f_x']
+    data['v'] = (data['v_x']**2 + data['v_y']**2)**0.5 *60
+    #data['f_corr'] = data['f_x_sim'] * data['materialremoved_sim'] / (data['v_sp'] + 1e-6)
+    #data['f_x'] = -data['f_x']
     #data['f_sp'] = (data['f_x']**2 + data['f_y']**2)**0.5
 
     data['time'] = data.index
@@ -152,7 +150,7 @@ for file in files:
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_sp'], label='f_sp', title=f'{name}')
 
-    plot_time_series(data, name, label='v_x', dpi=300, ylabel='v_x')
+    plot_time_series(data, name, label='v', dpi=300, ylabel='v_x')
     plot_time_series(data, name, label='v_y', dpi=300, ylabel='v_y')
     plot_time_series(data, name, label='v_x', dpi=300, ylabel='v_x')
 

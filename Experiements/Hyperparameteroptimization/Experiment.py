@@ -329,6 +329,7 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
+            'dropout_rate': (0.1, 0.4)
         }
         model = mnn.Net()
 
@@ -339,6 +340,7 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
+            'dropout_rate': (0.1,0.4)
         }
         model = mnn.RNN()
         dataclass.add_padding = True
@@ -350,6 +352,7 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
+            'dropout_rate': (0.1, 0.4)
         }
         model = mnn.LSTM()
         dataclass.add_padding = True
@@ -361,6 +364,7 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
+            'dropout_rate': (0.1, 0.4)
         }
         model = mnn.GRU()
         dataclass.add_padding = True
@@ -474,4 +478,4 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('Ref_RNN')
+    start_experiment_for('LSTM')

@@ -41,7 +41,7 @@ class BaseModel(ABC):
         pass
 
 class BaseTorchModel(BaseModel, nn.Module):
-    def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=0.001, optimizer_type='adam'):
+    def __init__(self, input_size=None, output_size=1, name="BaseNetModel", learning_rate=0.001, optimizer_type='adam', dropout_rate=0.0):
         """
         Initializes the base neural network model with common attributes.
 
@@ -67,6 +67,7 @@ class BaseTorchModel(BaseModel, nn.Module):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         self.scaler = None
+        self.dropout_rate = dropout_rate
 
         # Map the activation function name to the corresponding PyTorch function
         self.activation_map = {
@@ -318,5 +319,6 @@ class BaseTorchModel(BaseModel, nn.Module):
             "n_hidden_layers": self.n_hidden_layers,
             "activation": self.activation.__class__.__name__,
             "optimizer_type": self.optimizer_type,
+            "dropout_rate": self.dropout_rate,
         }}
         return documentation

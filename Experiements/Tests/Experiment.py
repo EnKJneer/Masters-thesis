@@ -27,6 +27,8 @@ if __name__ == '__main__':
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     #dataSet.folder = '..\\..\\Data'
+    #dataSet.testing_data_paths = [  'DMC60H_AL2007T4_Gear_SF_3.csv','DMC60H_AL2007T4_Plate_SF_3.csv',
+    #                                'DMC60H_S235JR_Gear_SF_3.csv','DMC60H_S235JR_Plate_Normal_3.csv']
     #dataSet.testing_data_paths =[  'CMX600V_AL2007T4_Validierung_Normal_2.csv','DMC60H_AL2007T4_Plate_Normal_3.csv',
     #                               'CMX600V_S235JR_Validierung_Normal_2.csv','DMC60H_S235JR_Plate_Normal_3.csv']
     #dataSet.header =["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z", "materialremoved_sim"]
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     dataclass2 = copy.copy(dataSet)
     dataclass2.name = 'mit z'
     dataclass2.add_sign_hold = True
-    dataclass2.target_channels = ['curr_y']
+    #dataclass2.target_channels = ['curr_y']
     # dataclass2 = hdata.Combined_Plate_TrainVal
     dataClasses = [dataclass2]
     for dataclass in dataClasses:

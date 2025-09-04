@@ -2,6 +2,8 @@ import copy
 import json
 import os
 import ast
+import re
+
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -454,6 +456,7 @@ class HeatmapPlotter(BasePlotter):
                 clean_model = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
                     .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
                 clean_dataset = train_dataset.replace('_', ' ')
+                clean_dataset = re.sub(r'(\w+Sampler)', r'\n\1', clean_dataset)
                 if len(train_datasets) == 1:
                     model_dataset_labels[combination] = f"{clean_model}"
                 else:
