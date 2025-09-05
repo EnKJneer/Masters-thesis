@@ -329,7 +329,7 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
-            'dropout_rate': (0.1, 0.4)
+            'dropout_rate': (0.0, 0.4)
         }
         model = mnn.Net()
 
@@ -340,8 +340,8 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
-            'dropout_rate': (0.1,0.4)
-        }
+
+        } #'dropout_rate': (0.0,0.4)
         model = mnn.RNN()
         dataclass.add_padding = True
 
@@ -352,7 +352,7 @@ def start_experiment_for(model_str = 'NN'):
             'learning_rate': (0.001, 0.1),
             'activation': ['ReLU', 'Sigmoid', 'Tanh', 'ELU'],
             'optimizer_type': ['adam', 'sgd', 'quasi_newton'],
-            'dropout_rate': (0.1, 0.4)
+            'dropout_rate': (0.0, 0.4)
         }
         model = mnn.LSTM()
         dataclass.add_padding = True

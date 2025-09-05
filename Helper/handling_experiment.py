@@ -255,18 +255,16 @@ class BasePlotter(ABC):
 
     @staticmethod
     def replace_space(text):
-        zaehler = 0
-        ergebnis = []
-        for zeichen in text:
-            if zeichen == ' ':
-                zaehler += 1
-                if zaehler % 2 == 0:
-                    ergebnis.append('\n')
-                else:
-                    ergebnis.append(' ')
-            else:
-                ergebnis.append(zeichen)
-        return ''.join(ergebnis)
+        # Erstelle eine Kopie des Textes für die Verarbeitung
+        ergebnis = text
+
+        # Spezifische Ersetzung für 'Recurrent Neural Net'
+        ergebnis = re.sub(r'Recurrent Neural Net', 'Recurrent\nNeural Net', ergebnis)
+
+        # Bestehende Ersetzung für \w+Sampler
+        ergebnis = re.sub(r'(\w+Sampler)', r'\n\1', ergebnis)
+
+        return ergebnis
 
 class ModelComparisonPlotter(BasePlotter):
     """Erstellt eine Übersichtsplot aller Modelle über alle Dataset/DataPath Kombinationen"""
@@ -456,7 +454,6 @@ class HeatmapPlotter(BasePlotter):
                 clean_model = model.replace('Plate_TrainVal_', '').replace('Reference_', '').replace('ST_Data_', '') \
                     .replace('ST_Plate_Notch_', '').replace('Ref', '').replace('_', ' ')
                 clean_dataset = train_dataset.replace('_', ' ')
-                clean_dataset = re.sub(r'(\w+Sampler)', r'\n\1', clean_dataset)
                 if len(train_datasets) == 1:
                     model_dataset_labels[combination] = f"{clean_model}"
                 else:
@@ -529,8 +526,8 @@ class HeatmapPlotter(BasePlotter):
 
         # Schriftgrößen anpassen basierend auf Anzahl der Kombinationen
         titlesize = 40
-        maesize = max(20, min(35, 400 // n_combinations))  # Dynamische Anpassung
-        textsize = max(15, min(25, 100 // n_combinations))
+        maesize = max(20, min(35, 200 // n_combinations))  # Dynamische Anpassung
+        textsize = max(5, min(25, 100 // (n_combinations)))
         labelsize = 35
 
         # Heatmap mit seaborn für bessere Optik

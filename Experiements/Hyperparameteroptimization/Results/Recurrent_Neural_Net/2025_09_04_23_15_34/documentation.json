@@ -1,0 +1,221 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Recurrent_Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 13,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "adam",
+                    "dropout_rate": 0.0
+                }
+            }
+        },
+        {
+            "Recurrent_Neural_Net_TPESampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.09209669375382186,
+                    "n_hidden_size": 55,
+                    "n_hidden_layers": 2,
+                    "activation": "Tanh",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.0
+                }
+            }
+        },
+        {
+            "Recurrent_Neural_Net_RandomSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.008400439240507497,
+                    "n_hidden_size": 86,
+                    "n_hidden_layers": 2,
+                    "activation": "Sigmoid",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.0
+                }
+            }
+        },
+        {
+            "Recurrent_Neural_Net_GridSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.1,
+                    "n_hidden_size": 100,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.0
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "Epochs": 800
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Recurrent_Neural_Net\\2025_09_04_23_15_34\\plots\\heatmap_model_comparison_with_datasets_and_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Recurrent_Neural_Net\\2025_09_04_23_15_34\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png",
+            "Results\\Recurrent_Neural_Net\\2025_09_04_23_15_34\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png",
+            "Results\\Recurrent_Neural_Net\\2025_09_04_23_15_34\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png",
+            "Results\\Recurrent_Neural_Net\\2025_09_04_23_15_34\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_TPESampler",
+                36.10764120214442
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_RandomSampler",
+                30.630717794565832
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_GridSampler",
+                39.404660365387315
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_TPESampler",
+                31.589682774488153
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_RandomSampler",
+                24.327876619790917
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_GridSampler",
+                32.47121208091041
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_TPESampler",
+                30.116268375975295
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_RandomSampler",
+                22.82909800260902
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_GridSampler",
+                39.20570749330762
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_TPESampler",
+                26.656944170891318
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_RandomSampler",
+                23.281589910162506
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_GridSampler",
+                28.41061784018611
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "Recurrent_Neural_Net",
+                "Recurrent_Neural_Net_TPESampler",
+                "Recurrent_Neural_Net_RandomSampler",
+                "Recurrent_Neural_Net_GridSampler"
+            ],
+            "Best_Model_Overall": "Recurrent_Neural_Net_GridSampler",
+            "Worst_Model_Overall": "Recurrent_Neural_Net"
+        }
+    }
+}

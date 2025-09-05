@@ -1,0 +1,221 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "LSTM": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.001,
+                    "n_hidden_size": 13,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "adam",
+                    "dropout_rate": 0.0
+                }
+            }
+        },
+        {
+            "LSTM_TPESampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.08128762383197252,
+                    "n_hidden_size": 81,
+                    "n_hidden_layers": 1,
+                    "activation": "ReLU",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.24136951450876332
+                }
+            }
+        },
+        {
+            "LSTM_RandomSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.019335630419998407,
+                    "n_hidden_size": 33,
+                    "n_hidden_layers": 1,
+                    "activation": "ELU",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.27110245811686284
+                }
+            }
+        },
+        {
+            "LSTM_GridSampler": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.1,
+                    "n_hidden_size": 100,
+                    "n_hidden_layers": 1,
+                    "activation": "Sigmoid",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.0
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "Epochs": 800
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\LSTM\\2025_09_05_07_55_34\\plots\\heatmap_model_comparison_with_datasets_and_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\LSTM\\2025_09_05_07_55_34\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png",
+            "Results\\LSTM\\2025_09_05_07_55_34\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png",
+            "Results\\LSTM\\2025_09_05_07_55_34\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png",
+            "Results\\LSTM\\2025_09_05_07_55_34\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "LSTM",
+                "LSTM_TPESampler",
+                1.6062595789572924
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "LSTM",
+                "LSTM_RandomSampler",
+                9.286826127007233
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "LSTM",
+                "LSTM_GridSampler",
+                12.166027624949885
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "LSTM",
+                "LSTM_TPESampler",
+                -10.925817405643231
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "LSTM",
+                "LSTM_RandomSampler",
+                3.960939120372206
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "LSTM",
+                "LSTM_GridSampler",
+                2.0398387679056076
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "LSTM",
+                "LSTM_TPESampler",
+                35.60391054726137
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "LSTM",
+                "LSTM_RandomSampler",
+                33.84953479124342
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "LSTM",
+                "LSTM_GridSampler",
+                36.44418968077264
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "LSTM",
+                "LSTM_TPESampler",
+                23.77512466062869
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "LSTM",
+                "LSTM_RandomSampler",
+                22.480011490129755
+            ],
+            [
+                "ST_Plate_Notch",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "LSTM",
+                "LSTM_GridSampler",
+                23.125829689092452
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "LSTM",
+                "LSTM_TPESampler",
+                "LSTM_RandomSampler",
+                "LSTM_GridSampler"
+            ],
+            "Best_Model_Overall": "LSTM_GridSampler",
+            "Worst_Model_Overall": "LSTM"
+        }
+    }
+}

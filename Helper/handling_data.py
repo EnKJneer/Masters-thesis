@@ -351,12 +351,14 @@ folder_data_reference =  '..\\..\\DataSets_Reference/DataFiltered'
 dataPaths_Test = [  'DMC60H_AL2007T4_Gear_Normal_3.csv','DMC60H_AL2007T4_Plate_Normal_3.csv', 'DMC60H_S235JR_Gear_Normal_3.csv','DMC60H_S235JR_Plate_Normal_3.csv']
 
 dataPaths_Train = ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',
-                                                    'DMC60H_S235JR_Plate_SF_1.csv', 'DMC60H_S235JR_Plate_Depth_1.csv',
-                                                    'DMC60H_S235JR_Plate_SF_2.csv', 'DMC60H_S235JR_Plate_Depth_2.csv',
-                                                    'DMC60H_S235JR_Plate_SF_3.csv', 'DMC60H_S235JR_Plate_Depth_3.csv']
+                   'DMC60H_S235JR_Plate_SF_1.csv', 'DMC60H_S235JR_Plate_Depth_1.csv',
+                   'DMC60H_S235JR_Plate_SF_2.csv', 'DMC60H_S235JR_Plate_Depth_2.csv',
+                   'DMC60H_S235JR_Plate_SF_3.csv', 'DMC60H_S235JR_Plate_Depth_3.csv',
+                   ]
 
-dataPaths_Val = ['DMC60H_S235JR_Notch_Normal_1.csv', 'DMC60H_S235JR_Notch_Normal_2.csv', 'DMC60H_S235JR_Notch_Normal_3.csv',
-                                              'DMC60H_S235JR_Notch_Depth_1.csv', 'DMC60H_S235JR_Notch_Depth_2.csv', 'DMC60H_S235JR_Notch_Depth_3.csv']
+dataPaths_Val = [   'DMC60H_S235JR_Notch_Normal_1.csv', 'DMC60H_S235JR_Notch_Normal_2.csv', 'DMC60H_S235JR_Notch_Normal_3.csv',
+                    'DMC60H_S235JR_Notch_Depth_1.csv', 'DMC60H_S235JR_Notch_Depth_2.csv', 'DMC60H_S235JR_Notch_Depth_3.csv',
+                    'DMC60H_S235JR_Notch_SF_1.csv', 'DMC60H_S235JR_Notch_SF_2.csv', 'DMC60H_S235JR_Notch_SF_3.csv',]
 
 DataClass_Reference = DataClass('Reference', folder_data_reference,
                                 ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',

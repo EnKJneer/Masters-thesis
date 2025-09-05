@@ -1,0 +1,50 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net      | 0.313457 | 0.087814
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net      | 0.266414 | 0.062426
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net      | 0.209248 | 0.040582
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net      | 0.198494 | 0.039464
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net_TPESampler | nan | nan
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net_TPESampler | nan | nan
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net_TPESampler | nan | nan
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net_TPESampler | nan | nan
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net_RandomSampler | 0.262078 | 0.050568
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net_RandomSampler | 0.265851 | 0.048157
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net_RandomSampler | 0.246422 | 0.041000
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net_RandomSampler | 0.221029 | 0.038707
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net_GridSampler | 0.268139 | 0.038485
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net_GridSampler | 0.324748 | 0.062331
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net_GridSampler | 0.101815 | 0.003576
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net_GridSampler | 0.113091 | 0.001503
+
+
+MODEL IMPROVEMENTS (vs Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net   | Neural_Net_TPESampler | +nan%       
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net   | Neural_Net_RandomSampler | +16.39%     
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net   | Neural_Net_GridSampler | +14.46%     
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net   | Neural_Net_TPESampler | +nan%       
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net   | Neural_Net_RandomSampler | +0.21%      
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net   | Neural_Net_GridSampler | -21.90%     
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net   | Neural_Net_TPESampler | +nan%       
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net   | Neural_Net_RandomSampler | -17.77%     
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Neural_Net   | Neural_Net_GridSampler | +51.34%     
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net   | Neural_Net_TPESampler | +nan%       
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net   | Neural_Net_RandomSampler | -11.35%     
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Neural_Net   | Neural_Net_GridSampler | +43.03%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_datasets_and_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png

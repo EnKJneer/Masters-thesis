@@ -138,11 +138,11 @@ def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50,
 if __name__ == '__main__':
     tool_diameter = 10
     target_frequency = 50
-    path_material_constant = '..\\Simulation\optimized_parameters_old.json'
+    path_material_constant = '..\\Simulation\optimized_parameters.json'
 
     show_results = False
     path = '..\\DataSets_CMX_Plate_Notch_Gear/DataMerged'
-    path_target = '..\\DataSets_CMX_Plate_Notch_Gear_Reference/DataSimulated'
+    path_target = '..\\DataSets_CMX_Plate_Notch_Gear/DataSimulated'
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)

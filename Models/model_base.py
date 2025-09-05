@@ -196,6 +196,8 @@ class BaseTorchModel(BaseModel, nn.Module):
             ax.legend()
 
         best_val_error = float('inf')
+        best_model_state = self.state_dict()
+
         patience_counter = 0
 
         for epoch in range(n_epochs):

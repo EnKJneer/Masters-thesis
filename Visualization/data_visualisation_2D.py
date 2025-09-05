@@ -113,10 +113,10 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = '..\\DataSets_CMX_Plate_Notch_Gear/DataSinumerik_50Hz_2'#'..\\DataSets_Reference\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
+path_data = '..\\DataSets_CMX_Plate_Notch_Gear/Data'#'..\\DataSets_Reference\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
 files = os.listdir(path_data)
 
-files = ['S235JR_Plate_Normal.csv']
+files = ['DMC60H_S235JR_Plate_Normal_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')

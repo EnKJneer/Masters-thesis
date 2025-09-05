@@ -10,57 +10,6 @@ from MMR_Calculator import voxel_class_numba as vc
 from MMR_Calculator.MRRSimulationV3 import SimpleCNCMRRSimulation
 
 VALID_AP ={0, 3, 6, 12}# {0, 2.5, 5, 10} #
-'''def check_and_correct_values(vector):
-    valid_values = {0, 3, 6, 12}
-    corrected_vector = []
-
-    for value in vector:
-        if value in valid_values:
-            corrected_vector.append(value)
-        else:
-            # Finde den nächstgelegenen gültigen Wert
-            closest_value = min(valid_values, key=lambda x: abs(x - value))
-            corrected_vector.append(closest_value)
-            print(f"Warnung: Ungültiger Wert {value} gefunden und auf {closest_value} korrigiert.")
-
-    return np.array(corrected_vector)
-
-def calculate_a_p(pos_z, z_position, z_dimension):
-    # Berechnung von output
-    output = -np.round(pos_z - z_position - z_dimension, 1)
-
-    # Setze Werte auf 0, bei denen abs(pos_z - z_position) nicht kleiner als z_dimension ist
-    output = np.where(np.abs(pos_z - z_position) < z_dimension, output, 0)
-
-    # Zähle die Häufigkeit jedes eindeutigen Werts
-    unique_pos_z, counts = np.unique(output, return_counts=True)
-
-    # Filtere Werte, von denen es mindestens 20 Stück gibt
-    frequent_unique_pos_z = unique_pos_z[counts >= 20]
-
-    # Sortiere die gefilterten Werte
-    sorted_unique_pos_z = np.sort(frequent_unique_pos_z)
-
-    # Berechne die neuen Werte
-    new_pos_z_values = np.zeros_like(sorted_unique_pos_z, dtype=float)
-    for i in range(len(sorted_unique_pos_z)):
-        if i == 0:
-            new_pos_z_values[i] = sorted_unique_pos_z[i]
-        else:
-            new_pos_z_values[i] = sorted_unique_pos_z[i] - sorted_unique_pos_z[i - 1]
-    new_pos_z_values = check_and_correct_values(new_pos_z_values)
-
-    print("Korrigierter Vektor:", new_pos_z_values)
-    # Erstelle ein Mapping von alten zu neuen Werten
-    value_mapping = {old: new for old, new in zip(sorted_unique_pos_z, new_pos_z_values)}
-
-    # Ersetze die Werte in 'output' durch die neuen Werte
-    for i in range(len(output)):
-        if output[i] in value_mapping:
-            output[i] = value_mapping[output[i]]
-
-    return output
-'''
 
 def calculate_ae_and_angle_for_tool(tool, part_position, part_dimension):
     """

@@ -1,0 +1,37 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | LSTM            | 0.605196 | 0.043831
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | LSTM            | 0.466898 | 0.028152
+Reference            | DMC60H_S235JR_Gear_Normal_3 | LSTM            | 0.732339 | 0.031759
+Reference            | DMC60H_S235JR_Plate_Normal_3 | LSTM            | 0.605240 | 0.028621
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | LSTM_GridSampler | 1.134146 | 0.079617
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | LSTM_GridSampler | 1.447000 | 0.085845
+Reference            | DMC60H_S235JR_Gear_Normal_3 | LSTM_GridSampler | 0.218217 | 0.017567
+Reference            | DMC60H_S235JR_Plate_Normal_3 | LSTM_GridSampler | 0.215639 | 0.008867
+
+
+MODEL IMPROVEMENTS (vs LSTM)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | LSTM         | LSTM_GridSampler | -87.40%     
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | LSTM         | LSTM_GridSampler | -209.92%    
+Reference            | DMC60H_S235JR_Gear_Normal_3 | LSTM         | LSTM_GridSampler | +70.20%     
+Reference            | DMC60H_S235JR_Plate_Normal_3 | LSTM         | LSTM_GridSampler | +64.37%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_datasets_and_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png
+Model_Heatmap: 2 plots
+  - heatmap_LSTM_with_std.png
+  - heatmap_LSTM_GridSampler_with_std.png

@@ -1,0 +1,17 @@
+{
+  "search_spaces": {
+    "RF": {
+      "n_estimators": [100, 500],
+      "min_samples_split": [1, 10],
+      "min_samples_leaf": [1, 10],
+      "max_depth": [100, 500]
+    },
+    "NN": {
+      "n_hidden_size": [13, 130],
+      "n_hidden_layers": [1, 5],
+      "learning_rate": [0.001, 0.1],
+      "activation": ["ReLU", "Sigmoid", "Tanh", "ELU"],
+      "optimizer_type": ["adam", "quasi_newton"]
+    }
+  }
+}

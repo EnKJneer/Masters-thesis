@@ -326,12 +326,17 @@ def start_experiment_for(model_str = 'NN'):
 
     optimization_samplers = ["GridSampler"]
 
+    # JSON-Datei laden
+    with open('search_spaces.json', 'r') as f:
+        data = json.load(f)
+
     if model_str == 'RF':
         NUMBEROFMODELS = 1
         #Random Forest
         search_space = {
             'n_estimators': (10, 30, 60, 100),
             'max_depth': (10, 30, 60, 100),
+            'min:samples_leaf': (5, 10, 20, 40)
         }
         model = mrf.RandomForestModel()
 

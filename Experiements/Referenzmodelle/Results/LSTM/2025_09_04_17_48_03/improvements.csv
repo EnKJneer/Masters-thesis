@@ -1,0 +1,5 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+Reference,DMC60H_AL2007T4_Gear_Normal_3,LSTM,LSTM_GridSampler,-87.40158313321385
+Reference,DMC60H_AL2007T4_Plate_Normal_3,LSTM,LSTM_GridSampler,-209.91814595163643
+Reference,DMC60H_S235JR_Gear_Normal_3,LSTM,LSTM_GridSampler,70.20276453432079
+Reference,DMC60H_S235JR_Plate_Normal_3,LSTM,LSTM_GridSampler,64.37127350475146
