@@ -1,5 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-Reference,DMC60H_AL2007T4_Gear_Normal_3,Neural_Net,Neural_Net_GridSampler,-50.58105019490977
-Reference,DMC60H_AL2007T4_Plate_Normal_3,Neural_Net,Neural_Net_GridSampler,-99.84640639211261
-Reference,DMC60H_S235JR_Gear_Normal_3,Neural_Net,Neural_Net_GridSampler,55.557701424774585
-Reference,DMC60H_S235JR_Plate_Normal_3,Neural_Net,Neural_Net_GridSampler,50.92971364175046

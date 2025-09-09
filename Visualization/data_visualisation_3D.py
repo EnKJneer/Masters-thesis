@@ -54,7 +54,6 @@ def plot_3d_with_color(
             s=1, edgecolor='none', label=mat
         )
 
-
         # Pfeile für die Gradienten (nur jeden zweiten Punkt)
         '''ax.quiver(
             x_values[mat_mask][::quiver_stride],

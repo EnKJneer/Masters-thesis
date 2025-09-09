@@ -19,13 +19,15 @@ if __name__ == '__main__':
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1000
-    NUMBEROFMODELS = 10
+    NUMBEROFMODELS = 1
 
     window_size = 1
     past_values = 0
     future_values = 0
 
-    dataSet = hdata.DataClass_ST_Plate_Notch
+    dataSet = hdata.DataClass_Reference
+    #dataSet.header = ["pos_sp", "pos_x", "pos_y", "pos_z", "v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
+    #dataSet.folder = '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data'
     #dataSet.folder = '..\\..\\Data'
     #dataSet.testing_data_paths = [  'DMC60H_AL2007T4_Gear_SF_3.csv','DMC60H_AL2007T4_Plate_SF_3.csv',
     #                                'DMC60H_S235JR_Gear_SF_3.csv','DMC60H_S235JR_Plate_Normal_3.csv']
@@ -34,25 +36,22 @@ if __name__ == '__main__':
     #dataSet.header =["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z", "materialremoved_sim"]
 
     dataclass2 = copy.copy(dataSet)
-    dataclass2.name = 'mit z'
-    dataclass2.add_sign_hold = True
+    #dataclass2.name = 'mit z'
+    #dataclass2.add_sign_hold = True
     #dataclass2.target_channels = ['curr_y']
     # dataclass2 = hdata.Combined_Plate_TrainVal
     dataClasses = [dataclass2]
     for dataclass in dataClasses:
-        dataclass.window_size = window_size
-        dataclass.past_values = past_values
         dataclass.future_values = future_values
         dataclass.add_padding = True
 
-    model_rf = mrf.RandomForestModel(n_estimators= 52,max_features= 500, min_samples_split= 67,
-                    min_samples_leaf= 4)
+    model_rf = mrf.RandomForestModel(n_estimators= 167, min_samples_split= 6,
+                    min_samples_leaf= 2)
 
     model_rnn = mnn.RNN(learning_rate= 0.07767273410029314, n_hidden_size= 86, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
-
-    models = [model_rnn]
+    models = [model_rf]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

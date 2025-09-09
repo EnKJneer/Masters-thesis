@@ -113,16 +113,17 @@ def apply_lowpass_filter(data, cutoff, order):
         data2[col] = filtfilt(b, a, data2[col])
     return data2
 
-path_data = '..\\DataSets_CMX_Plate_Notch_Gear/Data'#'..\\DataSets_Reference\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
+path_data = '..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data' #'..\\DataSets_Reference\\Data' #Data/DMC_S235JR_Plate_Depth_3.csv
+#path_data = '..\\DataSets_Reference/DataFiltered'
 files = os.listdir(path_data)
 
-files = ['DMC60H_S235JR_Plate_Normal_2.csv']
+files = ['DMC60H_AL2007T4_Plate_Normal_2.csv']
 for file in files:
     #file = file.replace('.csv', '')
     data = pd.read_csv(f'{path_data}/{file}')
 
-    n = int(len(data)*1/3)
-    data = data.iloc[int(1*n):int(2*n), :].reset_index(drop=True)
+    #n = int(len(data)*1/3)
+    #data = data.iloc[int(1*n):int(2*n), :].reset_index(drop=True)
     #print(data.columns)
     #print(data.shape)
 
@@ -131,7 +132,7 @@ for file in files:
     #min_value = -2#-7 for curr_y # -2 for curr_x
     #color_values = np.clip(color_values, min_value, max_value)
 
-    name = file.replace('.csv', '')
+    name = file.replace('.csv', '')# +' Hanlin'
     #t_e = data.index[-1] * 1/500
     #print(t_e)
     #data['f_x'] = -data['f_x']*200
@@ -146,13 +147,29 @@ for file in files:
     #data['f_sp'] = (data['f_x']**2 + data['f_y']**2)**0.5
 
     data['time'] = data.index
-    #plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], label='materialremoved_sim', title=f'{name}')
+    plot_2d_with_color(data['pos_x'], data['pos_y'], data['materialremoved_sim'], label='materialremoved_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_sp'], label='f_sp', title=f'{name}')
 
+    plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='f_y_sim', dpi=300, ylabel='curr_y')
+    #plot_time_series(data, name, label='f_z_sim', dpi=300, ylabel='curr_z')
+    #plot_time_series(data, name, label='f_sp_sim', dpi=300, ylabel='curr_sp')
+
+    #plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')
+    #plot_time_series(data, name, label='f_y_sim', dpi=300, ylabel='f_y')
+    #plot_time_series(data, name, label='f_z_sim', dpi=300, ylabel='f_z')
+    #plot_time_series(data, name, label='f_sp_sim', dpi=300, ylabel='f_sp')
+
+    #plot_time_series(data, name, label='materialremoved_sim', dpi=300)
+    #plot_time_series(data, name, label='v_z', dpi=300)
+    #plot_time_series(data, name, label='f_x_sim', dpi=300)
+
     plot_time_series(data, name, label='v', dpi=300, ylabel='v_x')
-    plot_time_series(data, name, label='v_y', dpi=300, ylabel='v_y')
-    plot_time_series(data, name, label='v_x', dpi=300, ylabel='v_x')
+    plot_time_series(data, name, label='v_x', dpi=300, ylabel='curr_x')
+    #plot_time_series(data, name, label='v_y', dpi=300, ylabel='curr_y')
+    #plot_time_series(data, name, label='v_z', dpi=300, ylabel='curr_z')
+    plot_time_series(data, name, label='v_sp', dpi=300, ylabel='curr_sp')
 
     #plot_time_series(data, name, label='f_corr', dpi=300, ylabel='f_x')
     #plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='f_x')

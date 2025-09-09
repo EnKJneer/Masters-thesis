@@ -1,0 +1,97 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Mixed_Experts_2": {
+                "NUMBEROFMODELS": 1,
+                "threshold_v_axis": 0.1,
+                "expert1": {
+                    "description": "This model fits a two-stage friction model: stillstand and movement.",
+                    "parameters": {
+                        "name": "Friction_Model",
+                        "velocity_threshold": 0.1,
+                        "F_s": 0,
+                        "a_x": -0.0010908256546690136,
+                        "a_sp": 0,
+                        "b": -0.030713337011797282,
+                        "F_c": -0.5284831243669994,
+                        "sigma_2": -0.005595755573681626,
+                        "a_b": -0.00517593700719205
+                    }
+                },
+                "expert2": {
+                    "description": "This model combines linear functions with the LuGre friction model to simulate friction in dynamic systems. It uses SciPy for curve fitting to train the model parameters.",
+                    "parameters": {
+                        "name": "LuGre_Model_modified",
+                        "a1": 0.0006969546037049962,
+                        "a2": -0.0013799334643890201,
+                        "b": -0.02705276058089299,
+                        "sigma_0": -0.001124953790869569,
+                        "sigma_1": 0.0027807540151605797,
+                        "sigma_2": -0.010402023250176933,
+                        "theta_0": 1.014188211373931,
+                        "theta_1": 42.720825694921544,
+                        "theta_2": 21.199132915423537,
+                        "theta_3": -0.0017241359028094259,
+                        "dt": 0.02,
+                        "target_channel": "curr_x"
+                    }
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1000
+    }
+}

@@ -798,7 +798,7 @@ class LuGreModelSciPy(mb.BaseModel):
 
     def get_input_vector_from_df(self, df):
         prefix_current = '_1_current'
-        axes = ['sp','x', 'y', 'z']
+        axes = ['x', 'y', 'z', 'sp']
         acceleration = []
         velocity = []
         force = []
@@ -920,6 +920,167 @@ class LuGreModelSciPy(mb.BaseModel):
     def reset_hyperparameter(self):
         throw_error('not implemented')
 
+class LuGreModelModifiedSciPy(mb.BaseModel):
+    def __init__(self,name="LuGre_Model_modified",
+                 a1 = 1, a2 = 1,  b = 1,
+                 sigma_0=1, sigma_1=1, sigma_2=1,
+                 theta_0=1, theta_1=1, theta_2=1, theta_3=1,
+                 dt = 0.02, target_channel = 'curr_x'):
+        self.name = name
+        self.a1 = a1
+        self.a2 = a2
+        self.b = b
+        self.sigma_0 = sigma_0
+        self.sigma_1 = sigma_1
+        self.sigma_2 = sigma_2
+        self.theta_0 = theta_0
+        self.theta_1 = theta_1
+        self.theta_2 = theta_2
+        self.theta_3 = theta_3
+        self.dt = dt
+
+        self.z = 0.0
+
+        self.target_channel = target_channel
+        if target_channel == 'curr_x':
+            self.axis = 1
+        elif target_channel == 'curr_y':
+            self.axis = 2
+        elif target_channel == 'curr_z':
+            self.axis = 3
+        elif target_channel == 'curr_sp':
+            self.axis = 0
+        else:
+            throw_error('Pleas select an valid target channel.')
+
+    def get_input_vector_from_df(self, df):
+        prefix_current = '_1_current'
+        axes = ['x', 'y', 'z', 'sp']
+        acceleration = []
+        velocity = []
+        force = []
+        sign_hold = []
+        for axis in axes:
+            acceleration.append(df[['a_' + axis + prefix_current]].values)
+            velocity.append(df[['v_' + axis + prefix_current]].values)
+            force.append(df[['f_' + axis + '_sim' + prefix_current]].values)
+            sign_hold.append(df[['z_' + axis + prefix_current]].values)
+        MRR = df['materialremoved_sim' + prefix_current].values
+
+        acceleration = np.array(acceleration)
+        velocity = np.array(velocity)
+        force = np.array(force)
+        sign_hold = np.array(sign_hold)
+
+        return [acceleration, velocity, force, MRR, sign_hold]
+
+    def criterion(self, y_target, y_pred):
+        return np.mean(np.abs(y_target - y_pred))
+
+    @staticmethod
+    def equation(X, a1, a2, b, sigma_0, sigma_1, sigma_2, theta_0, theta_1, theta_2, theta_3, dt=0.02):
+        acceleration, velocity, force, sign_hold = X
+
+        def g(v_i, sign_hold_i):
+            eps = 1e-12
+            if v_i * sign_hold_i > 0:
+                return -theta_3 * v_i + eps
+            else:
+                return (-theta_0 / (1 + np.exp(-theta_1 * v_i)) - theta_2 * v_i) + eps
+
+        def step(v_i, sign_hold_i, dt, z_i):
+            dz = v_i - (sigma_0 * np.abs(v_i) / g(v_i, sign_hold_i)) * z_i
+            z_i += dz * dt
+            f_friction = sigma_0 * z_i + sigma_1 * dz + sigma_2 * v_i
+            return z_i, f_friction
+
+        # Initialize z
+        z = 0.0
+        y = np.zeros_like(velocity, dtype=float)
+
+        # Iterate over each time step
+        for i in range(len(velocity)):
+            z, f_friction = step(velocity[i], sign_hold[i], dt, z)
+            z = np.clip(z, -1e2, 1e2)
+            y[i] = a1 * acceleration[i] + a2 * force[i] + f_friction + b
+
+            # Print progress every 100 time steps
+            if (i + 1) % 1000 == 0:
+                print(f"Fortschritt: {i + 1}/{len(velocity)} Schritte abgeschlossen.")
+
+        return y
+
+    def predict(self, X):
+        [acceleration, velocity, force, MRR, sign_hold] = self.get_input_vector_from_df(X)
+        acceleration = acceleration[self.axis].squeeze()
+        velocity = velocity[self.axis].squeeze()
+        force = force[self.axis].squeeze()
+        sign_hold = sign_hold[self.axis].squeeze()
+
+        return self.equation([acceleration, velocity, force, sign_hold], self.a1, self.a2, self.b, self.sigma_0, self.sigma_1, self.sigma_2, self.theta_0, self.theta_1, self.theta_2, self.theta_3)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+
+        initial_params = [self.a1, self.a2, self.b, self.sigma_0, self.sigma_1, self.sigma_2, self.theta_0, self.theta_1, self.theta_2, self.theta_3]
+
+        [acceleration, velocity, force, MRR, sign_hold] = self.get_input_vector_from_df(X_train)
+        acceleration = acceleration[self.axis].squeeze()
+        velocity = velocity[self.axis].squeeze()
+        force = force[self.axis].squeeze()
+        sign_hold = sign_hold[self.axis].squeeze()
+        x_data = [acceleration, velocity, force, sign_hold]
+        y = np.array(y_train).squeeze()
+        params_lugre, y_pred = curve_fit(f = self.equation, xdata = x_data, ydata = y, p0=initial_params, maxfev=10000)
+
+        [self.a1, self.a2, self.b, self.sigma_0, self.sigma_1, self.sigma_2, self.theta_0, self.theta_1, self.theta_2, self.theta_3] = params_lugre
+
+        # Ausgabe der trainierten Parameter
+        print("Trained Parameters:")
+        print(f"a1: {self.a1:.3f}")
+        print(f"a2: {self.a2:.3f}")
+        print(f"b: {self.b:.3f}")
+        print(f"sigma_0: {self.sigma_0:.3f}")
+        print(f"sigma_1: {self.sigma_1:.3f}")
+        print(f"sigma_2: {self.sigma_2:.3f}")
+        print(f"f_s: {self.theta_0:.3f}")
+        print(f"f_s: {self.theta_1:.3f}")
+        print(f"f_c: {self.theta_2:.3f}")
+        print(f"v_s: {self.theta_3:.3f}")
+
+        validation_loss = self.criterion(y_val.squeeze(), self.predict(X_val))
+        print(f"Validation Loss: {validation_loss:.4e}")
+
+        return validation_loss
+
+    def test_model(self, X, y_target):
+        prediction = self.predict(X)
+        loss = self.criterion(y_target.squeeze(), prediction)
+        return loss, prediction
+
+    def get_documentation(self):
+        documentation = {
+            "description": "This model combines linear functions with the LuGre friction model to simulate friction in dynamic systems. It uses SciPy for curve fitting to train the model parameters.",
+            "parameters": {
+                "name": self.name,
+                "a1": self.a1,
+                "a2": self.a2,
+                "b": self.b,
+                "sigma_0": self.sigma_0,
+                "sigma_1": self.sigma_1,
+                "sigma_2": self.sigma_2,
+                "theta_0": self.theta_0,
+                "theta_1": self.theta_1,
+                "theta_2": self.theta_2,
+                "theta_3": self.theta_3,
+                "dt": self.dt,
+                "target_channel": self.target_channel
+            }
+        }
+        return documentation
+
+    def reset_hyperparameter(self):
+        throw_error('not implemented')
+
 class FrictionModel(mb.BaseModel):
     def __init__(self, name="Friction_Model",
                  f_s = 0, a_x = 0, a_sp = 0, b = 0, f_c = 0, sigma_2 = 0,a_b =0,
@@ -965,7 +1126,7 @@ class FrictionModel(mb.BaseModel):
             v_x = X[f'v_{axis}_1_current'].values
             a_x = X[f'a_{axis}_1_current'].values
             f_x_sim = X[f'f_{axis}_sim_1_current'].values #_sim
-            v_sp = X[f'v_sp_1_current'].values
+            #v_sp = X[f'v_sp_1_current'].values
 
             stillstand_mask = (np.abs(v_x) <= self.velocity_threshold)
             bewegung_mask = ~stillstand_mask
@@ -974,13 +1135,13 @@ class FrictionModel(mb.BaseModel):
             v_s = self.sign_hold(v_x)
             y_pred[stillstand_mask] = (self.F_s * v_s[stillstand_mask] +
                                        self.theta_f * f_x_sim[stillstand_mask] +
-                                       self.b * v_sp[stillstand_mask])
+                                       self.b ) #* v_sp[stillstand_mask]
 
             y_pred[bewegung_mask] = (self.F_c * np.sign(v_x[bewegung_mask]) +
                                      self.sigma_2 * v_x[bewegung_mask] +
                                      self.theta_f * f_x_sim[bewegung_mask] +
                                      self.theta_a * a_x[bewegung_mask] +
-                                     self.b * v_sp[bewegung_mask])
+                                     self.b) # * v_sp[bewegung_mask]
 
         return y_pred
 
@@ -1014,7 +1175,7 @@ class FrictionModel(mb.BaseModel):
             a_x = data[f'a_{axis}_1_current'].values
             f_x_sim = data[f'f_{axis}_sim_1_current'].values #_sim
             v_s = self.sign_hold(v_x)
-            v_sp = data[f'v_sp_1_current'].values
+            #v_sp = data[f'v_sp_1_current'].values
 
             curr_x = data[target].values
 
@@ -1026,7 +1187,7 @@ class FrictionModel(mb.BaseModel):
             if np.sum(stillstand_mask) > 2:
                 X_stillstand = np.column_stack([v_s[stillstand_mask],
                                                 f_x_sim[stillstand_mask],
-                                                v_sp[stillstand_mask]]) # np.ones(np.sum(stillstand_mask))
+                                                np.ones(np.sum(stillstand_mask))]) # v_sp[stillstand_mask]
                 y_stillstand = curr_x[stillstand_mask]
                 reg_stillstand = LinearRegression(fit_intercept=False)
                 reg_stillstand.fit(X_stillstand, y_stillstand)
@@ -1042,7 +1203,7 @@ class FrictionModel(mb.BaseModel):
             if np.sum(bewegung_mask) > 4:
                 X_bewegung = np.column_stack([np.sign(v_x[bewegung_mask]), v_x[bewegung_mask],
                                               f_x_sim[bewegung_mask],
-                                              a_x[bewegung_mask], v_sp[bewegung_mask]]) #np.ones(np.sum(bewegung_mask))
+                                              a_x[bewegung_mask], np.ones(np.sum(bewegung_mask))]) #v_sp[bewegung_mask]
                 y_bewegung = curr_x[bewegung_mask]
                 reg_bewegung = LinearRegression(fit_intercept=False)
                 reg_bewegung.fit(X_bewegung, y_bewegung)

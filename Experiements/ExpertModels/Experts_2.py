@@ -100,7 +100,9 @@ class Experts_2(mb.BaseModel):
         (X_val1, y_val1), (X_val2, y_val2)= self._split_data(X_val, y_val)
 
         val_error1 = self.expert1.train_model(X_train1, y_train1, X_val1, y_val1, n_epochs=n_epochs, trial=trial, draw_loss=draw_loss, **kwargs)
-        val_error2 = self.expert2.train_model(X_train2, y_train2, X_val2, y_val2,n_epochs=n_epochs, trial=trial, draw_loss=draw_loss, **kwargs)
+        val_error2 = self.expert2.train_model(X_train=X_train2, y_train=y_train2,
+                                              X_val=X_val2, y_val=y_val2,
+                                              n_epochs=n_epochs, trial=trial, draw_loss=draw_loss, **kwargs)
 
         return val_error1 + val_error2
 
@@ -217,36 +219,22 @@ class Experts_2(mb.BaseModel):
         return Experts_2()
 
 
+
+
 if __name__ == '__main__':
 
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1000
-    NUMBEROFMODELS = 10
+    NUMBEROFMODELS = 1
 
     window_size = 1
     past_values = 0
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-
-    dataSet.training_data_paths = ['S235JR_Plate_Normal_0.csv', 'S235JR_Plate_Normal_4.csv',
-                                   'S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
-                                   'S235JR_Plate_SF_0.csv', 'S235JR_Plate_Depth_0.csv',
-                                   'S235JR_Plate_SF_1.csv', 'S235JR_Plate_Depth_1.csv',
-                                   'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
-                                   'S235JR_Plate_SF_3.csv', 'S235JR_Plate_Depth_3.csv',
-                                   'S235JR_Plate_SF_4.csv', 'S235JR_Plate_Depth_4.csv', ]
-    dataSet.validation_data_paths = ['S235JR_Notch_Normal_0.csv', 'S235JR_Notch_Normal_1.csv',
-                                     'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
-                                     'S235JR_Notch_Normal_4.csv', 'S235JR_Notch_Depth_0.csv',
-                                     'S235JR_Notch_Depth_1.csv', 'S235JR_Notch_Depth_2.csv',
-                                     'S235JR_Notch_Depth_3.csv', 'S235JR_Notch_Depth_4.csv', ]
-    dataSet.testing_data_paths = ['AL_2007_T4_Gear_Normal_3.csv', 'AL_2007_T4_Plate_Normal_3.csv',
-                                  'S235JR_Gear_Normal_3.csv', 'S235JR_Plate_Normal_3.csv']
-
-    dataSet.header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z",
-                      "materialremoved_sim"]
+    #dataSet.header = ["pos_sp", "pos_x", "pos_y", "pos_z", "v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp",
+    #                  "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.add_sign_hold = True
 
@@ -265,8 +253,8 @@ if __name__ == '__main__':
     model_lin = mphys.LinearModel()
     model_phys = mphys.FrictionModel()
     model = Experts_2()
-    model.expert1 = copy.deepcopy(model_rf)
-    model.expert2 = copy.deepcopy(model_rnn)
+    model.expert1 = copy.deepcopy(model_phys)
+    model.expert2 = mphys.LuGreModelSciPy()
 
     model.name = 'Mixed_Experts_2'
     models = [model]

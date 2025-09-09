@@ -21,10 +21,6 @@ if __name__ == "__main__":
 
     dataSet = hdata.DataClass_ST_Plate_Notch
 
-    dataSet.folder = '..\\..\\Data'
-    dataSet.testing_data_paths = ['DMC60H_AL2007T4_Validierung_Normal_2.csv', 'DMC60H_AL2007T4_Plate_Normal_3.csv',
-                                  'DMC60H_S235JR_Validierung_Normal_2.csv', 'DMC60H_S235JR_Plate_Normal_3.csv']
-
     #dataSet.header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z",
     #                  "materialremoved_sim"]
 

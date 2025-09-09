@@ -1421,6 +1421,125 @@ class PiNNFriction(Net):
         }}
         return documentation
 
+class PiRNNFriction(RNN):
+    def __init__(self, *args, name="PiRNNFriction", penalty_weight=1, optimizer_type='adam', learning_rate=0.001, theta_init=None,**kwargs):
+        super(PiRNNFriction, self).__init__(*args, learning_rate=learning_rate, **kwargs)
+        self.name = name
+        self.penalty_weight = penalty_weight
+        self.optimizer_type = optimizer_type
+        self.theta_init = theta_init
+        self.input_head = hdata.HEADER_x
+        # Neue Parameter-Matrix für alle Achsen
+        if theta_init is not None:
+            if theta_init.shape != (4, 5):
+                raise ValueError("theta_init must have shape (4, 5)")
+            self.theta = nn.Parameter(torch.tensor(theta_init, dtype=torch.float32))
+        else:
+            self.theta = nn.Parameter(torch.zeros(4, 5, dtype=torch.float32))  # Achsen: x, y, z, sp
+
+    def get_indices_by_prefix(self, header, prefix):
+        return [index for index, item in enumerate(header) if item.startswith(prefix)]
+
+    def criterion(self, y_target, y_pred, x_input=None):
+        criterion = nn.MSELoss()
+        mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
+
+        if x_input is not None and (y_pred.requires_grad or y_target.requires_grad):
+            x_input = x_input.clone().detach().requires_grad_(True)
+
+            # Temporär CuDNN deaktivieren, um "double backwards" zu ermöglichen
+            with torch.backends.cudnn.flags(enabled=False):
+                y_pred_physics = self(x_input)
+
+            dy_dx = torch.autograd.grad(
+                outputs=y_pred_physics,
+                inputs=x_input,
+                grad_outputs=torch.ones_like(y_pred_physics),
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True
+            )[0]
+
+            axis = self.target_channel.replace('curr_', '')
+            indices_a = self.get_indices_by_prefix(self.input_head, f'a_{axis}')
+            indices_f = self.get_indices_by_prefix(self.input_head, f'f_{axis}')
+            indices_v = self.get_indices_by_prefix(self.input_head, f'v_{axis}')
+            indices_z = self.get_indices_by_prefix(self.input_head, f'z_{axis}')
+
+            all_excluded_indices = set(indices_a + indices_f + indices_v + indices_z)
+            remaining_indices = [i for i in range(dy_dx.shape[1]) if i not in all_excluded_indices]
+
+            dy_remaining = dy_dx[:, remaining_indices]
+            dy_da = dy_dx[:, indices_a]
+            dy_df = dy_dx[:, indices_f]
+            dy_dv = dy_dx[:, indices_v]
+            dy_dz = dy_dx[:, indices_z]
+
+            a = x_input[:, indices_a]
+            f = x_input[:, indices_f]
+            v = x_input[:, indices_v]
+            z = x_input[:, indices_z]
+
+            constraint = []
+            deriv = dy_dv + dy_df + dy_da + dy_dz
+            dim = v.shape[1]
+            influences = (
+                    self.theta[1, 0] +
+                    v * self.theta[:dim, 1] +
+                    f * self.theta[:dim, 2] +
+                    a * self.theta[:dim, 3] +
+                    z * self.theta[:dim, 4]
+            )
+            constraint_i = deriv - influences
+            constraint.append(constraint_i.unsqueeze(1))
+            constraint = torch.cat(constraint, dim=1)
+            penalty = torch.mean(constraint ** 2) + 1 / 10 * torch.mean(dy_remaining ** 2)
+
+            return mse_loss + self.penalty_weight * penalty
+
+        return mse_loss
+
+    def scaled_to_tensor(self, data):
+        if isinstance(data, torch.Tensor):
+            return data.to(self.device)
+        elif hasattr(data, 'values'):
+            data_scaled = self.scale_data(data.values)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+        else:
+            data_scaled = self.scale_data(data)
+            return torch.tensor(data_scaled, dtype=torch.float32).to(self.device)
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        original_criterion = self.criterion
+
+        self.input_head = [col for col in X_train.columns if "_1_current" in col]
+        current_input = self.scaled_to_tensor(X_train)
+
+        def custom_train_model(*args, **kwargs):
+            nonlocal current_input
+            original_train_model = super(PiRNNFriction, self).train_model
+
+            def patched_criterion(y_target, y_pred):
+                return original_criterion(y_target, y_pred, x_input=current_input)
+
+            self.criterion = patched_criterion
+            result = original_train_model(*args, **kwargs)
+            self.criterion = original_criterion
+            return result
+
+        return custom_train_model(X_train, y_train, X_val, y_val, **kwargs)
+
+    def get_documentation(self):
+        documentation = {"hyperparameters": {
+            "learning_rate": self.learning_rate,
+            "n_hidden_size": self.n_hidden_size,
+            "n_hidden_layers": self.n_hidden_layers,
+            "n_activation_function": self.activation.__class__.__name__,
+            "optimizer_type": self.optimizer_type,
+            "penalty_weight": self.penalty_weight,
+        }}
+        return documentation
+
 class PiNNNaive(Net):
     def __init__(self, *args, name="PiNN_Naive", penalty_weight=1, optimizer_type='adam', learning_rate=0.001,  theta_init=None, **kwargs):
         super(PiNNNaive, self).__init__(*args,learning_rate=learning_rate, **kwargs)

@@ -136,17 +136,28 @@ def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50,
     plt.show()
 
 if __name__ == '__main__':
+
+    REFERENCE = True
+    show_results = False
+
     tool_diameter = 10
     target_frequency = 50
-    path_material_constant = '..\\Simulation\optimized_parameters.json'
+    if REFERENCE:
+        path_material_constant = '..\\Simulation\optimized_parameters_old.json'
+    else:
+        path_material_constant = '..\\Simulation\\optimized_parameters.json'
 
-    show_results = False
+
     path = '..\\DataSets_CMX_Plate_Notch_Gear/DataMerged'
-    path_target = '..\\DataSets_CMX_Plate_Notch_Gear/DataSimulated'
+    if REFERENCE:
+        path_target = '..\\DataSets_CMX_Plate_Notch_Gear_Reference/DataSimulated'
+    else:
+        path_target = '..\\DataSets_CMX_Plate_Notch_Gear/DataSimulated'
+
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)
     files = os.listdir(path)
-    #files = ['AL2007T4_Plate_Depth.csv']
+    #files = ['AL2007T4_Plate_Normal.csv']
     for file in files:
         if not file.endswith('.csv'):
             continue

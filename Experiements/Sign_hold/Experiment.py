@@ -46,7 +46,10 @@ if __name__ == '__main__':
     model_rnn = mnn.RNN(learning_rate= 0.07767273410029314, n_hidden_size= 86, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    models = [model_rnn, model_rf]
+    model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 130, n_hidden_layers= 1,
+                    activation= 'Tanh', optimizer_type= 'quasi_newton')
+
+    models = [model_rnn]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

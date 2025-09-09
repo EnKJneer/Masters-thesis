@@ -14,6 +14,7 @@ import seaborn as sns
 from numpy.exceptions import AxisError
 from sklearn.metrics import mean_absolute_error
 
+import Helper.handling_hyperopt as hyperopt
 import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
@@ -261,8 +262,13 @@ class BasePlotter(ABC):
         # Spezifische Ersetzung für 'Recurrent Neural Net'
         ergebnis = re.sub(r'Recurrent Neural Net', 'Recurrent\nNeural Net', ergebnis)
 
+        # Spezifische Ersetzung für 'Random Forest'
+        ergebnis = re.sub(r'Random Forest', 'Random\nForest', ergebnis)
+
         # Bestehende Ersetzung für \w+Sampler
         ergebnis = re.sub(r'(\w+Sampler)', r'\n\1', ergebnis)
+        # Trenne die art des Samplers vom Wort Sampler und fügt einen umbruch hinzu
+        ergebnis = re.sub(r'(\w+)(Sampler)', r'\1-\n\2', ergebnis)
 
         return ergebnis
 
@@ -1135,24 +1141,49 @@ def calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_resu
         ])
         header_list[j].append(name)
 
+def setup_experiment_directory(experiment_name):
+    """
+    Creates a directory for storing experiment results.
 
-def run_experiment(dataSets, models,
-                   NUMBEROFEPOCHS=800, NUMBEROFMODELS=10, batched_data=False,
-                   patience=5, plot_types=None,
-                   experiment_name = 'Experiment'):
+    The directory is created inside the 'Results' folder and includes a timestamp
+    to uniquely identify the experiment.
 
-    if type(dataSets) is not list:
-        dataSets = [dataSets]
-    if type(models) is not list:
-        models = [models]
+    Args:
+        experiment_name (str): Name of the experiment, used in the directory name.
 
-    # Create directory for results
+    Returns:
+        str: Path to the created directory.
+
+    Example:
+        >>> results_dir = setup_experiment_directory("Test_Experiment")
+        >>> print(results_dir)
+        'Results/Test_Experiment-2025_09_05_14_30_00'
+    """
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    results_dir = experiment_name +'-'+ timestamp
-    results_dir = os.path.join('Results', results_dir)
+    results_dir = os.path.join('Results', f"{experiment_name}-{timestamp}")
     os.makedirs(results_dir, exist_ok=True)
+    return results_dir
 
-    # Define the meta information structure
+def prepare_meta_information(dataSets, models, NUMBEROFEPOCHS, batched_data=False):
+    """
+    Creates a dictionary containing meta-information about the datasets and models used in the experiment.
+
+    This information is later saved in the experiment's documentation.
+
+    Args:
+        dataSets (list): List of datasets used in the experiment.
+        models (list): List of models used in the experiment.
+        NUMBEROFEPOCHS (int): Number of training epochs.
+        batched_data (bool, optional): Whether the data is processed in batches. Defaults to False.
+
+    Returns:
+        dict: Dictionary containing meta-information about datasets and models.
+
+    Example:
+        >>> meta_info = prepare_meta_information([dataset1, dataset2], [model1, model2], 800)
+        >>> print(meta_info.keys())
+        ['DataSets', 'Models', 'Data_Preprocessing']
+    """
     meta_information = {
         "DataSets": [],
         "Models": [],
@@ -1161,206 +1192,356 @@ def run_experiment(dataSets, models,
             "NUMBEROFEPOCHS": NUMBEROFEPOCHS,
         }
     }
-
-    # Add datasets to meta information
     for data_params in dataSets:
-        data_info = {
-            **data_params.get_documentation()
-        }
-        meta_information["DataSets"].append(data_info)
+        meta_information["DataSets"].append({**data_params.get_documentation()})
+    return meta_information
 
-    """ Prediction """
-    results = []
+def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y_train, y_val, y_test,  NUMBEROFEPOCHS: int,
+    NUMBEROFMODELS: int, patience: int, raw_data: list, results: list, df_list_results: list, header_list: list) -> list:
+    """
+    Trains and evaluates a list of models on the given data.
+
+    For each model, multiple runs (`NUMBEROFMODELS`) are performed to ensure robustness.
+
+    Args:
+        models (list): List of models to train.
+        dataClass: Class encapsulating the data and its properties.
+        X_train: Training data (features).
+        X_val: Validation data (features).
+        X_test: Test data (features).
+        y_train: Training data (labels).
+        y_val: Validation data (labels).
+        y_test: Test data (labels).
+        NUMBEROFEPOCHS (int): Number of training epochs.
+        NUMBEROFMODELS (int): Number of runs per model.
+        patience (int): Number of epochs without improvement before stopping training.
+        raw_data (list): Raw data for later analysis.
+        results (list): List to store the results.
+        df_list_results (list): List of DataFrames for intermediate results.
+        header_list (list): List of column headers for intermediate results.
+
+    Returns:
+        list: The trained models.
+
+    Example:
+        >>> models = train_and_evaluate_models(
+        ...     [model1, model2],
+        ...     dataClass,
+        ...     X_train, X_val, X_test,
+        ...     y_train, y_val, y_test,
+        ...     800, 10, 5,
+        ...     raw_data, results, df_list_results, header_list
+        ... )
+    """
     models_copy = copy.deepcopy(models)
-    for i, dataClass in enumerate(dataSets):
-        print(f"\n===== Verarbeitung: {dataClass.name} =====")
-        # Daten laden
-        X_train, X_val, X_test, y_train, y_val, y_test = dataClass.load_data()
-        raw_data = dataClass.load_raw_test_data()
-        if isinstance(X_test, list):
-            df_list_results = [pd.DataFrame() for x in range(len(X_test))]
-            header_list = [[] for x in range(len(X_test))]
-        else:
-            df_list_results = [pd.DataFrame()]
-            header_list = []
-
-        # Train and test models
-        for idx, model in enumerate(models):
-            # Modellvergleich auf neuen Daten
-            nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
-
-            for _ in range(NUMBEROFMODELS):
-                model = models_copy[idx]
-                if hasattr(model, 'input_size'):
-                    model.input_size = None
-                    model.scaler = None
-                model.target_channel = dataClass.target_channels[0]
-                model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience)
-                if hasattr(model, 'clear_active_experts_log'):
-                    model.clear_active_experts_log()  # Clear the log for the next test
-                if isinstance(X_test, list):
-                    for i, (x, y) in enumerate(zip(X_test, y_test)):
-                        mse, pred_nn = model.test_model(x, y)
-                        print(f"{model.name}: Test RMAE: {mse}")
-                        nn_preds[i].append(pred_nn.flatten())
-
-                        # Check if the model has the method to plot active experts and call it
-                        if hasattr(model, 'plot_active_experts'):
-                            model.plot_active_experts()
-                            model.clear_active_experts_log()  # Clear the log for the next test
-                else:
-                    mse, pred_nn = model.test_model(X_test, y_test)
+    for idx, model in enumerate(models_copy):
+        nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
+        for _ in range(NUMBEROFMODELS):
+            model = models_copy[idx]
+            if hasattr(model, 'input_size'):
+                model.input_size = None
+                model.scaler = None
+            model.target_channel = dataClass.target_channels[0]
+            model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience)
+            if hasattr(model, 'clear_active_experts_log'):
+                model.clear_active_experts_log()
+            if isinstance(X_test, list):
+                for i, (x, y) in enumerate(zip(X_test, y_test)):
+                    mse, pred_nn = model.test_model(x, y)
                     print(f"{model.name}: Test RMAE: {mse}")
-                    nn_preds.append(pred_nn.flatten())
-
-                    # Check if the model has the method to plot active experts and call it
+                    nn_preds[i].append(pred_nn.flatten())
                     if hasattr(model, 'plot_active_experts'):
                         model.plot_active_experts()
-                        model.clear_active_experts_log()  # Clear the log for the next test
-                models[idx] = model # save for documentation
-            # Fehlerberechnung
-            calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
-                                        raw_data)
+                        model.clear_active_experts_log()
+            else:
+                mse, pred_nn = model.test_model(X_test, y_test)
+                print(f"{model.name}: Test RMAE: {mse}")
+                nn_preds.append(pred_nn.flatten())
+                if hasattr(model, 'plot_active_experts'):
+                    model.plot_active_experts()
+                    model.clear_active_experts_log()
+        calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list, raw_data)
+    return models_copy
 
-    # After training to include learned parameters
-    # Add models to meta information
-    for model in models:
-        model_info = {
-            model.name: {
-                "NUMBEROFMODELS": NUMBEROFMODELS,
-                **model.get_documentation()
-            },
-        }
-        meta_information["Models"].append(model_info)
+def save_results(results_dir: str, results: list, documentation: dict, plot_paths: dict, improvement_results: list = None) -> None:
+    """
+    Saves the results, documentation, and plots of an experiment to the specified directory.
 
-    # Save the meta information to a JSON file
-    documentation = meta_information
+    Args:
+        results_dir (str): Directory where the results will be saved.
+        results (list): List of results in the format [DataSet, DataPath, Model, MAE, StdDev, ...].
+        documentation (dict): Dictionary containing meta-information and documentation.
+        plot_paths (dict): Dictionary with paths to the generated plots.
+        improvement_results (list, optional): List of model improvements. Defaults to None.
 
-    # ========== MODULARE PLOT-ERSTELLUNG ==========
+    Returns:
+        None
 
-    # DataFrame mit korrigierter Struktur erstellen
+    Example:
+        >>> save_results(
+        ...     "Results/Test_Experiment-2025_09_05_14_30_00",
+        ...     results,
+        ...     documentation,
+        ...     plot_paths,
+        ...     improvement_results
+        ... )
+    """
     df = pd.DataFrame(results, columns=HEADER)
-
-    # Modulare Plots erstellen
-    print("\n===== Erstelle Plots =====")
-    plot_paths = create_plots_modular(results_dir, results, plot_types)
-
-    # Plot-Pfade zur Dokumentation hinzufügen
-    documentation["Generated_Plots"] = plot_paths
-
-    # ========== VERBESSERUNGSBERECHNUNG ==========
-
-    # Prozentuale Verbesserung berechnen (korrigiert für DataPath-Struktur)
-    improvement_results = []
-    datasets = df['DataSet'].unique()
-    datapaths = df['DataPath'].unique()
-
-    # Referenzmodell (erstes Modell) für Vergleiche
-    reference_model = df['Model'].iloc[0]
-
-    for dataset in datasets:
-        for datapath in datapaths:
-            df_subset = df[(df['DataSet'] == dataset) & (df['DataPath'] == datapath)]
-
-            if len(df_subset) > 1:  # Mindestens 2 Modelle vorhanden
-                reference_mse = df_subset[df_subset['Model'] == reference_model]['MAE'].values
-
-                if len(reference_mse) > 0:
-                    reference_mse = reference_mse[0]
-
-                    for _, row in df_subset.iterrows():
-                        if row['Model'] != reference_model:
-                            improvement = (reference_mse - row['MAE']) / reference_mse * 100
-                            improvement_results.append([
-                                dataset, datapath, reference_model, row['Model'], improvement
-                            ])
-
-    # ========== ERGEBNISSE SPEICHERN ==========
-
-    print("\n===== Modellvergleichsergebnisse =====")
-    results_file = os.path.join(results_dir, 'Results.txt')
-
-    with open(results_file, 'w', encoding='utf-8') as f:
-        # Hauptergebnisse
+    # Speichern der Ergebnisse in Textdatei
+    with open(os.path.join(results_dir, 'Results.txt'), 'w', encoding='utf-8') as f:
         f.write("EXPERIMENT RESULTS\n")
         f.write("=" * 80 + "\n\n")
         f.write(f"{'DataSet':<20} | {'DataPath':<15} | {'Model':<15} | {'MAE':<10} | {'StdDev':<10}\n")
         f.write("-" * 80 + "\n")
-
         for row in results:
-            print(f"{row[0]:<20} | {row[1]:<15} | {row[2]:<15} | {row[3]:.6f} | {row[4]:.6f}")
             f.write(f"{row[0]:<20} | {row[1]:<15} | {row[2]:<15} | {row[3]:.6f} | {row[4]:.6f}\n")
-
-        # Verbesserungen
-        if improvement_results:
-            f.write(f"\n\nMODEL IMPROVEMENTS (vs {reference_model})\n")
-            f.write("=" * 80 + "\n")
-            f.write(
-                f"{'DataSet':<20} | {'DataPath':<15} | {'Reference':<12} | {'Compared':<12} | {'Improvement %':<12}\n")
-            f.write("-" * 80 + "\n")
-
-            for row in improvement_results:
-                improvement_str = f"{row[4]:+.2f}%"
-                print(f"{row[0]:<20} | {row[1]:<15} | {row[2]:<12} | {row[3]:<12} | {improvement_str:<12}")
-                f.write(f"{row[0]:<20} | {row[1]:<15} | {row[2]:<12} | {row[3]:<12} | {improvement_str:<12}\n")
-
-        # Plot-Übersicht
-        f.write(f"\n\nGENERATED PLOTS\n")
-        f.write("=" * 40 + "\n")
-        for plot_type, paths in plot_paths.items():
-            f.write(f"{plot_type.title()}: {len(paths)} plots\n")
-            for path in paths:
-                f.write(f"  - {os.path.basename(path)}\n")
-
-    # ========== ERWEITERTE DOKUMENTATION ==========
-
-    documentation["Results"] = {
-        #"Model_Comparison": results,
-        "Improvement_Analysis": improvement_results,
-        "Summary_Statistics": {
-            "Total_Experiments": len(results),
-            "Datasets_Tested": len(datasets),
-            "DataPaths_per_Dataset": {
-                dataset: len(df[df['DataSet'] == dataset]['DataPath'].unique())
-                for dataset in datasets
-            },
-            "Models_Compared": df['Model'].unique().tolist(),
-            "Best_Model_Overall": df.loc[df['MAE'].idxmin(), 'Model'],
-            "Worst_Model_Overall": df.loc[df['MAE'].idxmax(), 'Model']
-        }
-    }
-    # JSON-Dokumentation speichern
+    # Speichern der Dokumentation als JSON
     documentation_file = os.path.join(results_dir, 'documentation.json')
     with open(documentation_file, 'w', encoding='utf-8') as json_file:
         json.dump(documentation, json_file, indent=4, ensure_ascii=False)
-
-    # CSV-Export der Ergebniss Übersicht
-    csv_file = os.path.join(results_dir, 'results.csv')
-    df_csv = df[["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble"]]
-    df_csv.to_csv(csv_file, index=False)
-    # CSV-Export der Daten
-    save_detailed_csv(df, results_dir)
-
+    # Speichern der Plots
+    for plot_type, paths in plot_paths.items():
+        for path in paths:
+            print(f"Plot gespeichert: {path}")
+    # Speichern der Verbesserungen als CSV
     if improvement_results:
-        improvement_df = pd.DataFrame(improvement_results,
-                                      columns=["DataSet", "DataPath", "Reference_Model",
-                                               "Compared_Model", "Improvement_Percent"])
-        improvement_csv = os.path.join(results_dir, 'improvements.csv')
-        improvement_df.to_csv(improvement_csv, index=False)
+        improvement_df = pd.DataFrame(improvement_results, columns=["DataSet", "DataPath", "Reference_Model", "Compared_Model", "Improvement_Percent"])
+        improvement_df.to_csv(os.path.join(results_dir, 'improvements.csv'), index=False)
 
-    print(f"\n===== Ergebnisse gespeichert =====")
-    print(f"Hauptverzeichnis: {results_dir}")
-    print(f"Dokumentation: documentation.json, Results.txt")
-    print(f"CSV-Dateien: results.csv" + (", improvements.csv" if improvement_results else ""))
-    print(f"Plots: {sum(len(paths) for paths in plot_paths.values())} Dateien im plots/ Unterverzeichnis")
+def calculate_improvements(results: list) -> list:
+    """
+    Calculates the percentage improvements of models compared to a reference model.
 
+    Args:
+        results (list): List of results in the format [DataSet, DataPath, Model, MAE, StdDev, ...].
+
+    Returns:
+        list: List of improvements in the format [DataSet, DataPath, Reference_Model, Compared_Model, Improvement_Percent].
+
+    Example:
+        >>> improvements = calculate_improvements(results)
+        >>> print(improvements[0])
+        ['Dataset1', 'DataPath1', 'ReferenceModel', 'ComparedModel', 15.2]
+    """
+    df = pd.DataFrame(results, columns=HEADER)
+    improvement_results = []
+    datasets = df['DataSet'].unique()
+    datapaths = df['DataPath'].unique()
+    reference_model = df['Model'].iloc[0]
+    for dataset in datasets:
+        for datapath in datapaths:
+            df_subset = df[(df['DataSet'] == dataset) & (df['DataPath'] == datapath)]
+            if len(df_subset) > 1:
+                reference_mse = df_subset[df_subset['Model'] == reference_model]['MAE'].values[0]
+                for _, row in df_subset.iterrows():
+                    if row['Model'] != reference_model:
+                        improvement = (reference_mse - row['MAE']) / reference_mse * 100
+                        improvement_results.append([dataset, datapath, reference_model, row['Model'], improvement])
+    return improvement_results
+
+def run_experiment(dataSets, models, NUMBEROFEPOCHS: int = 800, NUMBEROFMODELS: int = 10, batched_data: bool = False,
+    patience: int = 5, plot_types: list = None, experiment_name: str = 'Experiment') -> dict:
+    """
+    Runs an experiment without hyperparameter optimization.
+
+    Trains and evaluates the specified models on the given datasets.
+    Saves the results, plots, and documentation in the results directory.
+
+    Args:
+        dataSets: A dataset or a list of datasets.
+        models: A model or a list of models.
+        NUMBEROFEPOCHS (int, optional): Number of training epochs. Defaults to 800.
+        NUMBEROFMODELS (int, optional): Number of runs per model. Defaults to 10.
+        batched_data (bool, optional): Whether the data is processed in batches. Defaults to False.
+        patience (int, optional): Number of epochs without improvement before stopping training. Defaults to 5.
+        plot_types (list, optional): List of plot types to generate. Defaults to None.
+        experiment_name (str, optional): Name of the experiment. Defaults to 'Experiment'.
+
+    Returns:
+        dict: A dictionary containing the results, improvements, documentation, and plot paths.
+
+    Example:
+        >>> results = run_experiment(
+        ...     [dataset1, dataset2],
+        ...     [model1, model2],
+        ...     NUMBEROFEPOCHS=800,
+        ...     NUMBEROFMODELS=10,
+        ...     experiment_name="Test_Experiment"
+        ... )
+    """
+    if type(dataSets) is not list:
+        dataSets = [dataSets]
+    if type(models) is not list:
+        models = [models]
+    # Verzeichnis erstellen
+    results_dir = setup_experiment_directory(experiment_name)
+    # Meta-Informationen vorbereiten
+    meta_information = prepare_meta_information(dataSets, models, NUMBEROFEPOCHS, batched_data)
+    # Ergebnisse initialisieren
+    results = []
+    for i, dataClass in enumerate(dataSets):
+        print(f"\n===== Verarbeitung: {dataClass.name} =====")
+        X_train, X_val, X_test, y_train, y_val, y_test = dataClass.load_data()
+        raw_data = dataClass.load_raw_test_data()
+        if isinstance(X_test, list):
+            df_list_results = [pd.DataFrame() for _ in range(len(X_test))]
+            header_list = [[] for _ in range(len(X_test))]
+        else:
+            df_list_results = [pd.DataFrame()]
+            header_list = []
+        # Modelle trainieren und evaluieren
+        models = train_and_evaluate_models(models, dataClass, X_train, X_val, X_test, y_train, y_val, y_test, NUMBEROFEPOCHS, NUMBEROFMODELS, patience, raw_data, results, df_list_results, header_list)
+    # Meta-Informationen aktualisieren
+    for model in models:
+        meta_information["Models"].append({model.name: {"NUMBEROFMODELS": NUMBEROFMODELS, **model.get_documentation()}})
+    # Plots erstellen
+    plot_paths = create_plots_modular(results_dir, results, plot_types)
+    # Verbesserungen berechnen
+    improvement_results = calculate_improvements(results)
+    # Ergebnisse speichern
+    save_results(results_dir, results, meta_information, plot_paths, improvement_results)
     return {
         'results_dir': results_dir,
         'results': results,
         'improvements': improvement_results,
-        'documentation': documentation,
+        'documentation': meta_information,
         'plot_paths': plot_paths
     }
+
+def run_experiment_with_hyperparameteroptimization(dataSets, models, search_spaces: list, optimization_samplers: list = ["TPESampler", "RandomSampler", "GridSampler"],
+    NUMBEROFEPOCHS: int = 800, NUMBEROFMODELS: int = 10, NUMBEROFTRIALS: int = 10, patience: int = 5, plot_types: list = None,
+    experiment_name: str = 'Experiment') -> dict:
+    """
+    Runs an experiment with hyperparameter optimization.
+
+    Optimizes the hyperparameters of the models using the specified search spaces and samplers,
+    then trains and evaluates the optimized models on the given datasets.
+    Saves the results, plots, and documentation in the results directory.
+
+    Args:
+        dataSets: A dataset or a list of datasets.
+        models: A model or a list of models.
+        search_spaces (list): List of search spaces for hyperparameter optimization.
+        optimization_samplers (list, optional): List of optimization samplers to use. Defaults to ["TPESampler", "RandomSampler", "GridSampler"].
+        NUMBEROFEPOCHS (int, optional): Number of training epochs. Defaults to 800.
+        NUMBEROFMODELS (int, optional): Number of runs per model. Defaults to 10.
+        NUMBEROFTRIALS (int, optional): Number of optimization trials. Defaults to 10.
+        patience (int, optional): Number of epochs without improvement before stopping training. Defaults to 5.
+        plot_types (list, optional): List of plot types to generate. Defaults to None.
+        experiment_name (str, optional): Name of the experiment. Defaults to 'Experiment'.
+
+    Returns:
+        dict: A dictionary containing the results, improvements, documentation, and plot paths.
+
+    Example:
+        >>> results = run_experiment_with_hyperparameteroptimization(
+        ...     [dataset1, dataset2],
+        ...     [model1, model2],
+        ...     [search_space1, search_space2],
+        ...     NUMBEROFEPOCHS=800,
+        ...     NUMBEROFMODELS=10,
+        ...     NUMBEROFTRIALS=10,
+        ...     experiment_name="Test_Experiment_Optimized"
+        ... )
+    """
+    if type(dataSets) is not list:
+        dataSets = [dataSets]
+    if type(models) is not list:
+        models = [models]
+    # Verzeichnis erstellen
+    results_dir = setup_experiment_directory(experiment_name)
+    # Meta-Informationen vorbereiten
+    meta_information = prepare_meta_information(dataSets, models, NUMBEROFEPOCHS)
+    # Ergebnisse initialisieren
+    results = []
+    reference_models = [model.get_reference_model() for model in models]
+    for i, dataClass in enumerate(dataSets):
+        print(f"\n===== Verarbeitung: {dataClass.name} =====")
+        X_train, X_val, X_test, y_train, y_val, y_test = dataClass.load_data()
+        raw_data = dataClass.load_raw_test_data()
+        if isinstance(X_test, list):
+            df_list_results = [pd.DataFrame() for _ in range(len(X_test))]
+            header_list = [[] for _ in range(len(X_test))]
+        else:
+            df_list_results = [pd.DataFrame()]
+            header_list = []
+        # Hyperparameteroptimierung durchführen
+        models_optimized = perform_hyperparameter_optimization(models, search_spaces, optimization_samplers, X_train, X_val, y_train, y_val, NUMBEROFEPOCHS, NUMBEROFTRIALS, results_dir, experiment_name)
+        # Referenzmodelle trainieren und evaluieren
+        reference_models = train_and_evaluate_models(reference_models, dataClass, X_train, X_val, X_test, y_train, y_val, y_test, NUMBEROFEPOCHS, NUMBEROFMODELS, patience, raw_data, results, df_list_results, header_list)
+        # Optimierte Modelle trainieren und evaluieren
+        models_optimized = train_and_evaluate_models(models_optimized, dataClass, X_train, X_val, X_test, y_train, y_val, y_test, NUMBEROFEPOCHS, NUMBEROFMODELS, patience, raw_data, results, df_list_results, header_list)
+    # Meta-Informationen aktualisieren
+    for model in reference_models + models_optimized:
+        meta_information["Models"].append({model.name: {"NUMBEROFMODELS": NUMBEROFMODELS, **model.get_documentation()}})
+    # Plots erstellen
+    plot_paths = create_plots_modular(results_dir, results, plot_types)
+    # Verbesserungen berechnen
+    improvement_results = calculate_improvements(results)
+    # Ergebnisse speichern
+    save_results(results_dir, results, meta_information, plot_paths, improvement_results)
+    return {
+        'results_dir': results_dir,
+        'results': results,
+        'improvements': improvement_results,
+        'documentation': meta_information,
+        'plot_paths': plot_paths
+    }
+
+def perform_hyperparameter_optimization(models: list, search_spaces: list, optimization_samplers: list,
+                                        X_train, X_val, y_train, y_val,
+                                        NUMBEROFEPOCHS: int, NUMBEROFTRIALS: int,
+                                        results_dir: str, experiment_name: str) -> list:
+    """
+    Performs hyperparameter optimization for a list of models.
+
+    For each model and sampler, an optimization is performed to find the best hyperparameters.
+
+    Args:
+        models (list): List of models to optimize.
+        search_spaces (list): List of search spaces for hyperparameter optimization.
+        optimization_samplers (list): List of optimization samplers to use.
+        X_train: Training data (features).
+        X_val: Validation data (features).
+        y_train: Training data (labels).
+        y_val: Validation data (labels).
+        NUMBEROFEPOCHS (int): Number of training epochs.
+        NUMBEROFTRIALS (int): Number of optimization trials.
+        results_dir (str): Directory where optimization results will be saved.
+        experiment_name (str): Name of the experiment.
+
+    Returns:
+        list: List of optimized models.
+
+    Example:
+        >>> models_optimized = perform_hyperparameter_optimization(
+        ...     [model1, model2],
+        ...     [search_space1, search_space2],
+        ...     ["TPESampler", "RandomSampler"],
+        ...     X_train, X_val, y_train, y_val,
+        ...     800, 10,
+        ...     "Results/Test_Experiment-2025_09_05_14_30_00",
+        ...     "Test_Experiment"
+        ... )
+    """
+    models_optimized = []
+    for idx, model in enumerate(models):
+        for sampler in optimization_samplers:
+            study_name = f"{experiment_name}_{sampler}_"
+            search_space = search_spaces[idx]
+            objective_nn = hyperopt.Objective(
+                search_space=search_space,
+                model=copy.copy(model),
+                data=[X_train, X_val, y_train, y_val],
+                n_epochs=NUMBEROFEPOCHS,
+                pruning=True,
+            )
+            best_params = hyperopt.optimize(objective_nn, results_dir, study_name=study_name, n_trials=NUMBEROFTRIALS, sampler=sampler)
+            model_optimized = copy.deepcopy(model)
+            model_optimized.reset_hyperparameter(**best_params)
+            model_optimized.name = f"{model_optimized.name}_{sampler}"
+            models_optimized.append(model_optimized)
+    return models_optimized
 
 def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, center_data = False):
     mae_values = []

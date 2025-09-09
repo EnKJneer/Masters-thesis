@@ -473,3 +473,40 @@ def WriteAsDefault(folderpath, search_space):
     # save the search_space
     with open('{folderpath}\\default_search_space.json'.format(folderpath=folderpath), 'w') as f:
         json.dump(search_space, f)
+
+def load_search_spaces(json_path: str) -> dict[str, any]:
+    """
+    Loads the search spaces for machine learning models from a JSON file.
+
+    This function reads a JSON file containing search spaces for different models (e.g., 'RF' for Random Forest,
+    'NN' for Neural Network). It converts lists with exactly two elements into tuples, which is useful for
+    hyperparameter optimization libraries like Optuna.
+
+    Args:
+        json_path (str): Path to the JSON file containing the search spaces.
+
+    Returns:
+        Dict[str, Any]: A dictionary where keys are model names (e.g., 'RF', 'NN') and values are dictionaries
+                        of search spaces. Lists with two elements are converted to tuples.
+
+    Example:
+        >>> search_spaces = load_search_spaces("search_spaces.json")
+        >>> print(search_spaces["RF"])
+        {
+            'n_estimators': (100, 500),
+            'min_samples_split': (2, 10),
+            'min_samples_leaf': (1, 10),
+            'max_depth': (100, 500)
+        }
+    """
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    search_spaces = data.get("search_spaces", {})
+
+    for model_name, space in search_spaces.items():
+        for key, value in space.items():
+            if isinstance(value, list) and len(value) == 2:
+                search_spaces[model_name][key] = tuple(value)
+
+    return search_spaces

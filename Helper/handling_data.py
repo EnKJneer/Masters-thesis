@@ -347,7 +347,7 @@ class DataClass(BaseDataClass):
         return documentation
 
 folder_data = '..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data'
-folder_data_reference =  '..\\..\\DataSets_Reference/DataFiltered'
+folder_data_reference =  '..\\..\\DataSets_Reference/DataFiltered' #
 dataPaths_Test = [  'DMC60H_AL2007T4_Gear_Normal_3.csv','DMC60H_AL2007T4_Plate_Normal_3.csv', 'DMC60H_S235JR_Gear_Normal_3.csv','DMC60H_S235JR_Plate_Normal_3.csv']
 
 dataPaths_Train = ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',
@@ -368,7 +368,14 @@ DataClass_Reference = DataClass('Reference', folder_data_reference,
                                 dataPaths_Test,
                                              ["curr_x"],
                                      header = HEADER_x)
-
+DataClass_Reference_2 = DataClass('Reference', '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data',
+                                ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',
+                                                 'DMC60H_S235JR_Plate_SF_1.csv', 'DMC60H_S235JR_Plate_Depth_1.csv',
+                                                 'DMC60H_S235JR_Plate_SF_3.csv', 'DMC60H_S235JR_Plate_Depth_3.csv'],
+                                ['DMC60H_S235JR_Plate_SF_2.csv', 'DMC60H_S235JR_Plate_Depth_2.csv',],
+                                dataPaths_Test,
+                                             ["curr_x"],
+                                     header = HEADER_x)
 DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                              ["curr_x"],
