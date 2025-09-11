@@ -1,0 +1,21 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net      | 0.263809 | 0.055081
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net      | 0.258720 | 0.033086
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Neural_Net      | 0.170589 | 0.031692
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Neural_Net      | 0.155551 | 0.027021
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net_TPESampler | 0.251010 | 0.083512
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net_TPESampler | 0.337120 | 0.064470
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Neural_Net_TPESampler | 0.103658 | 0.008548
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Neural_Net_TPESampler | 0.114033 | 0.002570
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net_RandomSampler | 0.221434 | 0.037346
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net_RandomSampler | 0.291301 | 0.030655
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Neural_Net_RandomSampler | 0.105493 | 0.010355
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Neural_Net_RandomSampler | 0.117654 | 0.004859
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Neural_Net_GridSampler | 0.929867 | 2.046763
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Neural_Net_GridSampler | 0.921479 | 1.974109
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Neural_Net_GridSampler | 1.511548 | 4.022747
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Neural_Net_GridSampler | 1.504492 | 4.029855

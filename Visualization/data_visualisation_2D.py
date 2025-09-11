@@ -151,6 +151,8 @@ for file in files:
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_x_sim'], label='f_x_sim', title=f'{name}')
     #plot_2d_with_color(data['pos_x'], data['pos_y'], data['f_sp'], label='f_sp', title=f'{name}')
 
+    plot_time_series(data, name, label='v', dpi=300, ylabel=None)
+
     plot_time_series(data, name, label='f_x_sim', dpi=300, ylabel='curr_x')
     #plot_time_series(data, name, label='f_y_sim', dpi=300, ylabel='curr_y')
     #plot_time_series(data, name, label='f_z_sim', dpi=300, ylabel='curr_z')

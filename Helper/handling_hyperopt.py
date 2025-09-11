@@ -275,7 +275,6 @@ def _create_grid_search_space(search_space, n_trials):
 
     return grid_search_space
 
-
 def optimize(objective, folderpath, study_name, n_trials=100, n_reduction_factor=3, sampler="TPESampler",
              show_plots=True):
     """

@@ -144,14 +144,14 @@ def plot_time_series(data, title, filename, dpi=300,
 
 # Beispielaufruf der Funktion
 material = 'S235JR'
-geometry =  'Gear'
-version = 'SF'
-path_data = '..\\DataSets\\DataSimulated'#'..\\Archiv\\DataSets\\Data' #
-file = f'{material}_{geometry}_{version}.csv'
+geometry =  'Plate'
+version = 'Normal'
+path_data = '..\\DataSets_CMX_Plate_Notch_Gear/Data'#'..\\Archiv\\DataSets\\Data' #
+file = f'DMC60H_{material}_{geometry}_{version}_3.csv'
 
 data = pd.read_csv(f'{path_data}/{file}')
-
+data['v'] = (data['v_x']**2 + data['v_y']**2)**0.5 *60
 file = file.replace('.csv','')
 #data['f_x'] = -200*data['f_x']
-plot_time_series(data, f'{material} {geometry} {version}: Verlauf der Prozesskraft',
-                 f'Kraft_z_{file}', col_name= 'f_z', label_axis ='$F$ in N', label='Simulation z-Axe', dpi=600)
+plot_time_series(data, f'{material} {geometry} {version}: Verlauf der Vorschubgeschwindigkeit',
+                 f'V_{file}', col_name= 'v', label_axis ='$v$ in mm/min', label='Vorschubgeschwindigkeit', dpi=600)

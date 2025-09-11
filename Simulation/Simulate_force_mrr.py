@@ -143,9 +143,9 @@ if __name__ == '__main__':
     tool_diameter = 10
     target_frequency = 50
     if REFERENCE:
-        path_material_constant = '..\\Simulation\optimized_parameters_old.json'
+        path_material_constant = 'parameters_literature.json'
     else:
-        path_material_constant = '..\\Simulation\\optimized_parameters.json'
+        path_material_constant = '..\\Simulation\\parameters_optimized.json'
 
 
     path = '..\\DataSets_CMX_Plate_Notch_Gear/DataMerged'

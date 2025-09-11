@@ -4,6 +4,8 @@ import os
 import ast
 import re
 
+import shap
+import torch
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,6 +14,7 @@ from typing import Dict, List, Optional
 from datetime import datetime
 import seaborn as sns
 from numpy.exceptions import AxisError
+from numpy.f2py.auxfuncs import throw_error
 from sklearn.metrics import mean_absolute_error
 
 import Helper.handling_hyperopt as hyperopt
@@ -1027,7 +1030,14 @@ def create_plots_modular(results_dir: str, results: List, plot_types: List[str] 
             print(f"Beispiel result: {results[0]}")
             print(f"Länge erstes Element: {len(results[0])}")
 
-    df = pd.DataFrame(results, columns=HEADER)
+    if len(results[0]) == 9:
+        df = pd.DataFrame(results, columns=HEADER)
+    elif len(results[0]) == 10:
+        header = HEADER
+        header.append('SHARPLY')
+        df = pd.DataFrame(results, columns=header)
+    else:
+        throw_error('Results contains more than 9 or 10 elements')
 
     if DEBUG:
         # DataFrame validieren
@@ -1235,6 +1245,7 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
     """
     models_copy = copy.deepcopy(models)
     for idx, model in enumerate(models_copy):
+
         nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
         for _ in range(NUMBEROFMODELS):
             model = models_copy[idx]
@@ -1487,6 +1498,324 @@ def run_experiment_with_hyperparameteroptimization(dataSets, models, search_spac
         'documentation': meta_information,
         'plot_paths': plot_paths
     }
+
+
+def calculate_shap_values(model, data):
+    """
+    Calculate Shapley values for a given model and data using the SHAP library.
+
+    Parameters:
+        model: The neural network model for which Shapley values are calculated.
+        data: Input data for which Shapley values are calculated. If not a tensor, it will be converted.
+
+    Returns:
+        shap_values: Shapley values calculated by SHAP.
+    """
+    if type(model) != mrf.RandomForestModel:
+        # Convert data to tensor if it's not already
+        if not isinstance(data, torch.Tensor):
+            data = torch.tensor(data, dtype=torch.float32)
+
+        # Move data to the model's device if the model has a device attribute
+        if hasattr(model, 'device'):
+            data = data.to(model.device)
+
+
+    # Create a SHAP explainer with a smaller background dataset
+    background_size = min(1000, data.shape[0])  # Limit background size
+    background_data = data[:background_size]
+
+    # Calculate Shapley values for a subset of data if it's too large
+    sample_size = min(500, data.shape[0])
+    sample_data = data[:sample_size]
+
+    if type(model) == mrf.RandomForestModel:
+
+        explainer = shap.Explainer(model.model)
+        shap_values = explainer.shap_values(sample_data)
+    elif type(model) == mnn.RNN:
+        # Workaround: cuDNN benötigt train-Modus
+        model.train(True)
+        for module in model.modules():
+            if isinstance(module, torch.nn.Dropout):
+                module.eval()
+
+        explainer = shap.GradientExplainer(model, background_data)
+        shap_values = explainer.shap_values(sample_data)
+    else:
+        explainer = shap.DeepExplainer(model, background_data)
+        # Disable additivity check to avoid numerical precision issues
+        shap_values = explainer.shap_values(sample_data, check_additivity=False)
+
+
+    return shap_values
+
+
+def calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
+                                          raw_data):
+    """
+    Calculate MAE and standard deviation, calculate Shapley values if model is RNN, and store the results.
+    """
+    for j, path in enumerate(dataClass.testing_data_paths):
+        name = model.name + "_" + path.replace('.csv', '')
+        mse_nn, std_nn, mae_ensemble = calculate_mae_and_std(nn_preds[j],
+                                                             y_test[j].values if isinstance(y_test[j],
+                                                                                            pd.DataFrame) else
+                                                             y_test[j])
+        predictions = []
+        for pred in nn_preds[j]:
+            predictions.append(pred.tolist())
+
+        # Save raw data as a dictionary (JSON-serializable)
+        raw_data_dict = {
+            'columns': raw_data[j].columns.tolist(),
+            'data': raw_data[j].to_dict('records')  # As a list of dictionaries
+        }
+
+        # Calculate Shapley values if model is RNN
+        shap_values = None
+
+        try:
+            # Get X_test data properly
+            data_tuple = dataClass.load_data()
+            X_test = data_tuple[2]  # X_test is at position 2
+
+            if isinstance(X_test, list):
+                X_test_data = X_test[j]
+            else:
+                X_test_data = X_test
+
+            # Convert to numpy if it's a DataFrame
+            if hasattr(X_test_data, 'values'):
+                X_test_data = X_test_data.values
+            elif hasattr(X_test_data, 'to_numpy'):
+                X_test_data = X_test_data.to_numpy()
+
+            # Debug data shape and content
+            print(f"DEBUG: X_test_data shape: {X_test_data.shape}")
+            print(f"DEBUG: X_test_data range: {np.min(X_test_data)} to {np.max(X_test_data)}")
+
+            # Normalize or scale the data if values are very large
+            if np.max(np.abs(X_test_data)) > 1000:
+                print("Warning: Large input values detected, consider scaling")
+                # You might want to apply the same scaling used during training
+                # For now, we'll proceed but this might cause the large SHAP values
+
+            print(f"Calculating SHAP values for {model.name} on {path}")
+            shap_values = calculate_shap_values(model, X_test_data)
+            print(f"SHAP values calculated successfully for {model.name}")
+
+        except Exception as e:
+            print(f"Warning: Could not calculate SHAP values for {model.name} on {path}: {e}")
+            import traceback
+            traceback.print_exc()
+            shap_values = None
+
+        # Store results with raw_data and shap_values
+        df_list_results[j][name] = np.mean(nn_preds[j], axis=0)
+        results.append([
+            dataClass.name,  # dataClass
+            path.replace('.csv', ''),  # DataPath
+            model.name,  # Model
+            mse_nn,  # MAE
+            std_nn,  # StdDev
+            mae_ensemble,
+            predictions,
+            y_test[j].values.tolist() if isinstance(y_test[j], pd.DataFrame) else y_test[j].tolist(),
+            raw_data_dict,  # RawData as dictionary
+            shap_values  # Shapley values
+        ])
+        header_list[j].append(name)
+
+
+def plot_shap_values(shap_values, feature_names, output_dir, model_name, clip_quantile=0.95):
+    """
+    Plot Shapley values and save the plot to a specified directory.
+
+    Parameters:
+        shap_values: Shapley values to plot.
+        feature_names: Names of the features corresponding to the Shapley values.
+        output_dir: Directory where the plot will be saved.
+        model_name: Name of the model, used in the plot title and filename.
+
+    Returns:
+        plot_path: Path to the saved plot.
+    """
+    try:
+        import matplotlib.pyplot as plt
+
+        # Kopie erstellen, um Original nicht zu verändern
+        shap_clipped = shap_values
+
+        # Clip symmetrisch um 0
+        q = np.quantile(np.abs(shap_clipped), clip_quantile)
+        shap_clipped = np.clip(shap_clipped, -q, q)
+
+        plt.figure(figsize=(12, 6))
+        sns.heatmap(
+            shap_clipped.T,
+            cmap="coolwarm",
+            center=0,
+            xticklabels=50,
+            yticklabels=feature_names
+        )
+        plt.title(f"SHAP values heatmap ({model_name})\n(clipped at {clip_quantile * 100:.1f}th percentile)")
+        plt.xlabel("Time index")
+        plt.ylabel("Feature")
+        plt.tight_layout()
+
+        plot_path = os.path.join(output_dir, f"shap_heatmap_filtered_{model_name}.png")
+        plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+        plt.close()
+
+        return plot_path
+
+    except Exception as e:
+        print(f"Error creating SHAP plot for {model_name}: {e}")
+        return None
+
+def train_and_evaluate_models_with_shap(models: list, dataClass, X_train, X_val, X_test, y_train, y_val, y_test,  NUMBEROFEPOCHS: int,
+    NUMBEROFMODELS: int, patience: int, raw_data: list, results: list, df_list_results: list, header_list: list) -> list:
+    """
+    Trains and evaluates a list of models on the given data.
+
+    For each model, multiple runs (`NUMBEROFMODELS`) are performed to ensure robustness.
+
+    Args:
+        models (list): List of models to train.
+        dataClass: Class encapsulating the data and its properties.
+        X_train: Training data (features).
+        X_val: Validation data (features).
+        X_test: Test data (features).
+        y_train: Training data (labels).
+        y_val: Validation data (labels).
+        y_test: Test data (labels).
+        NUMBEROFEPOCHS (int): Number of training epochs.
+        NUMBEROFMODELS (int): Number of runs per model.
+        patience (int): Number of epochs without improvement before stopping training.
+        raw_data (list): Raw data for later analysis.
+        results (list): List to store the results.
+        df_list_results (list): List of DataFrames for intermediate results.
+        header_list (list): List of column headers for intermediate results.
+
+    Returns:
+        list: The trained models.
+
+    Example:
+        >>> models = train_and_evaluate_models(
+        ...     [model1, model2],
+        ...     dataClass,
+        ...     X_train, X_val, X_test,
+        ...     y_train, y_val, y_test,
+        ...     800, 10, 5,
+        ...     raw_data, results, df_list_results, header_list
+        ... )
+    """
+    models_copy = copy.deepcopy(models)
+    for idx, model in enumerate(models_copy):
+        nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
+        for _ in range(NUMBEROFMODELS):
+            model = models_copy[idx]
+            if hasattr(model, 'input_size'):
+                model.input_size = None
+                model.scaler = None
+            model.target_channel = dataClass.target_channels[0]
+            model.train_model(X_train, y_train, X_val, y_val, n_epochs=NUMBEROFEPOCHS, patience_stop=patience)
+            if hasattr(model, 'clear_active_experts_log'):
+                model.clear_active_experts_log()
+            if isinstance(X_test, list):
+                for i, (x, y) in enumerate(zip(X_test, y_test)):
+                    mse, pred_nn = model.test_model(x, y)
+                    print(f"{model.name}: Test RMAE: {mse}")
+                    nn_preds[i].append(pred_nn.flatten())
+                    if hasattr(model, 'plot_active_experts'):
+                        model.plot_active_experts()
+                        model.clear_active_experts_log()
+            else:
+                mse, pred_nn = model.test_model(X_test, y_test)
+                print(f"{model.name}: Test RMAE: {mse}")
+                nn_preds.append(pred_nn.flatten())
+                if hasattr(model, 'plot_active_experts'):
+                    model.plot_active_experts()
+                    model.clear_active_experts_log()
+        calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df_list_results, results, header_list, raw_data)
+    return models_copy
+
+def run_experiment_with_shap(dataSets, models, NUMBEROFEPOCHS: int = 800, NUMBEROFMODELS: int = 10, batched_data: bool = False,
+    patience: int = 5, plot_types: list = None, experiment_name: str = 'Experiment') -> dict:
+    """
+    Runs an experiment without hyperparameter optimization, including Shapley value calculations for RNN models.
+    Trains and evaluates the specified models on the given datasets.
+    Saves the results, plots, and documentation in the results directory.
+
+    Parameters:
+        dataSets: A dataset or a list of datasets.
+        models: A model or a list of models.
+        NUMBEROFEPOCHS (int, optional): Number of training epochs. Defaults to 800.
+        NUMBEROFMODELS (int, optional): Number of runs per model. Defaults to 10.
+        batched_data (bool, optional): Whether the data is processed in batches. Defaults to False.
+        patience (int, optional): Number of epochs without improvement before stopping training. Defaults to 5.
+        plot_types (list, optional): List of plot types to generate. Defaults to None.
+        experiment_name (str, optional): Name of the experiment. Defaults to 'Experiment'.
+
+    Returns:
+        dict: A dictionary containing the results, improvements, documentation, and plot paths.
+    """
+    if type(dataSets) is not list:
+        dataSets = [dataSets]
+    if type(models) is not list:
+        models = [models]
+    # Create directory
+    results_dir = setup_experiment_directory(experiment_name)
+    # Prepare meta-information
+    meta_information = prepare_meta_information(dataSets, models, NUMBEROFEPOCHS, batched_data)
+    # Initialize results
+    results = []
+    for i, dataClass in enumerate(dataSets):
+        print(f"\n===== Processing: {dataClass.name} =====")
+        X_train, X_val, X_test, y_train, y_val, y_test = dataClass.load_data()
+        raw_data = dataClass.load_raw_test_data()
+        if isinstance(X_test, list):
+            df_list_results = [pd.DataFrame() for _ in range(len(X_test))]
+            header_list = [[] for _ in range(len(X_test))]
+        else:
+            df_list_results = [pd.DataFrame()]
+            header_list = []
+        # Train and evaluate models
+        models = train_and_evaluate_models_with_shap(models, dataClass, X_train, X_val, X_test, y_train, y_val, y_test, NUMBEROFEPOCHS, NUMBEROFMODELS, patience, raw_data, results, df_list_results, header_list)
+
+    # Update meta-information
+    for model in models:
+        meta_information["Models"].append({model.name: {"NUMBEROFMODELS": NUMBEROFMODELS, **model.get_documentation()}})
+
+    # Create plots
+    plot_paths = create_plots_modular(results_dir, results, plot_types)
+
+    # Plot and save Shapley values
+    shap_plot_paths = []
+    for i, result in enumerate(results):
+        if len(result) == 10:  # Make sure the result has 10 elements
+            dataClass_name, dataPath, model_name, _, _, _, _, _, raw_data_dict, shap_values = result
+            if shap_values is not None:
+                # Extract feature names from raw data
+                feature_names = dataSets[0].header
+                plot_path = plot_shap_values(shap_values, feature_names, results_dir, model_name + '_' + dataPath)
+                shap_plot_paths.append(plot_path)
+
+    # Calculate improvements
+    improvement_results = calculate_improvements(results)
+    # Save results
+    save_results(results_dir, results, meta_information, plot_paths, improvement_results)
+    return {
+        'results_dir': results_dir,
+        'results': results,
+        'improvements': improvement_results,
+        'documentation': meta_information,
+        'plot_paths': plot_paths,
+        'shap_plot_paths': shap_plot_paths
+    }
+
+
 
 def perform_hyperparameter_optimization(models: list, search_spaces: list, optimization_samplers: list,
                                         X_train, X_val, y_train, y_val,
