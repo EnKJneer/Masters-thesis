@@ -47,7 +47,6 @@ def start_experiment_for(model_str = 'NN'):
     serach_spaces = hyperopt.load_search_spaces('..\\Hyperparameter.json')
 
     if model_str == 'RF':
-        NUMBEROFMODELS = 1
         #Random Forest
         search_space = serach_spaces[model_str]
         model = mrf.RandomForestModel()
@@ -74,6 +73,6 @@ def start_experiment_for(model_str = 'NN'):
 
 if __name__ == "__main__":
     #start_experiment_for('RF')
-    #start_experiment_for('NN')
-    #start_experiment_for('LSTM')
+    start_experiment_for('NN')
+    start_experiment_for('LSTM')
     start_experiment_for('RNN')

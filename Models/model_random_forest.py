@@ -9,7 +9,7 @@ import Models.model_base as mb
 
 class RandomForestModel(mb.BaseModel):
     def __init__(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2,
-                 min_samples_leaf = 1, random_state=42, name ="Random_Forest"):
+                 min_samples_leaf = 1, random_state=None, name ="Random_Forest"):
         """
         Initializes a Random Forest regressor.
 
@@ -27,6 +27,7 @@ class RandomForestModel(mb.BaseModel):
 
         # Save Parameter for documentation
         self.n_estimators = n_estimators
+        self.max_depth = max_depth
         self.random_state = random_state
         self.max_features = max_features
         self.min_samples_split = min_samples_split
@@ -39,6 +40,7 @@ class RandomForestModel(mb.BaseModel):
         self.max_features = max_features
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
+        self.max_depth = max_depth
 
         # Neuinitialisierung des Modells mit den neuen Hyperparametern
         self.model = RandomForestRegressor(
@@ -173,6 +175,7 @@ class RandomForestModel(mb.BaseModel):
     def get_documentation(self):
         documentation = {"hyperparameters": {
             "n_estimators": self.n_estimators,
+            "max_depth": self.max_depth,
             "max_features": self.max_features,
             "min_samples_split": self.min_samples_split,
             "min_samples_leaf": self.min_samples_leaf

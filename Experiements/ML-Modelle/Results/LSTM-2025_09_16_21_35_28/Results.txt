@@ -1,0 +1,21 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | LSTM            | 0.237710 | 0.063622
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | LSTM            | 0.211362 | 0.052781
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | LSTM            | 0.181668 | 0.030733
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | LSTM            | 0.158942 | 0.024829
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | LSTM_TPESampler | 0.205639 | 0.023234
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | LSTM_TPESampler | 0.198556 | 0.019842
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | LSTM_TPESampler | 0.114003 | 0.006629
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | LSTM_TPESampler | 0.122997 | 0.000970
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | LSTM_RandomSampler | 0.259557 | 0.045992
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | LSTM_RandomSampler | 0.243883 | 0.044931
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | LSTM_RandomSampler | 0.253663 | 0.102292
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | LSTM_RandomSampler | 0.240669 | 0.078583
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | LSTM_GridSampler | 0.264326 | 0.055301
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | LSTM_GridSampler | 0.264767 | 0.060939
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | LSTM_GridSampler | 0.110384 | 0.004523
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | LSTM_GridSampler | 0.119935 | 0.001980

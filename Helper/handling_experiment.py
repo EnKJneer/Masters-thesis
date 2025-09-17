@@ -1298,6 +1298,8 @@ def save_results(results_dir: str, results: list, documentation: dict, plot_path
         ... )
     """
     df = pd.DataFrame(results, columns=HEADER)
+
+    save_detailed_csv(df, results_dir)
     # Speichern der Ergebnisse in Textdatei
     with open(os.path.join(results_dir, 'Results.txt'), 'w', encoding='utf-8') as f:
         f.write("EXPERIMENT RESULTS\n")
@@ -1411,6 +1413,7 @@ def run_experiment(dataSets, models, NUMBEROFEPOCHS: int = 800, NUMBEROFMODELS: 
     improvement_results = calculate_improvements(results)
     # Ergebnisse speichern
     save_results(results_dir, results, meta_information, plot_paths, improvement_results)
+
     return {
         'results_dir': results_dir,
         'results': results,
@@ -1491,6 +1494,7 @@ def run_experiment_with_hyperparameteroptimization(dataSets, models, search_spac
     improvement_results = calculate_improvements(results)
     # Ergebnisse speichern
     save_results(results_dir, results, meta_information, plot_paths, improvement_results)
+
     return {
         'results_dir': results_dir,
         'results': results,
@@ -1899,7 +1903,7 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
 def save_detailed_csv(df, results_dir):
     """
     Speichert detaillierte Daten für jeden DataPath in separaten CSV-Dateien.
-    Jede Zeitreihe (Seed/Run) wird einzeln gespeichert anstatt als Mittelwert.
+    Jede Zeitreihe (Seed/Run) wird einzeln gespeichert.
 
     Args:
         df (pd.DataFrame): DataFrame mit den Ergebnissen.

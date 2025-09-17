@@ -1,0 +1,21 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.115248 | 0.013819
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.197665 | 0.019695
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.101182 | 0.002232
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.092574 | 0.000740
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_TPESampler | 0.097930 | 0.001664
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_TPESampler | 0.185824 | 0.005572
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_TPESampler | 0.098351 | 0.000914
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_TPESampler | 0.088147 | 0.000179
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_RandomSampler | 0.097704 | 0.002715
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_RandomSampler | 0.188974 | 0.007450
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_RandomSampler | 0.098519 | 0.000897
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_RandomSampler | 0.088095 | 0.000258
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_GridSampler | 0.098035 | 0.003208
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_GridSampler | 0.189424 | 0.007871
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_GridSampler | 0.097548 | 0.001025
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_GridSampler | 0.088807 | 0.000172
