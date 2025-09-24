@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | MachineAndProcessModel_Linear | 0.144529 | 0.003382
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | MachineAndProcessModel_Linear | 0.142177 | 0.002371
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | MachineAndProcessModel_Linear | 0.084559 | 0.000443
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | MachineAndProcessModel_Linear | 0.067569 | 0.000314

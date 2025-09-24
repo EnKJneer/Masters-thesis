@@ -1,0 +1,149 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Erd": {
+                "NUMBEROFMODELS": 10,
+                "description": "Implementation of Model Erd.",
+                "parameters": {
+                    "name": "Erd",
+                    "theta_a": {
+                        "x": 2.8420081022129182e-09,
+                        "y": 4.218855155085477e-08,
+                        "z": 3.543616265085924e-07,
+                        "sp": -2.964315462418001e-20
+                    },
+                    "theta_v": {
+                        "x": 2.75046350746054e-10,
+                        "y": 7.597372641824717e-09,
+                        "z": 6.173495451883945e-08,
+                        "sp": -2.1354105938168108e-16
+                    },
+                    "theta_f": {
+                        "x": -1.5661705857132094e-06,
+                        "y": 8.135749594554042e-07,
+                        "z": -5.707967441840009e-09,
+                        "sp": -2.6327334897969987e-08
+                    },
+                    "theta_s": {
+                        "x": -1.7987953363980604e-12,
+                        "y": -8.189562133317907e-13,
+                        "z": 2.4124816016980097e-13,
+                        "sp": -1.5743020187518785e-14
+                    }
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 100,
+                    "max_depth": 100,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 4
+                }
+            }
+        },
+        {
+            "Hybrid Erd Random Forest": {
+                "NUMBEROFMODELS": 10,
+                "model": "HybridModel",
+                "physical_model": {
+                    "description": "Implementation of Model Erd.",
+                    "parameters": {
+                        "name": "Erd",
+                        "theta_a": {
+                            "x": 2.8420081022129182e-09,
+                            "y": 4.218855155085477e-08,
+                            "z": 3.543616265085924e-07,
+                            "sp": -2.964315462418001e-20
+                        },
+                        "theta_v": {
+                            "x": 2.75046350746054e-10,
+                            "y": 7.597372641824717e-09,
+                            "z": 6.173495451883945e-08,
+                            "sp": -2.1354105938168108e-16
+                        },
+                        "theta_f": {
+                            "x": -1.5661705857132094e-06,
+                            "y": 8.135749594554042e-07,
+                            "z": -5.707967441840009e-09,
+                            "sp": -2.6327334897969987e-08
+                        },
+                        "theta_s": {
+                            "x": -1.7987953363980604e-12,
+                            "y": -8.189562133317907e-13,
+                            "z": 2.4124816016980097e-13,
+                            "sp": -1.5743020187518785e-14
+                        }
+                    }
+                },
+                "net_model": {
+                    "hyperparameters": {
+                        "n_estimators": 100,
+                        "max_depth": 100,
+                        "max_features": null,
+                        "min_samples_split": 2,
+                        "min_samples_leaf": 4
+                    }
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 100
+    }
+}

@@ -168,7 +168,7 @@ if __name__ == '__main__':
                 mat = 'Stahl'
             plot_time_series(df, f'{mat} {geometry}: Stromverlauf der Vorschubachse in x-Richtung',
                              f'Verlauf_{material}_{geometry}_Ref_RF_opt',
-                             col_name='curr_x', label='Strom in A', dpi=1200,
+                             col_name='curr_x', label='Strom in A', dpi=600,
                              ycolname_1='Reference_Random_Forest_TPESampler', ylabel_1='Random Forest',
                              ycolname_2='Reference_Recurrent_Neural_Net_GridSampler', ylabel_2='RNN')
 

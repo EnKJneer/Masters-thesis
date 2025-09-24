@@ -29,7 +29,10 @@ class MachineAndProcessLinearCombined(mb.BaseModel):
                  n_estimators=100, max_features = 1, max_depth =None, min_samples_split = 2, min_samples_leaf = 1, random_state=None,
                  **kwargs):
         super(MachineAndProcessLinearCombined, self).__init__(*args, name, **kwargs)
-        self.model_process = mrf.RandomForestRegressor(n_estimators=n_estimators, max_features = max_features, max_depth = max_depth, min_samples_split = min_samples_split, min_samples_leaf = min_samples_leaf, random_state=random_state, n_jobs = -1)
+        self.model_process = mrf.RandomForestRegressor(n_estimators=n_estimators, max_features = max_features,
+                                                       max_depth = max_depth, min_samples_split = min_samples_split,
+                                                       min_samples_leaf = min_samples_leaf, random_state=random_state,
+                                                       n_jobs = -1)
         self.model_machine = LinearRegression()
         self.input_machine = ['a_x_1_current', 'a_y_1_current', 'a_z_1_current', 'a_sp_1_current']
 
@@ -198,18 +201,17 @@ if __name__ == "__main__":
     dataClasses = [dataclass2]
     for dataclass in dataClasses:
         #dataclass.only_aircut = True
-        dataclass.remove_bias = False
         dataclass.window_size = window_size
         dataclass.past_values = past_values
         dataclass.future_values = future_values
-        #dataclass.keep_separate = True
-        #dataclass.add_sign_hold = True
 
     #model_simple = mphys.NaiveModelSimple()
-    model = MachineAndProcessLinearCombined()
-    models = [model] #, model_2
+    model = MachineAndProcessLinearCombined(n_estimators= 100, max_depth= 100, max_features = None,
+                                     min_samples_split= 2, min_samples_leaf= 4)
+
+    models = [model]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name='Addition')
+                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name='Addition')

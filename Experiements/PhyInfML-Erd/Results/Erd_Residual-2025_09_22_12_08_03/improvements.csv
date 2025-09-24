@@ -1,0 +1,9 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+ST_Plate_Notch,DMC60H_AL2007T4_Gear_Normal_3,Erd,Random_Forest,82.38290537839731
+ST_Plate_Notch,DMC60H_AL2007T4_Gear_Normal_3,Erd,Hybrid Erd Random Forest,83.83842790513401
+ST_Plate_Notch,DMC60H_AL2007T4_Plate_Normal_3,Erd,Random_Forest,51.87843439027377
+ST_Plate_Notch,DMC60H_AL2007T4_Plate_Normal_3,Erd,Hybrid Erd Random Forest,44.97998480899698
+ST_Plate_Notch,DMC60H_S235JR_Gear_Normal_3,Erd,Random_Forest,76.38949213869721
+ST_Plate_Notch,DMC60H_S235JR_Gear_Normal_3,Erd,Hybrid Erd Random Forest,75.44538721325905
+ST_Plate_Notch,DMC60H_S235JR_Plate_Normal_3,Erd,Random_Forest,70.74169367096812
+ST_Plate_Notch,DMC60H_S235JR_Plate_Normal_3,Erd,Hybrid Erd Random Forest,71.12056368145767

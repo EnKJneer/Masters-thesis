@@ -1253,10 +1253,9 @@ class FrictionModel(mb.BaseModel):
 class ModelErd(mb.BaseModel):
     def __init__(self, name="Erd",
                  theta_v = 1, theta_a = 1, theta_f = 1, theta_s = 1, epsilon_y = 0.1, epsilon_z = 0.1, epsilon_sp = 0.1,
-                 velocity_threshold=1e-1, target_channel = ['curr_x']):
+                 target_channel = ['curr_x']):
 
         self.name = name
-        self.velocity_threshold = velocity_threshold
 
         # parameter
         self.theta_a = [theta_a, theta_a * epsilon_y, theta_a * epsilon_z, theta_a * epsilon_sp]
@@ -1335,7 +1334,6 @@ class ModelErd(mb.BaseModel):
             "description": "Implementation of Model Erd.",
             "parameters": {
                 "name": self.name,
-                "velocity_threshold": self.velocity_threshold,
                 "theta_a": {
                     "x": self.theta_a[0],
                     "y": self.theta_a[1],
@@ -1365,11 +1363,11 @@ class ModelErd(mb.BaseModel):
         return documentation
 
     def reset_hyperparameter(self):
-        throw_error('Not implemented')
+        raise NotImplementedError("Not implemented")
 
 class ThermodynamicModel(mb.BaseModel):
     def __init__(self, name="Thermodynamic_Model",
-                 theta_v = 0, theta_a = 0, theta_f = 0,
+                 theta_v = 0, theta_a = 0, theta_f = 0, theta_offset = 0,
                  velocity_threshold=1e-1, target_channel = 'curr_x'):
 
         self.name = name
@@ -1377,6 +1375,7 @@ class ThermodynamicModel(mb.BaseModel):
         self.theta_v = theta_v
         self.theta_f = theta_f
         self.theta_a = theta_a
+        self.theta_offset = theta_offset
         self.target_channel = target_channel
         self.epsilon = 1e-3
 
@@ -1391,8 +1390,7 @@ class ThermodynamicModel(mb.BaseModel):
             a_x = X[f'a_{axis}_1_current'].values
             f_x_sim = X[f'f_{axis}_sim_1_current'].values
             mrr = X[f'materialremoved_sim_1_current'].values
-            y_pred = self.theta_v * v_x + self.theta_f * f_x_sim * mrr / (v_sp + self.epsilon) + self.theta_a * a_x
-
+            y_pred = self.theta_v * v_x + self.theta_f * f_x_sim + self.theta_a * a_x + self.theta_offset #
         return y_pred
 
     def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
@@ -1409,17 +1407,19 @@ class ThermodynamicModel(mb.BaseModel):
 
             params = {}
 
-            data = np.array([a_x, v_x, f_x_sim * mrr / (v_sp + self.epsilon) ]).T # , np.ones(len(v_x))
+            data = np.array([a_x, v_x, f_x_sim, np.ones(len(v_x))]).T #
 
             reg = LinearRegression(fit_intercept=False)
             reg.fit(data, y_train[target].values)
             params['theta_a'] = reg.coef_[0]
             params['theta_v'] = reg.coef_[1]
             params['theta_f'] = reg.coef_[2]
+            params['theta_offset'] = reg.coef_[3]
 
         self.theta_v = params['theta_v']
         self.theta_f = params['theta_f']
         self.theta_a = params['theta_a']
+        self.theta_offset = params['theta_offset']
 
         # Ausgabe der Parameter
         for param_name, param_value in params.items():
@@ -1437,13 +1437,14 @@ class ThermodynamicModel(mb.BaseModel):
 
     def get_documentation(self):
         documentation = {
-            "description": "This model fits a two-stage friction model: stillstand and movement.",
+            "description": "Improvmend of Model Erd.",
             "parameters": {
                 "name": self.name,
                 "velocity_threshold": self.velocity_threshold,
                 "theta_a": self.theta_a,
                 "theta_v": self.theta_v,
                 "theta_f": self.theta_f,
+                "theta_offset": self.theta_offset,
             }
         }
         return documentation

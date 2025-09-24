@@ -1,0 +1,9 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+ST_Plate_Notch,DMC60H_AL2007T4_Gear_Normal_3,Erd,Recurrent_Neural_Net,68.91989101810285
+ST_Plate_Notch,DMC60H_AL2007T4_Gear_Normal_3,Erd,Hybrid Erd Rekurrentes neuronales Netz,71.06439726838369
+ST_Plate_Notch,DMC60H_AL2007T4_Plate_Normal_3,Erd,Recurrent_Neural_Net,53.60739872660992
+ST_Plate_Notch,DMC60H_AL2007T4_Plate_Normal_3,Erd,Hybrid Erd Rekurrentes neuronales Netz,58.74044000894266
+ST_Plate_Notch,DMC60H_S235JR_Gear_Normal_3,Erd,Recurrent_Neural_Net,71.75442456824429
+ST_Plate_Notch,DMC60H_S235JR_Gear_Normal_3,Erd,Hybrid Erd Rekurrentes neuronales Netz,72.16245607039768
+ST_Plate_Notch,DMC60H_S235JR_Plate_Normal_3,Erd,Recurrent_Neural_Net,57.47569797712971
+ST_Plate_Notch,DMC60H_S235JR_Plate_Normal_3,Erd,Hybrid Erd Rekurrentes neuronales Netz,58.908641343493365

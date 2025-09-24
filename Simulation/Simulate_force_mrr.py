@@ -142,15 +142,16 @@ if __name__ == '__main__':
 
     tool_diameter = 10
     target_frequency = 50
+
     if REFERENCE:
-        path_material_constant = 'parameters_literature.json'
+        path_material_constant = 'parameters_Hanlin.json' # 'parameters_literature.json'
     else:
-        path_material_constant = '..\\Simulation\\parameters_optimized.json'
+        path_material_constant = 'parameters_optimized.json'
 
 
     path = '..\\DataSets_CMX_Plate_Notch_Gear/DataMerged'
     if REFERENCE:
-        path_target = '..\\DataSets_CMX_Plate_Notch_Gear_Reference/DataSimulated'
+        path_target = '..\\DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR/DataSimulated'
     else:
         path_target = '..\\DataSets_CMX_Plate_Notch_Gear/DataSimulated'
 
@@ -183,6 +184,10 @@ if __name__ == '__main__':
 
         material, part_position, part_dimension = get_part_properties(material_geometry, raw_data)
 
+        if REFERENCE:
+            # Aufgrund der geringeren Performance der alten MRR berechnung wird die voxel größe erhöht
+            part_dimension[3] = part_dimension[3] * 2
+
         material_setting = machine_state.load_optimized_parameters_as_dict(path_material_constant)
 
         new_machine_state, tool, part = machine_state.set_machine_state(material_setting, material,
@@ -192,7 +197,7 @@ if __name__ == '__main__':
 
         data_df = monitoring.state_monitoring(new_machine_state, tool,
                                               part, process_value, true_curr,
-                                              target_frequency, part_position, part_dimension, show_results)
+                                              target_frequency, part_position, part_dimension, show_results, REFERENCE)
         file = file + '.csv'
         path_data = os.path.join(path_target, file)
         data_df.to_csv(path_data)

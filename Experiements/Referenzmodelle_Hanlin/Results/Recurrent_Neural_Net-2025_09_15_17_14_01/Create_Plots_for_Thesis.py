@@ -91,7 +91,7 @@ class BasePlotter(ABC):
     def save_plot(self, fig, filename: str):
         """Speichert einen Plot"""
         plot_path = os.path.join(self.output_dir, filename)
-        fig.savefig(plot_path, dpi=800, bbox_inches='tight')
+        fig.savefig(plot_path, dpi=600, bbox_inches='tight')
         plt.close(fig)
         return plot_path
 
@@ -386,7 +386,7 @@ class HeatmapPlotter(BasePlotter):
 
         # Heatmap erstellen
         fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-        fig.set_dpi(1200)
+        fig.set_dpi(600)
 
         # Maske für NaN-Werte
         mask = mae_pivot.isna()
@@ -590,6 +590,7 @@ class ModelHeatmapPlotter(BasePlotter):
 
             # Titel und Labels mit größerer Schrift
             title = re.sub(r'([a-zA-Z]+)Sampler', r'\n\1Sampler', model_clean)
+            title = title.replace('Recurrent Neural Net', 'Rekurrentes neuronales Netz')
             ax.set_title(f'MAE Heatmap: {title}', fontsize=titlesize, fontweight='bold', pad=20,
                          color=self.kit_dark_blue)
             ax.set_xlabel('Geometry', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)

@@ -27,4 +27,4 @@ if __name__ == "__main__":
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model],
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name='Erd')
+                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name='Erd')

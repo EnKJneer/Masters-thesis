@@ -1526,11 +1526,11 @@ def calculate_shap_values(model, data):
 
 
     # Create a SHAP explainer with a smaller background dataset
-    background_size = min(1000, data.shape[0])  # Limit background size
+    background_size = min(100, data.shape[0])  # Limit background size
     background_data = data[:background_size]
 
     # Calculate Shapley values for a subset of data if it's too large
-    sample_size = min(500, data.shape[0])
+    sample_size = min(50, data.shape[0])
     sample_data = data[:sample_size]
 
     if type(model) == mrf.RandomForestModel:
@@ -1598,12 +1598,6 @@ def calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df
             # Debug data shape and content
             print(f"DEBUG: X_test_data shape: {X_test_data.shape}")
             print(f"DEBUG: X_test_data range: {np.min(X_test_data)} to {np.max(X_test_data)}")
-
-            # Normalize or scale the data if values are very large
-            if np.max(np.abs(X_test_data)) > 1000:
-                print("Warning: Large input values detected, consider scaling")
-                # You might want to apply the same scaling used during training
-                # For now, we'll proceed but this might cause the large SHAP values
 
             print(f"Calculating SHAP values for {model.name} on {path}")
             shap_values = calculate_shap_values(model, X_test_data)

@@ -8,6 +8,7 @@ import machine_state as ms
 
 from MMR_Calculator import voxel_class_numba as vc
 from MMR_Calculator.MRRSimulationV3 import SimpleCNCMRRSimulation
+from MMR_Calculator.MRRSimulation_Referenze import calculateMRR
 
 VALID_AP ={0, 3, 6, 12}# {0, 2.5, 5, 10} #
 
@@ -203,7 +204,8 @@ def is_tool_in_part(tool_radius, a_p, pos_x, pos_y, pos_z, part_position, part_d
     )
 
 def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.PartialVoxelPart,
-                     process_data: pd.DataFrame, true_curr: pd.DataFrame, frequence: int, part_position, part_dimension, plot_mrr = False) -> pd.DataFrame:
+                     process_data: pd.DataFrame, true_curr: pd.DataFrame, frequence: int, part_position, part_dimension,
+                     plot_mrr = False, use_reference = False) -> pd.DataFrame:
 
     a_e = machine_state.get_tool_radius() * 2
     a_p_array = calculate_a_p(process_data['pos_z'], part_position[2], part_dimension[2])
@@ -212,14 +214,13 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
     new_part_volume =part_dimension[0] * part_dimension[1] * part_dimension[2]
     print(f'Volumen vorher: {new_part_volume}')
 
-    #simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius)
-    #times, mrr_values, segments  = simulator.simulate_mrr(process_data, frequence)
-    #if plot_mrr:
-    #    simulator.plot_results(times, mrr_values, segments, process_data)
-    simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius, frequence)
-    times, mrr_values  = simulator.simulate_mrr(process_data)
-    if plot_mrr:
-        simulator.plot_results(times, mrr_values)
+    if not use_reference:
+        simulator = SimpleCNCMRRSimulation(part_position, part_dimension, tool.radius, frequence)
+        times, mrr_values  = simulator.simulate_mrr(process_data)
+        if plot_mrr:
+            simulator.plot_results(times, mrr_values)
+    else:
+        mrr_values =  calculateMRR(process_data, part, tool, a_p_array, part_position, part_dimension,frequence)
 
     mrr_mean = mrr_values.mean()
     for i in range(process_data.shape[0]):
@@ -274,7 +275,7 @@ def state_monitoring(machine_state: ms.MachineState, tool: vc.Tool, part: vc.Par
     for idx, col in enumerate(cols):
         data_df[col] = exponential_smoothing(data_df[col], alphas[idx])
 
-    removed_material = mrr_values.cumsum() * 1/simulator.sampling_frequency
+    removed_material = mrr_values.cumsum() * 1/frequence
     print(f'Entferntes Material: {removed_material[-1]}')
     print(f'Volumen nach der Bearbeitung: {new_part_volume - removed_material[-1]}')
     print(f'Prozent entfernt: {round(removed_material[-1] / new_part_volume *100, 2)} %')

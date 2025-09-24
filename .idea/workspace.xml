@@ -5,136 +5,263 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR/SplitData.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/ML-Modelle/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_16_21_11_28/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_16_15_19_42/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_16_22_27_10/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Erd/Erd.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Erd/Hyprid_Models_Residual.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Erd/PiNN_Erd.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Thermo/Analisys_Influence_F_MRR.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Thermo/Hyprid_Models_Residual.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Thermo/PiNN_HyperOpt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Thermo/PiNN_Thermo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiements/PhyInfML-Thermo/Thermo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Simulation/MMR_Calculator/MRRSimulation_Referenze.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/ML-Modelle/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/LSTM_GridSampler_2025_09_06_09_43_23.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/LSTM_RandomSampler_2025_09_06_09_25_01.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/LSTM_TPESampler_2025_09_06_09_07_10.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/heatmap_LSTM_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/heatmap_LSTM_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/heatmap_LSTM_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/heatmap_LSTM_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_06_09_07_10/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/Neural_Net_GridSampler_2025_09_06_12_35_48.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/Neural_Net_RandomSampler_2025_09_06_12_27_37.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/Neural_Net_TPESampler_2025_09_06_12_15_09.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/heatmap_Neural_Net_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/heatmap_Neural_Net_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/heatmap_Neural_Net_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/heatmap_Neural_Net_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Neural_Net-2025_09_06_12_15_08/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/Random_Forest_GridSampler_2025_09_05_17_34_17.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/Random_Forest_RandomSampler_2025_09_05_16_48_18.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/Random_Forest_TPESampler_2025_09_05_16_12_52.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/heatmap_Random_Forest_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/heatmap_Random_Forest_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/heatmap_Random_Forest_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/heatmap_Random_Forest_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Random_Forest-2025_09_05_16_12_52/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/Recurrent_Neural_Net_GridSampler_2025_09_06_13_01_26.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/Recurrent_Neural_Net_RandomSampler_2025_09_06_12_52_03.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/Recurrent_Neural_Net_TPESampler_2025_09_06_12_39_37.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/heatmap_Recurrent_Neural_Net_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/heatmap_Recurrent_Neural_Net_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/heatmap_Recurrent_Neural_Net_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/heatmap_Recurrent_Neural_Net_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_06_12_39_36/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/LSTM_GridSampler_2025_09_11_12_06_00.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/LSTM_RandomSampler_2025_09_11_11_50_04.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/LSTM_TPESampler_2025_09_11_11_23_19.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/heatmap_LSTM_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/heatmap_LSTM_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/heatmap_LSTM_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/heatmap_LSTM_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_11_11_23_19/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/Neural_Net_GridSampler_2025_09_11_11_17_38.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/Neural_Net_RandomSampler_2025_09_11_11_10_09.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/Neural_Net_TPESampler_2025_09_11_10_55_41.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/heatmap_Neural_Net_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/heatmap_Neural_Net_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/heatmap_Neural_Net_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/heatmap_Neural_Net_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_11_10_55_41/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/Random_Forest_GridSampler_2025_09_11_10_30_51.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/Random_Forest_RandomSampler_2025_09_11_09_46_57.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/Random_Forest_TPESampler_2025_09_11_08_56_59.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/heatmap_Random_Forest_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/heatmap_Random_Forest_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/heatmap_Random_Forest_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/heatmap_Random_Forest_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_11_08_56_58/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/Recurrent_Neural_Net_GridSampler_2025_09_11_12_33_37.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/Recurrent_Neural_Net_RandomSampler_2025_09_11_12_24_34.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/Recurrent_Neural_Net_TPESampler_2025_09_11_12_12_37.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/Results.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/documentation.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/improvements.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/heatmap_Recurrent_Neural_Net_GridSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/heatmap_Recurrent_Neural_Net_RandomSampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/heatmap_Recurrent_Neural_Net_TPESampler_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/heatmap_Recurrent_Neural_Net_with_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_11_12_12_37/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Depth_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Depth_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Depth_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Depth_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Depth_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Normal_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Normal_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Normal_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_Normal_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_SF_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_SF_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_SF_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_SF_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Gear_SF_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Depth_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Depth_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Depth_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Depth_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Normal_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Normal_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Notch_Normal_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Depth_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Depth_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Depth_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Depth_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Depth_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Normal_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Normal_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_Normal_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_SF_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_SF_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_SF_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_AL2007T4_Plate_SF_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Depth_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Depth_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Depth_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Depth_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Depth_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Normal_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Normal_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Normal_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_Normal_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_SF_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_SF_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_SF_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Gear_SF_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Depth_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Depth_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Depth_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Depth_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Depth_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Normal_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Normal_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Normal_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_Normal_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_SF_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_SF_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_SF_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_SF_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Notch_SF_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Depth_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Depth_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Depth_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Depth_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Depth_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Normal_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Normal_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Normal_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_Normal_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_SF_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_SF_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_SF_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_SF_Aircut_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Data/DMC60H_S235JR_Plate_SF_Aircut_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Gear_Depth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Gear_SF.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Notch_Depth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Notch_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Plate_Depth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/AL2007T4_Plate_SF.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Gear_Depth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Gear_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Gear_SF.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Notch_Depth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Notch_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Notch_SF.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Plate_Depth.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Plate_Normal.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/DataSimulated/S235JR_Plate_SF.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Design of experiments.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Gear/AL_2007_T4_Gear_Depth.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Gear/AL_2007_T4_Gear_Normal.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Gear/AL_2007_T4_Gear_SF.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Gear/S235JR_Gear_Depth.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Gear/S235JR_Gear_Normal.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Gear/S235JR_Gear_SF.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Notch/AL_2007_T4_Notch_Depth.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Notch/AL_2007_T4_Notch_Normal.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Notch/AL_2007_T4_Notch_SF.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Notch/S235JR_Notch_Depth.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Notch/S235JR_Notch_Normal.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Notch/S235JR_Notch_SF.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Plate/AL_2007_T4_Plate_Depth.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Plate/AL_2007_T4_Plate_Normal.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Plate/AL_2007_T4_Plate_SF.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Plate/S235JR_Plate_Depth.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Plate/S235JR_Plate_Normal.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/NC Code/Plate/S235JR_Plate_SF.mpf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Recording information.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Tools/dsh_de-de_21763.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Tools/dsh_de-de_22544.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Workpieces/AL_2007_T4_Gear_and_Notch.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Workpieces/AL_2007_T4_Plate.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Workpieces/S235JR_Gear_and_Notch.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/Infos/Workpieces/S235JR_Plate.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_MRR_corrected/SplitData.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/ML-Modelle/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/ML-Modelle/Results/LSTM-2025_09_16_21_35_28/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Erd.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/PhysicalModel/Erd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/Predictions/AL_2007_T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/Predictions/AL_2007_T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/Predictions/S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/Predictions/S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/plots/heatmap_mae_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Erd-2025_08_26_11_24_09/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/Predictions/AL_2007_T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/Predictions/AL_2007_T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/Predictions/S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/Predictions/S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/plots/heatmap_Friction_Model_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/plots/heatmap_model_comparison_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_26_15_53_23/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/Predictions/DMC_AL2007T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/Predictions/DMC_AL2007T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/Predictions/DMC_S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/Predictions/DMC_S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/plots/heatmap_Friction_Model_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/plots/predictions_vs_groundtruth_DMC_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/plots/predictions_vs_groundtruth_DMC_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/plots/predictions_vs_groundtruth_DMC_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/plots/predictions_vs_groundtruth_DMC_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_12_02_55/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/Predictions/DMC_AL2007T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/Predictions/DMC_AL2007T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/Predictions/DMC_S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/Predictions/DMC_S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/plots/heatmap_Friction_Model_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/plots/predictions_vs_groundtruth_DMC_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/plots/predictions_vs_groundtruth_DMC_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/plots/predictions_vs_groundtruth_DMC_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/plots/predictions_vs_groundtruth_DMC_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/SimpleFriction-2025_08_29_17_19_56/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/Predictions/AL_2007_T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/Predictions/AL_2007_T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/Predictions/S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/Predictions/S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/info.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/plots/heatmap_mae_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/PhysicalModel/Results/Thermodynamic-2025_07_31_15_22_11/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Addition.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Addition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/Predictions/AL_2007_T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/Predictions/AL_2007_T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/Predictions/S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/Predictions/S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/plots/heatmap_mae_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/plots/predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/plots/predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/plots/predictions_vs_groundtruth_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/plots/predictions_vs_groundtruth_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture/Results/Addition-2025_08_26_11_57_09/results.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_AL2007T4_Gear_Ref_RF_opt.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_AL2007T4_Gear_Ref_RF_opt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_AL2007T4_Plate_Ref_RF_opt.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_AL2007T4_Plate_Ref_RF_opt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_S235JR_Gear_Ref_RF_opt.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_S235JR_Gear_Ref_RF_opt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_S235JR_Plate_Ref_RF_opt.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Plots/Verlauf_S235JR_Plate_Ref_RF_opt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM_GridSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM_GridSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM_RandomSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM_RandomSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM_TPESampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/LSTM-2025_09_16_11_24_12/Plots_Thesis/heatmap_LSTM_TPESampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_KNN.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_KNN.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_Neural_Net_GridSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_Neural_Net_GridSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_Neural_Net_RandomSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_Neural_Net_RandomSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_Neural_Net_TPESampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Plots_Thesis/heatmap_Neural_Net_TPESampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_RF.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_RF.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_Random_Forest_GridSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_Random_Forest_GridSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_Random_Forest_RandomSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_Random_Forest_RandomSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_Random_Forest_TPESampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Plots_Thesis/heatmap_Random_Forest_TPESampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_RNN.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_RNN.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_Recurrent_Neural_Net_GridSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_Recurrent_Neural_Net_GridSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_Recurrent_Neural_Net_RandomSampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_Recurrent_Neural_Net_RandomSampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_Recurrent_Neural_Net_TPESampler_with_std.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Plots_Thesis/heatmap_Recurrent_Neural_Net_TPESampler_with_std.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/plots/heatmap_Recurrent_Neural_Net_GridSampler_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/plots/heatmap_Recurrent_Neural_Net_RandomSampler_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/plots/heatmap_Recurrent_Neural_Net_TPESampler_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/plots/heatmap_Recurrent_Neural_Net_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiements/Tests/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiements/Tests/Experiment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Helper/handling_experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/model_random_forest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_random_forest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_neural_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_physical.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_physical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/MMR_Calculator/MRRSimulationV2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/Simulate_force_mrr.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/Simulate_force_mrr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/monitoring.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/monitoring.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,179 +302,183 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Doctests in graph.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ARMAX.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Adddition_ARMAX.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Addition.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Addition_LinearSigmoid.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Additional_Input.executor&quot;: &quot;Run&quot;,
-    &quot;Python.AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.AktivationfunctionPlotter.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Align_Force_Measurements_Method_Analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Align_Force_Measurments.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Align_SInumerik_DT9836.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Analyse_Errors.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Change_Point_Detection.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare Activation Functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_batches_vs_single.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_different_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Comparson_Erd_vs_Naive.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Comparson_of_physical_model.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Controler_Influence.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Plots_for_Thesis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_Plots_for_Thesis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_rename.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_1kHz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_1kHz_Seperete.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_500Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_50Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Data_to_50Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Different_DataSets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Evaluate_RNN_potential.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Evaluate_Sequential_potential.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experiment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experiment_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_3.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_Residual.executor&quot;: &quot;Run&quot;,
-    &quot;Python.FilterData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.FilterMethod.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Fit_Parameter.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Friction_simple.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyperparameteroptimization_Methods_Comparsion.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid_Models_Guided.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid_Models_Residual.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Integrate_Cont_Dev.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Integrated.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LRRC.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LRRC_2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Linear_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Load_Data_Method_Comparsion.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Load_Single_Axis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_Analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_Functions_Test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LuGre.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MRRSimulation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MRRSimulationV2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MRRSimulationV3.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Mathematic_model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Merge_Controler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Merge_Controller_with_OldData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Merge_Sinumerik_DT9836.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MoE.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MoE_Gating.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MoE_Moirai.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Model_Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.NaiveModel.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Naive_Dynamic.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Naive_Model_analysy.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Normierung.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ODE_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ODE_Model_1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ODE_Model_integration.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Optimize_Parameter.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNN_Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNN_Friction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNNs.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Potential_Transformer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PySINDy.executor&quot;: &quot;Run&quot;,
-    &quot;Python.RF_FiFo_load.executor&quot;: &quot;Run&quot;,
-    &quot;Python.RF_with_expo.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Scatter_plot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Search_for_causality.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SemiLuGre.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SharplyValues.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SimpleFriction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simple_PI_Controler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simple_PI_Controler_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simple_PI_Controller_Adam.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simulate_force_mrr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simulate_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simulate_view_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Sinumerik_json_to_csv50Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SplitData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Thermodynamic_Model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualisation_MRR.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Force.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Force_with_v.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Heatmap.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Heatmap_comparsion.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Prediction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Prediction_Subplot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Predictions_V.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Vorschub.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_time_series.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_variance_time_series.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_Scatter_plot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_a_e.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_3D_vf.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_a.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_a_state_oldData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_f.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_v.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_v_state.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_v_state_oldData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_parameter_simularity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_process_start.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_v_zero_fit_model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_2D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_3D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_corr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_curr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_similarity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_similarity_v_zero.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_simularity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualization.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualization_curr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualization_simularity_v_zero.executor&quot;: &quot;Run&quot;,
-    &quot;Python.error_influence.executor&quot;: &quot;Run&quot;,
-    &quot;Python.experiment_material_dependency.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_data.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.handling_experiment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_plots.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_read_data_from_json.executor&quot;: &quot;Run&quot;,
-    &quot;Python.identifiy_forces.executor&quot;: &quot;Run&quot;,
-    &quot;Python.influence_error.executor&quot;: &quot;Run&quot;,
-    &quot;Python.influence_test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.merge_additional_information.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_base.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_neural_net.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_physical.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.model_random_forest.executor&quot;: &quot;Run&quot;,
-    &quot;Python.monitoring.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plot_forces_from_DT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.read_data_from_json.executor&quot;: &quot;Run&quot;,
-    &quot;Python.rename_force_columns.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.visualize_z_transform.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ToolWindow.Plots.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/Experiements/Referenzmodelle_Hanlin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Doctests in graph.executor": "Run",
+    "Python.ARMAX.executor": "Run",
+    "Python.Adddition_ARMAX.executor": "Run",
+    "Python.Addition.executor": "Run",
+    "Python.Addition_LinearSigmoid.executor": "Run",
+    "Python.Additional_Input.executor": "Run",
+    "Python.AirCut.executor": "Run",
+    "Python.AktivationfunctionPlotter.executor": "Run",
+    "Python.Align_Force_Measurements_Method_Analysis.executor": "Run",
+    "Python.Align_Force_Measurments.executor": "Run",
+    "Python.Align_SInumerik_DT9836.executor": "Run",
+    "Python.Analisys_Influence_F_MRR.executor": "Run",
+    "Python.Analyse_Errors.executor": "Debug",
+    "Python.Change_Point_Detection.executor": "Run",
+    "Python.Compare Activation Functions.executor": "Run",
+    "Python.Compare_batches_vs_single.executor": "Run",
+    "Python.Compare_different_trainingsdata.executor": "Run",
+    "Python.Comparson_Erd_vs_Naive.executor": "Run",
+    "Python.Comparson_of_physical_model.executor": "Debug",
+    "Python.Controler_Influence.executor": "Run",
+    "Python.Create_Plots_for_Thesis.executor": "Run",
+    "Python.Create_TimeSeries_Plots_for_Thesis.executor": "Run",
+    "Python.DT9836_rename.executor": "Run",
+    "Python.DT9836_to_1kHz.executor": "Run",
+    "Python.DT9836_to_1kHz_Seperete.executor": "Run",
+    "Python.DT9836_to_500Hz.executor": "Run",
+    "Python.DT9836_to_50Hz.executor": "Run",
+    "Python.Data_to_50Hz.executor": "Run",
+    "Python.Different_DataSets.executor": "Run",
+    "Python.Erd.executor": "Run",
+    "Python.Evaluate_RNN_potential.executor": "Run",
+    "Python.Evaluate_Sequential_potential.executor": "Run",
+    "Python.Experiment.executor": "Run",
+    "Python.Experiment_AirCut.executor": "Run",
+    "Python.Experts.executor": "Run",
+    "Python.Experts_2.executor": "Run",
+    "Python.Experts_3.executor": "Run",
+    "Python.Experts_Residual.executor": "Run",
+    "Python.FilterData.executor": "Run",
+    "Python.FilterMethod.executor": "Run",
+    "Python.Fit_Parameter.executor": "Run",
+    "Python.Friction_simple.executor": "Run",
+    "Python.Hyperparameteroptimization_Methods_Comparsion.executor": "Run",
+    "Python.Hyprid_Models_Guided.executor": "Run",
+    "Python.Hyprid_Models_Residual.executor": "Run",
+    "Python.Integrate_Cont_Dev.executor": "Run",
+    "Python.Integrated.executor": "Run",
+    "Python.LRRC.executor": "Run",
+    "Python.LRRC_2.executor": "Run",
+    "Python.Linear_AirCut.executor": "Run",
+    "Python.Load_Data_Method_Comparsion.executor": "Debug",
+    "Python.Load_Single_Axis.executor": "Run",
+    "Python.Loss_Analysis.executor": "Run",
+    "Python.Loss_Functions_Test.executor": "Run",
+    "Python.Loss_functions.executor": "Run",
+    "Python.LuGre.executor": "Run",
+    "Python.MRRSimulation.executor": "Run",
+    "Python.MRRSimulationV2.executor": "Run",
+    "Python.MRRSimulationV3.executor": "Run",
+    "Python.Mathematic_model.executor": "Run",
+    "Python.Merge_Controler.executor": "Run",
+    "Python.Merge_Controller_with_OldData.executor": "Run",
+    "Python.Merge_Sinumerik_DT9836.executor": "Run",
+    "Python.MoE.executor": "Run",
+    "Python.MoE_Gating.executor": "Run",
+    "Python.MoE_Moirai.executor": "Run",
+    "Python.Model_Erd.executor": "Run",
+    "Python.NaiveModel.executor": "Run",
+    "Python.Naive_Dynamic.executor": "Run",
+    "Python.Naive_Model_analysy.executor": "Run",
+    "Python.Normierung.executor": "Run",
+    "Python.ODE_AirCut.executor": "Run",
+    "Python.ODE_Model_1.executor": "Run",
+    "Python.ODE_Model_integration.executor": "Run",
+    "Python.Optimize_Parameter.executor": "Run",
+    "Python.PiNN_Erd.executor": "Run",
+    "Python.PiNN_Friction.executor": "Run",
+    "Python.PiNN_HyperOpt.executor": "Run",
+    "Python.PiNN_Thermo.executor": "Run",
+    "Python.PiNNs.executor": "Run",
+    "Python.Potential_Transformer.executor": "Run",
+    "Python.PySINDy.executor": "Run",
+    "Python.RF_FiFo_load.executor": "Run",
+    "Python.RF_with_expo.executor": "Run",
+    "Python.Scatter_plot.executor": "Run",
+    "Python.Search_for_causality.executor": "Run",
+    "Python.SemiLuGre.executor": "Run",
+    "Python.SharplyValues.executor": "Debug",
+    "Python.SimpleFriction.executor": "Run",
+    "Python.Simple_PI_Controler.executor": "Run",
+    "Python.Simple_PI_Controler_AirCut.executor": "Run",
+    "Python.Simple_PI_Controller_Adam.executor": "Run",
+    "Python.Simulate_force_mrr.executor": "Run",
+    "Python.Simulate_trainingsdata.executor": "Run",
+    "Python.Simulate_view_trainingsdata.executor": "Run",
+    "Python.Sinumerik_json_to_csv50Hz.executor": "Run",
+    "Python.SplitData.executor": "Run",
+    "Python.Thermo.executor": "Run",
+    "Python.Thermodynamic_Model.executor": "Run",
+    "Python.Visualisation_MRR.executor": "Run",
+    "Python.Visualization_Force.executor": "Run",
+    "Python.Visualization_Force_with_v.executor": "Run",
+    "Python.Visualization_Heatmap.executor": "Run",
+    "Python.Visualization_Heatmap_comparsion.executor": "Run",
+    "Python.Visualization_Prediction.executor": "Run",
+    "Python.Visualization_Prediction_Subplot.executor": "Run",
+    "Python.Visualization_Predictions_V.executor": "Run",
+    "Python.Visualization_Vorschub.executor": "Run",
+    "Python.Visualization_time_series.executor": "Run",
+    "Python.Visualization_variance_time_series.executor": "Run",
+    "Python.analyse_Scatter_plot.executor": "Run",
+    "Python.analyse_a_e.executor": "Run",
+    "Python.analyse_dependence_3D_vf.executor": "Run",
+    "Python.analyse_dependence_a.executor": "Run",
+    "Python.analyse_dependence_a_state_oldData.executor": "Run",
+    "Python.analyse_dependence_f.executor": "Run",
+    "Python.analyse_dependence_v.executor": "Run",
+    "Python.analyse_dependence_v_state.executor": "Run",
+    "Python.analyse_dependence_v_state_oldData.executor": "Run",
+    "Python.analyse_parameter_simularity.executor": "Run",
+    "Python.analyse_process_start.executor": "Run",
+    "Python.data_v_zero_fit_model.executor": "Run",
+    "Python.data_visualisation.executor": "Run",
+    "Python.data_visualisation_2D.executor": "Run",
+    "Python.data_visualisation_3D.executor": "Run",
+    "Python.data_visualisation_corr.executor": "Run",
+    "Python.data_visualisation_curr.executor": "Run",
+    "Python.data_visualisation_similarity.executor": "Run",
+    "Python.data_visualisation_similarity_v_zero.executor": "Run",
+    "Python.data_visualisation_simularity.executor": "Run",
+    "Python.data_visualization.executor": "Run",
+    "Python.data_visualization_curr.executor": "Run",
+    "Python.data_visualization_simularity_v_zero.executor": "Run",
+    "Python.error_influence.executor": "Run",
+    "Python.experiment_material_dependency.executor": "Run",
+    "Python.handling_data.executor": "Debug",
+    "Python.handling_experiment.executor": "Run",
+    "Python.handling_plots.executor": "Run",
+    "Python.handling_read_data_from_json.executor": "Run",
+    "Python.identifiy_forces.executor": "Run",
+    "Python.influence_error.executor": "Run",
+    "Python.influence_test.executor": "Run",
+    "Python.merge_additional_information.executor": "Run",
+    "Python.model_base.executor": "Run",
+    "Python.model_neural_net.executor": "Run",
+    "Python.model_physical.executor": "Debug",
+    "Python.model_random_forest.executor": "Run",
+    "Python.monitoring.executor": "Run",
+    "Python.plot_forces_from_DT.executor": "Run",
+    "Python.read_data_from_json.executor": "Run",
+    "Python.rename_force_columns.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.visualize_z_transform.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ToolWindow.Plots.ShowToolbar": "false",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/Experiements/PhyInfML-Thermo",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\Referenzmodelle_Hanlin" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\Referenzmodelle_Hanlin\Results\Neural_Net-2025_09_16_14_13_21" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\Referenzmodelle_Hanlin\Results\Random_Forest-2025_09_16_12_07_58" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\Referenzmodelle_Hanlin\Results\LSTM-2025_09_16_11_24_12" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\Referenzmodelle_Hanlin\Results\Random_Forest-2025_09_16_08_55_55" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\PhyInfML-Thermo" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\PhyInfML-Erd" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiements\ML-Modelle\Results\LSTM-2025_09_16_21_35_28" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Visualization" />
@@ -516,7 +647,12 @@
       <workItem from="1757925216415" duration="9438000" />
       <workItem from="1758005672434" duration="22225000" />
       <workItem from="1758041881829" duration="6105000" />
-      <workItem from="1758089800681" duration="606000" />
+      <workItem from="1758089800681" duration="13076000" />
+      <workItem from="1758185971878" duration="498000" />
+      <workItem from="1758275779674" duration="5726000" />
+      <workItem from="1758529413007" duration="22093000" />
+      <workItem from="1758567488605" duration="4025000" />
+      <workItem from="1758705369581" duration="307000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -668,21 +804,6 @@
           <option name="timeStamp" value="292" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Helper/handling_hyperopt.py</url>
-          <line>331</line>
-          <option name="timeStamp" value="332" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Helper/handling_hyperopt.py</url>
-          <line>332</line>
-          <option name="timeStamp" value="333" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Simulation/MMR_Calculator/MRRSimulationV3.py</url>
-          <line>233</line>
-          <option name="timeStamp" value="334" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Experiements/ExpertModels/Experts_Residual.py</url>
           <line>80</line>
           <option name="timeStamp" value="335" />
@@ -703,11 +824,6 @@
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Create_Plots_for_Thesis.py</url>
-          <line>300</line>
-          <option name="timeStamp" value="344" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Neural_Net-2025_09_16_14_13_21/Create_Plots_for_Thesis.py</url>
           <line>289</line>
           <option name="timeStamp" value="348" />
@@ -722,6 +838,11 @@
           <line>168</line>
           <option name="timeStamp" value="351" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Helper/handling_experiment.py</url>
+          <line>1922</line>
+          <option name="timeStamp" value="352" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -733,9 +854,11 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Master_thesis$Thermo.coverage" NAME="Thermo Coverage Results" MODIFIED="1758553611788" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Thermo" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualization.coverage" NAME="data_visualization Coverage Results" MODIFIED="1751530075191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Visualization_Heatmap_comparsion.coverage" NAME="Visualization_Heatmap_comparsion Coverage Results" MODIFIED="1756214457278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Visualization" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_3D.coverage" NAME="data_visualisation_3D Coverage Results" MODIFIED="1757336119834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Visualization" />
+    <SUITE FILE_PATH="coverage/Master_thesis$PiNN_Thermo.coverage" NAME="PiNN_Thermo Coverage Results" MODIFIED="1758572911859" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Thermo" />
     <SUITE FILE_PATH="coverage/Master_thesis$MoE_Gating.coverage" NAME="MoE_Gating Coverage Results" MODIFIED="1749027647505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MoE_Gating" />
     <SUITE FILE_PATH="coverage/Master_thesis$Experts.coverage" NAME="Experts Coverage Results" MODIFIED="1756480689005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/ExpertModels" />
     <SUITE FILE_PATH="coverage/Master_thesis$DT9836_rename.coverage" NAME="DT9836_rename Coverage Results" MODIFIED="1752943388887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSetsV2" />
@@ -746,20 +869,21 @@
     <SUITE FILE_PATH="coverage/Master_thesis$Load_Single_Axis.coverage" NAME="Load_Single_Axis Coverage Results" MODIFIED="1748505689186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Single_Axis" />
     <SUITE FILE_PATH="coverage/Master_thesis$Scatter_plot.coverage" NAME="Scatter_plot Coverage Results" MODIFIED="1751531165662" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$handling_read_data_from_json.coverage" NAME="handling_read_data_from_json Coverage Results" MODIFIED="1752834522999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$PiNN_HyperOpt.coverage" NAME="PiNN_HyperOpt Coverage Results" MODIFIED="1758571776525" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Thermo" />
     <SUITE FILE_PATH="coverage/Master_thesis$MRRSimulationV2.coverage" NAME="MRRSimulationV2 Coverage Results" MODIFIED="1753303901859" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation/MMR_Calculator" />
     <SUITE FILE_PATH="coverage/Master_thesis$Merge_Controller_with_OldData.coverage" NAME="Merge_Controller_with_OldData Coverage Results" MODIFIED="1752835175333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Naive_Model_analysy.coverage" NAME="Naive_Model_analysy Coverage Results" MODIFIED="1751962017211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
-    <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_similarity_v_zero.coverage" NAME="data_visualisation_similarity_v_zero Coverage Results" MODIFIED="1751961987431" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$influence_error.coverage" NAME="influence_error Coverage Results" MODIFIED="1751009073085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
+    <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_similarity_v_zero.coverage" NAME="data_visualisation_similarity_v_zero Coverage Results" MODIFIED="1751961987431" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$handling_experiment.coverage" NAME="handling_experiment Coverage Results" MODIFIED="1755248982332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Helper" />
     <SUITE FILE_PATH="coverage/Master_thesis$Integrate_Cont_Dev.coverage" NAME="Integrate_Cont_Dev Coverage Results" MODIFIED="1751456975293" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Cont_Dev" />
     <SUITE FILE_PATH="coverage/Master_thesis$Loss_functions.coverage" NAME="Loss_functions Coverage Results" MODIFIED="1748263304107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss_with_delta_y" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Simulate_force_mrr.coverage" NAME="Simulate_force_mrr Coverage Results" MODIFIED="1757573796100" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Simulate_force_mrr.coverage" NAME="Simulate_force_mrr Coverage Results" MODIFIED="1758120036634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_dependence_v.coverage" NAME="analyse_dependence_v Coverage Results" MODIFIED="1751701661949" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Different_DataSets.coverage" NAME="Different_DataSets Coverage Results" MODIFIED="1750176677248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Load_Data_DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_dependence_f.coverage" NAME="analyse_dependence_f Coverage Results" MODIFIED="1751904148030" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Simple_PI_Controler_AirCut.coverage" NAME="Simple_PI_Controler_AirCut Coverage Results" MODIFIED="1752480885157" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Controller" />
-    <SUITE FILE_PATH="coverage/Master_thesis$SplitData.coverage" NAME="SplitData Coverage Results" MODIFIED="1757575447128" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference" />
+    <SUITE FILE_PATH="coverage/Master_thesis$SplitData.coverage" NAME="SplitData Coverage Results" MODIFIED="1758186052935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR" />
     <SUITE FILE_PATH="coverage/Master_thesis$FilterMethod.coverage" NAME="FilterMethod Coverage Results" MODIFIED="1752761695454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NeuralNet" />
     <SUITE FILE_PATH="coverage/Master_thesis$PiNNs.coverage" NAME="PiNNs Coverage Results" MODIFIED="1751449034147" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/PiNN" />
     <SUITE FILE_PATH="coverage/Master_thesis$Visualization_Prediction.coverage" NAME="Visualization_Prediction Coverage Results" MODIFIED="1756138434297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Visualization" />
@@ -810,7 +934,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$Additional_Input.coverage" NAME="Additional_Input Coverage Results" MODIFIED="1751706342881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Cont_Dev" />
     <SUITE FILE_PATH="coverage/Master_thesis$Experiment_AirCut.coverage" NAME="Experiment_AirCut Coverage Results" MODIFIED="1752233513966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$Thermodynamic_Model.coverage" NAME="Thermodynamic_Model Coverage Results" MODIFIED="1756713420121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhysicalModel" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Create_TimeSeries_Plots_for_Thesis.coverage" NAME="Create_TimeSeries_Plots_for_Thesis Coverage Results" MODIFIED="1758036393059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Create_TimeSeries_Plots_for_Thesis.coverage" NAME="Create_TimeSeries_Plots_for_Thesis Coverage Results" MODIFIED="1758289571496" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_dependence_a_state_oldData.coverage" NAME="analyse_dependence_a_state_oldData Coverage Results" MODIFIED="1751901549584" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Friction_simple.coverage" NAME="Friction_simple Coverage Results" MODIFIED="1751962079840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$visualize_z_transform.coverage" NAME="visualize_z_transform Coverage Results" MODIFIED="1752046996141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
@@ -821,11 +945,11 @@
     <SUITE FILE_PATH="coverage/Master_thesis$PiNN_Friction.coverage" NAME="PiNN_Friction Coverage Results" MODIFIED="1757342625920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PiNNs" />
     <SUITE FILE_PATH="coverage/Master_thesis$read_data_from_json.coverage" NAME="read_data_from_json Coverage Results" MODIFIED="1752944257672" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSetsV2" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_Activation_Functions.coverage" NAME="Compare Activation Functions Coverage Results" MODIFIED="1747662253865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Activation_Function" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Residual.coverage" NAME="Hyprid_Models_Residual Coverage Results" MODIFIED="1756222610955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Hyprid_Models" />
     <SUITE FILE_PATH="coverage/Master_thesis$Merge_Sinumerik_DT9836.coverage" NAME="Merge_Sinumerik_DT9836 Coverage Results" MODIFIED="1757060194372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Residual.coverage" NAME="Hyprid_Models_Residual Coverage Results" MODIFIED="1758553677859" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Thermo" />
     <SUITE FILE_PATH="coverage/Master_thesis$experiment_material_dependency.coverage" NAME="experiment_material_dependency Coverage Results" MODIFIED="1744641603565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments" />
     <SUITE FILE_PATH="coverage/Master_thesis$Optimize_Parameter.coverage" NAME="Optimize_Parameter Coverage Results" MODIFIED="1753360811401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Addition.coverage" NAME="Addition Coverage Results" MODIFIED="1756202225431" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Addition.coverage" NAME="Addition Coverage Results" MODIFIED="1758555159342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture" />
     <SUITE FILE_PATH="coverage/Master_thesis$Experts_3.coverage" NAME="Experts_3 Coverage Results" MODIFIED="1756716106164" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/ExpertModels" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_simularity.coverage" NAME="data_visualisation_simularity Coverage Results" MODIFIED="1749625289021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Addition_LinearSigmoid.coverage" NAME="Addition_LinearSigmoid Coverage Results" MODIFIED="1752649892216" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel" />
@@ -848,7 +972,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_curr.coverage" NAME="data_visualisation_curr Coverage Results" MODIFIED="1750755945810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$identifiy_forces.coverage" NAME="identifiy_forces Coverage Results" MODIFIED="1752916998677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets/RawData" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_dependence_v_state_oldData.coverage" NAME="analyse_dependence_v_state_oldData Coverage Results" MODIFIED="1751901839329" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Erd.coverage" NAME="Erd Coverage Results" MODIFIED="1756200244930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhysicalModel" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Erd.coverage" NAME="Erd Coverage Results" MODIFIED="1758533675247" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Erd" />
     <SUITE FILE_PATH="coverage/Master_thesis$PySINDy.coverage" NAME="PySINDy Coverage Results" MODIFIED="1752598335448" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/SystemIdentifikation" />
     <SUITE FILE_PATH="coverage/Master_thesis$influence_test.coverage" NAME="influence_test Coverage Results" MODIFIED="1751902548233" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Loss_Functions_Test.coverage" NAME="Loss_Functions_Test Coverage Results" MODIFIED="1748865606888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Loss Functions" />
@@ -856,8 +980,8 @@
     <SUITE FILE_PATH="coverage/Master_thesis$MRRSimulationV3.coverage" NAME="MRRSimulationV3 Coverage Results" MODIFIED="1757321214252" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation/MMR_Calculator" />
     <SUITE FILE_PATH="coverage/Master_thesis$model_random_forest.coverage" NAME="model_random_forest Coverage Results" MODIFIED="1757410494279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models" />
     <SUITE FILE_PATH="coverage/Master_thesis$Integrated.coverage" NAME="Integrated Coverage Results" MODIFIED="1755084310293" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Controller_Input" />
-    <SUITE FILE_PATH="coverage/Master_thesis$monitoring.coverage" NAME="monitoring Coverage Results" MODIFIED="1755080268967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation" />
     <SUITE FILE_PATH="coverage/Master_thesis$model_physical.coverage" NAME="model_physical Coverage Results" MODIFIED="1755426533802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models" />
+    <SUITE FILE_PATH="coverage/Master_thesis$monitoring.coverage" NAME="monitoring Coverage Results" MODIFIED="1758114109811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation" />
     <SUITE FILE_PATH="coverage/Master_thesis$Simulate_trainingsdata.coverage" NAME="Simulate_trainingsdata Coverage Results" MODIFIED="1751468193312" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Friction_Model" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualization_simularity_v_zero.coverage" NAME="data_visualization_simularity_v_zero Coverage Results" MODIFIED="1749627063876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Adddition_ARMAX.coverage" NAME="Adddition_ARMAX Coverage Results" MODIFIED="1752597349457" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel" />
@@ -866,21 +990,22 @@
     <SUITE FILE_PATH="coverage/Master_thesis$ARMAX.coverage" NAME="ARMAX Coverage Results" MODIFIED="1752840799926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Combined_Machine_and_Processmodel" />
     <SUITE FILE_PATH="coverage/Master_thesis$Merge_Controler.coverage" NAME="Merge_Controler Coverage Results" MODIFIED="1752072673039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$SimpleFriction.coverage" NAME="SimpleFriction Coverage Results" MODIFIED="1757196377245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhysicalModel" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Analisys_Influence_F_MRR.coverage" NAME="Analisys_Influence_F_MRR Coverage Results" MODIFIED="1758554605757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Thermo" />
     <SUITE FILE_PATH="coverage/Master_thesis$plot_forces_from_DT.coverage" NAME="plot_forces_from_DT Coverage Results" MODIFIED="1752955494751" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSetsV2" />
     <SUITE FILE_PATH="coverage/Master_thesis$ODE_AirCut.coverage" NAME="ODE_AirCut Coverage Results" MODIFIED="1752481337833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$AktivationfunctionPlotter.coverage" NAME="AktivationfunctionPlotter Coverage Results" MODIFIED="1756821076449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Visualization" />
     <SUITE FILE_PATH="coverage/Master_thesis$Align_SInumerik_DT9836.coverage" NAME="Align_SInumerik_DT9836 Coverage Results" MODIFIED="1752969559982" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSetsV2" />
     <SUITE FILE_PATH="coverage/Master_thesis$data_visualisation_2D.coverage" NAME="data_visualisation_2D Coverage Results" MODIFIED="1757595813980" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Visualization" />
     <SUITE FILE_PATH="coverage/Master_thesis$LRRC.coverage" NAME="LRRC Coverage Results" MODIFIED="1751305710534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
-    <SUITE FILE_PATH="coverage/Master_thesis$PiNN_Erd.coverage" NAME="PiNN_Erd Coverage Results" MODIFIED="1756201782198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PiNNs" />
+    <SUITE FILE_PATH="coverage/Master_thesis$PiNN_Erd.coverage" NAME="PiNN_Erd Coverage Results" MODIFIED="1758552400662" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhyInfML-Erd" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_Scatter_plot.coverage" NAME="analyse_Scatter_plot Coverage Results" MODIFIED="1751904122817" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Guided.coverage" NAME="Hyprid_Models_Guided Coverage Results" MODIFIED="1748243212134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Hybrid_Guided" />
     <SUITE FILE_PATH="coverage/Master_thesis$Change_Point_Detection.coverage" NAME="Change_Point_Detection Coverage Results" MODIFIED="1749483065774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Change_Point_Detection" />
     <SUITE FILE_PATH="coverage/Master_thesis$RF_with_expo.coverage" NAME="RF_with_expo Coverage Results" MODIFIED="1752831224567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NewFeature" />
     <SUITE FILE_PATH="coverage/Master_thesis$RF_FiFo_load.coverage" NAME="RF_FiFo_load Coverage Results" MODIFIED="1752832396580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NewFeature" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Create_Plots_for_Thesis.coverage" NAME="Create_Plots_for_Thesis Coverage Results" MODIFIED="1758040885792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Create_Plots_for_Thesis.coverage" NAME="Create_Plots_for_Thesis Coverage Results" MODIFIED="1758290076872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/ML-Modelle/Results/Recurrent_Neural_Net-2025_09_16_22_27_10" />
     <SUITE FILE_PATH="coverage/Master_thesis$ODE_Model_1.coverage" NAME="ODE_Model_1 Coverage Results" MODIFIED="1751701798783" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1758089866801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Tests" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1758186069120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Tests" />
     <SUITE FILE_PATH="coverage/Master_thesis$Visualization_Vorschub.coverage" NAME="Visualization_Vorschub Coverage Results" MODIFIED="1757597530669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plots_Masterarbeit" />
   </component>
 </project>

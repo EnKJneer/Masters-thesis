@@ -1,0 +1,29 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.179018 | 0.037347
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.190434 | 0.033989
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.121430 | 0.009048
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.129570 | 0.003112
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Thermo_0   | 0.177615 | 0.013159
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Thermo_0   | 0.180487 | 0.008890
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Thermo_0   | 0.127543 | 0.004143
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Thermo_0   | 0.130085 | 0.001456
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Thermo_1   | 0.185680 | 0.007811
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Thermo_1   | 0.183395 | 0.003872
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Thermo_1   | 0.153290 | 0.005534
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Thermo_1   | 0.133338 | 0.001520
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Thermo_2   | 0.194146 | 0.012737
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Thermo_2   | 0.187582 | 0.003977
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Thermo_2   | 0.166708 | 0.004821
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Thermo_2   | 0.132519 | 0.001528
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Thermo_3   | 0.185378 | 0.013172
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Thermo_3   | 0.190979 | 0.007844
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Thermo_3   | 0.169253 | 0.004299
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Thermo_3   | 0.131273 | 0.001548
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Thermo_4   | 0.244797 | 0.051784
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Thermo_4   | 0.242399 | 0.032740
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Thermo_4   | 0.187516 | 0.012562
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Thermo_4   | 0.171476 | 0.017651

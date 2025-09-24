@@ -1,0 +1,29 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.168973 | 0.018154
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.181621 | 0.011118
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.115873 | 0.004586
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.129572 | 0.000718
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Erd_0      | 0.248599 | 0.028447
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Erd_0      | 0.225029 | 0.027244
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Erd_0      | 0.138074 | 0.005152
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Erd_0      | 0.129550 | 0.001065
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Erd_1      | 0.233966 | 0.026820
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Erd_1      | 0.192658 | 0.030928
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Erd_1      | 0.151910 | 0.007258
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Erd_1      | 0.131339 | 0.002876
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Erd_2      | 0.239277 | 0.007195
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Erd_2      | 0.235150 | 0.020527
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Erd_2      | 0.162359 | 0.008797
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Erd_2      | 0.134788 | 0.003186
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Erd_3      | 0.251356 | 0.031535
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Erd_3      | 0.246433 | 0.033705
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Erd_3      | 0.177216 | 0.013714
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Erd_3      | 0.141916 | 0.006873
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiNN_Erd_4      | 0.271524 | 0.022055
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiNN_Erd_4      | 0.224537 | 0.023488
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiNN_Erd_4      | 0.215988 | 0.011688
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiNN_Erd_4      | 0.166827 | 0.007643
