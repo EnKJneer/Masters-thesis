@@ -14,6 +14,7 @@ import numpy as np
 import pickle
 from abc import ABC, abstractmethod
 from scipy.signal import butter, filtfilt
+from scipy.integrate import cumulative_trapezoid
 
 # konstanten
 WINDOWSIZE = 1
@@ -25,7 +26,7 @@ HEADER_y = ["curr_x", "curr_y", "curr_z", "curr_sp"]
 
 class BaseDataClass(ABC):
     @abstractmethod
-    def __init__(self, name, folder, testing_data_paths, target_channels=HEADER_y, past_values=0, future_values=0, window_size=1, add_padding=False):
+    def __init__(self, name, folder, testing_data_paths, target_channels=HEADER_y, past_values=0, future_values=0, window_size=1, add_padding=False, columns_to_integrate= None):
         self.name = name
         self.folder = folder
         self.target_channels = target_channels
@@ -42,6 +43,9 @@ class BaseDataClass(ABC):
         self.testing_data_paths = testing_data_paths
 
         self.add_padding = add_padding
+
+        self.columns_to_integrate = columns_to_integrate
+
     @staticmethod
     def create_padding(df, length=10):
         """
@@ -197,6 +201,44 @@ class BaseDataClass(ABC):
 
         return test_datas
 
+    def read_fulldata(self, names, folder):
+        """
+        Reads full data from multiple files and returns it as a list of DataFrames.
+
+        Parameters
+        ----------
+        names : list of str
+            A list of file names to read.
+
+        folder : str, optional
+            The folder where the data is located.
+
+        Returns
+        -------
+        pd.DataFrame or list of pd.DataFrame
+            The full data read from the files, either as a single DataFrame or a list of DataFrames.
+        """
+        results = []
+
+        for name in names:
+            file_path = os.path.join(folder, name)
+            if os.path.exists(file_path):
+                fulldata = read_file(file_path)
+            else:
+                print(f"ERROR: No file for {file_path} was found")
+                fulldata = None
+
+            if fulldata is not None:
+                # integration der Zeilen.
+                if self.columns_to_integrate is not None:
+                    for column in self.columns_to_integrate:
+                        if column in fulldata.columns:
+                            # Numerische Integration mit Trapezregel (kumulativ)
+                            fulldata[column] = cumulative_trapezoid(fulldata[column], initial=0)  # initial=0 für Startwert
+
+                results.append(fulldata)
+        return results
+
 # Datenklassen
 class DataClass(BaseDataClass):
     def __init__(self, name, folder, training_data_paths, validation_data_paths, testing_data_paths, target_channels = HEADER_y, header = HEADER_x,
@@ -285,8 +327,7 @@ class DataClass(BaseDataClass):
         """
 
         # Load data
-        fulldatas = read_fulldata(data_paths, self.folder)
-
+        fulldatas = self.read_fulldata(data_paths, self.folder)
 
         datas = apply_action(fulldatas, lambda data: data[self.header].rolling(window=self.window_size, min_periods=1).mean())
 
@@ -343,6 +384,8 @@ class DataClass(BaseDataClass):
             "testing_data_paths": self.testing_data_paths,
             "target_channels": self.target_channels,
             'input_features': self.header,
+            'columns_to_integrate': self.columns_to_integrate,
+
         }
         return documentation
 

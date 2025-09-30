@@ -41,7 +41,7 @@ def start_experiment_for(model_str = 'NN'):
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataclass = copy.copy(dataSet)
 
-    optimization_samplers = ["GridSampler"] #["TPESampler", "RandomSampler", "GridSampler"]
+    optimization_samplers = ["TPESampler", "GridSampler"] #["TPESampler", "RandomSampler", "GridSampler"]
 
     # JSON-Datei laden
     serach_spaces = hyperopt.load_search_spaces('..\\Hyperparameter.json')
