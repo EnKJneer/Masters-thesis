@@ -25,8 +25,8 @@ if __name__ == '__main__':
     past_values = 0
     future_values = 0
 
-    dataSet = hdata.DataClass_Reference
-    dataSet.folder = '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR/Data'
+    dataSet = hdata.DataClass_ST_Plate_Notch
+    dataSet.folder = '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR/Data' #
     #dataSet.header = ["pos_sp", "pos_x", "pos_y", "pos_z", "v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
     #dataSet.folder = '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data'
     #dataSet.folder = '..\\..\\Data'

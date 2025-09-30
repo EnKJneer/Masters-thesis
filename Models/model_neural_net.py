@@ -1187,7 +1187,7 @@ class PiRNNThermo(RNN):
         self.penalty_weight = penalty_weight
         self.optimizer_type = optimizer_type
         self.theta_init = theta_init
-        self.epsilon = 1e-12
+        self.epsilon = 9e-1
 
         # Neue Parameter-Matrix für alle Achsen
         if theta_init is not None:
@@ -1385,11 +1385,8 @@ class PiRNNThermo(RNN):
         criterion = nn.MSELoss()
         mse_loss = criterion(y_target.squeeze(), y_pred.squeeze())
 
-        if x_input is not None and y_pred.requires_grad or y_target.requires_grad:
+        if x_input is not None and (y_pred.requires_grad or y_target.requires_grad):
             x_input = x_input.clone().detach().requires_grad_(True)
-            y_pred_physics = self(x_input)
-
-            # Temporär CuDNN deaktivieren, um "double backwards" zu ermöglichen
             with torch.backends.cudnn.flags(enabled=False):
                 y_pred_physics = self(x_input)
 
@@ -1403,32 +1400,46 @@ class PiRNNThermo(RNN):
             )[0]
 
             if x_input.size(1) == 13:
-                # Features extrahieren
-                a = x_input[:, 0:4]  # [a_sp, a_x, a_y, a_z]
-                f = x_input[:, 4:8]  # [f_sp, f_x, f_y, f_z]
-                mrr = x_input[:, 8].unsqueeze(1)  # (N, 1)
-                v = x_input[:, 9:13]  # [v_sp, v_x, v_y, v_z]
+                a = x_input[:, 0:4]  # (N, 4)
+                f = x_input[:, 4:8]  # (N, 4)
+                mrr = x_input[:, 8]  # (N,)
+                v = x_input[:, 9:13]  # (N, 4)
+                ones = torch.ones_like(mrr)  # (N,)
 
-                ones = torch.ones_like(mrr)  # bias-term
-                input_features = torch.cat([a, v, f, mrr, ones], dim=1)  # (N, 13)
+                dy_da = dy_dx[:, 0:4]  # (N, 4)
+                dy_dv = dy_dx[:, 9:13]  # (N, 4)
+                dy_df = dy_dx[:, 4:8]  # (N, 4)
+                dy_dmrr = dy_dx[:, 8]  # (N,)
 
-                # Ableitungen extrahieren: d/d[a_sp, a_x, a_y, a_z, ..., v_z]
-                dy_da = dy_dx[:, 0:4]
-                dy_dv = dy_dx[:, 9:13]
-                dy_df = dy_dx[:, 4:8]
-                dy_dmrr = dy_dx[:, 8].unsqueeze(1)  # (N, 1)
-
-                # Constraint-Berechnung für jede Achse separat
                 constraint = []
                 for i in range(4):  # 4 Achsen: sp, x, y, z
-                    deriv = dy_da[:, i] + dy_dv[:, i] + dy_df[:, i]
-                    influences = (
-                            self.theta[i, 0] + # dI/dv
-                            self.theta[i, 1] + # dI/da
-                            self.theta[i, 2]  # dI/dF
-                    )
-                    constraint_i = deriv - influences
-                    constraint.append(constraint_i.unsqueeze(1))
+                    deriv = dy_da[:, i] + dy_dv[:, i] + dy_df[:, i]  # (N,)
+
+                    if i == 0:  # Sonderfall für sp-Achse (MRR-Term)
+                        # Ersetze kleine Werte um überanpassung an Außreisern zu verhindern
+                        v_safe = torch.where(
+                            torch.abs(v[:, i]) < self.epsilon,
+                            torch.sign(v[:, i]) * self.epsilon,  # Erhalte Vorzeichen, setze Betrag auf 0.9
+                            v[:, i]
+                        )
+                        # Elementweise Berechnung der influences (skalar pro Probe)
+                        influences = (
+                                self.theta[i, 0] * ones +  # dI/dv (skalar)
+                                self.theta[i, 1] * ones +  # dI/da (skalar)
+                                self.theta[i, 2] * mrr / v_safe +  # dI/dF (N,)
+                                self.theta[i, 2] * f[:, i]/ v_safe -  # dI/dMRR (N,)
+                                self.theta[i, 2] * f[:, i] * mrr / v_safe**2
+                        )
+                        deriv += dy_dmrr  # (N,)
+                    else:
+                        influences = (
+                                self.theta[i, 0] * ones +  # dI/dv (skalar)
+                                self.theta[i, 1] * ones +  # dI/da (skalar)
+                                self.theta[i, 2] * ones  # dI/dF (skalar)
+                        )
+
+                    constraint_i = deriv - influences  # (N,)
+                    constraint.append(constraint_i.unsqueeze(1))  # (N, 1)
 
                 constraint = torch.cat(constraint, dim=1)  # (N, 4)
                 penalty = torch.mean(constraint ** 2)

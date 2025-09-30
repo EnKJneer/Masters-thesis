@@ -1247,12 +1247,34 @@ class FrictionModel(mb.BaseModel):
         }
         return documentation
 
-    def reset_hyperparameter(self):
-        throw_error('Not implemented')
+    def reset_hyperparameter(self, **kwargs):
+        """
+        Resets the hyperparameters of the friction model.
+        Only updates parameters that are explicitly provided in kwargs.
+        """
+        # Update only if parameter exists in kwargs
+        if 'f_s' in kwargs:
+            self.F_s = kwargs['f_s']
+        if 'a_x' in kwargs:
+            self.theta_f = kwargs['a_x']
+        if 'a_sp' in kwargs:
+            self.a_sp = kwargs['a_sp']
+        if 'b' in kwargs:
+            self.b = kwargs['b']
+        if 'f_c' in kwargs:
+            self.F_c = kwargs['f_c']
+        if 'sigma_2' in kwargs:
+            self.sigma_2 = kwargs['sigma_2']
+        if 'a_b' in kwargs:
+            self.theta_a = kwargs['a_b']
+        if 'velocity_threshold' in kwargs:
+            self.velocity_threshold = kwargs['velocity_threshold']
+        if 'target_channel' in kwargs:
+            self.target_channel = kwargs['target_channel']
 
 class ModelErd(mb.BaseModel):
     def __init__(self, name="Erd",
-                 theta_v = 1, theta_a = 1, theta_f = 1, theta_s = 1, epsilon_y = 0.1, epsilon_z = 0.1, epsilon_sp = 0.1,
+                 theta_v = 1, theta_a = 1, theta_f = 1, theta_s = 1, theta_c = 1, epsilon_y = 0.1, epsilon_z = 0.1, epsilon_sp = 0.1,
                  target_channel = ['curr_x']):
 
         self.name = name
@@ -1262,6 +1284,7 @@ class ModelErd(mb.BaseModel):
         self.theta_v = [theta_v, theta_v * epsilon_y, theta_v * epsilon_z, theta_v * epsilon_sp]
         self.theta_f = [theta_f, theta_f * epsilon_y, theta_f * epsilon_z, theta_f * epsilon_sp]
         self.theta_s = [theta_s, theta_s * epsilon_y, theta_s * epsilon_z, theta_s * epsilon_sp]
+        self.theta_c = [theta_c, theta_c * epsilon_y, theta_c * epsilon_z, theta_c * epsilon_sp]
 
         # parameter für den offset
         self.theta_offset = 0.0
@@ -1281,7 +1304,9 @@ class ModelErd(mb.BaseModel):
             y_pred += (self.theta_a[idx] * a_axis * v_axis +
                        self.theta_v[idx] * v_axis * v_axis * np.sign(v_axis) +
                        self.theta_f[idx] * f_axis_sim * mrr +
-                       self.theta_s[idx] * np.sign(v_axis))
+                       self.theta_s[idx] * np.sign(v_axis) +
+                        self.theta_c[idx])
+
         y_pred += np.ones(len(x)) * self.theta_offset
         return y_pred
 
@@ -1297,7 +1322,8 @@ class ModelErd(mb.BaseModel):
                 a_axis * v_axis,
                 v_axis * v_axis * np.sign(v_axis),
                 f_axis_sim * mrr,
-                np.sign(v_axis)
+                np.sign(v_axis),
+                np.ones_like(v_axis)
             ]).T
             data.append(data_axis)
         data = np.concatenate(data, axis=1)
@@ -1308,16 +1334,18 @@ class ModelErd(mb.BaseModel):
         reg.fit(data, y_train_values.squeeze())
 
         # Parameter extrahieren
-        self.theta_a = reg.coef_[0::4].tolist()
-        self.theta_v = reg.coef_[1::4].tolist()
-        self.theta_f = reg.coef_[2::4].tolist()
-        self.theta_s = reg.coef_[3::4].tolist()
+        self.theta_a = reg.coef_[0::5].tolist()
+        self.theta_v = reg.coef_[1::5].tolist()
+        self.theta_f = reg.coef_[2::5].tolist()
+        self.theta_s = reg.coef_[3::5].tolist()
+        self.theta_c = reg.coef_[4::5].tolist()
 
         # Ausgabe der Parameter
         print(f"theta_a: {self.theta_a}")
         print(f"theta_v: {self.theta_v}")
         print(f"theta_f: {self.theta_f}")
         print(f"theta_s: {self.theta_s}")
+        print(f"theta_c: {self.theta_c}")
 
         # Validierungsverlust berechnen
         validation_loss = self.criterion(y_val.values.squeeze(), self.predict(X_val))
@@ -1358,6 +1386,12 @@ class ModelErd(mb.BaseModel):
                     "z": self.theta_s[2],
                     "sp": self.theta_s[3]
                 },
+                "theta_c": {
+                    "x": self.theta_c[0],
+                    "y": self.theta_c[1],
+                    "z": self.theta_c[2],
+                    "sp": self.theta_c[3]
+                },
             }
         }
         return documentation
@@ -1366,6 +1400,144 @@ class ModelErd(mb.BaseModel):
         raise NotImplementedError("Not implemented")
 
 class ThermodynamicModel(mb.BaseModel):
+    def __init__(self, name="ThermodynamicModel",
+                 theta_v = 1, theta_a = 1, theta_f = 1, theta_s = 1, theta_c = 1, epsilon_y = 0.1, epsilon_z = 0.1, epsilon_sp = 0.1,
+                 target_channel = ['curr_x']):
+
+        self.name = name
+
+        # parameter
+        self.theta_a = [theta_a, theta_a * epsilon_y, theta_a * epsilon_z, theta_a * epsilon_sp]
+        self.theta_v = [theta_v, theta_v * epsilon_y, theta_v * epsilon_z, theta_v * epsilon_sp]
+        self.theta_f = [theta_f, theta_f * epsilon_y, theta_f * epsilon_z, theta_f * epsilon_sp]
+        self.theta_s = [theta_s, theta_s * epsilon_y, theta_s * epsilon_z, theta_s * epsilon_sp]
+        self.theta_c = [theta_c, theta_c * epsilon_y, theta_c * epsilon_z, theta_c * epsilon_sp]
+
+        # parameter für den offset
+        self.theta_offset = 0.0
+
+        self.target_channel = target_channel
+
+        self.epsilon = 1e-3
+
+    def criterion(self, y_target, y_pred):
+        return np.mean(np.abs(y_target - y_pred))
+
+    def predict(self, x):
+        y_pred = np.zeros(len(x))
+        for idx, axis in enumerate(['x', 'y', 'z', 'sp']):
+            v_axis = x[f'v_{axis}_1_current'].values
+            a_axis = x[f'a_{axis}_1_current'].values
+            f_axis_sim = x[f'f_{axis}_sim_1_current'].values
+            mrr = x[f'materialremoved_sim_1_current'].values
+            if axis != 'sp':
+                term = self.theta_f[idx] * f_axis_sim
+            else:
+                term = self.theta_f[idx] * f_axis_sim #* mrr / (v_axis + self.epsilon)
+            y_pred += (self.theta_a[idx] * a_axis +
+                       self.theta_v[idx] * v_axis +
+                       term +
+                       self.theta_s[idx] * np.sign(v_axis) +
+                        self.theta_c[idx])
+
+        y_pred += np.ones(len(x)) * self.theta_offset
+        return y_pred
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        target = self.target_channel
+        data = []
+        for axis in ['x', 'y', 'z', 'sp']:
+            v_axis = X_train[f'v_{axis}_1_current'].values
+            a_axis = X_train[f'a_{axis}_1_current'].values
+            f_axis_sim = X_train[f'f_{axis}_sim_1_current'].values
+            mrr = X_train[f'materialremoved_sim_1_current'].values
+            if axis != 'sp':
+                term = f_axis_sim
+            else:
+                term = f_axis_sim #* mrr / (v_axis + self.epsilon)
+
+            data_axis = np.array([
+                a_axis,
+                v_axis,
+                term,
+                np.sign(v_axis),
+                np.ones_like(v_axis)
+            ]).T
+            data.append(data_axis)
+        data = np.concatenate(data, axis=1)
+        y_train_values = y_train[target].values
+
+        # Lineare Regression für alle Parameter
+        reg = LinearRegression(fit_intercept=False)
+        reg.fit(data, y_train_values.squeeze())
+
+        # Parameter extrahieren
+        self.theta_a = reg.coef_[0::5].tolist()
+        self.theta_v = reg.coef_[1::5].tolist()
+        self.theta_f = reg.coef_[2::5].tolist()
+        self.theta_s = reg.coef_[3::5].tolist()
+        self.theta_c = reg.coef_[4::5].tolist()
+
+        # Ausgabe der Parameter
+        print(f"theta_a: {self.theta_a}")
+        print(f"theta_v: {self.theta_v}")
+        print(f"theta_f: {self.theta_f}")
+        print(f"theta_s: {self.theta_s}")
+        print(f"theta_c: {self.theta_c}")
+
+        # Validierungsverlust berechnen
+        validation_loss = self.criterion(y_val.values.squeeze(), self.predict(X_val))
+        print(f"Validation Loss: {validation_loss:.4e}")
+        return validation_loss
+
+    def test_model(self, X, y_target):
+        prediction = self.predict(X)
+        loss = self.criterion(y_target.values.squeeze(), prediction)
+        return loss, prediction
+
+    def get_documentation(self):
+        documentation = {
+            "description": "Implementation of Model Erd.",
+            "parameters": {
+                "name": self.name,
+                "theta_a": {
+                    "x": self.theta_a[0],
+                    "y": self.theta_a[1],
+                    "z": self.theta_a[2],
+                    "sp": self.theta_a[3]
+                },
+                "theta_v": {
+                    "x": self.theta_v[0],
+                    "y": self.theta_v[1],
+                    "z": self.theta_v[2],
+                    "sp": self.theta_v[3]
+                },
+                "theta_f": {
+                    "x": self.theta_f[0],
+                    "y": self.theta_f[1],
+                    "z": self.theta_f[2],
+                    "sp": self.theta_f[3]
+                },
+                "theta_s": {
+                    "x": self.theta_s[0],
+                    "y": self.theta_s[1],
+                    "z": self.theta_s[2],
+                    "sp": self.theta_s[3]
+                },
+                "theta_c": {
+                    "x": self.theta_c[0],
+                    "y": self.theta_c[1],
+                    "z": self.theta_c[2],
+                    "sp": self.theta_c[3]
+                },
+            }
+        }
+        return documentation
+
+    def reset_hyperparameter(self):
+        raise NotImplementedError("Not implemented")
+
+class ThermodynamicModel_old(mb.BaseModel):
     def __init__(self, name="Thermodynamic_Model",
                  theta_v = 0, theta_a = 0, theta_f = 0, theta_offset = 0,
                  velocity_threshold=1e-1, target_channel = 'curr_x'):
@@ -1390,7 +1562,7 @@ class ThermodynamicModel(mb.BaseModel):
             a_x = X[f'a_{axis}_1_current'].values
             f_x_sim = X[f'f_{axis}_sim_1_current'].values
             mrr = X[f'materialremoved_sim_1_current'].values
-            y_pred = self.theta_v * v_x + self.theta_f * f_x_sim + self.theta_a * a_x + self.theta_offset #
+            y_pred = self.theta_a * a_x + self.theta_v * v_x + self.theta_f * f_x_sim + self.theta_offset #
         return y_pred
 
     def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
@@ -1437,7 +1609,7 @@ class ThermodynamicModel(mb.BaseModel):
 
     def get_documentation(self):
         documentation = {
-            "description": "Improvmend of Model Erd.",
+            "description": "Improvement of Model Erd.",
             "parameters": {
                 "name": self.name,
                 "velocity_threshold": self.velocity_threshold,

@@ -35,23 +35,55 @@ class RandomForestModel(mb.BaseModel):
         self.name = name
         self.device = "cpu"
 
-    def reset_hyperparameter(self, n_estimators=100, max_features = None, max_depth =None, min_samples_split = 2, min_samples_leaf = 1):
-        self.n_estimators = n_estimators
-        self.max_features = max_features
-        self.min_samples_split = min_samples_split
-        self.min_samples_leaf = min_samples_leaf
-        self.max_depth = max_depth
+    def reset_hyperparameter(self, n_estimators=None, max_features=None, max_depth=None,
+                             min_samples_split=None, min_samples_leaf=None, random_state=None):
+        """
+        Resets hyperparameters of the RandomForestRegressor adaptively.
+        Only updates parameters that are explicitly provided (not None).
+        Reinitializes the model with the new parameters if any are changed.
 
-        # Neuinitialisierung des Modells mit den neuen Hyperparametern
-        self.model = RandomForestRegressor(
-            n_estimators=n_estimators,
-            max_features=max_features,
-            max_depth=max_depth,
-            min_samples_split=min_samples_split,
-            min_samples_leaf=min_samples_leaf,
-            random_state=self.random_state,
-            n_jobs=-1
-        )
+        Args:
+            n_estimators (int): Number of trees in the forest
+            max_features (str/int/float): Number of features to consider at each split
+            max_depth (int): Maximum depth of the tree
+            min_samples_split (int/float): Minimum number of samples required to split a node
+            min_samples_leaf (int/float): Minimum number of samples required at a leaf node
+            random_state (int): Seed for reproducibility
+        """
+        # Speichere, ob sich mindestens ein Parameter ändert
+        params_changed = False
+
+        # Update nur, wenn Parameter nicht None ist
+        if n_estimators is not None:
+            self.n_estimators = n_estimators
+            params_changed = True
+        if max_features is not None:
+            self.max_features = max_features
+            params_changed = True
+        if max_depth is not None:
+            self.max_depth = max_depth
+            params_changed = True
+        if min_samples_split is not None:
+            self.min_samples_split = min_samples_split
+            params_changed = True
+        if min_samples_leaf is not None:
+            self.min_samples_leaf = min_samples_leaf
+            params_changed = True
+        if random_state is not None:
+            self.random_state = random_state
+            params_changed = True
+
+        # Neuinitialisierung des Modells nur, wenn sich Parameter geändert haben
+        if params_changed:
+            self.model = RandomForestRegressor(
+                n_estimators=self.n_estimators,
+                max_features=self.max_features,
+                max_depth=self.max_depth,
+                min_samples_split=self.min_samples_split,
+                min_samples_leaf=self.min_samples_leaf,
+                random_state=self.random_state,
+                n_jobs=-1
+            )
 
     def criterion(self, y_target, y_pred):
         """

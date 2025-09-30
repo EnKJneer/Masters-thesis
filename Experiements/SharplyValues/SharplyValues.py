@@ -26,7 +26,7 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    dataSet.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"]
+    #dataSet.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"]
     dataclass2 = copy.copy(dataSet)
     #dataclass2.name = 'mit z'
     #dataclass2.add_sign_hold = True
@@ -37,6 +37,8 @@ if __name__ == '__main__':
         dataclass.future_values = future_values
         dataclass.add_padding = True
 
+    torch.backends.cudnn.enabled = False
+
     model_rf = mrf.RandomForestModel(n_estimators= 167, min_samples_split= 6,
                     min_samples_leaf= 2)
 
@@ -46,9 +48,11 @@ if __name__ == '__main__':
     model_nn = mnn.Net(learning_rate= 0.07307859730865025, n_hidden_size= 69, n_hidden_layers= 5,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    models = [model_rf]
+    models = [model_rnn]
+
 
     # Run the experiment
     hexp.run_experiment_with_shap(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'prediction_overview'], experiment_name=dataSet.name)
+                        plot_types=['heatmap', 'prediction_overview'], experiment_name=dataSet.name,
+                                  block_size = 100, stride = 200)

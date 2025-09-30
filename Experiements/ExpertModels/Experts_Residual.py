@@ -14,7 +14,7 @@ from Models.model_neural_net import RNN
 class Experts_Residual(mb.BaseModel):
     def __init__(self, threshold_v_axis=0.1, name='Experts_Residual', target_channel='curr_x', **kwargs):
         """
-        Initialisiert die RF_Experts-Klasse mit drei Random Forest-Modellen.
+        Initialisiert die Experts_Residual-Klasse.
 
         Parameter
         ----------
@@ -23,7 +23,7 @@ class Experts_Residual(mb.BaseModel):
         threshold_v_axis : float, optional
             Schwellenwert für v_axis. Standardmäßig 0.1.
         name : str, optional
-            Name des Modells. Standardmäßig 'RF_Experts'.
+            Name des Modells. Standardmäßig 'Experts_Residual'.
         """
         super().__init__(name, **kwargs)
         self.threshold_v_axis = threshold_v_axis
@@ -82,7 +82,7 @@ class Experts_Residual(mb.BaseModel):
         y_val2_residual = y_val2.T - self.expert1.predict(X_val2)
 
         # Expert2 auf Residuen trainieren
-        val_error2 = self.expert2.train_model(X_train2, y_train2_residual, X_val2, y_val2_residual, n_epochs=n_epochs,
+        val_error2 = self.expert2.train_model(X_train2, y_train2_residual.T, X_val2, y_val2_residual.T, n_epochs=n_epochs,
                                               trial=trial, draw_loss=draw_loss, **kwargs)
 
         return val_error1 + val_error2
@@ -196,8 +196,7 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    dataSet.header = ["pos_x","v_x", "a_x",
-                      "f_x_sim", "materialremoved_sim"]
+    #dataSet.header = ["pos_x","v_x", "a_x", "f_x_sim", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.add_sign_hold = True
 
@@ -208,21 +207,22 @@ if __name__ == '__main__':
         dataclass.future_values = future_values
         dataclass.add_padding = True
 
-    model_rf = RandomForestModel(n_estimators=52, max_features=500, min_samples_split=67,
-                                 min_samples_leaf=4)
+    model_rf = RandomForestModel(n_estimators= 100, max_depth= 100, max_features = None,
+                                     min_samples_split= 2, min_samples_leaf= 4)
 
-    model_rnn = RNN(learning_rate=0.04834201195017264, n_hidden_size=94, n_hidden_layers=1,
-                    activation='Sigmoid', optimizer_type='quasi_newton')
+    model_rnn = RNN(learning_rate=0.09216483876701392, n_hidden_size=104, n_hidden_layers=1,
+                        activation='ReLU', optimizer_type='quasi_newton')
+
     model_lin = mphys.LinearModel()
     model_phys = mphys.FrictionModel()
     model = Experts_Residual()
     model.expert1 = copy.deepcopy(model_phys)
-    model.expert2 = model_rnn # mphys.LuGreModelSciPy()
+    model.expert2 = copy.deepcopy(model_rnn) # mphys.LuGreModelSciPy()
 
     model.name = 'Mixed_Experts_Residual'
-    models = [model]
+    models = [copy.deepcopy(model_phys), copy.deepcopy(model_rnn), model] #
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name=model.name)
+                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name=model.name)

@@ -181,8 +181,8 @@ class Experts_2(mb.BaseModel):
         """
         documentation = {
             "threshold_v_axis": self.threshold_v_axis,
-            "expert1": self.expert1.get_documentation(),
-            "expert2": self.expert2.get_documentation(),
+            f"expert1 {self.expert1.name}": self.expert1.get_documentation(),
+            f"expert2 {self.expert2.name}": self.expert2.get_documentation(),
         }
         return documentation
 
@@ -218,48 +218,44 @@ class Experts_2(mb.BaseModel):
     def get_reference_model(input_size=None):
         return Experts_2()
 
-
-
-
 if __name__ == '__main__':
 
     """ Constants """
     NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1000
-    NUMBEROFMODELS = 1
+    NUMBEROFMODELS = 10
 
     window_size = 1
     past_values = 0
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    #dataSet.header = ["pos_sp", "pos_x", "pos_y", "pos_z", "v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp",
-    #                  "f_x_sim", "f_y_sim", "f_z_sim", "f_sp_sim", "materialremoved_sim"]
+
     dataclass1 = copy.copy(dataSet)
     dataclass1.add_sign_hold = True
 
     dataClasses = [dataclass1]
     for dataclass in dataClasses:
-        dataclass.window_size = window_size
-        dataclass.past_values = past_values
-        dataclass.future_values = future_values
         dataclass.add_padding = True
 
-    model_rf = RandomForestModel(n_estimators=52, max_features=500, min_samples_split=67,
-                                 min_samples_leaf=4)
+    model_rf = RandomForestModel(n_estimators= 100, max_depth= 100, max_features = None,
+                                     min_samples_split= 2, min_samples_leaf= 4)
 
-    model_rnn = RNN(learning_rate=0.04834201195017264, n_hidden_size=94, n_hidden_layers=1,
-                    activation='Sigmoid', optimizer_type='quasi_newton')
+    model_rnn = RNN(learning_rate=0.09216483876701392, n_hidden_size=104, n_hidden_layers=1,
+                        activation='ReLU', optimizer_type='quasi_newton')
+
     model_lin = mphys.LinearModel()
+
     model_phys = mphys.FrictionModel()
+
     model = Experts_2()
-    model.expert1 = copy.deepcopy(model_phys)
-    model.expert2 = mphys.LuGreModelSciPy()
+    model.expert1 = copy.deepcopy(model_phys) #copy.deepcopy(model_phys)
+    model.expert2 = copy.deepcopy(model_rnn) # mphys.LuGreModelSciPy()
 
     model.name = 'Mixed_Experts_2'
-    models = [model]
+    models = [model_phys, model_rnn, model]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name=model.name)
+                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name=model.name)

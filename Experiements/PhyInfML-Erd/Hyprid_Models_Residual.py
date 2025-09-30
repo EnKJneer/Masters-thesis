@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     dataSets = [hdata.DataClass_ST_Plate_Notch]
 
-    model_phys = mphys.ModelErd()
+    model_phys = mphys.ThermodynamicModel()
 
     model_rf = mrf.RandomForestModel(n_estimators= 100, max_depth= 100, max_features = None,
                                      min_samples_split= 2, min_samples_leaf= 4)
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     model_hybrid_rf = HybridModelResidual(physical_model=model_phys, ml_model=model_rf, name = 'Hybrid Erd Random Forest')
 
     models = [model_phys, model_rf, model_hybrid_rf] # , model_nn, model_hybrid_nn
-    models = [model_phys, model_rnn, model_hybrid_rnn]
+    #models = [model_phys, model_rnn, model_hybrid_rnn]
     # Run the experiment
     hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         experiment_name=model_phys.name+'_Residual')

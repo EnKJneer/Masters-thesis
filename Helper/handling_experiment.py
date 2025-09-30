@@ -23,6 +23,8 @@ import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 from matplotlib.colors import LinearSegmentedColormap
 
+from Helper.handling_data import HEADER_x
+
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
 SAMPLINGRATE = 50
 AXIS = 'x'
@@ -1274,7 +1276,7 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
         calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list, raw_data)
     return models_copy
 
-def save_results(results_dir: str, results: list, documentation: dict, plot_paths: dict, improvement_results: list = None) -> None:
+def save_results(results_dir: str, results: list, documentation: dict, plot_paths: dict, improvement_results: list = None, feature_names= HEADER_x) -> None:
     """
     Saves the results, documentation, and plots of an experiment to the specified directory.
 
@@ -1299,7 +1301,7 @@ def save_results(results_dir: str, results: list, documentation: dict, plot_path
     """
     df = pd.DataFrame(results, columns=HEADER)
 
-    save_detailed_csv(df, results_dir)
+    save_detailed_csv(df, results_dir, feature_names)
     # Speichern der Ergebnisse in Textdatei
     with open(os.path.join(results_dir, 'Results.txt'), 'w', encoding='utf-8') as f:
         f.write("EXPERIMENT RESULTS\n")
@@ -1504,59 +1506,74 @@ def run_experiment_with_hyperparameteroptimization(dataSets, models, search_spac
     }
 
 
-def calculate_shap_values(model, data):
+
+def calculate_shap_values(model,
+    data: torch.Tensor,
+    block_size: int = 50,
+    stride: int = 200,
+    use_sliding_window_for_rnn: bool = True,
+    window_size: int = None
+) -> List[tuple[int, np.ndarray]]:
     """
-    Calculate Shapley values for a given model and data using the SHAP library.
-
-    Parameters:
-        model: The neural network model for which Shapley values are calculated.
-        data: Input data for which Shapley values are calculated. If not a tensor, it will be converted.
-
+    Berechnet Shapley-Werte blockweise für Zeitreihendaten.
+    Args:
+        model: Trainiertes Modell (RandomForest, RNN, etc.).
+        data: Eingabedaten als Tensor oder NumPy-Array (Shape: [Zeitschritte, Features]).
+        block_size: Anzahl der Zeitpunkte pro Block (Default: 50).
+        stride: Schrittweite zwischen Blöcken (Default: 200).
+        use_sliding_window_for_rnn: Wenn True, verwendet Sliding Window für RNN/DeepLearning (Default: True).
+        window_size: Fenstergröße für Sliding Window. Falls None, wird block_size verwendet.
     Returns:
-        shap_values: Shapley values calculated by SHAP.
+        Liste von Tuples: [(Startzeitindex, Shapley-Werte des Blocks/Zeitschritts), ...]
     """
-    if type(model) != mrf.RandomForestModel:
-        # Convert data to tensor if it's not already
-        if not isinstance(data, torch.Tensor):
-            data = torch.tensor(data, dtype=torch.float32)
+    # Hintergrunddaten
+    background_data = np.mean(data, axis=0, keepdims=True)  # Mittelwert über alle Zeitreihen
 
-        # Move data to the model's device if the model has a device attribute
-        if hasattr(model, 'device'):
-            data = data.to(model.device)
+    # Datenkonvertierung (wie in deiner Originalfunktion)
+    if not isinstance(data, torch.Tensor):
+        data = torch.tensor(data, dtype=torch.float32)
+        background_data = torch.tensor(background_data, dtype=torch.float32)
+    if hasattr(model, 'device'):
+        data = data.to(model.device)
+        background_data = background_data.to(model.device)
 
-
-    # Create a SHAP explainer with a smaller background dataset
-    background_size = min(100, data.shape[0])  # Limit background size
-    background_data = data[:background_size]
-
-    # Calculate Shapley values for a subset of data if it's too large
-    sample_size = min(50, data.shape[0])
-    sample_data = data[:sample_size]
-
+    # Explainer initialisieren (1:1 wie in deiner Originalfunktion)
     if type(model) == mrf.RandomForestModel:
-
-        explainer = shap.Explainer(model.model)
-        shap_values = explainer.shap_values(sample_data)
+        explainer = shap.Explainer(model.model)  # TreeExplainer für RandomForest
     elif type(model) == mnn.RNN:
-        # Workaround: cuDNN benötigt train-Modus
         model.train(True)
-        for module in model.modules():
-            if isinstance(module, torch.nn.Dropout):
-                module.eval()
-
-        explainer = shap.GradientExplainer(model, background_data)
-        shap_values = explainer.shap_values(sample_data)
+        explainer = shap.GradientExplainer(model, background_data)  # GradientExplainer für RNNs
+        model.eval()
     else:
-        explainer = shap.DeepExplainer(model, background_data)
-        # Disable additivity check to avoid numerical precision issues
-        shap_values = explainer.shap_values(sample_data, check_additivity=False)
+        explainer = shap.DeepExplainer(model, background_data)  # DeepExplainer für andere Modelle
 
+    # Blockweise Berechnung
+    results = []
+    for start_idx in range(0, data.shape[0] - block_size + 1, stride):
+        end_idx = start_idx + block_size
+        block_data = data[start_idx:end_idx]
 
-    return shap_values
+        # Shapley-Werte berechnen (wie ursprünglich, aber pro Block)
+        if type(model) == mrf.RandomForestModel:
+            # RandomForest: SHAP erwartet NumPy (wie im Fehlerfall)
+            block_np = block_data.cpu().numpy() if isinstance(block_data, torch.Tensor) else block_data
+            shap_values = explainer.shap_values(block_np)
+            shap_values = np.array(shap_values)  # Falls Liste zurückgegeben wird
 
+        elif type(model) == mnn.RNN:
+            shap_values = explainer.shap_values(block_data, ranked_outputs=None)
+
+        else:
+            # RNN/DeepLearning: Tensor-Eingabe
+            shap_values = explainer.shap_values(block_data, check_additivity=False)
+            #shap_values = shap_values  # Annahme: Einzelner Output (Regression)
+
+        results.append((start_idx, shap_values))
+
+    return results
 
 def calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df_list_results, results, header_list,
-                                          raw_data):
+                                          raw_data, block_size = 10, stride = 1000):
     """
     Calculate MAE and standard deviation, calculate Shapley values if model is RNN, and store the results.
     """
@@ -1600,7 +1617,7 @@ def calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df
             print(f"DEBUG: X_test_data range: {np.min(X_test_data)} to {np.max(X_test_data)}")
 
             print(f"Calculating SHAP values for {model.name} on {path}")
-            shap_values = calculate_shap_values(model, X_test_data)
+            shap_values = calculate_shap_values(model, X_test_data, block_size = block_size, stride = stride)
             print(f"SHAP values calculated successfully for {model.name}")
 
         except Exception as e:
@@ -1626,54 +1643,76 @@ def calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df
         header_list[j].append(name)
 
 
-def plot_shap_values(shap_values, feature_names, output_dir, model_name, clip_quantile=0.95):
+def plot_shap_values(shap_blocks: List[tuple[int, np.ndarray]],
+    feature_names: List[str],
+    output_dir: str,
+    model_name: str,
+    clip_quantile: float = 0.95,
+    block_size = 10
+) -> str:
     """
-    Plot Shapley values and save the plot to a specified directory.
-
-    Parameters:
-        shap_values: Shapley values to plot.
-        feature_names: Names of the features corresponding to the Shapley values.
-        output_dir: Directory where the plot will be saved.
-        model_name: Name of the model, used in the plot title and filename.
-
+    Visualisiert blockweise Shapley-Werte als Heatmap.
+    Args:
+        shap_blocks: Liste von Tuples (Startindex, Shapley-Werte pro Block).
+        feature_names: Namen der Features (für y-Achse).
+        output_dir: Pfad zum Speichern der Plot-Datei.
+        model_name: Name des Modells (für Titel/Dateiname).
     Returns:
-        plot_path: Path to the saved plot.
+        Pfad zur gespeicherten Plot-Datei.
     """
-    try:
-        import matplotlib.pyplot as plt
 
-        # Kopie erstellen, um Original nicht zu verändern
-        shap_clipped = shap_values
+    # 1. Daten vorbereiten: Matrix mit np.nan initialisieren
+    max_time_index = max(start_idx + block_size for start_idx, _ in shap_blocks)
+    heatmap_data = np.full((len(feature_names), max_time_index), np.nan)
 
-        # Clip symmetrisch um 0
-        q = np.quantile(np.abs(shap_clipped), clip_quantile)
-        shap_clipped = np.clip(shap_clipped, -q, q)
+    # Shapley-Werte an den korrekten Positionen einfügen
+    for start_idx, shap_values in shap_blocks:
+        end_idx = start_idx + block_size
+        heatmap_data[:, start_idx:end_idx] = shap_values.T
 
-        plt.figure(figsize=(12, 6))
-        sns.heatmap(
-            shap_clipped.T,
-            cmap="coolwarm",
-            center=0,
-            xticklabels=50,
-            yticklabels=feature_names
-        )
-        plt.title(f"SHAP values heatmap ({model_name})\n(clipped at {clip_quantile * 100:.1f}th percentile)")
-        plt.xlabel("Time index")
-        plt.ylabel("Feature")
-        plt.tight_layout()
+    # 2. Clipping (optional)
+    shap_clipped = np.where(
+        ~np.isnan(heatmap_data),  # Nur berechnete Werte clipppen
+        np.clip(heatmap_data, -np.quantile(np.abs(heatmap_data[~np.isnan(heatmap_data)]), clip_quantile),
+                np.quantile(np.abs(heatmap_data[~np.isnan(heatmap_data)]), clip_quantile)),
+        np.nan
+    )
 
-        plot_path = os.path.join(output_dir, f"shap_heatmap_filtered_{model_name}.png")
-        plt.savefig(plot_path, dpi=300, bbox_inches="tight")
-        plt.close()
+    # 3. Plot mit transparenter Darstellung für np.nan
+    plt.figure(figsize=(12, 6))
+    cmap = plt.cm.coolwarm
+    cmap.set_bad('white')  # np.nan-Werte werden weiß dargestellt
 
-        return plot_path
+    sns.heatmap(
+        shap_clipped,
+        cmap=cmap,
+        center=0,
+        xticklabels=max(1, max_time_index // 10),  # Weniger Ticks
+        yticklabels=feature_names,
+        cbar_kws={'label': 'SHAP value'}
+    )
 
-    except Exception as e:
-        print(f"Error creating SHAP plot for {model_name}: {e}")
-        return None
+    # x-Achse: Zeitindizes beschriften (z. B. alle 50 Schritte)
+    plt.xticks(
+        ticks=np.arange(0, max_time_index, max(1, max_time_index // 10)),
+        labels=np.arange(0, max_time_index, max(1, max_time_index // 10)),
+        rotation=45
+    )
+
+    plt.title(f"SHAP values ({model_name})")
+    plt.xlabel("Time index")
+    plt.ylabel("Feature")
+    plt.tight_layout()
+
+    # 4. Speichern
+    plot_path = os.path.join(output_dir, f"shap_heatmap_{model_name}.png")
+    plt.savefig(plot_path, dpi=300, bbox_inches="tight", transparent=False)  # transparent=False für weißen Hintergrund
+    plt.close()
+    return plot_path
 
 def train_and_evaluate_models_with_shap(models: list, dataClass, X_train, X_val, X_test, y_train, y_val, y_test,  NUMBEROFEPOCHS: int,
-    NUMBEROFMODELS: int, patience: int, raw_data: list, results: list, df_list_results: list, header_list: list) -> list:
+    NUMBEROFMODELS: int, patience: int, raw_data: list, results: list, df_list_results: list, header_list: list,
+                                        block_size = 10, stride = 1000) -> list:
     """
     Trains and evaluates a list of models on the given data.
 
@@ -1736,11 +1775,11 @@ def train_and_evaluate_models_with_shap(models: list, dataClass, X_train, X_val,
                 if hasattr(model, 'plot_active_experts'):
                     model.plot_active_experts()
                     model.clear_active_experts_log()
-        calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df_list_results, results, header_list, raw_data)
+        calculate_and_store_results_with_shap(model, dataClass, nn_preds, y_test, df_list_results, results, header_list, raw_data, block_size = block_size, stride = stride)
     return models_copy
 
 def run_experiment_with_shap(dataSets, models, NUMBEROFEPOCHS: int = 800, NUMBEROFMODELS: int = 10, batched_data: bool = False,
-    patience: int = 5, plot_types: list = None, experiment_name: str = 'Experiment') -> dict:
+    patience: int = 5, plot_types: list = None, experiment_name: str = 'Experiment', block_size = 10, stride = 1000) -> dict:
     """
     Runs an experiment without hyperparameter optimization, including Shapley value calculations for RNN models.
     Trains and evaluates the specified models on the given datasets.
@@ -1780,7 +1819,10 @@ def run_experiment_with_shap(dataSets, models, NUMBEROFEPOCHS: int = 800, NUMBER
             df_list_results = [pd.DataFrame()]
             header_list = []
         # Train and evaluate models
-        models = train_and_evaluate_models_with_shap(models, dataClass, X_train, X_val, X_test, y_train, y_val, y_test, NUMBEROFEPOCHS, NUMBEROFMODELS, patience, raw_data, results, df_list_results, header_list)
+        models = train_and_evaluate_models_with_shap(models, dataClass, X_train, X_val, X_test, y_train, y_val, y_test,
+                                                     NUMBEROFEPOCHS, NUMBEROFMODELS,
+                                                     patience, raw_data, results, df_list_results, header_list,
+                                                     block_size, stride)
 
     # Update meta-information
     for model in models:
@@ -1796,14 +1838,14 @@ def run_experiment_with_shap(dataSets, models, NUMBEROFEPOCHS: int = 800, NUMBER
             dataClass_name, dataPath, model_name, _, _, _, _, _, raw_data_dict, shap_values = result
             if shap_values is not None:
                 # Extract feature names from raw data
-                feature_names = dataSets[0].header
-                plot_path = plot_shap_values(shap_values, feature_names, results_dir, model_name + '_' + dataPath)
+                feature_names = sorted(dataSets[0].header) # Feature werden beim laden sortiert.
+                plot_path = plot_shap_values(shap_values, feature_names, results_dir, model_name + '_' + dataPath, block_size = block_size)
                 shap_plot_paths.append(plot_path)
 
     # Calculate improvements
     improvement_results = calculate_improvements(results)
     # Save results
-    save_results(results_dir, results, meta_information, plot_paths, improvement_results)
+    save_results(results_dir, results, meta_information, plot_paths, improvement_results,  feature_names= dataSets[0].header)
     return {
         'results_dir': results_dir,
         'results': results,
@@ -1894,7 +1936,7 @@ def calculate_mae_and_std(predictions_list, true_values, n_drop_values=10, cente
 
     return np.mean(mae_values), np.std(mae_values), mae_ensemble
 
-def save_detailed_csv(df, results_dir):
+def save_detailed_csv(df, results_dir, feature_names = HEADER_x):
     """
     Speichert detaillierte Daten für jeden DataPath in separaten CSV-Dateien.
     Jede Zeitreihe (Seed/Run) wird einzeln gespeichert.
@@ -1922,14 +1964,36 @@ def save_detailed_csv(df, results_dir):
         # Erstelle einen DataFrame für alle individuellen Vorhersagen
         predictions_dict = {}
 
-        for _, row in df_subset.iterrows():
+        for idx, row in df_subset.iterrows():
             predictions = row['Predictions']  # Shape: (n_seeds, n_timesteps)
             dataset_model = f'{row["DataSet"]}_{row["Model"]}'
+
 
             # Füge jede einzelne Zeitreihe hinzu
             for seed_idx in range(len(predictions)):
                 column_name = f'{dataset_model}_seed_{seed_idx}'
                 predictions_dict[column_name] = predictions[seed_idx]
+
+            if 'SHARPLY' in df_subset.columns:
+                if df_subset['SHARPLY']is not None:
+                    n_timesteps = len(raw_data_df)  # Anzahl der Zeilen (Zeitpunkte)
+                    shap_blocks = df_subset['SHARPLY'].iloc[0]  # Liste von Tuples: [(time_idx, shap_values), ...]
+                    #feature_names = raw_data['columns']
+
+                    # Initialisiere Shapley-Spalten mit NaN
+                    for feature_name in feature_names:
+                        raw_data_df[f'SHAP_{feature_name}'] = np.nan
+
+                    # Iteriere über alle Shapley-Tuples und setze Werte zeilenweise
+                    for time_idx_start, shap_values in shap_blocks:
+                        for time in range(len(shap_values)):
+                            time_idx = time_idx_start + time
+                            if time_idx < n_timesteps:  # Prüfe, ob Zeitindex gültig ist
+                                for feature_idx, feature_name in enumerate(feature_names):
+                                    raw_data_df.iloc[time_idx, raw_data_df.columns.get_loc(f'SHAP_{feature_name}')] = shap_values[time][feature_idx]
+                            else:
+                                print(f"Warnung: Zeitindex {time_idx} ist außerhalb des Datenrahmens (max: {n_timesteps - 1}).")
+
 
         # Erstelle einen DataFrame aus dem Wörterbuch der individuellen Vorhersagen
         predictions_df = pd.DataFrame(predictions_dict)
