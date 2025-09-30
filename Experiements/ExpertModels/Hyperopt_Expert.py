@@ -30,11 +30,12 @@ import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 import Models.model_physical as mphys
 from Experts_2 import Experts_2
+from Experts_Residual import Experts_Residual
 
 
 def start_experiment():
     """ Constants """
-    NUMBEROFTRIALS = 512
+    NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1000
     NUMBEROFMODELS = 10
 
@@ -64,18 +65,20 @@ def start_experiment():
       "optimizer_type": ["quasi_newton"]
     }
 
-    model = Experts_2()
+    model = Experts_Residual()
+    model.name = 'Experts_Residual'
     model.expert1 = copy.deepcopy(model_phys)  # copy.deepcopy(model_phys)
     model.expert2 = copy.deepcopy(model_rnn)  # mphys.LuGreModelSciPy()
 
     dataclass.add_padding = True
+    dataclass.add_sign_hold = True
 
 
     print(f'Anzahl an trials: {NUMBEROFTRIALS}')
     # Run the experiment
     hexp.run_experiment_with_hyperparameteroptimization([dataclass], [model], [search_space],optimization_samplers = optimization_samplers,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, NUMBEROFTRIALS=NUMBEROFTRIALS,
-                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='Hyperopt_Experts')
+                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='Hyperopt_Experts_Residual')
 
 if __name__ == "__main__":
     start_experiment()

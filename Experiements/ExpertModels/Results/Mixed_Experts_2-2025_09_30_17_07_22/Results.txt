@@ -1,0 +1,17 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.084197 | 0.001438
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.115257 | 0.001523
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.096424 | 0.001108
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.049132 | 0.000138
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.093401 | 0.007216
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.068736 | 0.002973
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.100878 | 0.002348
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.071505 | 0.000721
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Mixed_Experts_2 | 0.074409 | 0.006360
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Mixed_Experts_2 | 0.093461 | 0.017228
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Mixed_Experts_2 | 0.093670 | 0.001009
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Mixed_Experts_2 | 0.057448 | 0.000510

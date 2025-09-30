@@ -95,11 +95,12 @@ class Objective:
         params = {}
         # If the search space is not grouped, iterate through the parameters directly
         for name, value in self.search_space.items():
-            if isinstance(value, tuple) and len(value) > 2:  # Wenn mehr als 2 Werte im Tuple: kategorisch!
+            correct_type = (isinstance(value, list) or isinstance(value, tuple))
+            if correct_type and len(value) > 2:  # Wenn mehr als 2 Werte im Tuple: kategorisch!
                 params[name] = trial.suggest_categorical(name, value)
-            elif isinstance(value, tuple) and all(isinstance(x, int) for x in value):
+            elif correct_type and all(isinstance(x, int) for x in value):
                 params[name] = trial.suggest_int(name, value[0], value[1])  # Nur für echte Bereiche (z. B. (10, 30))
-            elif isinstance(value, tuple) and all(isinstance(x, float) for x in value):
+            elif correct_type and all(isinstance(x, float) for x in value):
                 params[name] = trial.suggest_float(name, value[0], value[1],
                                                    log=True if name.startswith('learning_rate') else False)
             else:

@@ -249,11 +249,11 @@ if __name__ == '__main__':
     model_phys = mphys.FrictionModel()
 
     model = Experts_2()
-    model.expert1 = copy.deepcopy(model_phys) #copy.deepcopy(model_phys)
+    model.expert1 = copy.deepcopy(model_rf) #copy.deepcopy(model_phys)
     model.expert2 = copy.deepcopy(model_rnn) # mphys.LuGreModelSciPy()
 
     model.name = 'Mixed_Experts_2'
-    models = [model_phys, model_rnn, model]
+    models = [model_rf, model_rnn, model]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
