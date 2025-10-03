@@ -1,0 +1,17 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Friction_Model  | 0.063794 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Friction_Model  | 0.056496 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Friction_Model  | 0.087443 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Friction_Model  | 0.077347 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.125438 | 0.006911
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.091294 | 0.009749
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.114818 | 0.004691
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.060962 | 0.001548
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PhysicsInformedRNN | 0.078983 | 0.004479
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PhysicsInformedRNN | 0.092120 | 0.010828
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PhysicsInformedRNN | 0.098276 | 0.003318
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PhysicsInformedRNN | 0.091580 | 0.007931

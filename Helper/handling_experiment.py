@@ -536,9 +536,10 @@ class HeatmapPlotter(BasePlotter):
         mask = mae_pivot.isna()
 
         # Schriftgrößen anpassen basierend auf Anzahl der Kombinationen
+        n_combinations = max(1, n_combinations)
         titlesize = 40
         maesize = max(20, min(35, 200 // n_combinations))  # Dynamische Anpassung
-        textsize = max(5, min(25, 100 // (n_combinations)))
+        textsize = max(5, min(25, 100 // n_combinations))
         labelsize = 35
 
         # Heatmap mit seaborn für bessere Optik
@@ -551,8 +552,8 @@ class HeatmapPlotter(BasePlotter):
             cbar_kws={'label': 'MAE'},
             ax=ax,
             square=False,
-            vmin=0.04,
-            vmax=0.31,
+            vmin=0.01,
+            vmax=0.26,
             linewidths=0.5,  # Leichte Linien zur besseren Abgrenzung
             linecolor='white',
             annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
@@ -713,8 +714,8 @@ class ModelHeatmapPlotter(BasePlotter):
                 cbar_kws={'label': 'MAE'},
                 ax=ax,
                 square=True,
-                vmin=0.04,
-                vmax=0.31,
+                vmin=0.01,
+                vmax=0.26,
                 linewidths=0.0,
                 linecolor='white',
                 annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}

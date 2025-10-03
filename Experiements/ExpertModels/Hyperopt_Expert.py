@@ -35,12 +35,13 @@ from Experts_Residual import Experts_Residual
 
 def start_experiment():
     """ Constants """
-    NUMBEROFTRIALS = 250
+    NUMBEROFTRIALS = 100
     NUMBEROFEPOCHS = 1000
     NUMBEROFMODELS = 10
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataclass = copy.copy(dataSet)
+    dataclass.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
     optimization_samplers = ["TPESampler"]
 
@@ -49,36 +50,35 @@ def start_experiment():
 
 
     #Random Forest
-    model = mrf.RandomForestModel()
+    model_rf = mrf.RandomForestModel()
 
     model_rnn = mnn.RNN(learning_rate=0.09216483876701392, n_hidden_size=104, n_hidden_layers=1,
                         activation='ReLU', optimizer_type='quasi_newton')
-
+    model_rnn.learning_rate = 1
 
     model_phys = mphys.FrictionModel()
 
     search_space = {
-      "n_hidden_size": [13, 130],
-      "n_hidden_layers": [1, 5],
-      "learning_rate": [0.1, 1],
-      "activation": ["ReLU", "Sigmoid", "Tanh", "ELU"],
-      "optimizer_type": ["quasi_newton"]
+        "n_hidden_size": [4, 130],
+        "n_hidden_layers": [1, 5],
+        "activation": ["ReLU", "Sigmoid", "Tanh", "ELU"],
+        "threshold_v_axis": [0.1, 1.5],
     }
 
-    model = Experts_Residual()
-    model.name = 'Experts_Residual'
-    model.expert1 = copy.deepcopy(model_phys)  # copy.deepcopy(model_phys)
+    model = Experts_2(threshold_v_axis=1)
+    model.name = 'Experts'
+    model.expert1 = copy.deepcopy(model_rf)  # copy.deepcopy(model_phys)
     model.expert2 = copy.deepcopy(model_rnn)  # mphys.LuGreModelSciPy()
 
     dataclass.add_padding = True
-    dataclass.add_sign_hold = True
+    #dataclass.add_sign_hold = True
 
 
     print(f'Anzahl an trials: {NUMBEROFTRIALS}')
     # Run the experiment
     hexp.run_experiment_with_hyperparameteroptimization([dataclass], [model], [search_space],optimization_samplers = optimization_samplers,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, NUMBEROFTRIALS=NUMBEROFTRIALS,
-                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='Hyperopt_Experts_Residual')
+                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='Hyperopt_Experts')
 
 if __name__ == "__main__":
     start_experiment()

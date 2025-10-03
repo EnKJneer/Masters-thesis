@@ -144,7 +144,7 @@ if __name__ == '__main__':
     materials = ['S235JR', 'AL2007T4']
     geometries = ['Plate', 'Gear']
 
-    paths = ['Results/Recurrent_Neural_Net-2025_09_16_22_27_10/Predictions',
+    paths = ['Results/Recurrent_Neural_Net-2025_10_02_16_20_24/Predictions',
              'Results/Random_Forest-2025_09_16_15_19_42/Predictions']
 
     for material in materials:
@@ -170,6 +170,6 @@ if __name__ == '__main__':
                              f'Verlauf_{material}_{geometry}_Ref_RF_opt',
                              col_name='curr_x', label='Strom in A', dpi=600,
                              ycolname_1='ST_Plate_Notch_Random_Forest_GridSampler', ylabel_1='Random Forest',
-                             ycolname_2='ST_Plate_Notch_Recurrent_Neural_Net_RandomSampler', ylabel_2='RNN')
+                             ycolname_2='ST_Plate_Notch_Recurrent_Neural_Net_GridSampler', ylabel_2='RNN')
 
 

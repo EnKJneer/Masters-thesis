@@ -324,3 +324,4 @@ class BaseTorchModel(BaseModel, nn.Module):
             "dropout_rate": self.dropout_rate,
         }}
         return documentation
+

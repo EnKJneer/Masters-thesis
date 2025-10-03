@@ -6,6 +6,8 @@ Created on Fri May 24 11:12:35 2024
 
 Beschreibung:   Entählt die nötigen funktionen für die Hyperparameteroptimierung
 """
+import math
+
 #libarie import
 import optuna
 import optuna.visualization as optuna_viz
@@ -168,110 +170,68 @@ def get_minimum_trials_for_grid_search(search_space):
     return min_trials
 
 def _create_grid_search_space(search_space, n_trials):
-    """
-    Konvertiert einen Suchraum mit Bereichen zu einem Grid Search Suchraum mit expliziten Werten.
-    Stellt sicher, dass Randwerte (Min/Max) immer getestet werden und verteilt restliche Trials gleichmäßig.
-
-    Parameters
-    ----------
-    search_space : dict
-        Dictionary mit Parameternamen als Keys und Bereichen/Listen als Values
-    n_trials : int
-        Gewünschte Anzahl der Trials (wird nur für Randwerte überschritten)
-
-    Returns
-    -------
-    dict
-        Grid Search Suchraum mit expliziten Werten für jeden Parameter
-    """
     grid_search_space = {}
-
-    # Zähle Parameter die Bereiche haben (nicht kategorische)
     range_params = []
     categorical_params = []
 
+    # Trenne kategorische und Bereichsparameter
     for name, value in search_space.items():
-        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
-                (isinstance(value, tuple) and len(value) > 2):
-            # Kategorische Parameter
-            categorical_params.append(name)
-        elif isinstance(value, tuple) and len(value) == 2:
-            # Parameter mit Bereichen
-            range_params.append(name)
+        if isinstance(value, list):
+            categorical_params.append(name)  # Listen sind immer kategorisch
+        elif isinstance(value, tuple):
+            # Prüfe, ob es ein numerischer Bereich ist
+            if len(value) == 2:
+                # Prüfe, ob beide Werte numerisch sind (int oder float)
+                is_numeric = all(isinstance(x, (int, float)) for x in value)
+                if is_numeric:
+                    range_params.append(name)  # Numerischer Bereich
+                else:
+                    categorical_params.append(name)  # Nicht-numerisch → kategorisch
+            else:
+                categorical_params.append(name)  # Tuples mit ≠2 Werten → kategorisch
         else:
-            # Einzelwert
-            categorical_params.append(name)
+            categorical_params.append(name)  # Einzelwerte → kategorisch
 
-    # Berechne verfügbare Trials für Bereichsparameter
+    # Berechne kategorische Kombinationen
     categorical_combinations = 1
     for name in categorical_params:
         value = search_space[name]
-        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
-                (isinstance(value, tuple) and len(value) > 2):
+        if isinstance(value, (list, tuple)):
             categorical_combinations *= len(value)
-        else:
-            categorical_combinations *= 1
 
-    available_trials_for_ranges = n_trials / categorical_combinations if categorical_combinations > 0 else n_trials
+    available_trials = n_trials / categorical_combinations if categorical_combinations > 0 else n_trials
+    n_range_params = len(range_params)
 
-    # Berechne Werte pro Bereichsparameter
-    if len(range_params) > 0:
-        # Für jeden Bereichsparameter: mindestens 2 Werte (Min/Max), dann gleichmäßig verteilen
-        values_per_range_param = max(2, int(available_trials_for_ranges ** (1.0 / len(range_params))))
+    # Berechne optimale k (Werte pro Bereichsparameter)
+    if n_range_params > 0:
+        k = int(round((available_trials)**(1/n_range_params), 6))
     else:
-        values_per_range_param = 2
+        k = 2
 
+    # Erstelle Grid-Search-Werte
     for name, value in search_space.items():
-        if isinstance(value, (list, tuple)) and not isinstance(value, tuple) or \
-                (isinstance(value, tuple) and len(value) > 2):
-            # Kategorische Parameter - verwende alle gegebenen Werte
-            grid_search_space[name] = list(value)
-
+        if isinstance(value, (list, tuple)) and (len(value) > 2 or not isinstance(value, tuple)):
+            grid_search_space[name] = list(value)  # Kategorisch: alle Werte
         elif isinstance(value, tuple) and len(value) == 2:
             min_val, max_val = value
-
-            if all(isinstance(x, int) for x in value):
-                # Integer Parameter
-                available_int_values = max_val - min_val + 1
-                if available_int_values <= values_per_range_param:
-                    # Wenn der Bereich klein genug ist, verwende alle Integer-Werte
-                    grid_search_space[name] = list(range(min_val, max_val + 1))
+            if name.startswith('n_') or all(isinstance(x, int) for x in value):
+                # Integer: Gleichmäßige Verteilung
+                if k == 2:
+                    grid_search_space[name] = [min_val, max_val]
                 else:
-                    # Erstelle Werte: immer Min/Max, dann gleichmäßig dazwischen
-                    if values_per_range_param == 2:
-                        values = [min_val, max_val]
-                    else:
-                        # Erstelle Zwischenwerte
-                        step = (max_val - min_val) / (values_per_range_param - 1)
-                        values = [min_val]
-                        for i in range(1, values_per_range_param - 1):
-                            values.append(min_val + round(i * step))
-                        values.append(max_val)
-                        # Entferne Duplikate aber behalte Reihenfolge
-                        values = sorted(list(set(values)))
-                    grid_search_space[name] = values
-
+                    step = int((max_val - min_val) / (k - 1))
+                    grid_search_space[name] = [min_val + i * step for i in range(k)]
             elif all(isinstance(x, float) for x in value):
-                if name.startswith('learning_rate') or name.startswith('log_') or 'lr' in name.lower():
-                    # Logarithmische Parameter
-                    if values_per_range_param == 2:
-                        grid_search_space[name] = [min_val, max_val]
-                    else:
-                        log_min = np.log10(min_val)
-                        log_max = np.log10(max_val)
-                        log_values = np.linspace(log_min, log_max, values_per_range_param)
-                        grid_search_space[name] = [10 ** log_val for log_val in log_values]
+                # Float: Lineare oder logarithmische Verteilung
+                if name.startswith(('learning_rate', 'log_', 'lr')):
+                    log_min, log_max = math.log10(min_val), math.log10(max_val)
+                    log_values = np.linspace(log_min, log_max, k)
+                    grid_search_space[name] = [10**x for x in log_values]
                 else:
-                    # Lineare Float Parameter
-                    if values_per_range_param == 2:
-                        grid_search_space[name] = [min_val, max_val]
-                    else:
-                        grid_search_space[name] = list(np.linspace(min_val, max_val, values_per_range_param))
+                    grid_search_space[name] = list(np.linspace(min_val, max_val, k))
             else:
-                # Gemischte Typen - behandle als kategorisch
                 grid_search_space[name] = list(value)
         else:
-            # Einzelwert - behandle als kategorisch mit einem Wert
             grid_search_space[name] = [value]
 
     return grid_search_space

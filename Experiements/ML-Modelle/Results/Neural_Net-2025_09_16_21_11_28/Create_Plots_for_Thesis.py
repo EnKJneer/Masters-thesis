@@ -407,8 +407,8 @@ class HeatmapPlotter(BasePlotter):
             cbar_kws={'label': 'MAE'},
             ax=ax,
             square=False,
-            vmin=0.04,
-            vmax=0.31,
+            vmin=0.01,
+            vmax=0.26,
             linewidths=0.5,  # Leichte Linien zur besseren Abgrenzung
             linecolor='white',
             annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}
@@ -569,8 +569,8 @@ class ModelHeatmapPlotter(BasePlotter):
                 cbar_kws={'label': 'MAE'},
                 ax=ax,
                 square=True,
-                vmin=0.04,
-                vmax=0.31,
+                vmin=0.01,
+                vmax=0.26,
                 linewidths=0.0,
                 linecolor='white',
                 annot_kws={'size': maesize, 'weight': 'bold', 'ha': 'center', 'va': 'center'}

@@ -144,10 +144,10 @@ if __name__ == '__main__':
     materials = ['S235JR', 'AL2007T4']
     geometries = ['Plate', 'Gear']
 
-    paths = ['Referenzmodelle_Hanlin/Results/Recurrent_Neural_Net-2025_09_15_17_14_01/Predictions',
-             'Referenzmodelle_Hanlin/Results/Random_Forest-2025_09_16_12_07_58/Predictions',
-             'ML-Modelle/Results/Recurrent_Neural_Net-2025_09_16_22_27_10/Predictions',
-             'ML-Modelle/Results/Random_Forest-2025_09_16_15_19_42/Predictions'
+    paths = ['Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Predictions',
+             'Referenzmodelle/Results/Random_Forest-2025_09_16_12_07_58/Predictions',
+             'ML-Modelle/Results/Recurrent_Neural_Net-2025_10_02_17_09_17/Predictions',
+             'ML-Modelle/Results/Recurrent_Neural_Net-2025_10_02_16_20_24/Predictions'
              ]
 
 
@@ -172,7 +172,7 @@ if __name__ == '__main__':
                 mat = 'Stahl'
 
             models = [['Reference_Random_Forest_TPESampler', 'ST_Plate_Notch_Random_Forest_GridSampler', 'Random_Forest'],
-                      ['Reference_Recurrent_Neural_Net_GridSampler', 'ST_Plate_Notch_Recurrent_Neural_Net_RandomSampler', 'Recurrent_Neural_Net']]
+                      ['Reference_Recurrent_Neural_Net_TPESampler', 'ST_Plate_Notch_Recurrent_Neural_Net_GridSampler', 'Recurrent_Neural_Net']]
 
             for model in models:
                 name = model[2].replace('_', ' ')

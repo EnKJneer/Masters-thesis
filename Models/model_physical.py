@@ -844,7 +844,7 @@ class LuGreModelSciPy(mb.BaseModel):
         # Iterate over each time step
         for i in range(len(velocity)):
             z, f_friction = step(velocity[i], dt, z)
-            z = np.clip(z, -1e2, 1e2)
+            z = np.clip(z, -1e1, 1e1)
             y[i] = a1 * acceleration[i] + a2 * force[i] + f_friction + b
 
             # Print progress every 100 time steps
@@ -1126,6 +1126,7 @@ class FrictionModel(mb.BaseModel):
             v_x = X[f'v_{axis}_1_current'].values
             a_x = X[f'a_{axis}_1_current'].values
             f_x_sim = X[f'f_{axis}_sim_1_current'].values #_sim
+
             #v_sp = X[f'v_sp_1_current'].values
 
             stillstand_mask = (np.abs(v_x) <= self.velocity_threshold)
@@ -1175,6 +1176,7 @@ class FrictionModel(mb.BaseModel):
             a_x = data[f'a_{axis}_1_current'].values
             f_x_sim = data[f'f_{axis}_sim_1_current'].values #_sim
             v_s = self.sign_hold(v_x)
+
             #v_sp = data[f'v_sp_1_current'].values
 
             curr_x = data[target].values

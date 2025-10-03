@@ -35,43 +35,24 @@ class RandomForestModel(mb.BaseModel):
         self.name = name
         self.device = "cpu"
 
-    def reset_hyperparameter(self, n_estimators=None, max_features=None, max_depth=None,
-                             min_samples_split=None, min_samples_leaf=None, random_state=None):
+    def reset_hyperparameter(self, **kwargs):
         """
         Resets hyperparameters of the RandomForestRegressor adaptively.
         Only updates parameters that are explicitly provided (not None).
         Reinitializes the model with the new parameters if any are changed.
-
-        Args:
-            n_estimators (int): Number of trees in the forest
-            max_features (str/int/float): Number of features to consider at each split
-            max_depth (int): Maximum depth of the tree
-            min_samples_split (int/float): Minimum number of samples required to split a node
-            min_samples_leaf (int/float): Minimum number of samples required at a leaf node
-            random_state (int): Seed for reproducibility
         """
-        # Speichere, ob sich mindestens ein Parameter ändert
         params_changed = False
 
-        # Update nur, wenn Parameter nicht None ist
-        if n_estimators is not None:
-            self.n_estimators = n_estimators
-            params_changed = True
-        if max_features is not None:
-            self.max_features = max_features
-            params_changed = True
-        if max_depth is not None:
-            self.max_depth = max_depth
-            params_changed = True
-        if min_samples_split is not None:
-            self.min_samples_split = min_samples_split
-            params_changed = True
-        if min_samples_leaf is not None:
-            self.min_samples_leaf = min_samples_leaf
-            params_changed = True
-        if random_state is not None:
-            self.random_state = random_state
-            params_changed = True
+        # Standardparameter des RandomForestRegressors
+        valid_params = {
+            'n_estimators', 'max_features', 'max_depth',
+            'min_samples_split', 'min_samples_leaf', 'random_state'
+        }
+
+        for param, value in kwargs.items():
+            if param in valid_params and value is not None:
+                setattr(self, param, value)
+                params_changed = True
 
         # Neuinitialisierung des Modells nur, wenn sich Parameter geändert haben
         if params_changed:

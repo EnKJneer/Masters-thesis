@@ -1,0 +1,125 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ],
+            "columns_to_integrate": null
+        }
+    ],
+    "Models": [
+        {
+            "Friction_Model": {
+                "NUMBEROFMODELS": 10,
+                "description": "This model fits a two-stage friction model: stillstand and movement.",
+                "parameters": {
+                    "name": "Friction_Model",
+                    "velocity_threshold": 0.1,
+                    "F_s": -0.3242283569040156,
+                    "a_x": -0.0010908256546690136,
+                    "a_sp": 0,
+                    "b": -0.030713337011797282,
+                    "F_c": -0.5284831243669994,
+                    "sigma_2": -0.005595755573681626,
+                    "a_b": -0.00517593700719205
+                }
+            }
+        },
+        {
+            "Recurrent_Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.1,
+                    "n_hidden_size": 71,
+                    "n_hidden_layers": 1,
+                    "activation": "ELU",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.0
+                }
+            }
+        },
+        {
+            "PhysicsInformedRNN": {
+                "NUMBEROFMODELS": 10,
+                "model_type": "PhysicsInformedRNN",
+                "hyperparameters": {
+                    "input_size": 13,
+                    "output_size": 1,
+                    "n_hidden_size": 72,
+                    "n_hidden_layers": 1,
+                    "activation": "ELU",
+                    "learning_rate": 0.1,
+                    "dropout_rate": 0.0,
+                    "z_dim": 1,
+                    "dt": 1.0,
+                    "physics_weight": 1.0,
+                    "axis": "x",
+                    "physics_indices": {
+                        "col_v": "v_x_1_current",
+                        "col_a": "a_x_1_current",
+                        "col_F": "f_x_sim_1_current",
+                        "idx_v": 10,
+                        "idx_a": 1,
+                        "idx_F": 5
+                    }
+                },
+                "learned_coefficients": {
+                    "c1": -0.334454208612442,
+                    "c2": -0.017476124688982964,
+                    "c3": -0.692907989025116,
+                    "c4": 0.25787150859832764,
+                    "c5": 0.10000000149011612
+                },
+                "device": "cuda"
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 800
+    }
+}

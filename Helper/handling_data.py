@@ -110,6 +110,7 @@ class BaseDataClass(ABC):
         tuple
             X_train, X_val, X_test, y_train, y_val, y_test
         """
+
         # Sicherstellen, dass die Eingaben Listen sind
         all_X_train = [all_X_train] if not isinstance(all_X_train, list) else all_X_train
         all_y_train = [all_y_train] if not isinstance(all_y_train, list) else all_y_train
@@ -403,22 +404,6 @@ dataPaths_Val = [   'DMC60H_S235JR_Notch_Normal_1.csv', 'DMC60H_S235JR_Notch_Nor
                     'DMC60H_S235JR_Notch_Depth_1.csv', 'DMC60H_S235JR_Notch_Depth_2.csv', 'DMC60H_S235JR_Notch_Depth_3.csv',
                     'DMC60H_S235JR_Notch_SF_1.csv', 'DMC60H_S235JR_Notch_SF_2.csv', 'DMC60H_S235JR_Notch_SF_3.csv',]
 
-DataClass_Reference = DataClass('Reference', folder_data_reference,
-                                ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',
-                                                 'DMC60H_S235JR_Plate_SF_1.csv', 'DMC60H_S235JR_Plate_Depth_1.csv',
-                                                 'DMC60H_S235JR_Plate_SF_3.csv', 'DMC60H_S235JR_Plate_Depth_3.csv'],
-                                ['DMC60H_S235JR_Plate_SF_2.csv', 'DMC60H_S235JR_Plate_Depth_2.csv',],
-                                dataPaths_Test,
-                                             ["curr_x"],
-                                     header = HEADER_x)
-DataClass_Reference_2 = DataClass('Reference', '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data',
-                                ['DMC60H_S235JR_Plate_Normal_1.csv', 'DMC60H_S235JR_Plate_Normal_2.csv',
-                                                 'DMC60H_S235JR_Plate_SF_1.csv', 'DMC60H_S235JR_Plate_Depth_1.csv',
-                                                 'DMC60H_S235JR_Plate_SF_3.csv', 'DMC60H_S235JR_Plate_Depth_3.csv'],
-                                ['DMC60H_S235JR_Plate_SF_2.csv', 'DMC60H_S235JR_Plate_Depth_2.csv',],
-                                dataPaths_Test,
-                                             ["curr_x"],
-                                     header = HEADER_x)
 DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                              ["curr_x"],
@@ -426,20 +411,6 @@ DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
 
 DataClass_ST_Plate_Notch_Reference = DataClass('Reference', '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data',
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
-                                             ["curr_x"], header = HEADER_x)
-
-DataClass_ST_Plate_Notch_Reference_Hanlin = DataClass('Reference', '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin/Data',
-                                    dataPaths_Train, dataPaths_Val, dataPaths_Test,
-                                             ["curr_x"], header = HEADER_x)
-
-DataClass_ST_Plate_Notch_noDepth = DataClass('ST_Plate_Notch_noDepth', folder_data,
-                                             ['S235JR_Plate_Normal_1.csv', 'S235JR_Plate_Normal_2.csv',
-                                                    'S235JR_Plate_SF_1.csv',
-                                                    'S235JR_Plate_SF_2.csv', 'S235JR_Plate_Depth_2.csv',
-                                                    'S235JR_Plate_SF_3.csv', ],
-                                             ['S235JR_Notch_Normal_1.csv', 'S235JR_Notch_Normal_2.csv', 'S235JR_Notch_Normal_3.csv',
-                                              'S235JR_Notch_Depth_2.csv'],
-                                             dataPaths_Test,
                                              ["curr_x"], header = HEADER_x)
 
 DataClass_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,

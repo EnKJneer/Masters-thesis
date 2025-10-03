@@ -232,7 +232,8 @@ if __name__ == '__main__':
     dataSet = hdata.DataClass_ST_Plate_Notch
 
     dataclass1 = copy.copy(dataSet)
-    dataclass1.add_sign_hold = True
+    #dataclass1.add_sign_hold = True
+    #dataclass1.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"] # ["pos_x", "v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
     dataClasses = [dataclass1]
     for dataclass in dataClasses:
@@ -248,12 +249,12 @@ if __name__ == '__main__':
 
     model_phys = mphys.FrictionModel()
 
-    model = Experts_2()
-    model.expert1 = copy.deepcopy(model_rf) #copy.deepcopy(model_phys)
-    model.expert2 = copy.deepcopy(model_rnn) # mphys.LuGreModelSciPy()
+    model = Experts_2(threshold_v_axis=1)
+    model.expert1 = mphys.FrictionModel() #copy.deepcopy(model_rf) #copy.deepcopy(model_phys)
+    model.expert2 = mphys.LuGreModelSciPy() #copy.deepcopy(model_rnn) # mphys.LuGreModelSciPy()
 
     model.name = 'Mixed_Experts_2'
-    models = [model_rf, model_rnn, model]
+    models = [model] #model_rf, model_rnn,
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

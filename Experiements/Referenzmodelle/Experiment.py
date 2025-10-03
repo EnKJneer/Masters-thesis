@@ -34,7 +34,7 @@ from datetime import datetime
 
 def start_experiment_for(model_str = 'NN'):
     """ Constants """
-    NUMBEROFTRIALS = 512
+    NUMBEROFTRIALS = 216
     NUMBEROFEPOCHS = 1000
     NUMBEROFMODELS = 10 # Bei RF mit festem random state nicht sinvoll
 
@@ -73,7 +73,7 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    start_experiment_for('RF')
-    start_experiment_for('NN')
+    #start_experiment_for('RF')
+    #start_experiment_for('NN')
     start_experiment_for('LSTM')
     start_experiment_for('RNN')

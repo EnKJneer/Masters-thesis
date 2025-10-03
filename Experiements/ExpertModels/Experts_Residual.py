@@ -196,7 +196,7 @@ if __name__ == '__main__':
     future_values = 0
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    #dataSet.header = ["pos_x","v_x", "a_x", "f_x_sim", "materialremoved_sim"]
+    dataSet.header = ["v_sp","v_x", "a_x", "f_x_sim", "materialremoved_sim"] #["pos_x","v_x", "a_x", "f_x_sim", "materialremoved_sim"]
     dataclass1 = copy.copy(dataSet)
     dataclass1.add_sign_hold = True
 
