@@ -1,0 +1,20 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+mit z                | DMC60H_AL2007T4_Validierung_Normal_2 | Recurrent_Neural_Net | 0.095384 | 0.007136
+mit z                | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.088173 | 0.010989
+mit z                | DMC60H_S235JR_Validierung_Normal_2 | Recurrent_Neural_Net | 0.173481 | 0.014711
+mit z                | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.073412 | 0.001823
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_datasets_and_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Validierung_Normal_2.png
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Validierung_Normal_2.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png

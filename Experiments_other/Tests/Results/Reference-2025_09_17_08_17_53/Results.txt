@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.532354 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.491816 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.241254 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.123916 | 0.000000

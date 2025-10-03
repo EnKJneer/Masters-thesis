@@ -1,9 +1,0 @@
-EXPERIMENT RESULTS
-================================================================================
-
-DataSet              | DataPath        | Model           | MAE        | StdDev    
---------------------------------------------------------------------------------
-ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Mixed_Experts_Residual | 0.067651 | 0.000020
-ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Mixed_Experts_Residual | 0.193501 | 0.025300
-ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Mixed_Experts_Residual | 0.089856 | 0.000011
-ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Mixed_Experts_Residual | 0.137523 | 0.000005

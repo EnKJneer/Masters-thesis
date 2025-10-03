@@ -1,0 +1,234 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Erd": {
+                "NUMBEROFMODELS": 10,
+                "description": "Implementation of Model Erd.",
+                "parameters": {
+                    "name": "Erd",
+                    "velocity_threshold": 0.1,
+                    "theta_a": {
+                        "x": 1.0038116225699374e-11,
+                        "y": 3.886323251477404e-12,
+                        "z": 1.8297691391960158e-13,
+                        "sp": -1.8350484901606073e-22
+                    },
+                    "theta_v": {
+                        "x": -1.2212385870308605e-10,
+                        "y": -8.298822554210699e-11,
+                        "z": 1.102895447361539e-15,
+                        "sp": -4.861657884768584e-17
+                    },
+                    "theta_f": {
+                        "x": -1.5092439824704361e-06,
+                        "y": 7.830609387320141e-07,
+                        "z": -5.934069835453169e-09,
+                        "sp": -2.5055849055203954e-08
+                    },
+                    "theta_s": {
+                        "x": -2.016484740249582e-12,
+                        "y": -1.0475632808187395e-12,
+                        "z": 1.5393622942618894e-14,
+                        "sp": -2.042266073216125e-14
+                    }
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 100,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 1
+                }
+            }
+        },
+        {
+            "Hybrid Erd Random Forest": {
+                "NUMBEROFMODELS": 10,
+                "model": "HybridModel",
+                "physical_model": {
+                    "description": "Implementation of Model Erd.",
+                    "parameters": {
+                        "name": "Erd",
+                        "velocity_threshold": 0.1,
+                        "theta_a": {
+                            "x": 1.0038116225699374e-11,
+                            "y": 3.886323251477404e-12,
+                            "z": 1.8297691391960158e-13,
+                            "sp": -1.8350484901606073e-22
+                        },
+                        "theta_v": {
+                            "x": -1.2212385870308605e-10,
+                            "y": -8.298822554210699e-11,
+                            "z": 1.102895447361539e-15,
+                            "sp": -4.861657884768584e-17
+                        },
+                        "theta_f": {
+                            "x": -1.5092439824704361e-06,
+                            "y": 7.830609387320141e-07,
+                            "z": -5.934069835453169e-09,
+                            "sp": -2.5055849055203954e-08
+                        },
+                        "theta_s": {
+                            "x": -2.016484740249582e-12,
+                            "y": -1.0475632808187395e-12,
+                            "z": 1.5393622942618894e-14,
+                            "sp": -2.042266073216125e-14
+                        }
+                    }
+                },
+                "net_model": {
+                    "hyperparameters": {
+                        "n_estimators": 100,
+                        "max_features": null,
+                        "min_samples_split": 2,
+                        "min_samples_leaf": 1
+                    }
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 100
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\Erd_Residual-2025_08_26_17_36_55\\plots\\heatmap_model_comparison_with_std.png"
+        ],
+        "overview": [
+            "Results\\Erd_Residual-2025_08_26_17_36_55\\plots\\model_comparison_bars.png"
+        ],
+        "prediction_overview": [
+            "Results\\Erd_Residual-2025_08_26_17_36_55\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\Erd_Residual-2025_08_26_17_36_55\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\Erd_Residual-2025_08_26_17_36_55\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\Erd_Residual-2025_08_26_17_36_55\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Erd",
+                "Random_Forest",
+                80.16147594588554
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Gear_Normal_3",
+                "Erd",
+                "Hybrid Erd Random Forest",
+                77.00382486472958
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Erd",
+                "Random_Forest",
+                56.28223192370856
+            ],
+            [
+                "ST_Plate_Notch",
+                "AL_2007_T4_Plate_Normal_3",
+                "Erd",
+                "Hybrid Erd Random Forest",
+                38.73503057698556
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Erd",
+                "Random_Forest",
+                73.05842824393982
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Gear_Normal_3",
+                "Erd",
+                "Hybrid Erd Random Forest",
+                73.98827970658535
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Erd",
+                "Random_Forest",
+                70.90662267649843
+            ],
+            [
+                "ST_Plate_Notch",
+                "S235JR_Plate_Normal_3",
+                "Erd",
+                "Hybrid Erd Random Forest",
+                70.99691744815352
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 12,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "Erd",
+                "Random_Forest",
+                "Hybrid Erd Random Forest"
+            ],
+            "Best_Model_Overall": "Hybrid Erd Random Forest",
+            "Worst_Model_Overall": "Erd"
+        }
+    }
+}

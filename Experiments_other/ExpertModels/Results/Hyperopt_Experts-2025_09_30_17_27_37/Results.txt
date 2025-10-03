@@ -1,0 +1,13 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | RF_Experts_2    | 0.078252 | 0.003618
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | RF_Experts_2    | 0.130465 | 0.004683
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | RF_Experts_2    | 0.093755 | 0.000704
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | RF_Experts_2    | 0.048336 | 0.000128
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Experts_2_TPESampler | 0.064101 | 0.001353
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Experts_2_TPESampler | 0.108690 | 0.010178
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Experts_2_TPESampler | 0.088335 | 0.001857
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Experts_2_TPESampler | 0.069001 | 0.000289

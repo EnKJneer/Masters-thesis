@@ -1,0 +1,129 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets\\Data",
+            "training_data_paths": [
+                "S235JR_Plate_Normal_0.csv",
+                "S235JR_Plate_Normal_4.csv",
+                "S235JR_Plate_Normal_1.csv",
+                "S235JR_Plate_Normal_2.csv",
+                "S235JR_Plate_SF_0.csv",
+                "S235JR_Plate_Depth_0.csv",
+                "S235JR_Plate_SF_1.csv",
+                "S235JR_Plate_Depth_1.csv",
+                "S235JR_Plate_SF_2.csv",
+                "S235JR_Plate_Depth_2.csv",
+                "S235JR_Plate_SF_3.csv",
+                "S235JR_Plate_Depth_3.csv",
+                "S235JR_Plate_SF_4.csv",
+                "S235JR_Plate_Depth_4.csv"
+            ],
+            "validation_data_paths": [
+                "S235JR_Notch_Normal_0.csv",
+                "S235JR_Notch_Normal_1.csv",
+                "S235JR_Notch_Normal_2.csv",
+                "S235JR_Notch_Normal_3.csv",
+                "S235JR_Notch_Normal_4.csv",
+                "S235JR_Notch_Depth_0.csv",
+                "S235JR_Notch_Depth_1.csv",
+                "S235JR_Notch_Depth_2.csv",
+                "S235JR_Notch_Depth_3.csv",
+                "S235JR_Notch_Depth_4.csv"
+            ],
+            "testing_data_paths": [
+                "AL_2007_T4_Gear_Normal_3.csv",
+                "AL_2007_T4_Plate_Normal_3.csv",
+                "S235JR_Gear_Normal_3.csv",
+                "S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x",
+                "f_y",
+                "f_z",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Mixed_Experts_3": {
+                "NUMBEROFMODELS": 10,
+                "threshold_mrr": 100,
+                "threshold_v_axis": 0.1,
+                "expert1": {
+                    "hyperparameters": {
+                        "n_estimators": 52,
+                        "max_features": 500,
+                        "min_samples_split": 67,
+                        "min_samples_leaf": 4
+                    }
+                },
+                "expert2": {
+                    "description": "This model fits a two-stage friction model: stillstand and movement.",
+                    "parameters": {
+                        "name": "Friction_Model",
+                        "velocity_threshold": 0.1,
+                        "F_s": 0,
+                        "a_x": 0.20565338012395323,
+                        "a_sp": 0,
+                        "b": -7.690956027005258e-07,
+                        "F_c": -0.4044180236272457,
+                        "sigma_2": -0.025574199150001142,
+                        "a_b": -0.004047545159070313
+                    }
+                },
+                "expert3": {
+                    "hyperparameters": {
+                        "learning_rate": 0.04834201195017264,
+                        "n_hidden_size": 94,
+                        "n_hidden_layers": 1,
+                        "activation": "str",
+                        "optimizer_type": "quasi_newton"
+                    }
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1000
+    },
+    "Generated_Plots": {
+        "model_heatmap": [
+            "Results\\Mixed_Experts_3-2025_09_01_10_41_50\\plots\\heatmap_Mixed_Experts_3_with_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\Mixed_Experts_3-2025_09_01_10_41_50\\plots\\predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png",
+            "Results\\Mixed_Experts_3-2025_09_01_10_41_50\\plots\\predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png",
+            "Results\\Mixed_Experts_3-2025_09_01_10_41_50\\plots\\predictions_vs_groundtruth_S235JR_Gear_Normal_3.png",
+            "Results\\Mixed_Experts_3-2025_09_01_10_41_50\\plots\\predictions_vs_groundtruth_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [],
+        "Summary_Statistics": {
+            "Total_Experiments": 4,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "Mixed_Experts_3"
+            ],
+            "Best_Model_Overall": "Mixed_Experts_3",
+            "Worst_Model_Overall": "Mixed_Experts_3"
+        }
+    }
+}

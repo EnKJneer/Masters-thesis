@@ -1,5 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-mit z,DMC60H_AL2007T4_Gear_Normal_3,PiRNN,Random_Forest,38.25659822466444
-mit z,DMC60H_AL2007T4_Plate_Normal_3,PiRNN,Random_Forest,-14.863756322507557
-mit z,DMC60H_S235JR_Gear_Normal_3,PiRNN,Random_Forest,19.96601036617175
-mit z,DMC60H_S235JR_Plate_Normal_3,PiRNN,Random_Forest,39.90856609733188

@@ -1,0 +1,102 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\Data",
+            "training_data_paths": [
+                "DMC_S235JR_Plate_Normal_1.csv",
+                "DMC_S235JR_Plate_Normal_2.csv",
+                "DMC_S235JR_Plate_SF_1.csv",
+                "DMC_S235JR_Plate_Depth_1.csv",
+                "DMC_S235JR_Plate_SF_2.csv",
+                "DMC_S235JR_Plate_Depth_2.csv",
+                "DMC_S235JR_Plate_SF_3.csv",
+                "DMC_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC_S235JR_Notch_Normal_1.csv",
+                "DMC_S235JR_Notch_Normal_2.csv",
+                "DMC_S235JR_Notch_Normal_3.csv",
+                "DMC_S235JR_Notch_Depth_1.csv",
+                "DMC_S235JR_Notch_Depth_2.csv",
+                "DMC_S235JR_Notch_Depth_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC_AL2007T4_Gear_Normal_3.csv",
+                "DMC_AL2007T4_Plate_Normal_3.csv",
+                "DMC_S235JR_Gear_Normal_3.csv",
+                "DMC_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "LuGre_Model": {
+                "NUMBEROFMODELS": 1,
+                "description": "This model combines linear functions with the LuGre friction model to simulate friction in dynamic systems. It uses SciPy for curve fitting to train the model parameters.",
+                "parameters": {
+                    "name": "LuGre_Model",
+                    "a1": -0.004698339495496306,
+                    "a2": -0.0011574152366861487,
+                    "b": -0.02526090495758635,
+                    "sigma_0": -0.44046658060728494,
+                    "sigma_1": -0.08157978915625723,
+                    "sigma_2": -0.01299749541153062,
+                    "f_s": -0.4031902296310997,
+                    "f_c": -6.768823637217209,
+                    "v_s": 1095.198077288314,
+                    "dt": 0.02,
+                    "target_channel": "curr_x"
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1
+    },
+    "Generated_Plots": {
+        "prediction_overview": [
+            "Results\\LuGre-2025_09_01_15_31_28\\plots\\predictions_vs_groundtruth_DMC_AL2007T4_Gear_Normal_3.png",
+            "Results\\LuGre-2025_09_01_15_31_28\\plots\\predictions_vs_groundtruth_DMC_AL2007T4_Plate_Normal_3.png",
+            "Results\\LuGre-2025_09_01_15_31_28\\plots\\predictions_vs_groundtruth_DMC_S235JR_Gear_Normal_3.png",
+            "Results\\LuGre-2025_09_01_15_31_28\\plots\\predictions_vs_groundtruth_DMC_S235JR_Plate_Normal_3.png"
+        ],
+        "model_heatmap": [
+            "Results\\LuGre-2025_09_01_15_31_28\\plots\\heatmap_LuGre_Model_with_std.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [],
+        "Summary_Statistics": {
+            "Total_Experiments": 4,
+            "Datasets_Tested": 1,
+            "DataPaths_per_Dataset": {
+                "ST_Plate_Notch": 4
+            },
+            "Models_Compared": [
+                "LuGre_Model"
+            ],
+            "Best_Model_Overall": "LuGre_Model",
+            "Worst_Model_Overall": "LuGre_Model"
+        }
+    }
+}

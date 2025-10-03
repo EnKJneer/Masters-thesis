@@ -1,0 +1,60 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Erd             | 0.561157 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Erd             | 0.406345 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Erd             | 0.411165 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Erd             | 0.305862 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Neural_Net      | 0.408402 | 0.075935
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Neural_Net      | 0.337764 | 0.033052
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Neural_Net      | 0.344360 | 0.069550
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Neural_Net      | 0.274641 | 0.036700
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.111325 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.177645 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Random_Forest   | 0.110774 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Random_Forest   | 0.088986 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Hybrid_Model_Phys_Erd_ML_Neural_Net | 0.374340 | 0.071968
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Hybrid_Model_Phys_Erd_ML_Neural_Net | 0.324767 | 0.043650
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Hybrid_Model_Phys_Erd_ML_Neural_Net | 0.237570 | 0.036411
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Hybrid_Model_Phys_Erd_ML_Neural_Net | 0.205872 | 0.024886
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Hybrid_Model_Phys_Erd_ML_Random_Forest | 0.129045 | 0.000000
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Hybrid_Model_Phys_Erd_ML_Random_Forest | 0.248947 | 0.000000
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Hybrid_Model_Phys_Erd_ML_Random_Forest | 0.106951 | 0.000000
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Hybrid_Model_Phys_Erd_ML_Random_Forest | 0.088709 | 0.000000
+
+
+MODEL IMPROVEMENTS (vs Erd)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Erd          | Neural_Net   | +27.22%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Erd          | Random_Forest | +80.16%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Neural_Net | +33.29%     
+ST_Plate_Notch       | AL_2007_T4_Gear_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Random_Forest | +77.00%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Erd          | Neural_Net   | +16.88%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Erd          | Random_Forest | +56.28%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Neural_Net | +20.08%     
+ST_Plate_Notch       | AL_2007_T4_Plate_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Random_Forest | +38.74%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Erd          | Neural_Net   | +16.25%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Erd          | Random_Forest | +73.06%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Neural_Net | +42.22%     
+ST_Plate_Notch       | S235JR_Gear_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Random_Forest | +73.99%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Erd          | Neural_Net   | +10.21%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Erd          | Random_Forest | +70.91%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Neural_Net | +32.69%     
+ST_Plate_Notch       | S235JR_Plate_Normal_3 | Erd          | Hybrid_Model_Phys_Erd_ML_Random_Forest | +71.00%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae_with_std.png
+Overview: 1 plots
+  - complete_model_comparison.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

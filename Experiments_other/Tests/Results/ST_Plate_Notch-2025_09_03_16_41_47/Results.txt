@@ -1,0 +1,20 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+mit z                | DMC60H_AL2007T4_Gear_Depth_1 | Recurrent_Neural_Net | 0.092966 | 0.010405
+mit z                | DMC60H_AL2007T4_Plate_Depth_1 | Recurrent_Neural_Net | 0.073420 | 0.007464
+mit z                | DMC60H_S235JR_Gear_Depth_1 | Recurrent_Neural_Net | 0.094849 | 0.005104
+mit z                | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.073420 | 0.001722
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_model_comparison_with_datasets_and_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Depth_1.png
+  - predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Depth_1.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Gear_Depth_1.png
+  - predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png

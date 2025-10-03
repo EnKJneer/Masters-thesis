@@ -1,0 +1,231 @@
+{
+    "DataSets": [
+        {
+            "name": "ohne z",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_Aircut_0.csv",
+                "DMC60H_S235JR_Plate_Normal_Aircut_4.csv",
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv",
+                "DMC60H_S235JR_Plate_SF_Aircut_0.csv",
+                "DMC60H_S235JR_Plate_SF_Aircut_4.csv",
+                "DMC60H_S235JR_Plate_Depth_Aircut_0.csv",
+                "DMC60H_S235JR_Plate_Depth_Aircut_4.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_Aircut_0.csv",
+                "DMC60H_S235JR_Notch_Normal_Aircut_4.csv",
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_Depth_Aircut_0.csv",
+                "DMC60H_S235JR_Notch_Depth_Aircut_4.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        },
+        {
+            "name": "mit z",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_Aircut_0.csv",
+                "DMC60H_S235JR_Plate_Normal_Aircut_4.csv",
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv",
+                "DMC60H_S235JR_Plate_SF_Aircut_0.csv",
+                "DMC60H_S235JR_Plate_SF_Aircut_4.csv",
+                "DMC60H_S235JR_Plate_Depth_Aircut_0.csv",
+                "DMC60H_S235JR_Plate_Depth_Aircut_4.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_Aircut_0.csv",
+                "DMC60H_S235JR_Notch_Normal_Aircut_4.csv",
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_Depth_Aircut_0.csv",
+                "DMC60H_S235JR_Notch_Depth_Aircut_4.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "Recurrent_Neural_Net": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "learning_rate": 0.07767273410029314,
+                    "n_hidden_size": 86,
+                    "n_hidden_layers": 1,
+                    "activation": "ELU",
+                    "optimizer_type": "quasi_newton",
+                    "dropout_rate": 0.0
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 52,
+                    "max_features": 500,
+                    "min_samples_split": 67,
+                    "min_samples_leaf": 4
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1000
+    },
+    "Generated_Plots": {
+        "heatmap": [
+            "Results\\ST_Plate_Notch-2025_09_05_09_57_30\\plots\\heatmap_model_comparison_with_datasets_and_std.png"
+        ],
+        "prediction_overview": [
+            "Results\\ST_Plate_Notch-2025_09_05_09_57_30\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_09_05_09_57_30\\plots\\predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_09_05_09_57_30\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png",
+            "Results\\ST_Plate_Notch-2025_09_05_09_57_30\\plots\\predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png"
+        ]
+    },
+    "Results": {
+        "Improvement_Analysis": [
+            [
+                "ohne z",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                33.768185145546546
+            ],
+            [
+                "ohne z",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                -8.623571427197426
+            ],
+            [
+                "ohne z",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                31.38159015926398
+            ],
+            [
+                "ohne z",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                32.25900297319089
+            ],
+            [
+                "mit z",
+                "DMC60H_AL2007T4_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                -67.2986202292231
+            ],
+            [
+                "mit z",
+                "DMC60H_AL2007T4_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                -67.50835233102801
+            ],
+            [
+                "mit z",
+                "DMC60H_S235JR_Gear_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                3.050574141957162
+            ],
+            [
+                "mit z",
+                "DMC60H_S235JR_Plate_Normal_3",
+                "Recurrent_Neural_Net",
+                "Random_Forest",
+                24.732213146251812
+            ]
+        ],
+        "Summary_Statistics": {
+            "Total_Experiments": 16,
+            "Datasets_Tested": 2,
+            "DataPaths_per_Dataset": {
+                "ohne z": 4,
+                "mit z": 4
+            },
+            "Models_Compared": [
+                "Recurrent_Neural_Net",
+                "Random_Forest"
+            ],
+            "Best_Model_Overall": "Random_Forest",
+            "Worst_Model_Overall": "Random_Forest"
+        }
+    }
+}

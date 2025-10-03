@@ -1,0 +1,46 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ohne sign y          | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.152800 | 0.016085
+ohne sign y          | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.169977 | 0.012901
+ohne sign y          | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.120669 | 0.005145
+ohne sign y          | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.129198 | 0.002307
+ohne sign y          | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.122424 | 0.000000
+ohne sign y          | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.192938 | 0.000000
+ohne sign y          | S235JR_Gear_Normal_3 | Random_Forest   | 0.101096 | 0.000000
+ohne sign y          | S235JR_Plate_Normal_3 | Random_Forest   | 0.100380 | 0.000000
+mit sign y           | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.172643 | 0.067882
+mit sign y           | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.153115 | 0.067548
+mit sign y           | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.116183 | 0.008040
+mit sign y           | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.124317 | 0.001324
+mit sign y           | AL_2007_T4_Gear_Normal_3 | Random_Forest   | 0.175640 | 0.000000
+mit sign y           | AL_2007_T4_Plate_Normal_3 | Random_Forest   | 0.194934 | 0.000000
+mit sign y           | S235JR_Gear_Normal_3 | Random_Forest   | 0.104882 | 0.000000
+mit sign y           | S235JR_Plate_Normal_3 | Random_Forest   | 0.103141 | 0.000000
+
+
+MODEL IMPROVEMENTS (vs Recurrent_Neural_Net)
+================================================================================
+DataSet              | DataPath        | Reference    | Compared     | Improvement %
+--------------------------------------------------------------------------------
+ohne sign y          | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | +19.88%     
+ohne sign y          | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | -13.51%     
+ohne sign y          | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | +16.22%     
+ohne sign y          | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | +22.31%     
+mit sign y           | AL_2007_T4_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | -1.74%      
+mit sign y           | AL_2007_T4_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | -27.31%     
+mit sign y           | S235JR_Gear_Normal_3 | Recurrent_Neural_Net | Random_Forest | +9.73%      
+mit sign y           | S235JR_Plate_Normal_3 | Recurrent_Neural_Net | Random_Forest | +17.03%     
+
+
+GENERATED PLOTS
+========================================
+Heatmap: 1 plots
+  - heatmap_mae_with_std.png
+Prediction_Overview: 4 plots
+  - predictions_vs_groundtruth_AL_2007_T4_Gear_Normal_3.png
+  - predictions_vs_groundtruth_AL_2007_T4_Plate_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Gear_Normal_3.png
+  - predictions_vs_groundtruth_S235JR_Plate_Normal_3.png

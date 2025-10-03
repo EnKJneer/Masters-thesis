@@ -1,5 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-ST_Plate_Notch,AL_2007_T4_Gear_Normal_3,RF_Experts,Experts_RNN_TPESampler,-88.18530575301139
-ST_Plate_Notch,AL_2007_T4_Plate_Normal_3,RF_Experts,Experts_RNN_TPESampler,-42.25221167871491
-ST_Plate_Notch,S235JR_Gear_Normal_3,RF_Experts,Experts_RNN_TPESampler,17.866102383410947
-ST_Plate_Notch,S235JR_Plate_Normal_3,RF_Experts,Experts_RNN_TPESampler,-35.1362302143104

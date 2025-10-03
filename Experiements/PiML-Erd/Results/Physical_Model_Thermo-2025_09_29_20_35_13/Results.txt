@@ -1,9 +1,0 @@
-EXPERIMENT RESULTS
-================================================================================
-
-DataSet              | DataPath        | Model           | MAE        | StdDev    
---------------------------------------------------------------------------------
-ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | ThermodynamicModel | 0.317975 | 0.000000
-ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | ThermodynamicModel | 0.285088 | 0.000000
-ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | ThermodynamicModel | 0.164866 | 0.000000
-ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | ThermodynamicModel | 0.177656 | 0.000000

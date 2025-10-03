@@ -1,0 +1,161 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ]
+        }
+    ],
+    "Models": [
+        {
+            "ThermodynamicModel": {
+                "NUMBEROFMODELS": 10,
+                "description": "Implementation of Model Erd.",
+                "parameters": {
+                    "name": "ThermodynamicModel",
+                    "theta_a": {
+                        "x": -0.005184376529693945,
+                        "y": 0.0002651388415569107,
+                        "z": -2.369740342891147e-05,
+                        "sp": -1.0448037249590198e-11
+                    },
+                    "theta_v": {
+                        "x": -0.015563891491481147,
+                        "y": -0.0002252110474788923,
+                        "z": 0.0013903037716815679,
+                        "sp": 4.708285487029351e-09
+                    },
+                    "theta_f": {
+                        "x": -0.0011994392055745813,
+                        "y": 0.0005198512804260274,
+                        "z": -0.0021394977563301363,
+                        "sp": 0.005617799193359077
+                    },
+                    "theta_s": {
+                        "x": -0.10578085490350937,
+                        "y": -0.026776688347146603,
+                        "z": 0.001461361727266027,
+                        "sp": -0.15529029029409647
+                    },
+                    "theta_c": {
+                        "x": 0.08824750836883252,
+                        "y": 0.08824750836883319,
+                        "z": 0.0882475083688335,
+                        "sp": 0.08824750836883331
+                    }
+                }
+            }
+        },
+        {
+            "Random_Forest": {
+                "NUMBEROFMODELS": 10,
+                "hyperparameters": {
+                    "n_estimators": 100,
+                    "max_depth": 100,
+                    "max_features": null,
+                    "min_samples_split": 2,
+                    "min_samples_leaf": 4
+                }
+            }
+        },
+        {
+            "Hybrid Erd Random Forest": {
+                "NUMBEROFMODELS": 10,
+                "model": "HybridModel",
+                "physical_model": {
+                    "description": "Implementation of Model Erd.",
+                    "parameters": {
+                        "name": "ThermodynamicModel",
+                        "theta_a": {
+                            "x": -0.005184376529693945,
+                            "y": 0.0002651388415569107,
+                            "z": -2.369740342891147e-05,
+                            "sp": -1.0448037249590198e-11
+                        },
+                        "theta_v": {
+                            "x": -0.015563891491481147,
+                            "y": -0.0002252110474788923,
+                            "z": 0.0013903037716815679,
+                            "sp": 4.708285487029351e-09
+                        },
+                        "theta_f": {
+                            "x": -0.0011994392055745813,
+                            "y": 0.0005198512804260274,
+                            "z": -0.0021394977563301363,
+                            "sp": 0.005617799193359077
+                        },
+                        "theta_s": {
+                            "x": -0.10578085490350937,
+                            "y": -0.026776688347146603,
+                            "z": 0.001461361727266027,
+                            "sp": -0.15529029029409647
+                        },
+                        "theta_c": {
+                            "x": 0.08824750836883252,
+                            "y": 0.08824750836883319,
+                            "z": 0.0882475083688335,
+                            "sp": 0.08824750836883331
+                        }
+                    }
+                },
+                "net_model": {
+                    "hyperparameters": {
+                        "n_estimators": 100,
+                        "max_depth": 100,
+                        "max_features": null,
+                        "min_samples_split": 2,
+                        "min_samples_leaf": 4
+                    }
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 100
+    }
+}
