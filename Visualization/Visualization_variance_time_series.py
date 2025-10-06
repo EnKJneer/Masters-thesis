@@ -108,7 +108,7 @@ path_data = '..\\DataSets\\Data'
 
 # Daten für alle Versionen laden
 data_list = []
-for version in [1, 2, 3]:
+for version in [3]:
     file = f'{material}_{geometry}_{variance}_{version}.csv'
     data = pd.read_csv(f'{path_data}/{file}')
     data_list.append(data)

@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiRNN           | 0.086538 | 0.016045
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiRNN           | 0.090275 | 0.013496
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiRNN           | 0.101224 | 0.009183
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiRNN           | 0.085593 | 0.007928

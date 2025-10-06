@@ -28,9 +28,7 @@ import Helper.handling_hyperopt as hyperopt
 import Helper.handling_experiment as hexp
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
-from Experiements.ExpertModels.Experts_3 import Experts_3
-#import Models.model_mixture_of_experts as mmix
-from datetime import datetime
+
 
 def start_experiment_for(model_str = 'NN'):
     """ Constants """

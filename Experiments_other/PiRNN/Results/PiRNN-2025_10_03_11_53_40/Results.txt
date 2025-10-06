@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PhysicsInformedRNN | 0.082715 | 0.012916
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PhysicsInformedRNN | 0.096052 | 0.009561
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PhysicsInformedRNN | 0.098009 | 0.004509
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PhysicsInformedRNN | 0.091141 | 0.002891

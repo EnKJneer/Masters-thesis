@@ -1251,7 +1251,7 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
 
         nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
         for _ in range(NUMBEROFMODELS):
-            model = models_copy[idx]
+            model = copy.deepcopy(models_copy[idx])
             if hasattr(model, 'input_size'):
                 model.input_size = None
                 model.scaler = None
@@ -1896,18 +1896,19 @@ def perform_hyperparameter_optimization(models: list, search_spaces: list, optim
     """
     models_optimized = []
     for idx, model in enumerate(models):
+        model_copy = copy.deepcopy(model)
         for sampler in optimization_samplers:
             study_name = f"{experiment_name}_{sampler}_"
             search_space = search_spaces[idx]
             objective_nn = hyperopt.Objective(
                 search_space=search_space,
-                model=copy.copy(model),
+                model=copy.deepcopy(model_copy),
                 data=[X_train, X_val, y_train, y_val],
                 n_epochs=NUMBEROFEPOCHS,
                 pruning=True,
             )
             best_params = hyperopt.optimize(objective_nn, results_dir, study_name=study_name, n_trials=NUMBEROFTRIALS, sampler=sampler)
-            model_optimized = copy.deepcopy(model)
+            model_optimized = copy.deepcopy(model_copy)
             model_optimized.reset_hyperparameter(**best_params)
             model_optimized.name = f"{model_optimized.name}_{sampler}"
             models_optimized.append(model_optimized)

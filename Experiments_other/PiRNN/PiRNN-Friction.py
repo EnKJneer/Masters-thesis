@@ -21,18 +21,16 @@ if __name__ == "__main__":
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataSet.add_padding = True
-    #dataSet.add_sign_hold = True
-    #dataSet.header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z",
-    #                  "materialremoved_sim"]
 
     dataclass = copy.copy(dataSet)
     model_phys = mphy.FrictionModel()
     model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
-    model = mnn.PhysicsInformedRNN(learning_rate= 0.1, n_hidden_size= 72, n_hidden_layers= 1,
-                    activation= 'ELU', optimizer_type= 'quasi_newton')
+
+    model = mnn.PiRNN_2(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                      activation= 'ELU', optimizer_type= 'quasi_newton')
 
     # Run the experiment
-    hexp.run_experiment([dataclass], models=[model_phys, model_rnn, model], #
+    hexp.run_experiment([dataclass], models=[model], #model_phys, model_rnn,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='PiRNN')

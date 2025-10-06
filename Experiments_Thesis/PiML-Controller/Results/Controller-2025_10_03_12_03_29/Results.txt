@@ -1,0 +1,21 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ohne cont_dev        | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.133109 | 0.009541
+ohne cont_dev        | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.097178 | 0.015363
+ohne cont_dev        | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.117706 | 0.005611
+ohne cont_dev        | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.068605 | 0.006597
+ohne cont_dev        | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.103294 | 0.002298
+ohne cont_dev        | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.210157 | 0.006499
+ohne cont_dev        | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.097393 | 0.000991
+ohne cont_dev        | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.088821 | 0.000287
+mit cont_dev         | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.125226 | 0.007432
+mit cont_dev         | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.102893 | 0.017885
+mit cont_dev         | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.111892 | 0.006106
+mit cont_dev         | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.067156 | 0.002773
+mit cont_dev         | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.099495 | 0.003280
+mit cont_dev         | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.209532 | 0.008013
+mit cont_dev         | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.103813 | 0.001277
+mit cont_dev         | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.085652 | 0.000267

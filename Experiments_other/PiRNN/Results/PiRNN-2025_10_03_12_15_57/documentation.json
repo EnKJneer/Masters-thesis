@@ -1,0 +1,95 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_x"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ],
+            "columns_to_integrate": null
+        }
+    ],
+    "Models": [
+        {
+            "PiRNN": {
+                "NUMBEROFMODELS": 10,
+                "model_type": "PhysicsInformedRNN",
+                "hyperparameters": {
+                    "input_size": 13,
+                    "output_size": 1,
+                    "n_hidden_size": 71,
+                    "n_hidden_layers": 1,
+                    "activation": "ELU",
+                    "learning_rate": 0.1,
+                    "dropout_rate": 0.0,
+                    "z_dim": 1,
+                    "dt": 50.0,
+                    "physics_weight": 1.0,
+                    "axis": "x",
+                    "physics_indices": {
+                        "col_v": "v_x_1_current",
+                        "col_a": "a_x_1_current",
+                        "col_F": "f_x_sim_1_current",
+                        "idx_v": 10,
+                        "idx_a": 1,
+                        "idx_F": 5
+                    }
+                },
+                "learned_coefficients": {
+                    "c1": -0.3357512950897217,
+                    "c2": -0.01141867320984602,
+                    "c3": -0.6875779628753662,
+                    "c4": 0.4337224066257477,
+                    "c5": 0.10000000149011612
+                },
+                "device": "cuda"
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 800
+    }
+}

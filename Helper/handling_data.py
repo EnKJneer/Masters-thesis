@@ -386,11 +386,12 @@ class DataClass(BaseDataClass):
             "target_channels": self.target_channels,
             'input_features': self.header,
             'columns_to_integrate': self.columns_to_integrate,
+            'add_sign_hold': self.add_sign_hold,
 
         }
         return documentation
 
-folder_data = '..\\..\\DataSets_CMX_Plate_Notch_Gear\\Data'
+folder_data = '..\\..\\DataSets_DMC60H_Plate_Notch_Gear\\Data'
 folder_data_reference =  '..\\..\\DataSets_Reference/DataFiltered' #
 dataPaths_Test = [  'DMC60H_AL2007T4_Gear_Normal_3.csv','DMC60H_AL2007T4_Plate_Normal_3.csv', 'DMC60H_S235JR_Gear_Normal_3.csv','DMC60H_S235JR_Plate_Normal_3.csv']
 
@@ -409,7 +410,7 @@ DataClass_ST_Plate_Notch = DataClass('ST_Plate_Notch', folder_data,
                                              ["curr_x"],
                                      header = HEADER_x)
 
-DataClass_ST_Plate_Notch_Reference = DataClass('Reference', '..\\..\\DataSets_CMX_Plate_Notch_Gear_Reference/Data',
+DataClass_ST_Plate_Notch_Reference = DataClass('Reference', '..\\..\\DataSets_DMC60H_Plate_Notch_Gear_Reference/Data',
                                     dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                              ["curr_x"], header = HEADER_x)
 
@@ -425,7 +426,7 @@ DataClass_ST_Notch_Plate = DataClass('ST_Notch_Plate', folder_data,
                                      [  'DMC60H_AL2007T4_Gear_Normal_3.csv','DMC60H_AL2007T4_Notch_Normal_3.csv', 'S235JR_Gear_Normal_3.csv','S235JR_Notch_Normal_3.csv'],
                                      ["curr_x"], header = HEADER_x)
 
-DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Mesurments', folder_data,
+DataClass_ST_Plate_Notch_Mes = DataClass('ST_Plate_Notch_Measurements', folder_data,
                                          dataPaths_Train, dataPaths_Val, dataPaths_Test,
                                          ["curr_x"], header = ["v_sp", "v_x", "v_y", "v_z", "a_x", "a_y", "a_z", "a_sp", "f_x", "f_y", "f_z"])
 
