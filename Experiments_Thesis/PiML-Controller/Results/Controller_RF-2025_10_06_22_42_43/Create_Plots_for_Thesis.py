@@ -474,7 +474,7 @@ class HeatmapPlotter(BasePlotter):
         plt.tight_layout()
 
         # Speichern mit der save_plot Methode der Basisklasse
-        filename = f'heatmap_vergleich.png'
+        filename = f'heatmap_vergleich_RF.png'
         plot_path = self.save_plot(fig, filename)
         print(f"Erweiterte Model Comparison Heatmap mit TrainingsDatasets und Standardabweichung erstellt: {plot_path}")
         return [plot_path]
@@ -724,7 +724,7 @@ if __name__ == '__main__':
         ]
         new_names ={
             '1_no_cont_dev_Random_Forest': 'Random Forest',
-            '2_with_cont_dev_Random_Forest': 'Random Forest\nmit Messwerten',
+            '2_with_cont_dev_Random_Forest': 'Random Forest\nmit Regeldifferenz',
             '3_int_cont_dev_Random_Forest': 'Random Forest\nmit integrierter\nRegeldifferenz'
         }
     else:

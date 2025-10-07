@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     dataSets = [hdata.DataClass_ST_Plate_Notch]
 
-    model_phys = mphys.FrictionModel()
+    model_phys = mphys.EmpiricLinearModel()
 
     model_rf = mrf.RandomForestModel(n_estimators= 100, max_depth=100, min_samples_split= 2,
                     min_samples_leaf= 4)

@@ -23,7 +23,7 @@ if __name__ == "__main__":
     dataSet.add_padding = True
 
     dataclass = copy.copy(dataSet)
-    model_phys = mphy.FrictionModel()
+    model_phys = mphy.EmpiricLinearModel()
     model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 

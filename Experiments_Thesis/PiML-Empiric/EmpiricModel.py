@@ -22,9 +22,9 @@ if __name__ == "__main__":
     dataSet = hdata.DataClass_ST_Plate_Notch
 
     dataclass = copy.copy(dataSet)
-    model = mphy.FrictionModel()
+    model = mphy.EmpiricLinearModel()
 
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model],
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['prediction_overview', 'model_heatmap'], experiment_name='SimpleFriction')
+                        plot_types=['prediction_overview', 'model_heatmap'], experiment_name='EmpiricModel')

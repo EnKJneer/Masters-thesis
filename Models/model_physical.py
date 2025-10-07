@@ -1081,8 +1081,8 @@ class LuGreModelModifiedSciPy(mb.BaseModel):
     def reset_hyperparameter(self):
         throw_error('not implemented')
 
-class FrictionModel(mb.BaseModel):
-    def __init__(self, name="Friction_Model",
+class EmpiricLinearModel(mb.BaseModel):
+    def __init__(self, name="EmpiricLinearModel",
                  f_s = 0, a_x = 0, a_sp = 0, b = 0, f_c = 0, sigma_2 = 0,a_b =0,
                  velocity_threshold=1e-1, target_channel = 'curr_x'):
         self.name = name

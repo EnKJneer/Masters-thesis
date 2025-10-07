@@ -54,11 +54,11 @@
     ],
     "Models": [
         {
-            "Friction_Model": {
+            "EmpiricLinearModel": {
                 "NUMBEROFMODELS": 10,
                 "description": "This model fits a two-stage friction model: stillstand and movement.",
                 "parameters": {
-                    "name": "Friction_Model",
+                    "name": "EmpiricLinearModel",
                     "velocity_threshold": 0.1,
                     "F_s": 0,
                     "a_x": 0,
