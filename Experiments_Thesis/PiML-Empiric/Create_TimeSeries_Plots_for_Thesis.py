@@ -238,6 +238,7 @@ def plot_time_series(
     plot_path = os.path.join(path, filename)
     os.makedirs(path, exist_ok=True)
     fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
     print(f'Saved as {plot_path}')
 
@@ -301,7 +302,7 @@ if __name__ == '__main__':
             plot_time_series(
                 df,
                 f'{mat} {geometry}: Einflüsse auf den Stromverlauf',
-                f'Verlauf_{material}_{geometry}_mit_Vorschub.pdf',
+                f'Verlauf_{material}_{geometry}_mit_Vorschub',
                 col_name='curr_x',
                 label='$I$\nin A',
                 v_colname='v_x',

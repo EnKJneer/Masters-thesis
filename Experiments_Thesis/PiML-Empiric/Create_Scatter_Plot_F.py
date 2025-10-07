@@ -100,6 +100,7 @@ def plot_scatter_fx_vs_curr(
     os.makedirs(path, exist_ok=True)
     plot_path = os.path.join(path, filename)
     fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
     print(f'Gespeichert unter: {plot_path}')
 
@@ -134,7 +135,7 @@ if __name__ == '__main__':
     plot_scatter_fx_vs_curr(
         data=df,
         title='Prozesskraft zum Motorstrom',
-        filename='scatter_fx_vs_curr_filtered.pdf',
+        filename='scatter_fx_vs_curr_filtered',
         v_threshold=10.0,
         dpi=600
     )

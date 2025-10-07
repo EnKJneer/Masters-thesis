@@ -90,7 +90,7 @@ class BasePlotter(ABC):
 
     def save_plot(self, fig, filename: str):
         """Speichert einen Plot"""
-        plot_path = os.path.join(self.output_dir, filename)
+        plot_path = os.path.join(self.output_dir, filename+'.pdf')
         fig.savefig(plot_path, dpi=600, bbox_inches='tight')
         plt.close(fig)
         return plot_path

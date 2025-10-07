@@ -8,10 +8,8 @@ import Helper.handling_experiment as hexp
 import Helper.handling_data as hdata
 import Models.model_base as mb
 import Models.model_physical as mphys
-from Models.model_random_forest import RandomForestModel
-from Models.model_neural_net import RNN, PiRNN
-
-from Experiments_Thesis.HybridModelResidual
+import Models.model_random_forest as mrf
+import Models.model_neural_net as mnn
 
 class Experts_2(mb.BaseModel):
     def __init__(self, threshold_v_axis=0.1, name='RF_Experts_2', target_channel='curr_x', **kwargs):
@@ -32,8 +30,8 @@ class Experts_2(mb.BaseModel):
         self.target_channel = target_channel
 
         # Initialisiere die drei Experten
-        self.expert1 = RandomForestModel(name="Expert_MRR_High_V_Axis_High")
-        self.expert2 = RandomForestModel(name="Expert_MRR_High_V_Axis_Low")
+        self.expert1 = mrf.RandomForestModel(name="Expert_MRR_High_V_Axis_High")
+        self.expert2 = mrf.RandomForestModel(name="Expert_MRR_High_V_Axis_Low")
 
     def _get_mask(self, X):
         axis = self.target_channel.replace('curr_', '')
@@ -241,18 +239,12 @@ if __name__ == '__main__':
         dataclass.add_padding = True
         dataclass.add_sign_hold = True
 
-    model_rf = RandomForestModel(n_estimators=100, max_depth=100, min_samples_split=2,
+    model_rf = mrf.RandomForestModel(n_estimators=100, max_depth=100, min_samples_split=2,
                                      min_samples_leaf=4)
 
-    model_rnn = RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
+    model_rnn = mnn.RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
                         activation='ELU', optimizer_type='quasi_newton')
 
-    model_pirnn = PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                      activation= 'ELU', optimizer_type= 'quasi_newton')
-
-    model_lin = mphys.EmpiricLinearModel()
-
-    model_hybrid_rnn = HybridModelResidual(physical_model=model_lin, ml_model=model_rnn, name='Hybrid_RNN')
 
     model = Experts_2(threshold_v_axis=1)
     model.expert1 = copy.deepcopy(model_rf)

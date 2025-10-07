@@ -104,6 +104,7 @@ def plot_time_series_with_variance(data_list, title, dpi=300, col_name='curr_x',
         plot_path = os.path.join(path, filename)
         os.makedirs(path, exist_ok=True)
         fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+        fig.savefig(plot_path +'.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
         plt.close(fig)
         print(f'Saved as {plot_path}')
     else:
@@ -129,5 +130,5 @@ plot_time_series_with_variance(
     col_name='curr_x',
     label_axis='$I$ in A',
     dpi=600,
-    filename='Variance_'+file.replace('.csv', '.png')
+    filename='Variance_' + file.replace('.csv', '')
 )

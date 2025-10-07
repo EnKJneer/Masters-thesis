@@ -93,6 +93,7 @@ class BasePlotter(ABC):
         plot_path = os.path.join(self.output_dir, filename)
         plot_path = plot_path.replace('\n','_')
         fig.savefig(plot_path, dpi=600, bbox_inches='tight')
+        fig.savefig(plot_path + '.pdf', dpi=600, bbox_inches='tight', facecolor='white')
         plt.close(fig)
         return plot_path
 
