@@ -9,7 +9,9 @@ import Helper.handling_data as hdata
 import Models.model_base as mb
 import Models.model_physical as mphys
 from Models.model_random_forest import RandomForestModel
-from Models.model_neural_net import RNN
+from Models.model_neural_net import RNN, PiRNN
+
+from Experiments_Thesis.HybridModelResidual
 
 class Experts_2(mb.BaseModel):
     def __init__(self, threshold_v_axis=0.1, name='RF_Experts_2', target_channel='curr_x', **kwargs):
@@ -232,8 +234,7 @@ if __name__ == '__main__':
     dataSet = hdata.DataClass_ST_Plate_Notch
 
     dataclass1 = copy.copy(dataSet)
-    #dataclass1.add_sign_hold = True
-    #dataclass1.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"] # ["pos_x", "v_x", "a_x", "f_x_sim", "materialremoved_sim"]
+    dataclass1.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"] # ["pos_x", "v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
     dataClasses = [dataclass1]
     for dataclass in dataClasses:
@@ -246,8 +247,14 @@ if __name__ == '__main__':
     model_rnn = RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
                         activation='ELU', optimizer_type='quasi_newton')
 
+    model_pirnn = PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                      activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    model = Experts_2(threshold_v_axis=0.1)
+    model_lin = mphys.EmpiricLinearModel()
+
+    model_hybrid_rnn = HybridModelResidual(physical_model=model_lin, ml_model=model_rnn, name='Hybrid_RNN')
+
+    model = Experts_2(threshold_v_axis=1)
     model.expert1 = copy.deepcopy(model_rf)
     model.expert2 = copy.deepcopy(model_rnn)
 

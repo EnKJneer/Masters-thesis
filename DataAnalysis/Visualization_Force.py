@@ -126,11 +126,11 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x', label='Mess
     plt.show()
 
 # Beispielaufruf der Funktion
-material = 'DMC_S235JR'
+material = 'DMC60H_S235JR'
 geometry = 'Gear'
 variant = 'Normal'
 version = '3'
-path_data = '..\\Data'#'..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
+path_data = '..\\DataSets_DMC60H_Plate_Notch_Gear\\Data'#'..\\DataSets\\DataSimulated_test' #'..\\Archiv\\DataSets\\OldData_Aligned'
 file = f'{material}_{geometry}_{variant}_{version}.csv' #
 
 data = pd.read_csv(f'{path_data}/{file}')

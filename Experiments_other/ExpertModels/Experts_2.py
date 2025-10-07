@@ -247,7 +247,7 @@ if __name__ == '__main__':
 
     model_lin = mphys.LinearModel()
 
-    model_phys = mphys.FrictionModel()
+    model_phys = mphys.EmpiricLinearModel()
 
     model = Experts_2(threshold_v_axis=1)
     model.expert1 = mphys.FrictionModel() #copy.deepcopy(model_rf) #copy.deepcopy(model_phys)

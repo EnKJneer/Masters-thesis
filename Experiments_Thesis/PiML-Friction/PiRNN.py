@@ -22,15 +22,15 @@ if __name__ == "__main__":
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataSet.add_padding = True
 
-    dataclass = copy.copy(dataSet)
+    dataclass = copy.deepcopy(dataSet)
 
-    model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                    activation= 'ELU', optimizer_type= 'quasi_newton')
+    model_rnn = copy.deepcopy(mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                    activation= 'ELU', optimizer_type= 'quasi_newton'))
 
     model = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                       activation= 'ELU', optimizer_type= 'quasi_newton')
 
     # Run the experiment
-    hexp.run_experiment([dataclass], models=[model],
+    hexp.run_experiment([dataclass], models=[model, model_rnn],
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='PiRNN')

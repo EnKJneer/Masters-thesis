@@ -25,7 +25,7 @@ if __name__ == "__main__":
     #                  "materialremoved_sim"]
 
     dataclass = copy.copy(dataSet)
-    model = mphy.FrictionModel()
+    model = mphy.EmpiricLinearModel()
 
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model],

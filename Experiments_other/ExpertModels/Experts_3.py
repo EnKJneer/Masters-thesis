@@ -276,7 +276,7 @@ if __name__ == '__main__':
     model_rnn = RNN(learning_rate= 0.04834201195017264, n_hidden_size= 94, n_hidden_layers= 1,
                     activation= 'Sigmoid', optimizer_type= 'quasi_newton')
     model_lin = mphys.LinearModel()
-    model_phys = mphys.FrictionModel()
+    model_phys = mphys.EmpiricLinearModel()
 
     model = Experts_3()
     model.expert1 = copy.deepcopy(model_rf)
