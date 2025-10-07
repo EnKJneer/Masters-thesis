@@ -1150,7 +1150,7 @@ class EmpiricLinearModel(mb.BaseModel):
         data = X_train.copy()
         data[self.target_channel] = y_train.values
 
-        params, _, _ = self.fit_friction_model(data)
+        params, _, _ = self.fit_model(data)
 
         self.F_s = params['F_s']
         self.theta_f = params['theta_f']
@@ -1167,7 +1167,7 @@ class EmpiricLinearModel(mb.BaseModel):
         print(f"Validation Loss: {validation_loss:.4e}")
         return validation_loss
 
-    def fit_friction_model(self, data):
+    def fit_model(self, data):
         if type(self.target_channel) is not list:
             self.target_channel = [self.target_channel]
         for target in self.target_channel:
