@@ -116,19 +116,21 @@ class BaseTorchModel(BaseModel, nn.Module):
 
         return self.scaler.transform(X)
 
-    def test_model(self, X, y_target, criterion_test = None):
+    def test_model(self, x, y_target, criterion_test = None):
         if criterion_test is None:
             criterion_test = self.criterion
-        X_scaled = self.scale_data(X)
+        X_scaled = self.scale_data(x)
         X = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
 
         y_pred_num = self.predict(X)
         y_pred = torch.tensor(y_pred_num, dtype=torch.float32).to(self.device)
-        if type(y_target) is not np.array:
-            y_target = np.array(y_target)
-        y_target = torch.tensor(y_target, dtype=torch.float32).to(self.device)
+        if type(y_target) is not torch.Tensor:
+            if type(y_target) is not np.array:
+                y_target = np.array(y_target)
+            y_target = torch.tensor(y_target, dtype=torch.float32).to(self.device)
 
         loss = criterion_test(y_target, y_pred)
+
         return loss.item(), y_pred_num
 
     def scaled_to_tensor(self, data):
@@ -263,8 +265,10 @@ class BaseTorchModel(BaseModel, nn.Module):
                     val_loss = self.criterion(y_tensor, output)
                     val_losses.append(val_loss.item())
 
-            avg_train_loss = sum(train_losses) / len(train_losses)
-            avg_val_loss = sum(val_losses) / len(val_losses)
+            n = max(1, len(train_losses))
+            avg_train_loss = sum(train_losses) / n
+            n = max(1, len(val_losses))
+            avg_val_loss = sum(val_losses) / n
 
             if avg_val_loss < best_val_error - epsilon:
                 best_val_error = avg_val_loss
@@ -272,6 +276,12 @@ class BaseTorchModel(BaseModel, nn.Module):
                 patience_counter = 0
             elif epoch > (n_epochs / 100):
                 patience_counter += 1
+
+            if np.isnan(avg_val_loss):
+                # Neustart
+                print(f"Validation loss: {avg_val_loss} --- Restart training")
+                self._initialize()
+                epoch = 0
 
             scheduler.step(avg_val_loss)
 

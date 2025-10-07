@@ -1250,7 +1250,7 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
     for idx, model in enumerate(models_copy):
 
         nn_preds = [[] for _ in range(len(X_test))] if isinstance(X_test, list) else []
-        for _ in range(NUMBEROFMODELS):
+        for n in range(NUMBEROFMODELS):
             model = copy.deepcopy(models_copy[idx])
             if hasattr(model, 'input_size'):
                 model.input_size = None
@@ -1267,6 +1267,8 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
                     if hasattr(model, 'plot_active_experts'):
                         model.plot_active_experts()
                         model.clear_active_experts_log()
+                    if np.isnan(mse):
+                        n = n -1
             else:
                 mse, pred_nn = model.test_model(X_test, y_test)
                 print(f"{model.name}: Test RMAE: {mse}")
@@ -1274,6 +1276,8 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
                 if hasattr(model, 'plot_active_experts'):
                     model.plot_active_experts()
                     model.clear_active_experts_log()
+                if np.isnan(mse):
+                    n = n - 1
         calculate_and_store_results(model, dataClass, nn_preds, y_test, df_list_results, results, header_list, raw_data)
     return models_copy
 

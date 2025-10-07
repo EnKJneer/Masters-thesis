@@ -81,8 +81,12 @@ if __name__ == "__main__":
     dataSet_2 = copy.deepcopy(hdata.DataClass_ST_Plate_Notch)
     dataSet_2.add_sign_hold = True
     dataSet_2.name = 'Sign_Hold'
+    dataSet_3 = copy.deepcopy(hdata.DataClass_ST_Plate_Notch)
+    dataSet_3.add_sign_hold = True
+    dataSet_3.name = 'Sign_Hold_x'
+    dataSet_3.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
-    dataSets = [dataSet_1, dataSet_2]
+    dataSets = [dataSet_1, dataSet_2, dataSet_3]
 
     for dataSet in dataSets:
         dataSet.add_padding = True
@@ -96,10 +100,10 @@ if __name__ == "__main__":
     use_rf = True
     if use_rf:
         models = [model_rf]
-        postfix = 'RF'
+        postfix = 'RF_x_pinn'
     else:
         models = [model_rnn]
-        postfix = 'RNN'
+        postfix = 'RNN_x_pinn'
 
     # Run the experiment
     hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,

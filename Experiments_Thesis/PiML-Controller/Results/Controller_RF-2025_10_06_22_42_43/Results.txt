@@ -1,0 +1,17 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+1_no_cont_dev        | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.102219 | 0.002685
+1_no_cont_dev        | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.206978 | 0.008469
+1_no_cont_dev        | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.097399 | 0.000576
+1_no_cont_dev        | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.089113 | 0.000437
+2_with_cont_dev      | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.100036 | 0.003701
+2_with_cont_dev      | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.214538 | 0.007397
+2_with_cont_dev      | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.102815 | 0.001274
+2_with_cont_dev      | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.085608 | 0.000186
+3_int_cont_dev       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.089256 | 0.002263
+3_int_cont_dev       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.160785 | 0.003963
+3_int_cont_dev       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.120632 | 0.001606
+3_int_cont_dev       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.046171 | 0.000290

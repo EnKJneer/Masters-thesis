@@ -1,0 +1,17 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Normal               | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.126630 | 0.011782
+Normal               | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.087392 | 0.013342
+Normal               | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.116694 | 0.002822
+Normal               | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.070411 | 0.003599
+Sign_Hold            | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.108108 | 0.017228
+Sign_Hold            | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.096107 | 0.023990
+Sign_Hold            | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.094775 | 0.001989
+Sign_Hold            | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.056405 | 0.002305
+Sign_Hold_x          | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.078041 | 0.003935
+Sign_Hold_x          | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.057128 | 0.005497
+Sign_Hold_x          | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.095178 | 0.003004
+Sign_Hold_x          | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.062133 | 0.002462
