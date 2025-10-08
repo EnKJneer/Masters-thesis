@@ -31,6 +31,7 @@ def plot_time_series(
     v_colname: str = 'v_x',
     v_label: str = 'Vorschubgeschwindigkeit',
     v_axis: str = 'v in m/s',
+    v_threshold: float = 1,
     y_configs: List[Dict[str, str]] = None,
     f_a: int = 50,
     path: str = 'Plots'
@@ -38,7 +39,7 @@ def plot_time_series(
     """
     Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
     - Oberem Plot: Vorschubgeschwindigkeit (v_x)
-    - Unterem Plot: Stromvorhersage mit farblicher Kennzeichnung von Bereichen mit |v_x| < 1 m/s
+    - Unterem Plot: Stromvorhersage mit farblicher Kennzeichnung von Bereichen mit |v_x| < v_threshold m/s
 
     Args:
         data: DataFrame mit den Daten
@@ -50,6 +51,7 @@ def plot_time_series(
         v_colname: Spaltenname für Vorschubgeschwindigkeit
         v_label: Legendenlabel für Vorschubgeschwindigkeit
         v_axis: Beschriftung der y-Achse für Vorschub
+        v_threshold: Grenzwert für die gekennzeichneten Bereiche.
         y_configs: Liste von Dictionaries mit 'ycolname' und 'ylabel' für zusätzliche y-Achsen
                   Beispiel: [{'ycolname': 'Abweichung_RF', 'ylabel': 'Random Forest'},
                              {'ycolname': 'Abweichung_RNN', 'ylabel': 'RNN'}]
@@ -80,7 +82,7 @@ def plot_time_series(
 
     # ----- Berechnung der langsamen Bereiche -----
     v_abs = np.abs(data[v_colname])
-    low_speed_mask = v_abs < 1.0
+    low_speed_mask = v_abs < v_threshold
     diff = np.diff(low_speed_mask.astype(int))
     starts = np.where(diff == 1)[0] + 1
     ends = np.where(diff == -1)[0]
@@ -200,9 +202,9 @@ def plot_time_series(
 
     from matplotlib.patches import Patch
     legend_elements = legend_elements + [
-        Patch(facecolor=color_sections, alpha=alpha, label='Bereiche mit |v| < 1 m/s')
+        Patch(facecolor=color_sections, alpha=alpha, label=f'Bereiche mit |v| < {v_threshold} m/s')
     ]
-    legend_labels = legend_labels + ['|v| < 1 m/s']
+    legend_labels = legend_labels + [f'|v| < {v_threshold} m/s']
 
     fig.legend(
         handles=legend_elements,

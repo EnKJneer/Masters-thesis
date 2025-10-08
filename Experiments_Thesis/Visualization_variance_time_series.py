@@ -123,10 +123,14 @@ for version in [1, 2, 3]:
     data = pd.read_csv(f'{path_data}/{file}')
     data_list.append(data)
 
+if material == 'S235JR':
+    mat = 'Stahl'
+else:
+    mat = 'Aluminium'
 # Plot erstellen
 plot_time_series_with_variance(
     data_list,
-    f'{material} {geometry}: Varianz von $I$ (Versionen 1-3)',
+    f'{mat} {geometry}: Varianz des Motorstroms (Versionen 1-3)',
     col_name='curr_x',
     label_axis='$I$ in A',
     dpi=600,

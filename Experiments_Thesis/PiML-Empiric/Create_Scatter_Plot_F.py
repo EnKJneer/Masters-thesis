@@ -13,14 +13,11 @@ def plot_scatter_fx_vs_curr(
     dpi: int = 300,
     curr_col: str = 'curr_x',
     fx_col: str = 'f_x_sim',
-    v_col: str = 'v_x',
     z_col: str = 'z',
-    v_threshold: float = 10.0,
     path: str = 'Plots',
 ) -> None:
     """
     Erstellt einen DIN-konformen Scatter-Plot von f_x_sim vs. curr_x mit:
-    - Filterung: Nur Punkte mit |v_x| ≤ v_threshold
     - Farbkodierung: kit_green für z > 0, kit_blue für z ≤ 0
     - KIT-Farben, Achsenbeschriftung, Legende
     """
@@ -31,20 +28,17 @@ def plot_scatter_fx_vs_curr(
     kit_dark_blue = "#002D4C"
     kit_gray = "#767676"
 
-    # Daten filtern
-    mask = np.abs(data[v_col]) <= v_threshold
-    data_filtered = data[mask].copy()
 
     # Farben basierend auf z > 0
-    colors = np.where(data_filtered[z_col] > 0, kit_green, kit_blue)
+    colors = np.where(data[z_col] > 0, kit_green, kit_blue)
 
     # Plot erstellen
     fig, ax = plt.subplots(figsize=(10, 8), dpi=dpi)
 
     # Scatter-Plot
     scatter = ax.scatter(
-        data_filtered[curr_col],
-        data_filtered[fx_col],
+        data[curr_col],
+        data[fx_col],
         c=colors,
         alpha=0.6,
         edgecolors='none',
@@ -90,8 +84,6 @@ def plot_scatter_fx_vs_curr(
     legend_elements = [
         Patch(facecolor=kit_green, label='z > 0'),
         Patch(facecolor=kit_blue, label='z ≤ 0'),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor=kit_gray,
-               markersize=10, label=f'Gefiltert: |v_x| ≤ {v_threshold}')
     ]
     ax.legend(handles=legend_elements, loc='upper right', framealpha=1.0)
 
@@ -136,6 +128,5 @@ if __name__ == '__main__':
         data=df,
         title='Prozesskraft zum Motorstrom',
         filename='scatter_fx_vs_curr_filtered',
-        v_threshold=10.0,
         dpi=600
     )
