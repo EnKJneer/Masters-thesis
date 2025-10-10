@@ -135,6 +135,7 @@ def plot_time_series(data, title, filename, dpi=300, col_name='v_x',
     plot_path = os.path.join(path, filename)
     os.makedirs(path, exist_ok=True)
     fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
     print(f'saved as {plot_path}')
 

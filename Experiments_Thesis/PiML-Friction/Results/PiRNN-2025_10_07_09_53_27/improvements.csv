@@ -1,5 +1,0 @@
-DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
-ST_Plate_Notch,DMC60H_AL2007T4_Gear_Normal_3,PiRNN,Recurrent_Neural_Net,-72.42918627961419
-ST_Plate_Notch,DMC60H_AL2007T4_Plate_Normal_3,PiRNN,Recurrent_Neural_Net,-20.62342230213888
-ST_Plate_Notch,DMC60H_S235JR_Gear_Normal_3,PiRNN,Recurrent_Neural_Net,-23.558251498723152
-ST_Plate_Notch,DMC60H_S235JR_Plate_Normal_3,PiRNN,Recurrent_Neural_Net,23.254579434660354

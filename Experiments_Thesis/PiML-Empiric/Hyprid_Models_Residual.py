@@ -32,7 +32,10 @@ if __name__ == "__main__":
     model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    model_hybrid_rnn = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_rnn, name = 'Hybrid_RNN')
+    model_pirnn = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                      activation= 'ELU', optimizer_type= 'quasi_newton')
+
+    model_hybrid_rnn = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_pirnn, name = 'Hybrid_RNN')
     model_hybrid_rf = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_rf, name = 'Hybrid_Random_Forest')
 
     use_rf = False

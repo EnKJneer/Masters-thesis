@@ -42,8 +42,8 @@ def plot_time_series(
     speed_threshold: float = 1.0,
     f_a: int = 50,
     path: str = 'Plots',
-    lane1: float = 130.0,
-    lane2: float = 310.0,
+    lane1: float = 0.45,
+    lane2: float = 1.1,
 ) -> None:
     """
     Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
@@ -156,10 +156,10 @@ def plot_time_series(
 
     # ----- Gestrichelte Näherungslinien (+/-lane1 und +/-310) -----
     # Für Strom (ax_i)
-    ax_i2.axhline(y=lane1, color=kit_green, linestyle='--', linewidth=2, label=f'Näherung +{lane1} F')
-    ax_i2.axhline(y=-lane1, color=kit_green, linestyle='--', linewidth=2, label=f'Näherung -{lane1} F')
-    ax_i2.axhline(y=lane2, color=kit_magenta, linestyle='--', linewidth=2, label=f'Näherung +{lane2} F')
-    ax_i2.axhline(y=-lane2, color=kit_magenta, linestyle='--', linewidth=2, label=f'Näherung -{lane2} F')
+    ax_i.axhline(y=lane1, color=kit_green, linestyle='--', linewidth=2, label=f'Näherung +{lane1} A')
+    ax_i.axhline(y=-lane1, color=kit_green, linestyle='--', linewidth=2, label=f'Näherung -{lane1} A')
+    ax_i.axhline(y=lane2, color=kit_magenta, linestyle='--', linewidth=2, label=f'Näherung +{lane2} A')
+    ax_i.axhline(y=-lane2, color=kit_magenta, linestyle='--', linewidth=2, label=f'Näherung -{lane2} A')
 
     # Grid und Achsenbeschriftung
     ax_i.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
@@ -211,10 +211,10 @@ def plot_time_series(
     # Gestrichelte Linien zur Legende hinzufügen
 
     legend_elements.extend([
-        Line2D([0], [0], color=kit_green, linestyle='--', label=f'Näherung ±{lane1} N'),
-        Line2D([0], [0], color=kit_magenta, linestyle='--', label=f'Näherung ±{lane2} N'),
+        Line2D([0], [0], color=kit_green, linestyle='--', label=f'Näherung ±{lane1} A'),
+        Line2D([0], [0], color=kit_magenta, linestyle='--', label=f'Näherung ±{lane2} A'),
     ])
-    legend_labels.extend([f'±{lane1} N', f'±{lane2} N'])
+    legend_labels.extend([f'±{lane1} A', f'±{lane2} A'])
 
     fig.legend(
         handles=legend_elements,

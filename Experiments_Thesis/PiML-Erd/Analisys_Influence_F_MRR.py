@@ -260,10 +260,17 @@ class CorrelationPlotter:
 
         # Speichern mit hochauflösendem Format
         if output_filename is None:
-            output_filename = f"correlation_{column1}_vs_{column2}.png"
+            output_filename = f"correlation_{column1}_vs_{column2}"
         output_path = os.path.join(self.output_dir, output_filename)
         plt.savefig(
             output_path,
+            dpi=600,
+            bbox_inches='tight',
+            facecolor='white',
+            transparent=False
+        )
+        plt.savefig(
+            output_path + '.pdf',
             dpi=600,
             bbox_inches='tight',
             facecolor='white',
@@ -293,7 +300,7 @@ class CorrelationPlotter:
             standard_cols = [f'v_{axis}', f'f_{axis}_sim', 'materialremoved_sim', f'Term_{axis}']
             for col in standard_cols:
                 if col in df.columns:  # Überprüfen ob Spalte existiert
-                    filename = f"corr_{column1}_vs_{col}.png"
+                    filename = f"corr_{column1}_vs_{col}"
                     try:
                         path = self.plot_correlation(df, column1, col, filename)
                         if path is not None:  # Nur hinzufügen wenn Plot erfolgreich erstellt wurde

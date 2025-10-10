@@ -92,6 +92,7 @@ class BasePlotter(ABC):
         """Speichert einen Plot"""
         plot_path = os.path.join(self.output_dir, filename)
         fig.savefig(plot_path, dpi=600, bbox_inches='tight')
+        fig.savefig(plot_path + '.pdf', dpi=600, bbox_inches='tight')
         plt.close(fig)
         return plot_path
 
@@ -467,7 +468,7 @@ class HeatmapPlotter(BasePlotter):
         plt.tight_layout()
 
         # Speichern mit der save_plot Methode der Basisklasse
-        filename = f'heatmap_KNN.png'
+        filename = f'heatmap_KNN'
         plot_path = self.save_plot(fig, filename)
         print(f"Erweiterte Model Comparison Heatmap mit TrainingsDatasets und Standardabweichung erstellt: {plot_path}")
         return [plot_path]
@@ -637,7 +638,7 @@ class ModelHeatmapPlotter(BasePlotter):
             plt.tight_layout()
 
             # Speichern mit der save_plot Methode der Basisklasse
-            filename = f'heatmap_{model_clean.replace(" ", "_")}_with_std.png'
+            filename = f'heatmap_{model_clean.replace(" ", "_")}_with_std'
             plot_path = self.save_plot(fig, filename)
             plot_paths.append(plot_path)
             print(f"Heatmap mit Standardabweichung für {model_clean} erstellt: {plot_path}")

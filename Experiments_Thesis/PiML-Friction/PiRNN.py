@@ -31,6 +31,6 @@ if __name__ == "__main__":
                       activation= 'ELU', optimizer_type= 'quasi_newton')
 
     # Run the experiment
-    hexp.run_experiment([dataclass], models=[model, model_rnn],
+    hexp.run_experiment([dataclass], models=[model, model_rnn], #
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
                         plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='PiRNN')

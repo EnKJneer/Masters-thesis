@@ -37,7 +37,7 @@ def start_experiment():
     NUMBEROFEPOCHS = 1000
     NUMBEROFMODELS = 10
 
-    optimization_samplers = ["TPESampler", "GridSampler"] #
+    optimization_samplers = ["GridSampler"] #"TPESampler",
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataSet.add_padding = True

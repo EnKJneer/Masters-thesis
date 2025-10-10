@@ -247,11 +247,11 @@ if __name__ == '__main__':
 
 
     model = Experts_2(threshold_v_axis=1)
-    model.expert1 = copy.deepcopy(model_rf)
+    model.expert1 = copy.deepcopy(model_rnn)
     model.expert2 = copy.deepcopy(model_rnn)
 
     model.name = 'Mixed_Experts_2'
-    models = [model, model_rf, model_rnn]
+    models = [model,model_rnn] # model_rf,
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

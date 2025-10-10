@@ -1,0 +1,17 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | EmpiricLinearModel | 0.063738 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | EmpiricLinearModel | 0.056491 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | EmpiricLinearModel | 0.087391 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | EmpiricLinearModel | 0.077488 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Recurrent_Neural_Net | 0.126329 | 0.009029
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Recurrent_Neural_Net | 0.101706 | 0.025323
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Recurrent_Neural_Net | 0.114522 | 0.005577
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Recurrent_Neural_Net | 0.067750 | 0.010796
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Hybrid_RNN      | 0.093766 | 0.011579
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Hybrid_RNN      | 0.076906 | 0.010770
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Hybrid_RNN      | 0.104304 | 0.003813
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Hybrid_RNN      | 0.063658 | 0.001287
