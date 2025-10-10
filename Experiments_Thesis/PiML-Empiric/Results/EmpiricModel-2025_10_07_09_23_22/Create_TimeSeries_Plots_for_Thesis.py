@@ -13,6 +13,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import datetime
 import seaborn as sns
+from matplotlib.patches import Patch
 from numpy.exceptions import AxisError
 from numpy.f2py.auxfuncs import throw_error
 from sklearn.metrics import mean_absolute_error
@@ -32,7 +33,10 @@ def plot_time_series(
     label: str = '$I$\nin A',
     y_configs: List[Dict[str, str]] = None,
     f_a: int = 50,
-    path: str = 'Plots'
+    path: str = 'Plots',
+    speed_threshold = 1,
+    v_colname: str = 'v_x',
+
 ) -> None:
     """
     Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
@@ -70,6 +74,21 @@ def plot_time_series(
     # Erstelle Figure mit zwei Achsen
     fig, ax_i = plt.subplots(figsize=(12, 8), dpi=dpi)
 
+    # ----- Berechnung der Bereiche mit |v| < speed_threshold -----
+    v_abs = np.abs(data[v_colname])
+    low_speed_mask = v_abs < speed_threshold
+    diff = np.diff(low_speed_mask.astype(int))
+    starts = np.where(diff == 1)[0] + 1
+    ends = np.where(diff == -1)[0]
+    if low_speed_mask.iloc[0]:
+        starts = np.insert(starts, 0, 0)
+    if low_speed_mask.iloc[-1]:
+        ends = np.append(ends, len(low_speed_mask) - 1)
+
+    # ----- Einfärben der Bereiche mit |v| < speed_threshold, abhängig von z -----
+    alpha = 0.2
+    for start, end in zip(starts, ends):
+        ax_i.axvspan(time[start], time[end], color=kit_green, alpha=alpha, linewidth=0)
 
     # ----- Unterer Plot (Stromvorhersage) -----
     ax_i.spines['left'].set_position('zero')
@@ -145,17 +164,28 @@ def plot_time_series(
         framealpha=1.0,
         bbox_to_anchor=(0.5, -0.05)
     )'''
-    # Kombinierte Legende für die Achsen
+    # Legende (inkl. Näherungslinien)
     legend_elements = [line_i] + lines_pred
-    legend_labels = [line.get_label() for line in legend_elements if line is not None]
-    lines = [line for line in legend_elements if line is not None]
-    labels = [line.get_label() for line in lines if line is not None]
-    legend = ax_i.legend(lines, legend_labels, loc='upper right',
-                        frameon=True, fancybox=False, shadow=False,
-                        framealpha=1.0, facecolor='white', edgecolor=kit_dark_blue)
-    legend.get_frame().set_linewidth(1.0)
-    for text in legend.get_texts():
-        text.set_color(kit_dark_blue)
+    legend_labels = [line.get_label() for line in legend_elements]
+
+    # Farbige Bereiche zur Legende hinzufügen
+    legend_elements.extend([
+        Patch(facecolor=kit_green, alpha=0.2, label=f'Bereiche mit |v| < {speed_threshold}'),
+    ])
+    legend_labels.extend([
+        f'|v| < {speed_threshold}'
+    ])
+
+    fig.legend(
+        handles=legend_elements,
+        labels=legend_labels,
+        loc='lower center',
+        ncol=2,  # 4 Spalten für bessere Lesbarkeit
+        frameon=True,
+        facecolor='white',
+        edgecolor=kit_dark_blue,
+        framealpha=1.0,
+    )
 
     # Achsenbegrenzungen anpassen
     ax_i.set_xlim(left=min(x_pos, xmin), right=xmax*1.05)

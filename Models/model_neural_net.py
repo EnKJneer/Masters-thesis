@@ -1670,7 +1670,9 @@ class PiRNN(mb.BaseTorchModel):
         mask = (np.abs(v_values) > 1) & (materialremoved_values > 100)
 
         if np.sum(mask) == 0:
-            raise ValueError("Keine Datenpunkte erfüllen die Filterkriterien!")
+            #raise ValueError("Keine Datenpunkte erfüllen die Filterkriterien!")
+            print("Keine Datenpunkte erfüllen die Filterkriterien! Pre-Training nicht möglich.")
+            return
 
         # Gefilterte Daten
         a_filtered = a_values[mask]
@@ -1683,8 +1685,13 @@ class PiRNN(mb.BaseTorchModel):
 
         # Trainiere mit Least Squares
         X_tensor = torch.tensor(X_linear, dtype=torch.float32, device=self.device)
-        y_tensor = torch.tensor(y_filtered.values, dtype=torch.float32, device=self.device)#.unsqueeze(-1)
-
+        if type(y_filtered) is not torch.Tensor:
+            if type(y_filtered) is pd.DataFrame:
+                y_tensor = torch.tensor(y_filtered.values, dtype=torch.float32, device=self.device)#.unsqueeze(-1)
+            else:
+                y_tensor = torch.tensor(y_filtered, dtype=torch.float32, device=self.device)
+        else:
+            y_tensor = y_filtered
         # Analytische Lösung: w = (X^T X)^{-1} X^T y
         XTX = X_tensor.T @ X_tensor
         XTy = X_tensor.T @ y_tensor
@@ -1750,7 +1757,8 @@ class PiRNN(mb.BaseTorchModel):
 
     def train_model(self, X_train, y_train, X_val, y_val, target='curr_x', **kwargs):
         """
-        Trainiert zuerst die lineare Regression, dann das RNN auf den Residuen.
+        Trainiert zuerst die lineare Regression, dann das RNN.
+        Getrenntes training stabilisiert den trainingsprozess leicht.
         """
         self._initialize()
 
@@ -1784,7 +1792,7 @@ class PiRNN(mb.BaseTorchModel):
             residuals_train = y_train_tensor - y_linear_train
 
         # Trainiere RNN auf Residuen
-        print("Trainiere RNN auf Residuen...")
+        print("Trainiere RNN ...")
         result = super().train_model(
             X_train_tensor, y_train_tensor,
             X_val_tensor, y_val_tensor,  # Validierung auf echten Werten
@@ -1906,6 +1914,8 @@ class HybridModelResidual(mb.BaseModel):
     def test_model(self, X, y_target):
         y_pred = self.predict(X)
         loss = self.criterion(y_target, y_pred)
+        if type(loss) is np.float64:
+            return loss, y_pred
         return loss.item(), y_pred
 
     def get_documentation(self):

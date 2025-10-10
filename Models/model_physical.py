@@ -1234,7 +1234,7 @@ class EmpiricLinearModel(mb.BaseModel):
 
     def get_documentation(self):
         documentation = {
-            "description": "This model fits a two-stage friction model: stillstand and movement.",
+            "description": "This model fits a two-stage friction model: steady and movement.",
             "parameters": {
                 "name": self.name,
                 "velocity_threshold": self.velocity_threshold,

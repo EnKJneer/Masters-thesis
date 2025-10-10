@@ -37,7 +37,7 @@ def start_experiment():
     NUMBEROFEPOCHS = 1000
     NUMBEROFMODELS = 10
 
-    optimization_samplers = ["GridSampler"] #"TPESampler",
+    optimization_samplers = ["TPESampler"] #"TPESampler",
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataSet.add_padding = True
@@ -49,7 +49,7 @@ def start_experiment():
         "n_hidden_layers": (1, 5),
         "learning_rate": (0.001, 0.1),
         "activation": ["ReLU", "Sigmoid", "Tanh", "ELU"],
-        "optimizer_type": ["adam", "quasi_newton"]
+        #"optimizer_type": ["adam", "quasi_newton"]
     }
 
     model = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,

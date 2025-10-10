@@ -245,13 +245,15 @@ if __name__ == '__main__':
     model_rnn = mnn.RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
                         activation='ELU', optimizer_type='quasi_newton')
 
+    model_phys = mphys.EmpiricLinearModel()
+
 
     model = Experts_2(threshold_v_axis=1)
-    model.expert1 = copy.deepcopy(model_rnn)
+    model.expert1 = copy.deepcopy(model_phys)
     model.expert2 = copy.deepcopy(model_rnn)
 
     model.name = 'Mixed_Experts_2'
-    models = [model,model_rnn] # model_rf,
+    models = [model,model_rnn, model_phys]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

@@ -1,0 +1,17 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Hybrid_PiRNN    | 0.068812 | 0.003021
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Hybrid_PiRNN    | 0.051945 | 0.002450
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Hybrid_PiRNN    | 0.097732 | 0.001274
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Hybrid_PiRNN    | 0.075738 | 0.000867
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | EmpiricLinearModel | 0.063738 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | EmpiricLinearModel | 0.056491 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | EmpiricLinearModel | 0.087391 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | EmpiricLinearModel | 0.077488 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | PiRNN           | 0.081853 | 0.019829
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | PiRNN           | 0.077700 | 0.019583
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | PiRNN           | 0.104895 | 0.021159
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | PiRNN           | 0.087742 | 0.020302
