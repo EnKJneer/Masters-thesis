@@ -1583,6 +1583,8 @@ class PiRNN(mb.BaseTorchModel):
         self.dt = dt
         self.axis = axis
 
+        self.target_channel = 'curr_x'
+
         # Gespeicherte Indizes für a, v, F, materialremoved
         self.idx_v = None
         self.idx_a = None
@@ -1619,11 +1621,11 @@ class PiRNN(mb.BaseTorchModel):
 
         self.to(self.device)
 
-    def _set_physics_indices(self, X, target):
+    def _set_physics_indices(self, X):
         """
         Bestimmt die Indizes von a, v, F, materialremoved im DataFrame X basierend auf target.
         """
-        axis = target.replace('curr_', '')
+        axis = self.target_channel.replace('curr_', '')
         self.col_v = f'v_{axis}_1_current'
         self.col_a = f'a_{axis}_1_current'
         self.col_F = f'f_{axis}_sim_1_current'
@@ -1755,16 +1757,17 @@ class PiRNN(mb.BaseTorchModel):
 
         return y_pred
 
-    def train_model(self, X_train, y_train, X_val, y_val, target='curr_x', **kwargs):
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
         """
         Trainiert zuerst die lineare Regression, dann das RNN.
         Getrenntes training stabilisiert den trainingsprozess leicht.
         """
         self._initialize()
+        target = self.target_channel.replace('curr_','')
 
         # Bestimme die Indizes von a, v, F, materialremoved
         if self.idx_v is None or self.idx_a is None or self.idx_F is None:
-            self._set_physics_indices(X_train, target)
+            self._set_physics_indices(X_train)
 
         # Trainiere lineare Regression (nur einmal)
         if not self.linear_regression_trained:
@@ -1801,12 +1804,12 @@ class PiRNN(mb.BaseTorchModel):
 
         return result
 
-    def test_model(self, X, y_target, target='curr_x', **kwargs):
+    def test_model(self, X, y_target, **kwargs):
         """
         Testet das Gesamtmodell (lineare Regression + RNN).
         """
         if self.idx_v is None or self.idx_a is None or self.idx_F is None:
-            self._set_physics_indices(X, target)
+            self._set_physics_indices(X)
 
         return super().test_model(X, y_target, **kwargs)
 

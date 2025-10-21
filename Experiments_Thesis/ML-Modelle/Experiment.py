@@ -70,7 +70,7 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    #start_experiment_for('RF')
+    start_experiment_for('RF')
     #start_experiment_for('NN')
-    start_experiment_for('LSTM')
+    #start_experiment_for('LSTM')
     #start_experiment_for('RNN')

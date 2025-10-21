@@ -1262,7 +1262,7 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
             if isinstance(X_test, list):
                 for i, (x, y) in enumerate(zip(X_test, y_test)):
                     mse, pred_nn = model.test_model(x, y)
-                    print(f"{model.name}: Test RMAE: {mse}")
+                    print(f"{model.name}: Test Loss: {mse}")
                     nn_preds[i].append(pred_nn.flatten())
                     if hasattr(model, 'plot_active_experts'):
                         model.plot_active_experts()
@@ -1271,7 +1271,7 @@ def train_and_evaluate_models(models: list, dataClass, X_train, X_val, X_test, y
                         n = n -1
             else:
                 mse, pred_nn = model.test_model(X_test, y_test)
-                print(f"{model.name}: Test RMAE: {mse}")
+                print(f"{model.name}: Test Loss: {mse}")
                 nn_preds.append(pred_nn.flatten())
                 if hasattr(model, 'plot_active_experts'):
                     model.plot_active_experts()
@@ -1768,14 +1768,14 @@ def train_and_evaluate_models_with_shap(models: list, dataClass, X_train, X_val,
             if isinstance(X_test, list):
                 for i, (x, y) in enumerate(zip(X_test, y_test)):
                     mse, pred_nn = model.test_model(x, y)
-                    print(f"{model.name}: Test RMAE: {mse}")
+                    print(f"{model.name}: Test Loss: {mse}")
                     nn_preds[i].append(pred_nn.flatten())
                     if hasattr(model, 'plot_active_experts'):
                         model.plot_active_experts()
                         model.clear_active_experts_log()
             else:
                 mse, pred_nn = model.test_model(X_test, y_test)
-                print(f"{model.name}: Test RMAE: {mse}")
+                print(f"{model.name}: Test Loss: {mse}")
                 nn_preds.append(pred_nn.flatten())
                 if hasattr(model, 'plot_active_experts'):
                     model.plot_active_experts()

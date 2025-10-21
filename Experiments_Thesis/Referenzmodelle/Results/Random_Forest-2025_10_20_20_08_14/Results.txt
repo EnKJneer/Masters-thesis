@@ -1,0 +1,21 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.215300 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.309228 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.104995 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.092794 | 0.000000
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_TPESampler | 0.255307 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_TPESampler | 0.286431 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_TPESampler | 0.106058 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_TPESampler | 0.089288 | 0.000000
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_RandomSampler | 0.257382 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_RandomSampler | 0.285824 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_RandomSampler | 0.105014 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_RandomSampler | 0.089702 | 0.000000
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest_GridSampler | 0.258690 | 0.000000
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest_GridSampler | 0.286195 | 0.000000
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest_GridSampler | 0.104746 | 0.000000
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest_GridSampler | 0.090346 | 0.000000

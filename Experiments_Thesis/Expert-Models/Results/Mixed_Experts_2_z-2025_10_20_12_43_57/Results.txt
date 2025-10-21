@@ -1,0 +1,13 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Mixed_Experts_2 | 0.093759 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Mixed_Experts_2 | 0.080014 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Mixed_Experts_2 | 0.037913 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Mixed_Experts_2 | 0.029298 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | EmpiricLinearModel | 0.166032 | 0.000000
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | EmpiricLinearModel | 0.147029 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | EmpiricLinearModel | 0.128182 | 0.000000
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | EmpiricLinearModel | 0.106512 | 0.000000

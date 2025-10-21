@@ -1,0 +1,99 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_DMC60H_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_y"
+            ],
+            "input_features": [
+                "v_y",
+                "a_y",
+                "f_y_sim",
+                "materialremoved_sim"
+            ],
+            "columns_to_integrate": null,
+            "add_sign_hold": true
+        }
+    ],
+    "Models": [
+        {
+            "Mixed_Experts_2": {
+                "NUMBEROFMODELS": 1,
+                "threshold_v_axis": 1,
+                "expert1 EmpiricLinearModel": {
+                    "description": "This model fits a two-stage friction model: steady and movement.",
+                    "parameters": {
+                        "name": "EmpiricLinearModel",
+                        "velocity_threshold": 0.1,
+                        "F_s": 0,
+                        "a_x": 0,
+                        "a_sp": 0,
+                        "b": 0,
+                        "F_c": 0,
+                        "sigma_2": 0,
+                        "a_b": 0
+                    }
+                },
+                "expert2 Recurrent_Neural_Net": {
+                    "hyperparameters": {
+                        "learning_rate": 0.1,
+                        "n_hidden_size": 71,
+                        "n_hidden_layers": 1,
+                        "activation": "ELU",
+                        "optimizer_type": "quasi_newton",
+                        "dropout_rate": 0.0
+                    }
+                }
+            }
+        },
+        {
+            "EmpiricLinearModel": {
+                "NUMBEROFMODELS": 1,
+                "description": "This model fits a two-stage friction model: steady and movement.",
+                "parameters": {
+                    "name": "EmpiricLinearModel",
+                    "velocity_threshold": 0.1,
+                    "F_s": 0,
+                    "a_x": 0,
+                    "a_sp": 0,
+                    "b": 0,
+                    "F_c": 0,
+                    "sigma_2": 0,
+                    "a_b": 0
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 1000
+    }
+}

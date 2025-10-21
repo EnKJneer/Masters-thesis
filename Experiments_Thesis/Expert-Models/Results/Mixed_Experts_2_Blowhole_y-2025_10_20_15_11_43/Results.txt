@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Blowhole_3 | Mixed_Experts_2 | 0.130151 | 0.063939
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Blowhole_3 | Mixed_Experts_2 | 0.055751 | 0.008149
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Blowhole_3 | Mixed_Experts_2 | 0.149694 | 0.076454
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Blowhole_3 | Mixed_Experts_2 | 0.064236 | 0.003707

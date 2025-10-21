@@ -19,12 +19,15 @@ if __name__ == "__main__":
     NUMBEROFEPOCHS = 800
     NUMBEROFMODELS = 10  # Bei RF mit festem random state nicht sinvoll
 
-    dataSet = hdata.DataClass_ST_Plate_Notch_Mes
+    dataSet = hdata.DataClass_ST_Plate_Notch
+    axis = 'y'
+    dataSet.target_channels = [f'curr_{axis}']
 
     dataclass = copy.copy(dataSet)
     model = mphy.EmpiricLinearModel()
+    model.target_channel = f'curr_{axis}'
 
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model],
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['prediction_overview', 'model_heatmap'], experiment_name='EmpiricModel_Mes')
+                        plot_types=['prediction_overview', 'model_heatmap'], experiment_name=f'EmpiricModel_{axis}')

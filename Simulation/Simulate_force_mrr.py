@@ -137,8 +137,8 @@ def plot_time_series(data, title, dpi=300, label='v_x', ylabel='curr_x', f_a=50,
 
 if __name__ == '__main__':
 
-    REFERENCE = True
-    show_results = False
+    REFERENCE = False
+    show_results = True
 
     tool_diameter = 10
     target_frequency = 50
@@ -150,10 +150,12 @@ if __name__ == '__main__':
 
 
     path = '..\\DataSets_CMX_Plate_Notch_Gear/DataMerged'
+    path = '..\\DataSets_DMC60H_Plate_Notch_Gear_Anomalien/DataSinumerik_50Hz'
     if REFERENCE:
         path_target = '..\\DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR/DataSimulated'
     else:
         path_target = '..\\DataSets_CMX_Plate_Notch_Gear/DataSimulated'
+        path_target = '..\\DataSets_DMC60H_Plate_Notch_Gear_Anomalien/DataSimulated'
 
     # Create target directory if it doesn't exist
     os.makedirs(path_target, exist_ok=True)

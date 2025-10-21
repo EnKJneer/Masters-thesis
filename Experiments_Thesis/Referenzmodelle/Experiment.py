@@ -28,7 +28,7 @@ import Helper.handling_hyperopt as hyperopt
 import Helper.handling_experiment as hexp
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
-from Experiements.ExpertModels.Experts_3 import Experts_3
+
 #import Models.model_mixture_of_experts as mmix
 from datetime import datetime
 
@@ -73,7 +73,7 @@ def start_experiment_for(model_str = 'NN'):
                         plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name=model.name)
 
 if __name__ == "__main__":
-    #start_experiment_for('RF')
+    start_experiment_for('RF')
     #start_experiment_for('NN')
-    start_experiment_for('LSTM')
-    start_experiment_for('RNN')
+    #start_experiment_for('LSTM')
+    #start_experiment_for('RNN')

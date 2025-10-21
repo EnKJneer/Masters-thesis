@@ -232,7 +232,9 @@ if __name__ == '__main__':
     dataSet = hdata.DataClass_ST_Plate_Notch
 
     dataclass1 = copy.copy(dataSet)
-    dataclass1.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"] # ["pos_x", "v_x", "a_x", "f_x_sim", "materialremoved_sim"]
+    axis = 'x'
+    dataclass1.target_channels = [f'curr_{axis}']
+    dataclass1.header = [f"v_{axis}", f"a_{axis}", f"f_{axis}_sim", "materialremoved_sim"] # ["pos_x", "v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
     dataClasses = [dataclass1]
     for dataclass in dataClasses:
@@ -246,16 +248,17 @@ if __name__ == '__main__':
                         activation='ELU', optimizer_type='quasi_newton')
 
     model_phys = mphys.EmpiricLinearModel()
-
+    model_phys.target_channel = dataclass1.target_channels
 
     model = Experts_2(threshold_v_axis=1)
     model.expert1 = copy.deepcopy(model_phys)
     model.expert2 = copy.deepcopy(model_rnn)
+    model.target_channel = dataclass1.target_channels
 
     model.name = 'Mixed_Experts_2'
-    models = [model,model_rnn, model_phys]
+    models = [model,model_phys]#model_rnn,
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name=model.name)
+                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name=model.name+'_'+axis)

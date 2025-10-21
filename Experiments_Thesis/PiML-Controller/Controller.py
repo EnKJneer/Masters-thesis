@@ -52,15 +52,15 @@ if __name__ == '__main__':
         dataclass.future_values = future_values
         dataclass.add_padding = True
 
-    model_rf = mrf.RandomForestModel(n_estimators= 100, max_depth=100, min_samples_split= 2,
-                    min_samples_leaf= 4)
+    model_rf = mrf.RandomForestModel(n_estimators=384, max_depth=435, min_samples_split=4,
+                                     min_samples_leaf=2)
 
     model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
     models = [model_rnn, model_rf]
 
-    use_rf = False
+    use_rf = True
     if use_rf:
         models = [model_rf]
         name = '_RF'

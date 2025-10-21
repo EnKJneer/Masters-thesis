@@ -1,0 +1,5 @@
+DataSet,DataPath,Reference_Model,Compared_Model,Improvement_Percent
+ST_Plate_Notch,DMC60H_AL2007T4_Gear_Normal_3,Mixed_Experts_2,EmpiricLinearModel,-77.08331244505233
+ST_Plate_Notch,DMC60H_AL2007T4_Plate_Normal_3,Mixed_Experts_2,EmpiricLinearModel,-83.75256723312562
+ST_Plate_Notch,DMC60H_S235JR_Gear_Normal_3,Mixed_Experts_2,EmpiricLinearModel,-238.0951928683499
+ST_Plate_Notch,DMC60H_S235JR_Plate_Normal_3,Mixed_Experts_2,EmpiricLinearModel,-263.54669856252235

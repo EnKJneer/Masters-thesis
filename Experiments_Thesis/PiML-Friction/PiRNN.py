@@ -21,6 +21,8 @@ if __name__ == "__main__":
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataSet.add_padding = True
+    axis = 'x'
+    dataSet.target_channels = [f'curr_{axis}']
 
     dataclass = copy.deepcopy(dataSet)
 
@@ -29,8 +31,9 @@ if __name__ == "__main__":
 
     model = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                       activation= 'ELU', optimizer_type= 'quasi_newton')
+    model.target_channel = 'curr_y'
 
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model], #, model_rnn
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name='PiRNN')
+                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name=f'PiRNN_{axis}')
