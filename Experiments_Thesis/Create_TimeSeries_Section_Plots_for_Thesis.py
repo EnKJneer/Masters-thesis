@@ -175,6 +175,12 @@ if __name__ == '__main__':
             models = [['Reference_Random_Forest_TPESampler', 'ST_Plate_Notch_Random_Forest_GridSampler', 'Random_Forest'],
                       ['Reference_Recurrent_Neural_Net_TPESampler', 'ST_Plate_Notch_Recurrent_Neural_Net_GridSampler', 'Recurrent_Neural_Net']]
 
+            new_names = {
+                'Reference_Random_Forest_RandomSampler': '\nRandom Forest\nZufalls-Sampler',
+                'Reference_Random_Forest_GridSampler': '\nRandom Forest\nRaster-Sampler',
+                'Reference_Random_Forest_TPESampler': '\nRandom Forest\nTPE-Sampler',
+            }
+
             for model in models:
                 name = model[2].replace('_', ' ')
                 name = name.replace('Recurrent Neural Net', 'Rekurrentes neuronales Netz')

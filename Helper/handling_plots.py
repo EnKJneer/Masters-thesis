@@ -6,7 +6,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 from abc import ABC, abstractmethod
 import seaborn as sns
+from matplotlib.patches import Patch
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+from typing import Dict, List, Optional
 
 from matplotlib.colors import LinearSegmentedColormap
 
@@ -701,3 +704,611 @@ def calculate_mae_and_std(df, datapath, model_prefixes, ground_truth_column='Gro
         })
 
     return pd.DataFrame(results)
+
+def plot_time_series(
+    data: pd.DataFrame,
+    title: str,
+    filename: str,
+    dpi: int = 300,
+    col_name: str = 'curr_x',
+    label: str = '$I$\nin A',
+    y_configs: List[Dict[str, str]] = None,
+    f_a: int = 50,
+    path: str = 'Plots',
+) -> None:
+    """
+    Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
+    - Plot: Stromvorhersage mit farblicher Kennzeichnung von Bereichen mit |v_x| < 1 m/s
+
+    Args:
+        data: DataFrame mit den Daten
+        title: Titel des Plots
+        filename: Dateiname zum Speichern des Plots
+        dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
+        col_name: Spaltenname für Strom-Messwerte
+        label: Beschriftung der y-Achse für Strom
+        y_configs: Liste von Dictionaries mit 'ycolname' und 'ylabel' für zusätzliche y-Achsen
+                  Beispiel: [{'ycolname': 'Abweichung_RF', 'ylabel': 'Random Forest'},
+                             {'ycolname': 'Abweichung_RNN', 'ylabel': 'RNN'}]
+        f_a: Abtastfrequenz in Hz (Standard: 50)
+        path: Pfad zum Speichern der Plots
+    """
+    fontsize_axis = 14
+    fontsize_axis_label = 16
+    fontsize_title = 18
+    line_size = 1.5
+
+    # KIT-Farben
+    kit_red = "#D30015"
+    kit_green = "#009682"
+    kit_yellow = "#FFFF00"
+    kit_orange = "#FFC000"
+    kit_blue = "#0C537E"
+    kit_dark_blue = "#002D4C"
+    kit_magenta = "#A3107C"
+    kit_gray = "#767676"
+
+    # Standardfarben für zusätzliche y-Achsen (kann erweitert werden)
+    y_colors = [kit_red, kit_orange, kit_magenta, kit_yellow, kit_green]
+
+    time = data.index / f_a
+
+    # Erstelle Figure
+    fig, ax_i = plt.subplots(figsize=(12, 8), dpi=dpi)
+
+    # ----- Unterer Plot (Stromvorhersage) -----
+    ax_i.spines['left'].set_position('zero')
+    ax_i.spines['bottom'].set_position('zero')
+    ax_i.spines['top'].set_visible(False)
+    ax_i.spines['right'].set_visible(False)
+    ax_i.spines['left'].set_color(kit_dark_blue)
+    ax_i.spines['bottom'].set_color(kit_dark_blue)
+    ax_i.spines['left'].set_linewidth(line_size)
+    ax_i.spines['bottom'].set_linewidth(line_size)
+
+    # Plot für Vorhersagen (dynamisch basierend auf y_configs)
+    lines_pred = []
+    if y_configs is None:
+        y_configs = []
+
+    for i, config in enumerate(y_configs):
+        color = y_colors[i % len(y_colors)]
+        line, _ = plot_prediction_with_std(
+            data,
+            config['ycolname'],
+            color,
+            config['ylabel']
+        )
+        if line is not None:
+            lines_pred.append(line)
+
+    # Plot für Strom-Messwerte
+    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte',
+                       color=kit_blue, linewidth=2)
+
+    # Grid und Achsenbeschriftung
+    ax_i.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=line_size/2)
+    ax_i.set_axisbelow(True)
+    ax_i.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
+
+    # X-Achsenbeschriftung (nur beim unteren Plot)
+    xmin, xmax = ax_i.get_xlim()
+    ymin, ymax = ax_i.get_ylim()
+    x_pos = -0.08 * (xmax - xmin)
+    y_pos = -0.15 * ymax
+    arrow_length = 0.04 * (xmax - xmin)
+
+    ax_i.set_xlim(left=min(x_pos, xmin), right=xmax + arrow_length/2) # Achsenbegrenzungen anpassen
+
+    ax_i.annotate('', xy=(xmax + arrow_length/2, 0), xytext=(xmax - arrow_length/2, 0),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_i.text(xmax*0.95, y_pos, r'$t$ in s',
+             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis)
+
+    # Y-Achsenbeschriftung
+    y_pos = ymax * 0.85
+    arrow_length = 0.04*(ymax-ymin)
+
+    ax_i.set_ylim(bottom=min(y_pos, ymin), top=ymax + arrow_length / 2) # Achsenbegrenzungen anpassen
+
+    ax_i.annotate('', xy=(0, ymax + arrow_length/2),
+                 xytext=(0, ymax - arrow_length/2),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_i.text(x_pos, y_pos - 0.04*(ymax-ymin), label,
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis)
+
+    # Titel über beiden Plots
+    fig.suptitle(title, color=kit_dark_blue, fontsize=fontsize_title,
+                fontweight='bold', y=0.98)
+
+    '''    
+    # Kombinierte Legende
+    legend_elements = [line_i] + lines_pred
+    legend_labels = [line.get_label() for line in legend_elements if line is not None]
+
+    fig.legend(
+        handles=legend_elements,
+        labels=legend_labels,
+        loc='lower center',
+        ncol=3,
+        frameon=True,
+        facecolor='white',
+        edgecolor=kit_dark_blue,
+        framealpha=1.0,
+        bbox_to_anchor=(0.5, -0.05)
+    )'''
+
+    # Legende (inkl. Näherungslinien)
+    legend_elements = [line_i] + lines_pred
+    legend_labels = [line.get_label() for line in legend_elements]
+
+    if len(legend_elements) > 1:
+        fig.legend(
+            handles=legend_elements,
+            labels=legend_labels,
+            loc='lower center',
+            ncol=2,  # 4 Spalten für bessere Lesbarkeit
+            frameon=True,
+            facecolor='white',
+            edgecolor=kit_dark_blue,
+            framealpha=1.0,
+            fontsize = fontsize_axis_label,
+        )
+
+    '''    
+    # Kombinierte Legende für die Achsen
+    legend_elements = [line_i] + lines_pred
+    legend_labels = [line.get_label() for line in legend_elements if line is not None]
+    lines = [line for line in legend_elements if line is not None]
+    labels = [line.get_label() for line in lines if line is not None]
+    legend = ax_i.legend(lines, legend_labels, loc='upper right',
+                        frameon=True, fancybox=False, shadow=False,
+                        framealpha=1.0, facecolor='white', edgecolor=kit_dark_blue)
+    legend.get_frame().set_linewidth(1.0)
+    for text in legend.get_texts():
+        text.set_color(kit_dark_blue)
+    '''
+
+    # Speichern des Plots
+    plot_path = os.path.join(path, filename)
+    os.makedirs(path, exist_ok=True)
+    fig.savefig(plot_path + '.svg', dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
+    plt.close(fig)
+    print(f'Saved as {plot_path}')
+
+def plot_time_series_with_sections(
+    data: pd.DataFrame,
+    title: str,
+    filename: str,
+    dpi: int = 300,
+    col_name: str = 'curr_x',
+    label: str = '$I$\nin A',
+    y_configs: List[Dict[str, str]] = None,
+    f_a: int = 50,
+    path: str = 'Plots',
+    v_colname: str = 'v_x',
+    v_label: str = 'Vorschubgeschwindigkeit',
+    v_axis: str = 'v in m/s',
+    v_threshold: float = 1.0,
+) -> None:
+    """
+    Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
+    - Plot: Stromvorhersage mit farblicher Kennzeichnung von Bereichen mit |v_x| < 1 m/s
+
+    Args:
+        data: DataFrame mit den Daten
+        title: Titel des Plots
+        filename: Dateiname zum Speichern des Plots
+        dpi: Auflösung des Plots in Dots Per Inch (Standard: 300)
+        col_name: Spaltenname für Strom-Messwerte
+        label: Beschriftung der y-Achse für Strom
+                v_colname: Spaltenname für Vorschubgeschwindigkeit
+        v_label: Legendenlabel für Vorschubgeschwindigkeit
+        v_axis: Beschriftung der y-Achse für Vorschub
+        v_threshold: Grenzwert für die gekennzeichneten Bereiche.
+        y_configs: Liste von Dictionaries mit 'ycolname' und 'ylabel' für zusätzliche y-Achsen
+                  Beispiel: [{'ycolname': 'Abweichung_RF', 'ylabel': 'Random Forest'},
+                             {'ycolname': 'Abweichung_RNN', 'ylabel': 'RNN'}]
+        f_a: Abtastfrequenz in Hz (Standard: 50)
+        path: Pfad zum Speichern der Plots
+    """
+    fontsize_axis = 14
+    fontsize_axis_label = 16
+    fontsize_title = 18
+    line_size = 1.5
+
+    # KIT-Farben
+    kit_red = "#D30015"
+    kit_green = "#009682"
+    kit_yellow = "#FFFF00"
+    kit_orange = "#FFC000"
+    kit_blue = "#0C537E"
+    kit_dark_blue = "#002D4C"
+    kit_magenta = "#A3107C"
+    kit_gray = "#767676"
+
+    # Standardfarben für zusätzliche y-Achsen (kann erweitert werden)
+    y_colors = [kit_red, kit_orange, kit_magenta, kit_yellow, kit_green]
+
+    time = data.index / f_a
+
+    # Erstelle Figure mit zwei Achsen
+    fig, (ax_v, ax_i) = plt.subplots(
+        2, 1, figsize=(12, 10), dpi=dpi,
+        sharex=True, height_ratios=[1, 2],
+        gridspec_kw={'hspace': 0.05}
+    )
+
+    # ----- Oberer Plot (Vorschubgeschwindigkeit) -----
+    ax_v.spines['left'].set_position('zero')
+    ax_v.spines['bottom'].set_position('zero')
+    ax_v.spines['top'].set_visible(False)
+    ax_v.spines['right'].set_visible(False)
+    ax_v.spines['left'].set_color(kit_dark_blue)
+    ax_v.spines['bottom'].set_color(kit_dark_blue)
+    ax_v.spines['left'].set_linewidth(1.0)
+    ax_v.spines['bottom'].set_linewidth(1.0)
+
+    # Plot Vorschubgeschwindigkeit
+    line_v, = ax_v.plot(time, data[v_colname], label=v_label,
+                       color=kit_blue, linewidth=2)
+
+    # Grid und Achsenbeschriftung
+    ax_v.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
+    ax_v.set_axisbelow(True)
+    ax_v.tick_params(axis='both', colors=kit_dark_blue)
+
+    # Achsenbeschriftung
+    xmin, xmax = ax_v.get_xlim()
+    ymin, ymax = ax_v.get_ylim()
+    y_pos = -0.08 * ymax
+
+    # X-Achsenbeschriftung
+    ax_v.annotate('', xy=(xmax, 0), xytext=(xmax*0.95, 0),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_v.text(xmax*0.95, y_pos, r'$t$ in s',
+             ha='left', va='center', color=kit_dark_blue, fontsize=12)
+
+    # Y-Achsenbeschriftung
+    x_label_pos_y = -0.06 * (xmax - xmin)
+    y_label_pos_y = ymax * 0.65
+    ax_v.annotate('', xy=(0, ymax),
+                 xytext=(0, ymax - 0.08*(ymax-ymin)),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_v.text(x_label_pos_y, y_label_pos_y - 0.04*(ymax-ymin), v_axis,
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+
+    # ----- Unterer Plot (Stromvorhersage) -----
+    ax_i.spines['left'].set_position('zero')
+    ax_i.spines['bottom'].set_position('zero')
+    ax_i.spines['top'].set_visible(False)
+    ax_i.spines['right'].set_visible(False)
+    ax_i.spines['left'].set_color(kit_dark_blue)
+    ax_i.spines['bottom'].set_color(kit_dark_blue)
+    ax_i.spines['left'].set_linewidth(line_size)
+    ax_i.spines['bottom'].set_linewidth(line_size)
+
+    # ----- Berechnung der Bereiche mit |v| < speed_threshold -----
+    v_abs = np.abs(data[v_colname])
+    low_speed_mask = v_abs < v_threshold
+    diff = np.diff(low_speed_mask.astype(int))
+    starts = np.where(diff == 1)[0] + 1
+    ends = np.where(diff == -1)[0]
+    if low_speed_mask.iloc[0]:
+        starts = np.insert(starts, 0, 0)
+    if low_speed_mask.iloc[-1]:
+        ends = np.append(ends, len(low_speed_mask) - 1)
+
+    # ----- Einfärben der Bereiche mit |v| < speed_threshold, abhängig von z -----
+    alpha = 0.2
+    for start, end in zip(starts, ends):
+        ax_i.axvspan(time[start], time[end], color=kit_green, alpha=alpha, linewidth=0)
+
+    # Plot für Vorhersagen (dynamisch basierend auf y_configs)
+    lines_pred = []
+    if y_configs is None:
+        y_configs = []
+
+    for i, config in enumerate(y_configs):
+        color = y_colors[i % len(y_colors)]
+        line, _ = plot_prediction_with_std(
+            data,
+            config['ycolname'],
+            color,
+            config['ylabel']
+        )
+        if line is not None:
+            lines_pred.append(line)
+
+    # Plot für Strom-Messwerte
+    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte',
+                       color=kit_blue, linewidth=2)
+
+    # Grid und Achsenbeschriftung
+    ax_i.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=line_size/2)
+    ax_i.set_axisbelow(True)
+    ax_i.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
+
+    # X-Achsenbeschriftung (nur beim unteren Plot)
+    xmin, xmax = ax_i.get_xlim()
+    ymin, ymax = ax_i.get_ylim()
+    x_pos = -0.08 * (xmax - xmin)
+    y_pos = -0.15 * ymax
+    arrow_length = 0.04 * (xmax - xmin)
+
+    ax_i.set_xlim(left=min(x_pos, xmin), right=xmax + arrow_length/2) # Achsenbegrenzungen anpassen
+
+    ax_i.annotate('', xy=(xmax + arrow_length/2, 0), xytext=(xmax - arrow_length/2, 0),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_i.text(xmax*0.95, y_pos, r'$t$ in s',
+             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis)
+
+    # Y-Achsenbeschriftung
+    y_pos = ymax * 0.85
+    arrow_length = 0.04*(ymax-ymin)
+
+    ax_i.set_ylim(bottom=min(y_pos, ymin), top=ymax + arrow_length / 2) # Achsenbegrenzungen anpassen
+
+    ax_i.annotate('', xy=(0, ymax + arrow_length/2),
+                 xytext=(0, ymax - arrow_length/2),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_i.text(x_pos, y_pos - 0.04*(ymax-ymin), label,
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis)
+
+    # Titel über beiden Plots
+    fig.suptitle(title, color=kit_dark_blue, fontsize=fontsize_title,
+                fontweight='bold', y=0.98)
+
+    # Legende (inkl. Näherungslinien)
+    legend_elements = [line_i, line_v] + lines_pred
+    legend_labels = [line.get_label() for line in legend_elements]
+
+    # Farbige Bereiche zur Legende hinzufügen
+    legend_elements.extend([
+        Patch(facecolor=kit_green, alpha=alpha, label=f'Bereiche mit |v| < {v_threshold}'),
+    ])
+    legend_labels.extend([
+        f'|v| < {v_threshold}',
+    ])
+
+    if len(legend_elements) > 1:
+        fig.legend(
+            handles=legend_elements,
+            labels=legend_labels,
+            loc='lower center',
+            ncol=2,  # 4 Spalten für bessere Lesbarkeit
+            frameon=True,
+            facecolor='white',
+            edgecolor=kit_dark_blue,
+            framealpha=1.0,
+            fontsize = fontsize_axis_label,
+        )
+
+    # Speichern des Plots
+    plot_path = os.path.join(path, filename)
+    os.makedirs(path, exist_ok=True)
+    fig.savefig(plot_path + '.svg', dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
+    plt.close(fig)
+    print(f'Saved as {plot_path}')
+
+def plot_time_series_error_with_sections(
+    data: pd.DataFrame,
+    title: str,
+    filename: str,
+    dpi: int = 300,
+    col_name: str = 'curr_x',
+    label: str = '$I$\nin A',
+    y_configs: List[Dict[str, str]] = None,
+    f_a: int = 50,
+    path: str = 'Plots',
+    v_colname: str = 'v_x',
+    v_label: str = 'Vorschubgeschwindigkeit',
+    v_axis: str = 'v in m/s',
+    v_threshold: float = 1.0,
+    scale_error: float = 2,
+) -> None:
+    fontsize_axis = 14
+    fontsize_axis_label = 16
+    fontsize_title = 18
+    line_size = 1.5
+
+    # KIT-Farben
+    kit_red = "#D30015"
+    kit_green = "#009682"
+    kit_yellow = "#FFFF00"
+    kit_orange = "#FFC000"
+    kit_blue = "#0C537E"
+    kit_dark_blue = "#002D4C"
+    kit_magenta = "#A3107C"
+    kit_gray = "#767676"
+
+    # Standardfarben für zusätzliche y-Achsen (kann erweitert werden)
+    y_colors = [kit_red, kit_orange, kit_magenta, kit_yellow, kit_green]
+
+    time = data.index / f_a
+
+    # Erstelle Figure mit zwei Achsen
+    fig, (ax_v, ax_i) = plt.subplots(
+        2, 1, figsize=(12, 10), dpi=dpi,
+        sharex=True, height_ratios=[1, 2],
+        gridspec_kw={'hspace': 0.05}
+    )
+
+    # ----- Oberer Plot (Vorschubgeschwindigkeit) -----
+    ax_v.spines['left'].set_position('zero')
+    ax_v.spines['bottom'].set_position('zero')
+    ax_v.spines['top'].set_visible(False)
+    ax_v.spines['right'].set_visible(False)
+    ax_v.spines['left'].set_color(kit_dark_blue)
+    ax_v.spines['bottom'].set_color(kit_dark_blue)
+    ax_v.spines['left'].set_linewidth(1.0)
+    ax_v.spines['bottom'].set_linewidth(1.0)
+
+    # Plot Vorschubgeschwindigkeit
+    line_v, = ax_v.plot(time, data[v_colname], label=v_label,
+                        color=kit_blue, linewidth=2)
+
+    # Grid und Achsenbeschriftung
+    ax_v.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
+    ax_v.set_axisbelow(True)
+    ax_v.tick_params(axis='both', colors=kit_dark_blue)
+
+    # Achsenbeschriftung
+    xmin, xmax = ax_v.get_xlim()
+    ymin, ymax = ax_v.get_ylim()
+    y_pos = -0.08 * ymax
+
+    # X-Achsenbeschriftung
+    ax_v.annotate('', xy=(xmax, 0), xytext=(xmax * 0.95, 0),
+                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_v.text(xmax * 0.95, y_pos, r'$t$ in s',
+              ha='left', va='center', color=kit_dark_blue, fontsize=12)
+
+    # Y-Achsenbeschriftung
+    x_label_pos_y = -0.06 * (xmax - xmin)
+    y_label_pos_y = ymax * 0.65
+    ax_v.annotate('', xy=(0, ymax),
+                  xytext=(0, ymax - 0.08 * (ymax - ymin)),
+                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_v.text(x_label_pos_y, y_label_pos_y - 0.04 * (ymax - ymin), v_axis,
+              ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+
+    # ----- Unterer Plot (Stromvorhersage) -----
+    ax_i.spines['left'].set_position('zero')
+    ax_i.spines['bottom'].set_position('zero')
+    ax_i.spines['top'].set_visible(False)
+    ax_i.spines['right'].set_visible(False)
+    ax_i.spines['left'].set_color(kit_dark_blue)
+    ax_i.spines['bottom'].set_color(kit_dark_blue)
+    ax_i.spines['left'].set_linewidth(line_size)
+    ax_i.spines['bottom'].set_linewidth(line_size)
+
+    # ----- Berechnung der Bereiche mit |v| < speed_threshold -----
+    v_abs = np.abs(data[v_colname])
+    low_speed_mask = v_abs < v_threshold
+    diff = np.diff(low_speed_mask.astype(int))
+    starts = np.where(diff == 1)[0] + 1
+    ends = np.where(diff == -1)[0]
+    if low_speed_mask.iloc[0]:
+        starts = np.insert(starts, 0, 0)
+    if low_speed_mask.iloc[-1]:
+        ends = np.append(ends, len(low_speed_mask) - 1)
+
+    # ----- Einfärben der Bereiche mit |v| < speed_threshold, abhängig von z -----
+    alpha = 0.2
+    for start, end in zip(starts, ends):
+        ax_i.axvspan(time[start], time[end], color=kit_green, alpha=alpha, linewidth=0)
+
+    # Plot für Abweichungen (Mittelwert der Vorhersagen - tatsächlicher Strom)
+    lines_pred = []
+    if y_configs is None:
+        y_configs = []
+    for i, config in enumerate(y_configs):
+        color = y_colors[i % len(y_colors)]
+        # Finde alle Spalten, die zu dieser Konfiguration gehören
+        cols = [col for col in data.columns if col.startswith(config['ycolname'])]
+        if not cols:
+            continue  # Überspringe, falls keine passenden Spalten gefunden wurden
+        # Berechne Mittelwert der Vorhersagen
+        mean_pred = data[cols].mean(axis=1)
+        # Berechne Differenz: Mittelwert - tatsächlicher Strom
+        deviation = mean_pred - data[col_name]
+        # Temporäre Spalte für die Differenz hinzufügen
+        data[f'deviation_{config["ycolname"]}'] = deviation * scale_error
+        # Plot der Differenz
+        line, _ = plot_prediction_with_std(
+            data,
+            f'deviation_{config["ycolname"]}',
+            color,
+            f'Abweichung {config["ylabel"]} (skaliert um {scale_error})'
+        )
+        if line is not None:
+            lines_pred.append(line)
+
+    # Plot für Strom-Messwerte
+    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte',
+                       color=kit_blue, linewidth=2)
+
+    # Grid und Achsenbeschriftung
+    ax_i.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=line_size/2)
+    ax_i.set_axisbelow(True)
+    ax_i.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
+
+    # X-Achsenbeschriftung (nur beim unteren Plot)
+    xmin, xmax = ax_i.get_xlim()
+    ymin, ymax = ax_i.get_ylim()
+    x_pos = -0.08 * (xmax - xmin)
+    y_pos = -0.15 * ymax
+    arrow_length = 0.04 * (xmax - xmin)
+
+    ax_i.set_xlim(left=min(x_pos, xmin), right=xmax + arrow_length/2) # Achsenbegrenzungen anpassen
+
+    ax_i.annotate('', xy=(xmax + arrow_length/2, 0), xytext=(xmax - arrow_length/2, 0),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_i.text(xmax*0.95, y_pos, r'$t$ in s',
+             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis)
+
+    # Y-Achsenbeschriftung
+    y_pos = ymax * 0.85
+    arrow_length = 0.04*(ymax-ymin)
+
+    ax_i.set_ylim(bottom=min(y_pos, ymin), top=ymax + arrow_length / 2) # Achsenbegrenzungen anpassen
+
+    ax_i.annotate('', xy=(0, ymax + arrow_length/2),
+                 xytext=(0, ymax - arrow_length/2),
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_i.text(x_pos, y_pos - 0.04*(ymax-ymin), label,
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis)
+
+    # Titel über beiden Plots
+    fig.suptitle(title, color=kit_dark_blue, fontsize=fontsize_title,
+                fontweight='bold', y=0.98)
+
+    # Legende (inkl. Näherungslinien)
+    legend_elements = [line_i, line_v] + lines_pred
+    legend_labels = [line.get_label() for line in legend_elements]
+
+    # Farbige Bereiche zur Legende hinzufügen
+    legend_elements.extend([
+        Patch(facecolor=kit_green, alpha=alpha, label=f'Bereiche mit |v| < {v_threshold}'),
+    ])
+    legend_labels.extend([
+        f'|v| < {v_threshold}',
+    ])
+
+    if len(legend_elements) > 1:
+        fig.legend(
+            handles=legend_elements,
+            labels=legend_labels,
+            loc='lower center',
+            ncol=2,  # 4 Spalten für bessere Lesbarkeit
+            frameon=True,
+            facecolor='white',
+            edgecolor=kit_dark_blue,
+            framealpha=1.0,
+            fontsize = fontsize_axis_label,
+        )
+
+    # Speichern des Plots
+    plot_path = os.path.join(path, filename)
+    os.makedirs(path, exist_ok=True)
+    fig.savefig(plot_path + '.svg', dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
+    plt.close(fig)
+    print(f'Saved as {plot_path}')
+
+def plot_prediction_with_std(data, base_label, color, label=''):
+    """
+    Hilfsfunktion zum Plotten von Vorhersagen mit Standardabweichung.
+    """
+    cols = [col for col in data.columns if col.startswith(base_label)]
+    if not cols:
+        return None, None
+
+    mean = data[cols].mean(axis=1)
+    std = data[cols].std(axis=1)
+    line, = plt.gca().plot(data.index / 50, mean, label=label, color=color, linewidth=2)
+    plt.gca().fill_between(data.index / 50, mean - std, mean + std, color=color, alpha=0.2)
+    return line, mean

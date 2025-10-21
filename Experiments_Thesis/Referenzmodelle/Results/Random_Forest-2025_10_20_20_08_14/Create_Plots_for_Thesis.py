@@ -1,28 +1,14 @@
 import copy
 import json
 import os
-import ast
-import re
 
-import shap
-import torch
 import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
-from datetime import datetime
-import seaborn as sns
-from numpy.exceptions import AxisError
-from numpy.f2py.auxfuncs import throw_error
-from sklearn.metrics import mean_absolute_error
 
 import Helper.handling_hyperopt as hyperopt
 import Helper.handling_data as hdata
 import Helper.handling_plots as hplot
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
-from matplotlib.colors import LinearSegmentedColormap
 
 HEADER = ["DataSet", "DataPath", "Model", "MAE", "StdDev", "MAE_Ensemble", "Predictions", "GroundTruth", "RawData"]
 SAMPLINGRATE = 50
@@ -37,6 +23,12 @@ if __name__ == '__main__':
         'Reference_Random_Forest_GridSampler',
         'Reference_Random_Forest_TPESampler'
     ]
+
+    new_names ={
+        'Reference_Random_Forest_RandomSampler': '\nRandom Forest\nZufalls-Sampler',
+        'Reference_Random_Forest_GridSampler': '\nRandom Forest\nRaster-Sampler',
+        'Reference_Random_Forest_TPESampler': '\nRandom Forest\nTPE-Sampler',
+    }
 
     for file in os.listdir('Predictions'):
         if file.endswith('.csv'):
@@ -55,7 +47,7 @@ if __name__ == '__main__':
     plot_paths = plotter.create_plots(
         df=combined_mae_std_df,
         title='Random Forest',
-        filename_postfix='RF',
+        filename_postfix='RF'
     )
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")
@@ -64,6 +56,6 @@ if __name__ == '__main__':
     plotter = hplot.ModelHeatmapPlotter(output_dir='Plots_Thesis')
 
     # Heatmaps für jedes Modell erstellen
-    plot_paths = plotter.create_plots(df=combined_mae_std_df)
+    plot_paths = plotter.create_plots(df=combined_mae_std_df, new_names=new_names)
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")

@@ -1,21 +1,8 @@
 import copy
 import json
 import os
-import ast
-import re
 
-import shap
-import torch
 import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
-from datetime import datetime
-import seaborn as sns
-from numpy.exceptions import AxisError
-from numpy.f2py.auxfuncs import throw_error
-from sklearn.metrics import mean_absolute_error
 
 import Helper.handling_hyperopt as hyperopt
 import Helper.handling_data as hdata
@@ -36,6 +23,12 @@ if __name__ == '__main__':
     model_prefixes_2 = ['ST_Plate_Notch_Recurrent_Neural_Net_TPESampler']
 
     model_prefixes_list = [model_prefixes_1, model_prefixes_2]
+
+    new_names ={
+        'ST_Plate_Notch_Recurrent_Neural_Net_RandomSampler': '\nRekurrentes neuronales Netz\nZufalls-Sampler',
+        'ST_Plate_Notch_Recurrent_Neural_Net_GridSampler': '\nRekurrentes neuronales Netz\nRaster-Sampler',
+        'ST_Plate_Notch_Recurrent_Neural_Net_TPESampler': '\nRekurrentes neuronales Netz\nTPE-Sampler',
+    }
 
     paths = ['Recurrent_Neural_Net-2025_10_02_16_20_24',
              'Recurrent_Neural_Net-2025_10_02_17_09_17']
@@ -68,6 +61,6 @@ if __name__ == '__main__':
     plotter = hplot.ModelHeatmapPlotter(output_dir='Plots_Thesis')
 
     # Heatmaps für jedes Modell erstellen
-    plot_paths = plotter.create_plots(df=combined_mae_std_df)
+    plot_paths = plotter.create_plots(df=combined_mae_std_df, new_names=new_names)
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")

@@ -37,6 +37,12 @@ if __name__ == '__main__':
         'ST_Plate_Notch_Random_Forest_TPESampler',
     ]
 
+    new_names ={
+        'ST_Plate_Notch_Random_Forest_RandomSampler': '\nRandom Forest\nZufalls-Sampler',
+        'ST_Plate_Notch_Random_Forest_GridSampler': '\nRandom Forest\nRaster-Sampler',
+        'ST_Plate_Notch_Random_Forest_TPESampler': '\nRandom Forest\nTPE-Sampler',
+    }
+
     for file in os.listdir('Predictions'):
         if file.endswith('.csv'):
             df = pd.read_csv(f"Predictions/{file}")
@@ -63,6 +69,6 @@ if __name__ == '__main__':
     plotter = hplot.ModelHeatmapPlotter(output_dir='Plots_Thesis')
 
     # Heatmaps für jedes Modell erstellen
-    plot_paths = plotter.create_plots(df=combined_mae_std_df)
+    plot_paths = plotter.create_plots(df=combined_mae_std_df, new_names=new_names)
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")

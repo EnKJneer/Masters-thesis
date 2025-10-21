@@ -15,6 +15,11 @@
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear/DataSinumerik_50Hz" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear/Data_1" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear/RawData" />
+      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/DataSets_CMX_Plate_Notch_Gear" />
+      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/DataSimulated" />
+      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/DataSinumerik_50Hz" />
+      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/Plots" />
+      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/RawData" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/Data" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/DataSimulated" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_Reference" />

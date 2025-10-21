@@ -38,6 +38,12 @@ if __name__ == '__main__':
         'Reference_Recurrent_Neural_Net_TPESampler'
     ]
 
+    new_names ={
+        'Reference_Recurrent_Neural_Net_RandomSampler': '\nRekurrentes neuronales Netz\nZufalls-Sampler',
+        'Reference_Recurrent_Neural_Net_GridSampler': '\nRekurrentes neuronales Netz\nRaster-Sampler',
+        'Reference_Recurrent_Neural_Net_TPESampler': '\nRekurrentes neuronales Netz\nTPE-Sampler',
+    }
+
     for file in os.listdir('Predictions'):
         if file.endswith('.csv'):
             df = pd.read_csv(f"Predictions/{file}")
@@ -64,6 +70,6 @@ if __name__ == '__main__':
     plotter = hplot.ModelHeatmapPlotter(output_dir='Plots_Thesis')
 
     # Heatmaps für jedes Modell erstellen
-    plot_paths = plotter.create_plots(df=combined_mae_std_df)
+    plot_paths = plotter.create_plots(df=combined_mae_std_df, new_names=new_names)
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")
