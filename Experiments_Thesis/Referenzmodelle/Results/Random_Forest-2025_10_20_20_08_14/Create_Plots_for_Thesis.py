@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # Heatmap erstellen
     plot_paths = plotter.create_plots(
         df=combined_mae_std_df,
-        title='Random Forest',
+        title='\nRandom Forest',
         filename_postfix='RF'
     )
 

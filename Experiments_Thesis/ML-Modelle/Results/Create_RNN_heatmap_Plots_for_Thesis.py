@@ -51,8 +51,9 @@ if __name__ == '__main__':
     # Heatmap erstellen
     plot_paths = plotter.create_plots(
         df=combined_mae_std_df,
-        title='Rekurrentes neuronales Netz',
+        title='\nRekurrentes neuronales Netz',
         filename='RNN',
+        filename_postfix='RNN'
     )
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")

@@ -54,7 +54,7 @@ if __name__ == '__main__':
     # Heatmap erstellen
     plot_paths = plotter.create_plots(
         df=combined_mae_std_df,
-        title='Künstliches neuronales Netz',
+        title='\nKünstliches neuronales Netz',
         filename_postfix='KNN'
     )
 
