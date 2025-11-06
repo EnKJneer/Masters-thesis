@@ -1275,93 +1275,226 @@ class EmpiricLinearModel(mb.BaseModel):
             self.target_channel = kwargs['target_channel']
 
 class ModelErd(mb.BaseModel):
+    """
+    Physikalisches Modell für Leistungsvorhersage basierend auf mechanischen Parametern.
+
+    Modellgleichung pro Achse:
+    P = θ_a · (a·v) + θ_v · (v²·sign(v)) + θ_f · (f·mrr) + θ_s · sign(v)
+
+    Gesamtleistung: P_total = Σ(P_achse) + θ_c
+    """
+
+    AXES = ['x', 'y', 'z', 'sp']
+    N_FEATURES_PER_AXIS = 4
+
     def __init__(self, name="Erd",
-                 theta_v = 1, theta_a = 1, theta_f = 1, theta_s = 1, theta_c = 1, epsilon_y = 0.1, epsilon_z = 0.1, epsilon_sp = 0.1,
-                 target_channel = ['curr_x']):
+                 theta_v=1, theta_a=1, theta_f=1, theta_s=1, theta_c=1,
+                 epsilon_y=0.1, epsilon_z=0.1, epsilon_sp=0.1,
+                 target_channel=['curr_x']):
 
         self.name = name
+        self.target_channel = target_channel
 
-        # parameter
+        # Initiale Parameter mit Skalierungsfaktoren für Y, Z, SP Achsen
         self.theta_a = [theta_a, theta_a * epsilon_y, theta_a * epsilon_z, theta_a * epsilon_sp]
         self.theta_v = [theta_v, theta_v * epsilon_y, theta_v * epsilon_z, theta_v * epsilon_sp]
         self.theta_f = [theta_f, theta_f * epsilon_y, theta_f * epsilon_z, theta_f * epsilon_sp]
         self.theta_s = [theta_s, theta_s * epsilon_y, theta_s * epsilon_z, theta_s * epsilon_sp]
-        self.theta_c = [theta_c, theta_c * epsilon_y, theta_c * epsilon_z, theta_c * epsilon_sp]
-
-        # parameter für den offset
-        self.theta_offset = 0.0
-
-        self.target_channel = target_channel
+        self.theta_c = theta_c  # Globale Konstante (ein Skalar)
 
     def criterion(self, y_target, y_pred):
+        """Mean Absolute Error (MAE) als Loss-Funktion."""
         return np.mean(np.abs(y_target - y_pred))
 
+    def _build_feature_matrix(self, X):
+        """
+        Erstellt die Feature-Matrix aus den Eingangsdaten.
+
+        Args:
+            X: DataFrame mit Spalten v_{axis}_1_current, a_{axis}_1_current, etc.
+
+        Returns:
+            np.ndarray: Feature-Matrix mit Shape (n_samples, 16+1)
+                        16 Features (4 pro Achse) + 1 Konstante
+        """
+        features = []
+
+        for axis in self.AXES:
+            v = X[f'v_{axis}_1_current'].values
+            a = X[f'a_{axis}_1_current'].values
+            f = X[f'f_{axis}_sim_1_current'].values
+            mrr = X[f'materialremoved_sim_1_current'].values
+
+            # Features pro Achse: [a·v, v²·sign(v), f·mrr, sign(v)]
+            axis_features = np.column_stack([
+                a * v,  # Beschleunigungsleistung
+                v * v * np.sign(v),  # Geschwindigkeitsleistung
+                f * mrr,  # Zerspanungsleistung
+                np.sign(v)  # Reibungsverluste
+            ])
+            features.append(axis_features)
+
+        # Alle Achsen kombinieren und Konstante hinzufügen
+        feature_matrix = np.hstack(features + [np.ones((len(X), 1))])
+
+        return feature_matrix
+
     def predict(self, x):
+        """
+        Vorhersage der Zielgröße.
+
+        Args:
+            x: DataFrame mit Eingangsdaten
+
+        Returns:
+            np.ndarray: Vorhergesagte Werte
+        """
+        # Outlier durch IQR-Grenzen ersetzen
+        x = self.cap_outliers_iqr(x, x.columns)
+
         y_pred = np.zeros(len(x))
-        for idx, axis in enumerate(['x', 'y', 'z', 'sp']):
+
+        for idx, axis in enumerate(self.AXES):
             v_axis = x[f'v_{axis}_1_current'].values
             a_axis = x[f'a_{axis}_1_current'].values
             f_axis_sim = x[f'f_{axis}_sim_1_current'].values
             mrr = x[f'materialremoved_sim_1_current'].values
-            y_pred += (self.theta_a[idx] * a_axis * v_axis +
-                       self.theta_v[idx] * v_axis * v_axis * np.sign(v_axis) +
-                       self.theta_f[idx] * f_axis_sim * mrr +
-                       self.theta_s[idx] * np.sign(v_axis) +
-                        self.theta_c[idx])
 
-        y_pred += np.ones(len(x)) * self.theta_offset
+            y_pred += (
+                    self.theta_a[idx] * a_axis * v_axis +
+                    self.theta_v[idx] * v_axis * v_axis * np.sign(v_axis) +
+                    self.theta_f[idx] * f_axis_sim * mrr +
+                    self.theta_s[idx] * np.sign(v_axis)
+            )
+
+        # Globale Konstante hinzufügen
+        y_pred += self.theta_c
+
         return y_pred
 
-    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
-        target = self.target_channel
-        data = []
-        for axis in ['x', 'y', 'z', 'sp']:
-            v_axis = X_train[f'v_{axis}_1_current'].values
-            a_axis = X_train[f'a_{axis}_1_current'].values
-            f_axis_sim = X_train[f'f_{axis}_sim_1_current'].values
-            mrr = X_train[f'materialremoved_sim_1_current'].values
-            data_axis = np.array([
-                a_axis * v_axis,
-                v_axis * v_axis * np.sign(v_axis),
-                f_axis_sim * mrr,
-                np.sign(v_axis),
-                np.ones_like(v_axis)
-            ]).T
-            data.append(data_axis)
-        data = np.concatenate(data, axis=1)
-        y_train_values = y_train[target].values
+    def remove_outliers_iqr(self, df, columns):
+        """
+        Entfernt Outlier basierend auf dem Interquartilsabstand (IQR).
 
-        # Lineare Regression für alle Parameter
+        Args:
+            df: DataFrame mit den Daten
+            columns: Liste der Spalten, die bereinigt werden sollen
+
+        Returns:
+            DataFrame ohne Outlier
+        """
+        df_clean = df.copy()
+        for col in columns:
+            Q1 = df[col].quantile(0.25)
+            Q3 = df[col].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 2 * IQR
+            upper_bound = Q3 + 2 * IQR
+            df_clean = df_clean[(df[col] >= lower_bound) & (df[col] <= upper_bound)]
+        return df_clean
+
+    def cap_outliers_iqr(self, df, columns):
+        """
+        Ersetzt Outlier durch die IQR-Grenzen (statt sie zu entfernen).
+
+        Args:
+            df: DataFrame mit den Daten
+            columns: Liste der Spalten, die bereinigt werden sollen
+
+        Returns:
+            DataFrame mit ersetzten Outlier-Werten
+        """
+        df_capped = df.copy()
+        for col in columns:
+            Q1 = df[col].quantile(0.25)
+            Q3 = df[col].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 2 * IQR
+            upper_bound = Q3 + 2 * IQR
+            # Outlier durch die Grenzen ersetzen
+            df_capped[col] = np.where(df[col] < lower_bound, lower_bound, df[col])
+            df_capped[col] = np.where(df[col] > upper_bound, upper_bound, df_capped[col])
+        return df_capped
+
+    def train_model(self, X_train, y_train, X_val, y_val, **kwargs):
+        """
+        Trainiert das Modell mittels linearer Regression (Least Squares).
+
+        Args:
+            X_train: Trainings-Features
+            y_train: Trainings-Zielwerte
+            X_val: Validierungs-Features
+            y_val: Validierungs-Zielwerte
+
+        Returns:
+            float: Validierungsverlust
+        """
+
+        X_train_clean = self.remove_outliers_iqr(X_train, X_train.columns)
+        y_train_clean = y_train.loc[X_train_clean.index]
+
+        # Feature-Matrix erstellen
+        X_features = self._build_feature_matrix(X_train_clean)
+        y_target = y_train_clean[self.target_channel].values.squeeze()
+
+        # Lineare Regression (ohne zusätzlichen Intercept)
         reg = LinearRegression(fit_intercept=False)
-        reg.fit(data, y_train_values.squeeze())
+        reg.fit(X_features, y_target)
 
         # Parameter extrahieren
-        self.theta_a = reg.coef_[0::5].tolist()
-        self.theta_v = reg.coef_[1::5].tolist()
-        self.theta_f = reg.coef_[2::5].tolist()
-        self.theta_s = reg.coef_[3::5].tolist()
-        self.theta_c = reg.coef_[4::5].tolist()
+        coefs = reg.coef_
+        self.theta_a = coefs[0::self.N_FEATURES_PER_AXIS].tolist()
+        self.theta_v = coefs[1::self.N_FEATURES_PER_AXIS].tolist()
+        self.theta_f = coefs[2::self.N_FEATURES_PER_AXIS].tolist()
+        self.theta_s = coefs[3::self.N_FEATURES_PER_AXIS].tolist()
+        self.theta_c = coefs[-1]  # Letzter Koeffizient ist die globale Konstante
 
-        # Ausgabe der Parameter
+        # Ausgabe der gelernten Parameter
+        self._print_parameters()
+
+        # Validierungsverlust berechnen
+        validation_loss = self.criterion(y_val.values.squeeze(), self.predict(X_val))
+        print(f"\nValidation Loss: {validation_loss:.4e}")
+
+        return validation_loss
+
+    def test_model(self, X, y_target):
+        """
+        Testet das Modell auf neuen Daten.
+
+        Args:
+            X: Test-Features
+            y_target: Test-Zielwerte
+
+        Returns:
+            tuple: (loss, predictions)
+        """
+        prediction = self.predict(X)
+        loss = self.criterion(y_target.values.squeeze(), prediction)
+        return loss, prediction
+
+    def _print_parameters(self):
+        """Gibt die gelernten Parameter übersichtlich aus."""
+        print("\n" + "=" * 70)
+        print("GELERNTE MODELLPARAMETER")
+        print("=" * 70)
         print(f"theta_a: {self.theta_a}")
         print(f"theta_v: {self.theta_v}")
         print(f"theta_f: {self.theta_f}")
         print(f"theta_s: {self.theta_s}")
         print(f"theta_c: {self.theta_c}")
-
-        # Validierungsverlust berechnen
-        validation_loss = self.criterion(y_val.values.squeeze(), self.predict(X_val))
-        print(f"Validation Loss: {validation_loss:.4e}")
-        return validation_loss
-
-    def test_model(self, X, y_target):
-        prediction = self.predict(X)
-        loss = self.criterion(y_target.values.squeeze(), prediction)
-        return loss, prediction
+        print("=" * 70)
 
     def get_documentation(self):
+        """
+        Gibt eine Dokumentation des Modells und seiner Parameter zurück.
+
+        Returns:
+            dict: Dokumentation mit Beschreibung und Parametern
+        """
         documentation = {
-            "description": "Implementation of Model Erd.",
+            "description": "Implementation of Model Erd - Physics-based power prediction model.",
+            "model_equation": "P_total = Σ[θ_a·(a·v) + θ_v·(v²·sign(v)) + θ_f·(f·mrr) + θ_s·sign(v)] + θ_c",
             "parameters": {
                 "name": self.name,
                 "theta_a": {
@@ -1388,17 +1521,13 @@ class ModelErd(mb.BaseModel):
                     "z": self.theta_s[2],
                     "sp": self.theta_s[3]
                 },
-                "theta_c": {
-                    "x": self.theta_c[0],
-                    "y": self.theta_c[1],
-                    "z": self.theta_c[2],
-                    "sp": self.theta_c[3]
-                },
+                "theta_c": self.theta_c  # Jetzt ein Skalar
             }
         }
         return documentation
 
     def reset_hyperparameter(self):
+        """Setzt die Hyperparameter auf Standardwerte zurück."""
         raise NotImplementedError("Not implemented")
 
 class ThermodynamicModel(mb.BaseModel):
@@ -1435,7 +1564,7 @@ class ThermodynamicModel(mb.BaseModel):
             if axis != 'sp':
                 term = self.theta_f[idx] * f_axis_sim
             else:
-                term = self.theta_f[idx] * f_axis_sim #* mrr / (v_axis + self.epsilon)
+                term = self.theta_f[idx] * f_axis_sim * mrr / (v_axis + self.epsilon)
             y_pred += (self.theta_a[idx] * a_axis +
                        self.theta_v[idx] * v_axis +
                        term +
@@ -1456,7 +1585,7 @@ class ThermodynamicModel(mb.BaseModel):
             if axis != 'sp':
                 term = f_axis_sim
             else:
-                term = f_axis_sim #* mrr / (v_axis + self.epsilon)
+                term = f_axis_sim * mrr / (v_axis + self.epsilon)
 
             data_axis = np.array([
                 a_axis,

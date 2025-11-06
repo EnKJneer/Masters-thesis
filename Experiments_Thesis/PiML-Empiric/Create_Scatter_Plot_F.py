@@ -28,9 +28,14 @@ def plot_scatter_fx_vs_curr(
     kit_dark_blue = "#002D4C"
     kit_gray = "#767676"
 
-
+    eps = 1e-3
     # Farben basierend auf z > 0
-    colors = np.where(data[z_col] > 0, kit_green, kit_blue)
+    conditions = [
+        data[z_col] > eps,  # Fall 1: z > eps
+        data[z_col] < -eps,  # Fall 2: z < -eps
+        (data[z_col] <= eps) & (data[z_col] >= -eps)  # Fall 3: -eps ≤ z ≤ eps
+    ]
+    colors = np.select(conditions, [kit_green, kit_blue, kit_red])
 
     # Plot erstellen
     fig, ax = plt.subplots(figsize=(10, 8), dpi=dpi)
@@ -82,16 +87,18 @@ def plot_scatter_fx_vs_curr(
 
     # Legende
     legend_elements = [
-        Patch(facecolor=kit_green, label='z > 0'),
-        Patch(facecolor=kit_blue, label='z ≤ 0'),
+        Patch(facecolor=kit_green, label=f'{z_col} > 0'),
+        Patch(facecolor=kit_blue, label=f'{z_col} ≤ 0'),
     ]
+    if any(conditions[2]):
+        legend_elements.append(Patch(facecolor=kit_red, label=f'{z_col} == 0'))
     ax.legend(handles=legend_elements, loc='upper right', framealpha=1.0)
 
     # Speichern
     import os
     os.makedirs(path, exist_ok=True)
     plot_path = os.path.join(path, filename)
-    fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.svg', dpi=dpi, bbox_inches='tight', facecolor='white')
     fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
     print(f'Gespeichert unter: {plot_path}')
@@ -128,5 +135,6 @@ if __name__ == '__main__':
         data=df,
         title='Prozesskraft zum Motorstrom',
         filename='scatter_fx_vs_curr_filtered',
+        z_col = 'v_x',
         dpi=600
     )

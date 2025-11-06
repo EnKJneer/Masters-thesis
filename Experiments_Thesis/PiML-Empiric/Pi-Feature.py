@@ -76,6 +76,8 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
+    axis = 'z'
+
     dataSet_1 = copy.deepcopy(hdata.DataClass_ST_Plate_Notch)
     dataSet_1.name = 'Normal'
     dataSet_2 = copy.deepcopy(hdata.DataClass_ST_Plate_Notch)
@@ -84,12 +86,13 @@ if __name__ == "__main__":
     dataSet_3 = copy.deepcopy(hdata.DataClass_ST_Plate_Notch)
     dataSet_3.add_sign_hold = True
     dataSet_3.name = 'Sign_Hold_x'
-    dataSet_3.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"]
+    dataSet_3.header = [f"v_{axis}", f"a_{axis}", f"f_{axis}_sim", f"materialremoved_sim"]
 
     dataSets = [dataSet_1, dataSet_2, dataSet_3]
 
     for dataSet in dataSets:
         dataSet.add_padding = True
+        dataSet.target_channels = [f'curr_{axis}']
 
     model_rf = mrf.RandomForestModel(n_estimators= 100, max_depth=100, min_samples_split= 2,
                     min_samples_leaf= 4)
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    use_rf = True
+    use_rf = False
     if use_rf:
         models = [model_rf]
         postfix = 'RF_x_pinn'
@@ -107,4 +110,4 @@ if __name__ == "__main__":
 
     # Run the experiment
     hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        experiment_name='Pi_Feature_'+postfix)
+                        experiment_name=f'Pi_Feature_{axis}_'+postfix)

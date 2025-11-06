@@ -21,10 +21,13 @@ if __name__ == "__main__":
 
     dataSet = hdata.DataClass_ST_Plate_Notch
     dataclass = copy.copy(dataSet)
+    axis = 'sp'
+    dataclass.target_channels = [f'curr_{axis}']
 
     model = mphy.ModelErd()
+    model.target_channel = f'curr_{axis}'
 
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model],
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name='Physical_Model_Erd')
+                        plot_types=['model_heatmap', 'prediction_overview'], experiment_name=f'Physical_Model_Erd_{axis}')

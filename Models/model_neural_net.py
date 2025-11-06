@@ -1546,10 +1546,10 @@ class PiRNN_unstable(mb.BaseTorchModel):
         Net
             An instance of the Net class configured with default parameters.
         """
-        return PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                      activation= 'ELU', optimizer_type= 'quasi_newton')
+        return LuGre_PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                           activation= 'ELU', optimizer_type= 'quasi_newton')
 
-class PiRNN(mb.BaseTorchModel):
+class LuGre_PiRNN(mb.BaseTorchModel):
     def __init__(
             self,
             input_size=None,
@@ -1628,7 +1628,7 @@ class PiRNN(mb.BaseTorchModel):
         axis = self.target_channel.replace('curr_', '')
         self.col_v = f'v_{axis}_1_current'
         self.col_a = f'a_{axis}_1_current'
-        self.col_F = f'f_{axis}_sim_1_current'
+        self.col_F = f'f_{axis}_sim_1_current' #_sim
         self.col_materialremoved = 'materialremoved_sim_1_current'
 
         if isinstance(X, pd.DataFrame):
@@ -1842,7 +1842,7 @@ class PiRNN(mb.BaseTorchModel):
     def get_documentation(self):
         """Gibt eine Dokumentation des Modells zurück."""
         doc = {
-            "model_type": "PhysicsInformedRNN_with_LinearRegression",
+            "model_type": "LuGre-PiRNN",
             "architecture": {
                 "linear_regression": "y_linear = w1*a + w2*v + w3*F (no bias, trained on |v|>1 & materialremoved>100)",
                 "rnn": "learns latent z from v",
@@ -1872,8 +1872,8 @@ class PiRNN(mb.BaseTorchModel):
         """
         Returns a reference neural network model with default parameters.
         """
-        return PiRNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
-                     activation='ELU', optimizer_type='quasi_newton')
+        return LuGre_PiRNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
+                           activation='ELU', optimizer_type='quasi_newton')
 
 
 class HybridModelResidual(mb.BaseModel):

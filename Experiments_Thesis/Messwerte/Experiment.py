@@ -22,13 +22,18 @@ if __name__ == '__main__':
     past_values = 0
     future_values = 0
 
+    axis = 'z'
+
     dataclass1 = copy.copy(hdata.DataClass_ST_Plate_Notch_Mes)
+    #dataclass1.header = ["v_x", "a_x", "f_x"]
     dataclass2 = copy.copy(hdata.DataClass_ST_Plate_Notch)
+    #dataclass2.header = ["v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
     dataClasses = [dataclass2, dataclass1]
     for dataclass in dataClasses:
         dataclass.add_padding = True
-        dataclass.add_sign_hold = True
+        dataclass.target_channels = [f'curr_{axis}']
+
 
     model_rf = RandomForestModel(n_estimators=384, max_depth=435, min_samples_split=4,
                                      min_samples_leaf=2)
@@ -36,10 +41,10 @@ if __name__ == '__main__':
     model_rnn = RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
                         activation='ELU', optimizer_type='quasi_newton')
 
-
-    models = [model_rf]
+    model_rnn.target_channel = dataclass1.target_channels
+    models = [model_rnn]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,
                         NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
-                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name='Messwerte_RF')
+                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name=f'Messwerte_RNN_{axis}')

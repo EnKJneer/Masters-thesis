@@ -47,13 +47,13 @@ def start_experiment():
     search_space = {
         "n_hidden_size": (1, 100),
         "n_hidden_layers": (1, 5),
-        "learning_rate": (0.001, 0.1),
+        "learning_rate": (0.01, 0.1),
         "activation": ["ReLU", "Sigmoid", "Tanh", "ELU"],
-        #"optimizer_type": ["adam", "quasi_newton"]
+        "optimizer_type": ["adam", "quasi_newton"]
     }
 
-    model = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                      activation= 'ELU', optimizer_type= 'quasi_newton')
+    model = mnn.LuGre_PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                            activation= 'ELU', optimizer_type= 'quasi_newton')
 
     print(f'Anzahl an trials: {NUMBEROFTRIALS}')
 

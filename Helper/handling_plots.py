@@ -27,6 +27,8 @@ class BasePlotter(ABC):
         self.known_material = known_material
         self.known_geometry = known_geometry
 
+        self.Metrik = 'nMAE'
+
         # KIT Farbpalette
         self.kit_red = "#D30015"
         self.kit_green = "#009682"
@@ -420,7 +422,7 @@ class HeatmapPlotter(BasePlotter):
                     text.set_color(text_colors[i, j])
 
         # Titel und Labels mit größerer Schrift
-        ax.set_title(f'nMAE Heatmap:{title}', fontsize=titlesize, fontweight='bold', pad=20, color=self.kit_dark_blue)
+        ax.set_title(f'{self.Metrik} Heatmap:{title}', fontsize=titlesize, fontweight='bold', pad=20, color=self.kit_dark_blue)
         ax.set_xlabel('Modell', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
         ax.set_ylabel('Test-Datensatz', fontsize=labelsize, fontweight='bold',
                       color=self.kit_dark_blue)
@@ -455,7 +457,7 @@ class HeatmapPlotter(BasePlotter):
 
         # Colorbar-Label vergrößern
         cbar = ax.collections[0].colorbar
-        cbar.set_label('nMAE', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
+        cbar.set_label(self.Metrik, fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
         cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
 
         # Colorbar Tick-Labels explizit färben
@@ -593,7 +595,7 @@ class ModelHeatmapPlotter(BasePlotter):
             # Titel und Labels mit größerer Schrift
             title = re.sub(r'([a-zA-Z]+)Sampler', r'\n\1Sampler', model_clean)
             #title = title.replace('Recurrent Neural Net', 'Rekurrentes neuronales Netz')
-            ax.set_title(f'nMAE Heatmap: {title}', fontsize=titlesize, fontweight='bold', pad=20,
+            ax.set_title(f'{self.Metrik} Heatmap: {title}', fontsize=titlesize, fontweight='bold', pad=20,
                          color=self.kit_dark_blue)
             ax.set_xlabel('Geometrie', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
             ax.set_ylabel('Material', fontsize=labelsize, fontweight='bold', color=self.kit_dark_blue)
@@ -631,7 +633,7 @@ class ModelHeatmapPlotter(BasePlotter):
 
             # Colorbar-Label vergrößern
             cbar = ax.collections[0].colorbar
-            cbar.set_label('nMAE', fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
+            cbar.set_label(self.Metrik, fontsize=textsize, fontweight='bold', color=self.kit_dark_blue)
             cbar.ax.tick_params(labelsize=labelsize, colors=self.kit_dark_blue)
             # Colorbar Tick-Labels explizit färben
             for label in cbar.ax.get_yticklabels():
@@ -647,9 +649,9 @@ class ModelHeatmapPlotter(BasePlotter):
 
         return plot_paths
 
-def calculate_mae_and_std(df, datapath, model_prefixes, ground_truth_column='GroundTruth'):
+def calculate_nmae_and_std(df, datapath, model_prefixes, ground_truth_column='GroundTruth'):
     """
-    Berechnet den nMAE und die Standardabweichung für alle Modelle mit den angegebenen Präfixen.
+    Berechnet den nRMSE und die Standardabweichung für alle Modelle mit den angegebenen Präfixen.
     Extrahiere Material und Geometrie aus dem DataPath.
 
     Args:
@@ -659,7 +661,7 @@ def calculate_mae_and_std(df, datapath, model_prefixes, ground_truth_column='Gro
         ground_truth_column: Name der Spalte mit den Ground Truth-Werten.
 
     Returns:
-        DataFrame mit den berechneten nMAE- und StdDev-Werten für jedes Modell, inkl. Material und Geometrie.
+        DataFrame mit den berechneten nRMSE- und StdDev-Werten für jedes Modell, inkl. Material und Geometrie.
     """
 
     results = []
@@ -676,7 +678,7 @@ def calculate_mae_and_std(df, datapath, model_prefixes, ground_truth_column='Gro
         rf_mse_values = []
         for col in model_columns:
             # RMSE berechnen
-            mae =  mean_absolute_error(df[ground_truth_column], df[col].fillna(0)) #
+            mae =  mean_absolute_error(df[ground_truth_column], df[col].fillna(0))
 
             # Mittelwert der tatsächlichen Werte
             mean_ground_truth = df[ground_truth_column].abs().mean()
@@ -917,6 +919,7 @@ def plot_time_series_with_sections(
     fontsize_axis_label = 16
     fontsize_title = 18
     line_size = 1.5
+    plot_line_size = 2
 
     # KIT-Farben
     kit_red = "#D30015"
@@ -936,7 +939,7 @@ def plot_time_series_with_sections(
     # Erstelle Figure mit zwei Achsen
     fig, (ax_v, ax_i) = plt.subplots(
         2, 1, figsize=(12, 10), dpi=dpi,
-        sharex=True, height_ratios=[1, 2],
+        sharex=True, height_ratios=[1, 3],
         gridspec_kw={'hspace': 0.05}
     )
 
@@ -947,37 +950,37 @@ def plot_time_series_with_sections(
     ax_v.spines['right'].set_visible(False)
     ax_v.spines['left'].set_color(kit_dark_blue)
     ax_v.spines['bottom'].set_color(kit_dark_blue)
-    ax_v.spines['left'].set_linewidth(1.0)
-    ax_v.spines['bottom'].set_linewidth(1.0)
+    ax_v.spines['left'].set_linewidth(line_size)
+    ax_v.spines['bottom'].set_linewidth(line_size)
 
     # Plot Vorschubgeschwindigkeit
     line_v, = ax_v.plot(time, data[v_colname], label=v_label,
-                       color=kit_blue, linewidth=2)
+                       color=kit_blue, linewidth=plot_line_size)
 
     # Grid und Achsenbeschriftung
     ax_v.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
     ax_v.set_axisbelow(True)
-    ax_v.tick_params(axis='both', colors=kit_dark_blue)
+    ax_v.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
 
     # Achsenbeschriftung
     xmin, xmax = ax_v.get_xlim()
     ymin, ymax = ax_v.get_ylim()
-    y_pos = -0.08 * ymax
+    y_pos = -0.2 * ymax
 
     # X-Achsenbeschriftung
     ax_v.annotate('', xy=(xmax, 0), xytext=(xmax*0.95, 0),
                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_v.text(xmax*0.95, y_pos, r'$t$ in s',
-             ha='left', va='center', color=kit_dark_blue, fontsize=12)
+             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
     # Y-Achsenbeschriftung
     x_label_pos_y = -0.06 * (xmax - xmin)
-    y_label_pos_y = ymax * 0.65
+    y_label_pos_y = ymax * 0.6
     ax_v.annotate('', xy=(0, ymax),
                  xytext=(0, ymax - 0.08*(ymax-ymin)),
                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_v.text(x_label_pos_y, y_label_pos_y - 0.04*(ymax-ymin), v_axis,
-             ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
     # ----- Unterer Plot (Stromvorhersage) -----
     ax_i.spines['left'].set_position('zero')
@@ -1042,7 +1045,7 @@ def plot_time_series_with_sections(
     ax_i.annotate('', xy=(xmax + arrow_length/2, 0), xytext=(xmax - arrow_length/2, 0),
                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_i.text(xmax*0.95, y_pos, r'$t$ in s',
-             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis)
+             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
     # Y-Achsenbeschriftung
     y_pos = ymax * 0.85
@@ -1054,7 +1057,7 @@ def plot_time_series_with_sections(
                  xytext=(0, ymax - arrow_length/2),
                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_i.text(x_pos, y_pos - 0.04*(ymax-ymin), label,
-             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis)
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
     # Titel über beiden Plots
     fig.suptitle(title, color=kit_dark_blue, fontsize=fontsize_title,
@@ -1298,6 +1301,7 @@ def plot_time_series_error_with_sections(
     fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
     print(f'Saved as {plot_path}')
+
 
 def plot_prediction_with_std(data, base_label, color, label=''):
     """

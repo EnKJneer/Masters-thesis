@@ -1,0 +1,96 @@
+{
+    "DataSets": [
+        {
+            "name": "ST_Plate_Notch",
+            "folder": "..\\..\\DataSets_DMC60H_Plate_Notch_Gear\\Data",
+            "training_data_paths": [
+                "DMC60H_S235JR_Plate_Normal_1.csv",
+                "DMC60H_S235JR_Plate_Normal_2.csv",
+                "DMC60H_S235JR_Plate_SF_1.csv",
+                "DMC60H_S235JR_Plate_Depth_1.csv",
+                "DMC60H_S235JR_Plate_SF_2.csv",
+                "DMC60H_S235JR_Plate_Depth_2.csv",
+                "DMC60H_S235JR_Plate_SF_3.csv",
+                "DMC60H_S235JR_Plate_Depth_3.csv"
+            ],
+            "validation_data_paths": [
+                "DMC60H_S235JR_Notch_Normal_1.csv",
+                "DMC60H_S235JR_Notch_Normal_2.csv",
+                "DMC60H_S235JR_Notch_Normal_3.csv",
+                "DMC60H_S235JR_Notch_Depth_1.csv",
+                "DMC60H_S235JR_Notch_Depth_2.csv",
+                "DMC60H_S235JR_Notch_Depth_3.csv",
+                "DMC60H_S235JR_Notch_SF_1.csv",
+                "DMC60H_S235JR_Notch_SF_2.csv",
+                "DMC60H_S235JR_Notch_SF_3.csv"
+            ],
+            "testing_data_paths": [
+                "DMC60H_AL2007T4_Gear_Normal_3.csv",
+                "DMC60H_AL2007T4_Plate_Normal_3.csv",
+                "DMC60H_S235JR_Gear_Normal_3.csv",
+                "DMC60H_S235JR_Plate_Normal_3.csv"
+            ],
+            "target_channels": [
+                "curr_y"
+            ],
+            "input_features": [
+                "v_sp",
+                "v_x",
+                "v_y",
+                "v_z",
+                "a_x",
+                "a_y",
+                "a_z",
+                "a_sp",
+                "f_x_sim",
+                "f_y_sim",
+                "f_z_sim",
+                "f_sp_sim",
+                "materialremoved_sim"
+            ],
+            "columns_to_integrate": null,
+            "add_sign_hold": false
+        }
+    ],
+    "Models": [
+        {
+            "Erd": {
+                "NUMBEROFMODELS": 10,
+                "description": "Implementation of Model Erd - Physics-based power prediction model.",
+                "model_equation": "P_total = Σ[θ_a·(a·v) + θ_v·(v²·sign(v)) + θ_f·(f·mrr) + θ_s·sign(v)] + θ_c",
+                "parameters": {
+                    "name": "Erd",
+                    "theta_a": {
+                        "x": 1,
+                        "y": 0.1,
+                        "z": 0.1,
+                        "sp": 0.1
+                    },
+                    "theta_v": {
+                        "x": 1,
+                        "y": 0.1,
+                        "z": 0.1,
+                        "sp": 0.1
+                    },
+                    "theta_f": {
+                        "x": 1,
+                        "y": 0.1,
+                        "z": 0.1,
+                        "sp": 0.1
+                    },
+                    "theta_s": {
+                        "x": 1,
+                        "y": 0.1,
+                        "z": 0.1,
+                        "sp": 0.1
+                    },
+                    "theta_c": 1
+                }
+            }
+        }
+    ],
+    "Data_Preprocessing": {
+        "batched_data": false,
+        "NUMBEROFEPOCHS": 800
+    }
+}

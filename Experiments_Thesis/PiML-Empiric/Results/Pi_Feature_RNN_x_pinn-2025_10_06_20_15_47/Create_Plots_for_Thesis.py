@@ -33,7 +33,7 @@ if __name__ == '__main__':
         if file.endswith('.csv'):
             df = pd.read_csv(f"Predictions/{file}")
             # MAE und StdDev für die Sampler berechnen
-            mae_std_df = hplot.calculate_mae_and_std(df, file, model_prefixes=model_prefixes)
+            mae_std_df = hplot.calculate_nmae_and_std(df, file, model_prefixes=model_prefixes)
             all_mae_std_dfs.append(mae_std_df)
 
     # Alle DataFrames zu einem einzigen DataFrame kombinieren

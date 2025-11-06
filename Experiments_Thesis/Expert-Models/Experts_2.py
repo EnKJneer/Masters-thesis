@@ -232,7 +232,7 @@ if __name__ == '__main__':
     dataSet = hdata.DataClass_ST_Plate_Notch
 
     dataclass1 = copy.copy(dataSet)
-    axis = 'x'
+    axis = 'z'
     dataclass1.target_channels = [f'curr_{axis}']
     dataclass1.header = [f"v_{axis}", f"a_{axis}", f"f_{axis}_sim", "materialremoved_sim"] # ["pos_x", "v_x", "a_x", "f_x_sim", "materialremoved_sim"]
 
@@ -256,7 +256,7 @@ if __name__ == '__main__':
     model.target_channel = dataclass1.target_channels
 
     model.name = 'Mixed_Experts_2'
-    models = [model,model_phys]#model_rnn,
+    models = [model,model_rnn,model_phys]
 
     # Run the experiment
     hexp.run_experiment(dataClasses, models=models,

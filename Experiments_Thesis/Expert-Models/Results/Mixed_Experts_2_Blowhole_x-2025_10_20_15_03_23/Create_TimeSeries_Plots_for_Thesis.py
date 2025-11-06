@@ -35,18 +35,16 @@ if __name__ == '__main__':
 
     y_configs = [
         {
-            'ycolname': 'ST_Plate_Notch_EmpiricLinearModel',
-            'ylabel': 'Empirisches Modell'
-        },
-        {
-            'ycolname': 'ST_Plate_Notch_Recurrent_Neural_Net',
-            'ylabel': 'RNN'
-        },
-        {
             'ycolname': 'ST_Plate_Notch_Mixed_Experts_2',
             'ylabel': 'Experten Modell'
         }
     ]
+
+    cut_offs = {'S235JR_Plate': (2, 40), # ST Plate
+               'S235JR_Gear': (2, 24),  # ST Gear
+               'AL2007T4_Plate': (2, 67),  # AL Plate
+               'AL2007T4_Gear': (2, 40),  # AL Gear
+                }
 
     for material in materials:
 
@@ -54,10 +52,11 @@ if __name__ == '__main__':
 
             data = []
             for path in paths:
-
+                cut_off = cut_offs[f'{material}_{geometry}']
                 file = f'DMC60H_{material}_{geometry}_Blowhole_3.csv'
-
-                data.append(pd.read_csv(f'{path}/{file}'))
+                df = pd.read_csv(f'{path}/{file}')
+                df = df.iloc[cut_off[0]*50:cut_off[1]*50]
+                data.append(df)
 
             df = pd.concat(data, axis=1).reset_index(drop=True)
 

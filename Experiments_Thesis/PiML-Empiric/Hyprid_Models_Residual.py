@@ -32,10 +32,10 @@ if __name__ == "__main__":
     model_rnn = mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    model_pirnn = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                      activation= 'ELU', optimizer_type= 'quasi_newton')
+    model_pirnn = mnn.LuGre_PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                                  activation= 'ELU', optimizer_type= 'quasi_newton')
 
-    model_hybrid_rnn = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_pirnn, name = 'Hybrid_PiRNN')
+    model_hybrid_rnn = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_rnn, name = 'Hybrid_RNN')
     model_hybrid_rf = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_rf, name = 'Hybrid_Random_Forest')
 
     use_rf = False
@@ -43,8 +43,8 @@ if __name__ == "__main__":
         models = [model_phys, model_rf, model_hybrid_rf] # , model_nn, model_hybrid_nn
         postfix = 'RF'
     else:
-        models = [model_hybrid_rnn, model_phys, model_pirnn]
-        postfix = 'PiRNN'
+        models = [model_rnn, model_phys, model_hybrid_rnn]
+        postfix = 'RNN'
 
     # Run the experiment
     hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,

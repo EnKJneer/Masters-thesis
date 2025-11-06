@@ -52,6 +52,13 @@ def plot_time_series(
     - Farbige Bereiche NUR für |v| < speed_threshold (rot/orange)
     - Gestrichelte Näherungslinien bei ±lane1 und ±^lane2
     """
+    fontsize_axis = 16
+    fontsize_axis_label = 16
+    fontsize_label = 14
+    fontsize_title = 20
+    line_size = 1.5
+    plot_line_size = 2
+
     # KIT-Farben
     kit_red = "#D30015"
     kit_green = "#009682"
@@ -84,7 +91,8 @@ def plot_time_series(
     alpha = 0.2
     for start, end in zip(starts, ends):
         z_segment = data[z_col].iloc[start:end+1]
-        if (z_segment > 0).any():
+        z_mean = np.mean(z_segment)
+        if (z_mean > 0):
             color = kit_red
         else:
             color = kit_orange
@@ -97,28 +105,28 @@ def plot_time_series(
     ax_v.spines['right'].set_visible(False)
     ax_v.spines['left'].set_color(kit_dark_blue)
     ax_v.spines['bottom'].set_color(kit_dark_blue)
-    ax_v.spines['left'].set_linewidth(1.0)
-    ax_v.spines['bottom'].set_linewidth(1.0)
+    ax_v.spines['left'].set_linewidth(line_size)
+    ax_v.spines['bottom'].set_linewidth(line_size)
 
-    line_v, = ax_v.plot(time, data[v_colname], label=v_label, color=kit_blue, linewidth=2)
+    line_v, = ax_v.plot(time, data[v_colname], label=v_label, color=kit_blue, linewidth=plot_line_size)
     ax_v.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
     ax_v.set_axisbelow(True)
-    ax_v.tick_params(axis='both', colors=kit_dark_blue)
+    ax_v.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
 
     # Achsenbeschriftung (Oberer Plot)
     xmin, xmax = ax_v.get_xlim()
     ymin, ymax = ax_v.get_ylim()
-    y_pos = -0.07 * ymax
+    y_pos = -0.2 * ymax
     ax_v.annotate('', xy=(xmax, 0), xytext=(xmax*0.95, 0),
-                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5))
-    ax_v.text(xmax*0.95, y_pos, r'$t$ in s', ha='left', va='center', color=kit_dark_blue, fontsize=12)
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
+    ax_v.text(xmax*0.95, y_pos, r'$t$ in s', ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
-    x_label_pos_y = -0.06 * (xmax - xmin)
+    x_label_pos_y = -0.08 * (xmax - xmin)
     y_label_pos_y = ymax * 0.65
     ax_v.annotate('', xy=(0, ymax), xytext=(0, ymax - 0.08*(ymax-ymin)),
-                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5))
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_v.text(x_label_pos_y, y_label_pos_y - 0.04*(ymax-ymin), v_axis,
-             ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
     # ----- Unterer Plot (Strom + f_x_sim) -----
     ax_i.spines['left'].set_position('zero')
@@ -131,7 +139,7 @@ def plot_time_series(
     ax_i.spines['bottom'].set_linewidth(1.0)
 
     # Plot Strom-Messwerte (primäre y-Achse)
-    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte', color=kit_dark_blue, linewidth=2)
+    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte', color=kit_dark_blue, linewidth=plot_line_size)
 
     # Zweite y-Achse für f_x_sim
     ax_i2 = ax_i.twinx()
@@ -140,10 +148,11 @@ def plot_time_series(
     ax_i2.spines['right'].set_linewidth(1.0)
     ax_i2.spines['top'].set_visible(False)
     ax_i2.spines['left'].set_visible(False)
-    ax_i2.tick_params(axis='y', colors=kit_blue)
+    ax_i2.spines['bottom'].set_visible(False)
+    ax_i2.tick_params(axis='y', colors=kit_blue, labelsize=fontsize_axis_label)
 
     # Plot f_x_sim
-    line_f, = ax_i2.plot(time, data[f_x_sim_col], label=f_x_sim_label, color=kit_blue, linewidth=2)
+    line_f, = ax_i2.plot(time, data[f_x_sim_col], label=f_x_sim_label, color=kit_blue, linewidth=plot_line_size)
 
     # ----- Symmetrische Achsengrenzen berechnen -----
     ymin_i, ymax_i = ax_i.get_ylim()
@@ -164,34 +173,34 @@ def plot_time_series(
     # Grid und Achsenbeschriftung
     ax_i.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
     ax_i.set_axisbelow(True)
-    ax_i.tick_params(axis='both', colors=kit_dark_blue)
+    ax_i.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
 
     # X-Achsenbeschriftung
     xmin, xmax = ax_i.get_xlim()
     ymin, ymax = ax_i.get_ylim()
     y_pos = -0.07 * ymax
     ax_i.annotate('', xy=(xmax, 0), xytext=(xmax*0.95, 0),
-                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5))
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_i.text(xmax*0.95, 1.5*y_pos, r'$t$ in s',
-             ha='left', va='center', color=kit_dark_blue, fontsize=12)
+             ha='left', va='center', color=kit_dark_blue, fontsize=fontsize_axis)
 
     # Y-Achsenbeschriftung (Strom)
     x_pos = -0.06 * (xmax - xmin)
     y_pos = ymax * 0.85
     ax_i.annotate('', xy=(0, ymax*1.05), xytext=(0, ymax*1.05 - 0.04*(ymax-ymin)),
-                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5))
+                 arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
     ax_i.text(x_pos, y_pos - 0.04*(ymax-ymin), label,
-             ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+             ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis)
 
     # Y-Achsenbeschriftung für f_x_sim
     ymin_f, ymax_f = ax_i2.get_ylim()
     ax_i2.annotate('', xy=(xmax*1.05, ymax_f*1.05), xytext=(xmax*1.05, ymax_f*1.05 - 0.04*(ymax_f-ymin_f)),
-                  arrowprops=dict(arrowstyle='->', color=kit_blue, lw=1.5))
+                  arrowprops=dict(arrowstyle='->', color=kit_blue, lw=line_size, mutation_scale=25))
     ax_i2.text(xmax, ymax_f * 0.85, f_x_sim_axis,
-              ha='left', va='center', color=kit_blue, fontsize=12)
+              ha='center', va='center', color=kit_blue, fontsize=fontsize_axis)
 
     # Titel
-    fig.suptitle(title, color=kit_dark_blue, fontsize=14, fontweight='bold', y=0.98)
+    fig.suptitle(title, color=kit_dark_blue, fontsize=fontsize_title, fontweight='bold', y=0.98)
 
     # Legende (inkl. Näherungslinien)
     legend_elements = [line_i, line_v, line_f]
@@ -225,6 +234,7 @@ def plot_time_series(
         facecolor='white',
         edgecolor=kit_dark_blue,
         framealpha=1.0,
+        fontsize=fontsize_label,
         bbox_to_anchor=(0.5, -0.05)
     )
 
@@ -237,7 +247,7 @@ def plot_time_series(
     # Speichern
     plot_path = os.path.join(path, filename)
     os.makedirs(path, exist_ok=True)
-    fig.savefig(plot_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    fig.savefig(plot_path + '.svg', dpi=dpi, bbox_inches='tight', facecolor='white')
     fig.savefig(plot_path + '.pdf', dpi=dpi, bbox_inches='tight', facecolor='white')
     plt.close(fig)
     print(f'Saved as {plot_path}')

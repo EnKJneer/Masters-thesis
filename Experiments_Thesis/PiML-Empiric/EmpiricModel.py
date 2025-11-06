@@ -20,7 +20,7 @@ if __name__ == "__main__":
     NUMBEROFMODELS = 10  # Bei RF mit festem random state nicht sinvoll
 
     dataSet = hdata.DataClass_ST_Plate_Notch
-    axis = 'y'
+    axis = 'sp'
     dataSet.target_channels = [f'curr_{axis}']
 
     dataclass = copy.copy(dataSet)

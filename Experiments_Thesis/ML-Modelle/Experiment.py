@@ -1,76 +1,46 @@
 import copy
-import datetime
-import json
-import os
 
-import numpy as np
 import pandas as pd
-import torch
-from scipy.optimize import curve_fit
-from torch import nn
-import Helper.handling_data as hdata
+import numpy as np
+
+from sklearn.metrics import mean_squared_error
 import Helper.handling_experiment as hexp
+import Helper.handling_data as hdata
+import Models.model_base as mb
+import Models.model_physical as mphys
 import Models.model_random_forest as mrf
 import Models.model_neural_net as mnn
 
-import copy
-import datetime
-import json
-import os
-import numpy as np
-import pandas as pd
-import torch
-from numpy.f2py.auxfuncs import throw_error
-from scipy.optimize import curve_fit
-from torch import nn
-import Helper.handling_data as hdata
-import Helper.handling_hyperopt as hyperopt
-import Helper.handling_experiment as hexp
-import Models.model_neural_net as mnn
-import Models.model_random_forest as mrf
+if __name__ == '__main__':
 
-
-def start_experiment_for(model_str = 'NN'):
     """ Constants """
-    NUMBEROFTRIALS = 216
+    NUMBEROFTRIALS = 250
     NUMBEROFEPOCHS = 1000
     NUMBEROFMODELS = 10
 
+    window_size = 1
+    past_values = 0
+    future_values = 0
+
     dataSet = hdata.DataClass_ST_Plate_Notch
-    dataclass = copy.copy(dataSet)
 
-    optimization_samplers = ["TPESampler", "GridSampler", "RandomSampler"] #
+    dataclass1 = copy.copy(dataSet)
+    axis = 'sp'
+    dataclass1.target_channels = [f'curr_{axis}']
 
-    # JSON-Datei laden
-    serach_spaces = hyperopt.load_search_spaces('..\\Hyperparameter.json')
+    dataClasses = [dataclass1]
+    for dataclass in dataClasses:
+        dataclass.add_padding = True
 
-    if model_str == 'RF':
-        #Random Forest
-        search_space = serach_spaces[model_str]
-        model = mrf.RandomForestModel()
+    model_rf = mrf.RandomForestModel(n_estimators=384, max_depth=435, min_samples_split=4,
+                                     min_samples_leaf=2)
 
-    elif model_str == 'NN' or model_str == 'LSTM' or model_str == 'RNN':
-        search_space = serach_spaces['NN']
-        if model_str == 'NN':
-            model = mnn.Net()
-        elif model_str == 'LSTM':
-            model = mnn.LSTM()
-            dataclass.add_padding = True
-        elif model_str == 'RNN':
-            model = mnn.RNN()
-            dataclass.add_padding = True
+    model_rnn = mnn.RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
+                        activation='ELU', optimizer_type='quasi_newton')
+    model = model_rf
+    models = [model]
 
-    else:
-        throw_error('string is not a valid model')
-
-    print(f'Anzahl an trials: {NUMBEROFTRIALS}')
     # Run the experiment
-    hexp.run_experiment_with_hyperparameteroptimization([dataclass], [model], [search_space],optimization_samplers = optimization_samplers,
-                        NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS, NUMBEROFTRIALS=NUMBEROFTRIALS,
-                        plot_types=['heatmap', 'prediction_overview', 'model_heatmap'], experiment_name=model.name)
-
-if __name__ == "__main__":
-    start_experiment_for('RF')
-    #start_experiment_for('NN')
-    #start_experiment_for('LSTM')
-    #start_experiment_for('RNN')
+    hexp.run_experiment(dataClasses, models=models,
+                        NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,
+                        plot_types=['heatmap', 'model_heatmap', 'prediction_overview'], experiment_name=model.name+'_'+axis)

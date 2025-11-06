@@ -29,8 +29,8 @@ if __name__ == "__main__":
     model_rnn = copy.deepcopy(mnn.RNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                     activation= 'ELU', optimizer_type= 'quasi_newton'))
 
-    model = mnn.PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                      activation= 'ELU', optimizer_type= 'quasi_newton')
+    model = mnn.LuGre_PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
+                            activation= 'ELU', optimizer_type= 'quasi_newton')
     model.target_channel = 'curr_y'
 
     # Run the experiment
