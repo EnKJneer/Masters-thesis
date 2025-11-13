@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import Helper.handling_timeseries_plots as hplottime
 
 def plot_time_series_with_variance(data_list, title, dpi=300, col_name='curr_x', label_axis='$I$ in A', f_a=50,
                                    filename = None, path = 'Plots'):
@@ -128,11 +129,15 @@ if material == 'S235JR':
 else:
     mat = 'Aluminium'
 # Plot erstellen
-plot_time_series_with_variance(
+hplottime.plot_time_series_with_variance(
     data_list,
     f'{mat} {geometry}: Varianz des Motorstroms (Versionen 1-3)',
     col_name='curr_x',
     label_axis='$I$ in A',
     dpi=600,
-    filename='Variance_' + file.replace('.csv', '')
+    filename='Variance_' + file.replace('.csv', '',),
+    fontsize_axis_label=18,
+fontsize_title = 22,
+line_size = 1.5,
+plot_line_size = 2
 )

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     dataSet = hdata.DataClass_ST_Plate_Notch
 
     dataclass1 = copy.copy(dataSet)
-    axis = 'sp'
+    axis = 'z'
     dataclass1.target_channels = [f'curr_{axis}']
 
     dataClasses = [dataclass1]
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     model_rnn = mnn.RNN(learning_rate=0.1, n_hidden_size=71, n_hidden_layers=1,
                         activation='ELU', optimizer_type='quasi_newton')
-    model = model_rf
+    model = model_rnn
     models = [model]
 
     # Run the experiment

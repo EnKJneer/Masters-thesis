@@ -19,7 +19,7 @@ if __name__ == '__main__':
         'ST_Plate_Notch_Thermo',
     ]
     new_names ={
-        'ST_Plate_Notch_Thermo': 'Verbessertes Modell',
+        'ST_Plate_Notch_Thermo': '\nVerbessertes Modell',
     }
 
     # Liste für alle DataFrames mit MAE/StdDev

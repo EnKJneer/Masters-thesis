@@ -18,6 +18,7 @@ from numpy.exceptions import AxisError
 from numpy.f2py.auxfuncs import throw_error
 from sklearn.metrics import mean_absolute_error
 
+import Helper.handling_timeseries_plots as hplottime
 import Helper.handling_hyperopt as hyperopt
 import Helper.handling_data as hdata
 import Models.model_neural_net as mnn
@@ -256,9 +257,10 @@ if __name__ == '__main__':
             else:
                 mat = 'Stahl'
 
-            plot_time_series(df, f'{mat} {geometry}: Stromverlauf der Vorschubachse in x-Richtung',
+            hplottime.plot_time_series_sections(df, f'{mat} {geometry}:\nStromverlauf der Vorschubachse in x-Richtung',
                              f'Verlauf_{material}_{geometry}',
-                             col_name='curr_x', label='$I$\nin A', dpi=600,
-                             y_configs=y_configs, path='Plots_Thesis')
-
-
+                             col_name='curr_x', dpi=600,
+                             y_configs=y_configs, path='Plots_Thesis',
+                                       fontsize_axis=22, fontsize_axis_label=24,
+                                       fontsize_title=28,
+                                       )

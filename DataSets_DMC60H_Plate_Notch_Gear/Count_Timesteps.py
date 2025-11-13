@@ -21,11 +21,13 @@ def umbenennen(name):
 # Verzeichnis, in dem die Dateien liegen (hier: aktuelles Verzeichnis)
 verzeichnis = "Data"
 
+dateinamen = os.listdir(verzeichnis)
+
 # Durch jede Datei iterieren
 for alter_name in dateinamen:
     neuer_name = umbenennen(alter_name)
     pfad = os.path.join(verzeichnis, neuer_name + ".csv")
-
+    pfad = os.path.join(verzeichnis,alter_name)
     # Prüfen, ob die Datei existiert
     if os.path.exists(pfad):
         # Datei laden

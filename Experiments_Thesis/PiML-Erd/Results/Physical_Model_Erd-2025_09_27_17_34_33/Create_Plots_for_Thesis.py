@@ -19,7 +19,7 @@ if __name__ == '__main__':
         'ST_Plate_Notch_Erd',
     ]
     new_names ={
-        'ST_Plate_Notch_Erd': 'Modell von Erd',
+        'ST_Plate_Notch_Erd':'Modell von Erd',
     }
 
 
@@ -52,6 +52,6 @@ if __name__ == '__main__':
     plotter = hplot.ModelHeatmapPlotter(output_dir='Plots_Thesis')
 
     # Heatmaps für jedes Modell erstellen
-    plot_paths = plotter.create_plots(df=combined_mae_std_df, new_names=new_names, title='Modell von Erd')
+    plot_paths = plotter.create_plots(df=combined_mae_std_df, new_names=new_names, title='\nModell von Erd')
 
     print(f"Heatmaps wurden erstellt: {plot_paths}")

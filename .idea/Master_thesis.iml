@@ -6,8 +6,6 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/Archiv" />
       <excludeFolder url="file://$MODULE_DIR$/Data" />
-      <excludeFolder url="file://$MODULE_DIR$/DataSets_CMX_Plate_Notch_Gear" />
-      <excludeFolder url="file://$MODULE_DIR$/DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear/DataDT9836_50Hz" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear/DataMerged" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear/DataSets_CMX_Plate_Notch_Gear" />
@@ -20,10 +18,12 @@
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/DataSinumerik_50Hz" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/Plots" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Anomalien/RawData" />
-      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/Data" />
-      <excludeFolder url="file://$MODULE_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/DataSimulated" />
       <excludeFolder url="file://$MODULE_DIR$/DataSets_Reference" />
       <excludeFolder url="file://$MODULE_DIR$/Plots_Masterarbeit" />
+      <excludeFolder url="file://$MODULE_DIR$/Archiv/DataSets_CMX_Plate_Notch_Gear" />
+      <excludeFolder url="file://$MODULE_DIR$/Archiv/DataSets_CMX_Plate_Notch_Gear_Reference_Hanlin_old_MRR" />
+      <excludeFolder url="file://$MODULE_DIR$/Archiv/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/Data" />
+      <excludeFolder url="file://$MODULE_DIR$/Archiv/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/DataSimulated" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (Code)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

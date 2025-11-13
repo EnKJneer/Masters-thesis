@@ -37,8 +37,8 @@ if __name__ == '__main__':
         ]
         new_names ={
             '1_no_cont_dev_Recurrent_Neural_Net': 'RNN',
-            '2_with_cont_dev_Recurrent_Neural_Net': 'RNN\nmit Regeldifferenz',
-            '3_int_cont_dev_Recurrent_Neural_Net': 'RNN\nmit integrierter\nRegeldifferenz',
+            '2_with_cont_dev_Recurrent_Neural_Net': 'RNN mit\nRegeldifferenz',
+            '3_int_cont_dev_Recurrent_Neural_Net': 'RNN mit\nintegrierter\nRegeldifferenz',
         }
 
     # Liste für alle DataFrames mit MAE/StdDev

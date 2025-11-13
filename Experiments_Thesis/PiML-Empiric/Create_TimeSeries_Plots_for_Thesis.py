@@ -21,6 +21,7 @@ from numpy.f2py.auxfuncs import throw_error
 from sklearn.metrics import mean_absolute_error
 import Helper.handling_hyperopt as hyperopt
 import Helper.handling_data as hdata
+import Helper.handling_timeseries_plots as hplottime
 import Models.model_neural_net as mnn
 import Models.model_random_forest as mrf
 from matplotlib.colors import LinearSegmentedColormap
@@ -52,10 +53,10 @@ def plot_time_series(
     - Farbige Bereiche NUR für |v| < speed_threshold (rot/orange)
     - Gestrichelte Näherungslinien bei ±lane1 und ±^lane2
     """
-    fontsize_axis = 16
-    fontsize_axis_label = 16
-    fontsize_label = 14
-    fontsize_title = 20
+    fontsize_axis = 24
+    fontsize_axis_label = 24
+    fontsize_label = 22
+    fontsize_title = 28
     line_size = 1.5
     plot_line_size = 2
 
@@ -72,7 +73,7 @@ def plot_time_series(
     time = data.index / f_a
     fig, (ax_v, ax_i) = plt.subplots(
         2, 1, figsize=(12, 10), dpi=dpi,
-        sharex=True, height_ratios=[1, 2],
+        sharex=True, height_ratios=[1, 3],
         gridspec_kw={'hspace': 0.05}
     )
 
@@ -229,7 +230,7 @@ def plot_time_series(
         handles=legend_elements,
         labels=legend_labels,
         loc='lower center',
-        ncol=4,  # 4 Spalten für bessere Lesbarkeit
+        ncol=3,  # 4 Spalten für bessere Lesbarkeit
         frameon=True,
         facecolor='white',
         edgecolor=kit_dark_blue,
@@ -295,6 +296,13 @@ if __name__ == '__main__':
         'Results/EmpiricModel-2025_10_07_09_23_22/Predictions',
     ]
 
+    y_configs = [
+        {
+            'ycolname': 'ST_Plate_Notch_PiRNN',
+            'ylabel': 'LuGre-PiRNN'
+        },
+    ]
+
     for material in materials:
         for geometry in geometries:
             data = []
@@ -311,12 +319,21 @@ if __name__ == '__main__':
 
             plot_time_series(
                 df,
-                f'{mat} {geometry}: Einflüsse auf den Stromverlauf',
+                f'{mat} {geometry}:\nEinflüsse auf den Stromverlauf',
                 f'Verlauf_{material}_{geometry}_mit_Vorschub',
                 col_name='curr_x',
                 label='$I$\nin A',
                 v_colname='v_x',
                 v_label='Vorschubgeschwindigkeit',
                 v_axis='$v$\nin m/s',
-                dpi=600
+                dpi=600,
+
             )
+            hplottime.plot_time_series_sections(df,
+                f'{mat} {geometry}:\nEinflüsse auf den Stromverlauf',
+                f'Verlauf_{material}_{geometry}_mit_Vorschub',
+                             col_name='curr_x', label='Strom-Messwerte', dpi=600,
+                             y_configs=y_configs, path='Plots_Thesis',
+                             fontsize_axis=22, fontsize_axis_label=24,
+                             fontsize_title=28,
+                             )

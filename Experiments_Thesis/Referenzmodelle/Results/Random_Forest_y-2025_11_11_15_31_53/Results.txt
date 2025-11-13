@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+Reference            | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.172296 | 0.003034
+Reference            | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.151957 | 0.002409
+Reference            | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.111284 | 0.000501
+Reference            | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.044176 | 0.000078

@@ -26,8 +26,8 @@ if __name__ == '__main__':
         ]
         new_names ={
             '1_no_cont_dev_Random_Forest': 'Random Forest',
-            '2_with_cont_dev_Random_Forest': 'Random Forest\nmit Messwerten',
-            '3_int_cont_dev_Random_Forest': 'Random Forest\nmit integrierter\nRegeldifferenz'
+            '2_with_cont_dev_Random_Forest': 'Random Forest mit\nRegeldifferenz',
+            '3_int_cont_dev_Random_Forest': 'Random Forest mit\nintegrierter\nRegeldifferenz'
         }
     else:
         model_prefixes = [

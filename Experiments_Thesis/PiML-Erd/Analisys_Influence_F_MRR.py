@@ -38,7 +38,7 @@ class CorrelationPlotter:
             'f_sp_sim': {'axis': 'F\nin N', 'title': 'Spindelkraft', 'unit': 'N'},
             # Materialentfernung
             'materialremoved_sim': {
-                'axis': 'MRR in mm³/s',
+                'axis': 'MRR\nin mm³/s',
                 'title': 'MRR',
                 'unit': 'mm³/s'
             },
@@ -71,12 +71,12 @@ class CorrelationPlotter:
         """Konfiguriert den Standard-Plot-Stil"""
         plt.rcParams.update({
             'font.size': 14,
-            'axes.titlesize': 18,
-            'axes.labelsize': 16,
-            'xtick.labelsize': 14,
-            'ytick.labelsize': 14,
-            'legend.fontsize': 14,
-            'figure.titlesize': 20,
+            'axes.titlesize': 34,
+            'axes.labelsize': 30,
+            'xtick.labelsize': 28,
+            'ytick.labelsize': 28,
+            'legend.fontsize': 28,
+            'figure.titlesize': 34,
             'figure.dpi': 120,
             'lines.linewidth': 2.5,
             'axes.grid': True,
@@ -206,22 +206,22 @@ class CorrelationPlotter:
         correlation_text = f"Korrelation: {correlation:.3f}"
         plt.title(
             f'{meta2["title"]} zu {meta1["title"]} \n{correlation_text}',
-            fontsize=20,
+            fontsize=32,
             pad=25,
             color=self.kit_dark_blue,
             weight='bold'
         )
         plt.xlabel(
             meta1["axis"],
-            fontsize=16,
+            fontsize=28,
             color=self.kit_dark_blue,
-            labelpad=15
+            labelpad=20
         )
         plt.ylabel(
             meta2["axis"],
-            fontsize=16,
+            fontsize=28,
             color=self.kit_dark_blue,
-            labelpad=15,
+            labelpad=45,
             rotation=0
         )
 
@@ -231,7 +231,7 @@ class CorrelationPlotter:
             axis='both',
             which='both',
             colors=self.kit_dark_blue,
-            labelsize=14,
+            #labelsize=14,
             length=5,
             width=1.5
         )

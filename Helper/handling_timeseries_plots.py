@@ -50,11 +50,11 @@ def setup_subplots(
     plot_line_size: float,
     kit_blue: str,
     v_label: str,
-    fontsize_axis_label: int,
+    fontsize_axis: int,
 ) -> tuple:
     """Erstellt die Grundstruktur der Plots (Achsen, Stile, etc.)."""
     fig, (ax_v, ax_i) = plt.subplots(
-        2, 1, figsize=(12, 10), dpi=300,
+        2, 1, figsize=(14, 12), dpi=300,
         sharex=True, height_ratios=[1, 3],
         gridspec_kw={'hspace': 0.05}
     )
@@ -75,8 +75,8 @@ def setup_subplots(
     ax_v.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
     ax_i.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
     ax_v.set_axisbelow(True)
-    ax_v.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
-    ax_i.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis_label)
+    ax_v.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis)
+    ax_i.tick_params(axis='both', colors=kit_dark_blue, labelsize=fontsize_axis)
 
     return fig, ax_v, ax_i, line_v
 
@@ -92,7 +92,7 @@ def plot_v_and_i(
 ) -> List[plt.Line2D]:
     """Plottet Strom-Messwerte und zusätzliche y-Achsen."""
     lines_pred = []
-    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte', color=kit_blue, linewidth=plot_line_size)
+
 
     if y_configs is None:
         y_configs = []
@@ -102,6 +102,8 @@ def plot_v_and_i(
         line, _ = plot_prediction_with_std(data, config['ycolname'], color, config['ylabel'])
         if line is not None:
             lines_pred.append(line)
+
+    line_i, = ax_i.plot(time, data[col_name], label='Strom-Messwerte', color=kit_blue, linewidth=plot_line_size)
 
     return [line_i] + lines_pred
 
@@ -162,7 +164,7 @@ def add_axes_labels(
     # X-Achsenbeschriftung (ax_i)
     xmin, xmax = ax_i.get_xlim()
     ymin, ymax = ax_i.get_ylim()
-    x_pos = -0.08 * (xmax - xmin)
+    x_pos = -0.125 * (xmax - xmin)
     y_pos = -0.15 * ymax
     arrow_length = 0.04 * (xmax - xmin)
     ax_i.set_xlim(left=min(x_pos, xmin), right=xmax + arrow_length/2)
@@ -176,7 +178,7 @@ def add_axes_labels(
     ax_i.set_ylim(bottom=min(y_pos, ymin), top=ymax + arrow_length / 2)
     ax_i.annotate('', xy=(0, ymax + arrow_length/2), xytext=(0, ymax - arrow_length/2),
                  arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=line_size, mutation_scale=25))
-    ax_i.text(x_pos, y_pos - 0.04*(ymax-ymin), label,
+    ax_i.text(x_pos, y_pos - 0.06*(ymax-ymin), label,
              ha='center', va='bottom', color=kit_dark_blue, fontsize=fontsize_axis_label)
 
 
@@ -206,10 +208,12 @@ def add_legend_and_save(
             facecolor='white',
             edgecolor=kit_dark_blue,
             framealpha=1.0,
-            fontsize=fontsize_axis_label
+            fontsize=fontsize_axis_label,
+            bbox_to_anchor=(0.5, -0.1),  # Position unterhalb des Plots
         )
 
     fig.suptitle(title, color=kit_dark_blue, fontsize=fontsize_title, fontweight='bold', y=0.98)
+    fig.tight_layout(rect=[0, 0.05, 1, 0.96])
     plot_path = os.path.join(path, filename)
     os.makedirs(path, exist_ok=True)
     for type in data_types:
@@ -270,15 +274,16 @@ def plot_time_series_with_sections(
     path: str = 'Plots',
     v_colname: str = 'v_x',
     v_label: str = 'Vorschubgeschwindigkeit',
-    v_axis: str = 'v in m/s',
+    v_axis: str = 'v\nin m/s',
     v_threshold: float = 1.0,
     data_types=['.svg', '.pdf'],
+        fontsize_axis: int = 14,
+        fontsize_axis_label: int = 16,
+        fontsize_title: int = 18,
+        add_v_axis: bool = True,
 ) -> None:
     """Erstellt einen DIN 461 konformen Zeitverlaufsplan (ursprüngliche Variante)."""
     # Konfigurationen
-    fontsize_axis = 14
-    fontsize_axis_label = 16
-    fontsize_title = 18
     line_size = 1.5
     plot_line_size = 2
     y_colors = [KIT_RED, KIT_ORANGE, KIT_MAGENTA, KIT_YELLOW, KIT_GREEN]
@@ -318,7 +323,79 @@ def plot_time_series_with_sections(
     legend_labels.append(f'|v| < {v_threshold} m/s')
 
     add_legend_and_save(
-        fig, ax_i, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis_label,
+        fig, ax_i, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis,
+        filename, path, dpi, data_types
+    )
+
+def plot_time_series_sections(
+        data: pd.DataFrame,
+        title: str,
+        filename: str,
+        dpi: int = 300,
+        col_name: str = 'curr_x',
+        axis_name: str = '$I$ in A',
+        label: str = 'Strom-Messwerte',
+        speed_threshold: float = 1.0,
+        f_a: int = 50,
+        path: str = 'Plots',
+        y_configs: List[Dict[str, str]] = None,
+        data_types=['.svg', '.pdf'],
+        fontsize_axis: int=16,
+        fontsize_axis_label: int = 16,
+        fontsize_label: int = 14,
+        fontsize_title: int = 18,
+        line_size: int = 1.5,
+        plot_line_size: int = 2,
+        v_colname: str = 'v_x',
+        v_threshold: float = 1.0,
+) -> None:
+    """Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
+    - Oberem Plot: Vorschubgeschwindigkeit (eingefärbt nach Vorzeichen der Kraft)
+    - Unterem Plot: Strom (eingefärbt nach z für |v| < speed_threshold)
+    - Unterstützung für y_configs im unteren Plot
+    """
+    # Konfigurationen
+
+    y_colors = [KIT_RED, KIT_ORANGE, KIT_MAGENTA, KIT_YELLOW, KIT_GREEN]
+
+    # Zeitachse
+    time = data.index / f_a
+
+    # ----- Plot aufbauen (zwei Achsen: oben für Vorschubgeschwindigkeit, unten für Strom) -----
+    fig, ax = setup_plot(
+        KIT_DARK_BLUE, line_size, fontsize_axis
+    )
+    # Bereiche mit |v| < v_threshold markieren
+    v_abs = np.abs(data[v_colname])
+    low_speed_mask = v_abs < v_threshold
+    diff = np.diff(low_speed_mask.astype(int))
+    starts = np.where(diff == 1)[0] + 1
+    ends = np.where(diff == -1)[0]
+    if low_speed_mask.iloc[0]:
+        starts = np.insert(starts, 0, 0)
+    if low_speed_mask.iloc[-1]:
+        ends = np.append(ends, len(low_speed_mask) - 1)
+
+    for start, end in zip(starts, ends):
+        ax.axvspan(time[start], time[end], color=KIT_GREEN, alpha=0.2, linewidth=0)
+
+    # ----- Plot für Strom-Messwerte und y_configs -----
+    lines_pred = plot_y_configs(ax, data, y_configs, y_colors, time, plot_line_size)
+    line_i, = ax.plot(time, data[col_name], label=label, color=KIT_BLUE, linewidth=plot_line_size)
+
+    # ----- Achsenbeschriftungen -----
+    add_axes_labels(ax, axis_name, KIT_DARK_BLUE, fontsize_axis_label, line_size)
+
+    # ----- Legende -----
+    legend_elements = lines_pred + [line_i]
+    legend_labels = [line.get_label() for line in legend_elements]
+
+    legend_elements.append(Patch(facecolor=KIT_GREEN, alpha=0.2, label=f'Bereiche mit |v| < {v_threshold} m/s'))
+    legend_labels.append(f'|v| < {v_threshold} m/s')
+
+    # ----- Titel, Legende und Speichern -----
+    add_legend_and_save(
+        fig, ax, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis_label,
         filename, path, dpi, data_types
     )
 
@@ -338,12 +415,12 @@ def plot_time_series_with_sections_force_colored(
     v_threshold: float = 1.0,
     force_colname: str = 'F_x',
     data_types = ['.svg', '.pdf'],
+        fontsize_axis: int = 14,
+        fontsize_axis_label: int = 16,
+        fontsize_title: int = 18
 ) -> None:
     """Erstellt einen DIN 461 konformen Zeitverlaufsplan mit Kraft-Einfärbung (neue Variante)."""
     # Konfigurationen
-    fontsize_axis = 14
-    fontsize_axis_label = 16
-    fontsize_title = 18
     line_size = 1.5
     plot_line_size = 2
     y_colors = [KIT_RED, KIT_ORANGE, KIT_MAGENTA, KIT_YELLOW, KIT_GREEN]
@@ -404,7 +481,7 @@ def plot_time_series_with_sections_force_colored(
     ])
 
     add_legend_and_save(
-        fig, ax_i, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis_label,
+        fig, ax_i, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis,
         filename, path, dpi, data_types
     )
 
@@ -422,12 +499,12 @@ def plot_time_series_error_with_sections(
     v_label: str = 'Vorschubgeschwindigkeit',
     v_axis: str = 'v in m/s',
     v_threshold: float = 1.0,
+    fontsize_axis: int =14,
+    fontsize_axis_label: int  = 16,
+    fontsize_title: int  = 18
 ) -> None:
     """Erstellt einen DIN 461 konformen Zeitverlaufsplan mit Fehlerdarstellung auf zwei y-Achsen."""
     # Konfigurationen
-    fontsize_axis = 14
-    fontsize_axis_label = 16
-    fontsize_title = 18
     line_size = 1.5
     plot_line_size = 2
     y_colors = [KIT_RED, KIT_ORANGE, KIT_MAGENTA, KIT_YELLOW, KIT_GREEN]
@@ -647,7 +724,7 @@ def plot_time_series_with_sections_colored(
 
     # ----- Titel, Legende und Speichern -----
     add_legend_and_save(
-        fig, ax_i, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis_label,
+        fig, ax_i, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis,
         filename, path, dpi, data_types
     )
 
@@ -657,12 +734,19 @@ def plot_time_series(
         filename: str,
         dpi: int = 300,
         col_name: str = 'curr_x',
-        label: str = '$I$ in A',
+        axis_name: str = '$I$ in A',
+        label: str = 'Strom-Messwerte',
         speed_threshold: float = 1.0,
         f_a: int = 50,
         path: str = 'Plots',
         y_configs: List[Dict[str, str]] = None,
-        data_types=['.svg', '.pdf']
+        data_types=['.svg', '.pdf'],
+        fontsize_axis: int=16,
+        fontsize_axis_label: int = 16,
+        fontsize_label: int = 14,
+        fontsize_title: int = 18,
+        line_size: int = 1.5,
+        plot_line_size: int = 2
 ) -> None:
     """Erstellt einen DIN 461 konformen Zeitverlaufsplan mit:
     - Oberem Plot: Vorschubgeschwindigkeit (eingefärbt nach Vorzeichen der Kraft)
@@ -670,12 +754,7 @@ def plot_time_series(
     - Unterstützung für y_configs im unteren Plot
     """
     # Konfigurationen
-    fontsize_axis = 16
-    fontsize_axis_label = 16
-    fontsize_label = 14
-    fontsize_title = 18
-    line_size = 1.5
-    plot_line_size = 2
+
     y_colors = [KIT_RED, KIT_ORANGE, KIT_MAGENTA, KIT_YELLOW, KIT_GREEN]
 
     # Zeitachse
@@ -683,15 +762,15 @@ def plot_time_series(
 
     # ----- Plot aufbauen (zwei Achsen: oben für Vorschubgeschwindigkeit, unten für Strom) -----
     fig, ax = setup_plot(
-        KIT_DARK_BLUE, line_size, fontsize_axis_label
+        KIT_DARK_BLUE, line_size, fontsize_axis
     )
 
     # ----- Plot für Strom-Messwerte und y_configs -----
     lines_pred = plot_y_configs(ax, data, y_configs, y_colors, time, plot_line_size)
-    line_i, = ax.plot(time, data[col_name], label='Strom-Messwerte', color=KIT_BLUE, linewidth=plot_line_size)
+    line_i, = ax.plot(time, data[col_name], label=label, color=KIT_BLUE, linewidth=plot_line_size)
 
     # ----- Achsenbeschriftungen -----
-    add_axes_labels(ax, label, KIT_DARK_BLUE, fontsize_axis_label, line_size)
+    add_axes_labels(ax, axis_name, KIT_DARK_BLUE, fontsize_axis_label, line_size)
 
     # ----- Legende -----
     legend_elements = lines_pred + [line_i]
@@ -706,6 +785,54 @@ def plot_time_series(
 
     # ----- Titel, Legende und Speichern -----
     add_legend_and_save(
-        fig, ax, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis_label,
+        fig, ax, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title, fontsize_axis,
         filename, path, dpi, data_types
     )
+
+def plot_time_series_with_variance(data_list, title, dpi=300, col_name='curr_x', label_axis='$I$ in A', f_a=50,
+                                   filename=None, path='Plots',    fontsize_axis_label = 14,
+    fontsize_title = 16,
+    line_size = 1.5,
+    plot_line_size = 2):
+    """
+    Erstellt einen DIN 461 konformen Zeitverlaufsplot mit Mittelwert, Standardabweichung und Originalkurven.
+    :param data_list: Liste von DataFrames (jeweils eine Version)
+    :param title: Titel des Plots
+    :param dpi: Auflösung des Plots
+    :param col_name: Spaltenname der zu plottenden Daten (z.B. 'curr_x')
+    :param label_axis: Beschriftung der y-Achse
+    :param f_a: Abtastrate für die Zeitachse
+    :param filename: Dateiname zum Speichern
+    :param path: Pfad zum Speichern
+    """
+    # Konfigurationen
+
+    # Minimale Länge der Datenreihen bestimmen
+    min_length = min(len(df[col_name]) for df in data_list)
+    # Daten auf minimale Länge kürzen
+    truncated_data = [df[col_name][:min_length] for df in data_list]
+    # Zeitachse erstellen
+    time = np.arange(min_length) / f_a
+    # Mittelwert und Standardabweichung berechnen
+    mean_values = np.mean(truncated_data, axis=0)
+    std_values = np.std(truncated_data, axis=0)
+    # Plot aufbauen
+    fig, ax = setup_plot(KIT_DARK_BLUE, line_size, fontsize_axis_label)
+    # Originalkurven (transparent) plotten
+    colors = [KIT_RED, KIT_ORANGE, KIT_MAGENTA]
+    lines_original = []
+    for i, values in enumerate(truncated_data):
+        line, = ax.plot(time, values, color=colors[i], alpha=0.3, linewidth=1, label=f'Version {i + 1}')
+        lines_original.append(line)
+    # Mittelwert plotten
+    line_mean, = ax.plot(time, mean_values, label='Mittelwert', color=KIT_BLUE, linewidth=plot_line_size)
+    # Standardabweichung als Schatten darstellen
+    ax.fill_between(time, mean_values - std_values, mean_values + std_values,
+                    color=KIT_BLUE, alpha=0.2, label='±1 Std.-Abw.')
+    # Achsenbeschriftungen hinzufügen
+    add_axes_labels(ax, label_axis, KIT_DARK_BLUE, fontsize_axis_label, line_size)
+    # Legende und speichern
+    legend_elements = lines_original + [line_mean, Patch(facecolor=KIT_BLUE, alpha=0.2, label='±1 Std.-Abw.')]
+    legend_labels = [line.get_label() for line in lines_original] + ['Mittelwert', '±1 Std.-Abw.']
+    add_legend_and_save(fig, ax, legend_elements, legend_labels, title, KIT_DARK_BLUE, fontsize_title,
+                        fontsize_axis_label, filename, path, dpi)

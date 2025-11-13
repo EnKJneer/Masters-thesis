@@ -1,0 +1,9 @@
+EXPERIMENT RESULTS
+================================================================================
+
+DataSet              | DataPath        | Model           | MAE        | StdDev    
+--------------------------------------------------------------------------------
+ST_Plate_Notch       | DMC60H_AL2007T4_Gear_Normal_3 | Random_Forest   | 0.104808 | 0.002090
+ST_Plate_Notch       | DMC60H_AL2007T4_Plate_Normal_3 | Random_Forest   | 0.076014 | 0.001882
+ST_Plate_Notch       | DMC60H_S235JR_Gear_Normal_3 | Random_Forest   | 0.108858 | 0.000622
+ST_Plate_Notch       | DMC60H_S235JR_Plate_Normal_3 | Random_Forest   | 0.043943 | 0.000083

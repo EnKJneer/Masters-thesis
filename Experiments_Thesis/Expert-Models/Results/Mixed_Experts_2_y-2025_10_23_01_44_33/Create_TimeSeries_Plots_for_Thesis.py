@@ -73,7 +73,7 @@ if __name__ == '__main__':
             axis = "y"
             hplott.plot_time_series(df, f'{mat} {geometry}: Stromverlauf der Vorschubachse in {axis}-Richtung',
                              f'Verlauf_{material}_{geometry}',
-                             col_name=f'curr_{axis}', label='$I$\nin A', dpi=600,
-                             y_configs=y_configs, path='Plots_Thesis')
+                                    col_name=f'curr_{axis}', axis_name='$I$\nin A', dpi=600,
+                                    y_configs=y_configs, path='Plots_Thesis')
 
 

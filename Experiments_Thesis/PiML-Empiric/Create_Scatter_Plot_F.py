@@ -1,5 +1,5 @@
 from collections import deque
-
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -64,7 +64,7 @@ def plot_scatter_fx_vs_curr(
     # Grid und Ticks
     ax.grid(True, color=kit_dark_blue, alpha=0.3, linewidth=0.5)
     ax.set_axisbelow(True)
-    ax.tick_params(axis='both', colors=kit_dark_blue)
+    ax.tick_params(axis='both', colors=kit_dark_blue, labelsize=22)
 
     # Achsenbeschriftung (manuell, wie in deiner Vorlage)
     xmin, xmax = ax.get_xlim()
@@ -72,30 +72,30 @@ def plot_scatter_fx_vs_curr(
 
     # X-Achse (curr_x)
     ax.annotate('', xy=(xmax, 0), xytext=(xmax*0.95, 0),
-                arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5))
+                arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5, mutation_scale=25))
     ax.text(xmax*0.95, -0.07*ymax, r'$I$ in A',
-            ha='left', va='center', color=kit_dark_blue, fontsize=12)
+            ha='left', va='center', color=kit_dark_blue, fontsize=20)
 
     # Y-Achse (f_x_sim)
     ax.annotate('', xy=(0, ymax), xytext=(0, ymax*0.95),
-                arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5))
-    ax.text(-0.06*(xmax-xmin), ymax*0.85, r'$F$ in N',
-            ha='center', va='bottom', color=kit_dark_blue, fontsize=12)
+                arrowprops=dict(arrowstyle='->', color=kit_dark_blue, lw=1.5, mutation_scale=25))
+    ax.text(-0.1*(xmax-xmin), ymax*0.8, r'$F$ in N',
+            ha='center', va='bottom', color=kit_dark_blue, fontsize=20)
 
     # Titel
-    fig.suptitle(title, color=kit_dark_blue, fontsize=14, fontweight='bold', y=0.95)
+    fig.suptitle(title, color=kit_dark_blue, fontsize=26, fontweight='bold', y=0.95)
 
     # Legende
     legend_elements = [
         Patch(facecolor=kit_green, label=f'{z_col} > 0'),
         Patch(facecolor=kit_blue, label=f'{z_col} ≤ 0'),
     ]
-    if any(conditions[2]):
-        legend_elements.append(Patch(facecolor=kit_red, label=f'{z_col} == 0'))
-    ax.legend(handles=legend_elements, loc='upper right', framealpha=1.0)
+    #if any(conditions[2]):
+    #    legend_elements.append(Patch(facecolor=kit_red, label=f'{z_col} == 0'))
+    ax.legend(handles=legend_elements, loc='upper right', framealpha=1.0, fontsize=20)
 
     # Speichern
-    import os
+
     os.makedirs(path, exist_ok=True)
     plot_path = os.path.join(path, filename)
     fig.savefig(plot_path + '.svg', dpi=dpi, bbox_inches='tight', facecolor='white')
@@ -135,6 +135,6 @@ if __name__ == '__main__':
         data=df,
         title='Prozesskraft zum Motorstrom',
         filename='scatter_fx_vs_curr_filtered',
-        z_col = 'v_x',
+        z_col = 'z',
         dpi=600
     )
