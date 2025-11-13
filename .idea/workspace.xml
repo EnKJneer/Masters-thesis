@@ -5,203 +5,71 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1070d83b-d724-42b9-9e62-a8af8f266874" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Create_TimeSeries_Plots_for_Thesis_Error.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Experts_Fressen.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Create_TimeSeries_Plots_for_Thesis_Detail.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2_Fressen_x-2025_11_07_17_22_20/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Recurrent_Neural_Net_sp-2025_11_11_16_34_14/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Recurrent_Neural_Net_y-2025_11_12_16_44_29/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Recurrent_Neural_Net_z-2025_11_12_16_53_00/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RF-2025_10_22_12_27_28/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Random_Forest_sp-2025_10_23_09_02_31/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Random_Forest_y-2025_11_11_15_31_53/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Random_Forest_z-2025_11_11_15_34_04/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net_sp-2025_11_12_16_34_59/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net_y-2025_11_11_15_51_41/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net_z-2025_11_12_17_03_13/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Master_thesis.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Master_thesis.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_41_20/Create_Plots_for_Thesis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets_DMC60H_Plate_Notch_Gear/Count_Timesteps.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSets_DMC60H_Plate_Notch_Gear/Count_Timesteps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataSets_DMC60H_Plate_Notch_Gear_Reference_Hanlin_old_MRR/SplitData.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_S235JR_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_S235JR_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_S235JR_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15/Plots_Thesis/Verlauf_S235JR_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2_y-2025_10_23_01_44_33/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2_y-2025_10_23_01_44_33/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap_RNN.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap_RNN.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap_RNN.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap_RNN.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/ML-Modelle/Results/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_AL2007T4_Gear_RF.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_AL2007T4_Gear_RF.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_AL2007T4_Plate_RF.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_AL2007T4_Plate_RF.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_S235JR_Gear_RF.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_S235JR_Gear_RF.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_S235JR_Plate_RF.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_06_10_18_01/Plots_Thesis/Verlauf_S235JR_Plate_RF.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Messwerten_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Messwerten_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Messwerten_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Messwerten_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Simulationsdaten_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Simulationsdaten_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Simulationsdaten_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_RNN_mit_Simulationsdaten_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Messwerte/Results/Messwerte_RNN-2025_10_22_12_08_27/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_Messwerten_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_Messwerten_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_Messwerten_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_Messwerten_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_integrierter_Regeldifferenz_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_integrierter_Regeldifferenz_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_integrierter_Regeldifferenz_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_mit_integrierter_Regeldifferenz_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_Random_Forest_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_vergleich_RF.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_vergleich_RF.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_vergleich_RF.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RF-2025_10_21_12_00_07/Plots_Thesis/heatmap_vergleich_RF.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_Regeldifferenz_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_Regeldifferenz_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_Regeldifferenz_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_Regeldifferenz_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_integrierter_Regeldifferenz_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_integrierter_Regeldifferenz_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_integrierter_Regeldifferenz_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_mit_integrierter_Regeldifferenz_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_RNN_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_vergleich_RNN.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_vergleich_RNN.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_vergleich_RNN.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24/Plots_Thesis/heatmap_vergleich_RNN.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Create_Scatter_Plot_F.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Create_Scatter_Plot_F.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/Verlauf_S235JR_Plate_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/Verlauf_S235JR_Plate_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/Verlauf_S235JR_Plate_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/Verlauf_S235JR_Plate_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/scatter_fx_vs_curr_filtered.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/scatter_fx_vs_curr_filtered.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/scatter_fx_vs_curr_filtered.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Plots/scatter_fx_vs_curr_filtered.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_S235JR_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_S235JR_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_S235JR_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/Verlauf_S235JR_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Empirisches_Modell_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Empirisches_Modell_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Empirisches_Modell_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Empirisches_Modell_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Residual-Modell_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Residual-Modell_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Residual-Modell_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Residual-Modell_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_RNN-2025_10_30_17_47_46/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_S235JR_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_S235JR_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_S235JR_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/Verlauf_S235JR_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/heatmap__Empirisches_Modell_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricModel-2025_10_07_09_23_22/Plots_Thesis/heatmap__Empirisches_Modell_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_S235JR_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_S235JR_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_S235JR_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/Verlauf_S235JR_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_und_nur_x-Komponenten_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_und_nur_x-Komponenten_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_und_nur_x-Komponenten_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_und_nur_x-Komponenten_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_mit_z_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_RNN_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/Pi_Feature_RNN_x_pinn-2025_10_06_20_15_47/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Analisys_Influence_F_MRR.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Analisys_Influence_F_MRR.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_Term_sp.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_Term_sp.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_Term_sp.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_Term_sp.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_f_sp_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_f_sp_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_f_sp_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_f_sp_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_materialremoved_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_materialremoved_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_materialremoved_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_materialremoved_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_v_sp.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_v_sp.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_v_sp.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_sp_vs_v_sp.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_Term_x.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_Term_x.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_Term_x.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_Term_x.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_f_x_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_f_x_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_f_x_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_f_x_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_materialremoved_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_materialremoved_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_materialremoved_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_materialremoved_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_v_x.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_v_x.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_v_x.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_x_vs_v_x.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_Term_y.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_Term_y.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_Term_y.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_Term_y.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_f_y_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_f_y_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_f_y_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_f_y_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_materialremoved_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_materialremoved_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_materialremoved_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_materialremoved_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_v_y.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_v_y.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_v_y.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_y_vs_v_y.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_Term_z.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_Term_z.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_Term_z.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_Term_z.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_f_z_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_f_z_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_f_z_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_f_z_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_materialremoved_sim.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_materialremoved_sim.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_materialremoved_sim.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_materialremoved_sim.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_v_z.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_v_z.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_v_z.png" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plot_Correlation/corr_curr_z_vs_v_z.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_AL2007T4_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_AL2007T4_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_S235JR_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_S235JR_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_S235JR_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Plots/Verlauf_S235JR_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/Physical_Model_Erd-2025_09_27_17_34_33/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/Physical_Model_Erd-2025_09_27_17_34_33/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/Physical_Model_Thermo-2025_10_21_11_28_35/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/Physical_Model_Thermo-2025_10_21_11_28_35/Create_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/PiNN_Thermo-2025_10_02_21_01_44/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/PiNN_Thermo-2025_10_02_21_01_44/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/PiNN_Thermo-2025_10_02_21_01_44/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/PiNN_Thermo-2025_10_02_21_01_44/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Random_Forest_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Random_Forest_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Random_Forest_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Random_Forest_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Residual-Model_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Residual-Model_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Residual-Model_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Residual-Model_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_09_29_21_42_39/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Physikalisches_Modell_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Rekurrentes_neuronales_Netz_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Rekurrentes_neuronales_Netz_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Rekurrentes_neuronales_Netz_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Rekurrentes_neuronales_Netz_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Residual-Model_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Residual-Model_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Residual-Model_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Residual-Model_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Erd/Results/ThermodynamicModel_Residual-2025_10_02_17_54_52/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_S235JR_Gear.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_S235JR_Gear.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_S235JR_Plate.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/Verlauf_S235JR_Plate.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_LuGre-PiRNN_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_LuGre-PiRNN_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_LuGre-PiRNN_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_LuGre-PiRNN_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_RNN_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_RNN_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_RNN_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_RNN_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_Vergleich.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_09_11_34_27/Plots_Thesis/heatmap_Vergleich.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Gear_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Gear_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Gear_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Gear_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Plate_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Plate_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Plate_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_AL2007T4_Plate_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Gear_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Gear_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Gear_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Gear_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Plate_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Plate_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Plate_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Fehler_S235JR_Plate_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Variance_DMC60H_S235JR_Plate_Normal_3.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Variance_DMC60H_S235JR_Plate_Normal_3.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Gear_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Gear_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Gear_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Gear_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Plate_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Plate_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Plate_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_AL2007T4_Plate_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Gear_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Gear_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Gear_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Gear_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Plate_mit_Vorschub.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Plate_mit_Vorschub.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Plate_mit_Vorschub.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Plots/Verlauf_S235JR_Plate_mit_Vorschub.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap_RNN.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap_RNN.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap_RNN.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap_RNN.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Raster-Sampler_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Raster-Sampler_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Raster-Sampler_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Raster-Sampler_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_TPE-Sampler_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_Zufalls-Sampler_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_with_std.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_with_std.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_with_std.svg" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net-2025_10_02_23_09_20/Plots_Thesis/heatmap__Rekurrentes_neuronales_Netz_with_std.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/Visualization_variance_time_series.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/Visualization_variance_time_series.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Helper/handling_plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_plots.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Helper/handling_timeseries_plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/Helper/handling_timeseries_plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Hyprid_Models_Residual.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Hyprid_Models_Residual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Create_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_34_27/Create_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Create_TimeSeries_Plots_for_Thesis.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_34_27/Create_TimeSeries_Plots_for_Thesis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_AL2007T4_Gear.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_AL2007T4_Gear.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_AL2007T4_Plate.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_AL2007T4_Plate.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_S235JR_Gear.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_S235JR_Gear.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_S235JR_Plate.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/Verlauf_S235JR_Plate.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_Empirisches_Modell_with_std.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_Empirisches_Modell_with_std.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_PiRNN_with_std.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_PiRNN_with_std.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_Residual-Modell_with_std.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_Residual-Modell_with_std.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_Vergleich.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Plots_Thesis/heatmap_Vergleich.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Predictions/DMC60H_AL2007T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Predictions/DMC60H_AL2007T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Predictions/DMC60H_S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Predictions/DMC60H_S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/improvements.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/heatmap_EmpiricLinearModel_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/heatmap_Hybrid_PiRNN_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/heatmap_PiRNN_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_10_10_09_40_38/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/PiRNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/PiRNN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/Predictions/DMC60H_AL2007T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/Predictions/DMC60H_AL2007T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/Predictions/DMC60H_S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/Predictions/DMC60H_S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/info.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/plots/heatmap_PiRNN_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_06_15_33_08/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/Predictions/DMC60H_AL2007T4_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/Predictions/DMC60H_AL2007T4_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/Predictions/DMC60H_S235JR_Gear_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/Predictions/DMC60H_S235JR_Plate_Normal_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/Results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/documentation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/improvements.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/heatmap_PiRNN_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/heatmap_Recurrent_Neural_Net_with_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/heatmap_model_comparison_with_datasets_and_std.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/predictions_vs_groundtruth_DMC60H_AL2007T4_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/predictions_vs_groundtruth_DMC60H_S235JR_Gear_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments_Thesis/PiML-Friction/Results/PiRNN-2025_10_10_02_24_17/plots/predictions_vs_groundtruth_DMC60H_S235JR_Plate_Normal_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/model_neural_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/model_neural_net.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -242,213 +110,213 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Doctests in graph.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Doctests in rnn.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ARMAX.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Adddition_ARMAX.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Addition.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Addition_LinearSigmoid.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Additional_Input.executor&quot;: &quot;Run&quot;,
-    &quot;Python.AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.AktivationfunctionPlotter.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Align_Force_Measurements_Method_Analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Align_Force_Measurments.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Align_SInumerik_DT9836.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Analisys_Influence_F_MRR.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Analyse_Errors.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Change_Point_Detection.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare Activation Functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_batches_vs_single.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_different_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Comparson_Erd_vs_Naive.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Comparson_of_physical_model.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Controler_Influence.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Correlation_f_curr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Correlation_v_curr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Count_Timesteps.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Expert_Model_Plots.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_LuGre_PiRNN_Plots.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Plots_for_Thesis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_RNN_heatmap_Plots_for_Thesis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_RNN_heatmap_Plots_for_Thesis_new.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Random_Forest_Plots.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Scatter_Plot_F.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_Erorr_with_Velocity_subplot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_Plots_for_Thesis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_Plots_for_Thesis_Detail.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_Plots_for_Thesis_Error.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_Section_Plots_for_Thesis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_TimeSeries_with_Velocity_subplot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_rename.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_1kHz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_1kHz_Seperete.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_500Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DT9836_to_50Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Data_to_50Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Different_DataSets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.EmpiricModel.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Evaluate_RNN_potential.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Evaluate_Sequential_potential.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experiment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experiment_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_2_Mes.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_3.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_Fressen.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Experts_Residual.executor&quot;: &quot;Run&quot;,
-    &quot;Python.FilterData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.FilterMethod.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Fit_Parameter.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Friction_simple.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Genaralist_and_Experts.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyperopt.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyperopt_Expert.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyperopt_PiRNN.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyperparameteroptimization_Methods_Comparsion.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid-PiRNN.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid_Models_Guided.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Hyprid_Models_Residual.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Integrate_Cont_Dev.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Integrated.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LRRC.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LRRC_2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Linear_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Load_Data_Method_Comparsion.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.Load_Single_Axis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_Analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_Functions_Test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loss_functions.executor&quot;: &quot;Run&quot;,
-    &quot;Python.LuGre.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MRRSimulation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MRRSimulationV2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MRRSimulationV3.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Mathematic_model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Merge_Controler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Merge_Controller_with_OldData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Merge_Sinumerik_DT9836.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MoE.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MoE_Gating.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MoE_Moirai.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Model_Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.NaiveModel.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Naive_Dynamic.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Naive_Model_analysy.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Normierung.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ODE_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ODE_Model_1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ODE_Model_integration.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Optimize_Parameter.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Phys_Model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Pi-Feature.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNN_Erd.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNN_Friction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNN_HyperOpt.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNN_Thermo.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiNNs.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiRNN-Friction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PiRNN.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_Anomalie_Data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Potential_Transformer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PySINDy.executor&quot;: &quot;Run&quot;,
-    &quot;Python.RF_FiFo_load.executor&quot;: &quot;Run&quot;,
-    &quot;Python.RF_with_expo.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Scatter_plot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Search_for_causality.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SemiLuGre.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SharplyValues.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SimpleFriction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simple_PI_Controler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simple_PI_Controler_AirCut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simple_PI_Controller_Adam.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simulate_force_mrr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simulate_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Simulate_view_trainingsdata.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Sinumerik_json_to_csv50Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SplitData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Thermo.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Thermodynamic_Model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualisation_MRR.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Force.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Force_with_v.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Heatmap.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Heatmap_comparsion.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_MRR_Detail.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Prediction.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Prediction_Subplot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Predictions_V.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_Vorschub.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_time_series.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualization_variance_time_series.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_Scatter_plot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_a_e.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_3D_vf.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_a.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_a_state_oldData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_f.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_v.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_v_state.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_dependence_v_state_oldData.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_parameter_simularity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.analyse_process_start.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_v_zero_fit_model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_2D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_3D.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_corr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_curr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_similarity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_similarity_v_zero.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualisation_simularity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualization.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualization_curr.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_visualization_simularity_v_zero.executor&quot;: &quot;Run&quot;,
-    &quot;Python.error_influence.executor&quot;: &quot;Run&quot;,
-    &quot;Python.experiment_material_dependency.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_data.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.handling_experiment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_plots.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handling_read_data_from_json.executor&quot;: &quot;Run&quot;,
-    &quot;Python.identifiy_forces.executor&quot;: &quot;Run&quot;,
-    &quot;Python.influence_error.executor&quot;: &quot;Run&quot;,
-    &quot;Python.influence_test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.merge_additional_information.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_base.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_neural_net.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_physical.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.model_random_forest.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.monitoring.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plot_forces_from_DT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.read_data_from_json.executor&quot;: &quot;Run&quot;,
-    &quot;Python.rename_force_columns.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.visualize_z_transform.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ToolWindow.Plots.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/Experiments_Thesis/Referenzmodelle/Results/Recurrent_Neural_Net_z-2025_11_12_17_03_13&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Doctests in graph.executor": "Run",
+    "Python tests.Doctests in rnn.executor": "Run",
+    "Python.ARMAX.executor": "Run",
+    "Python.Adddition_ARMAX.executor": "Run",
+    "Python.Addition.executor": "Run",
+    "Python.Addition_LinearSigmoid.executor": "Run",
+    "Python.Additional_Input.executor": "Run",
+    "Python.AirCut.executor": "Run",
+    "Python.AktivationfunctionPlotter.executor": "Run",
+    "Python.Align_Force_Measurements_Method_Analysis.executor": "Run",
+    "Python.Align_Force_Measurments.executor": "Run",
+    "Python.Align_SInumerik_DT9836.executor": "Run",
+    "Python.Analisys_Influence_F_MRR.executor": "Run",
+    "Python.Analyse_Errors.executor": "Debug",
+    "Python.Change_Point_Detection.executor": "Run",
+    "Python.Compare Activation Functions.executor": "Run",
+    "Python.Compare_batches_vs_single.executor": "Run",
+    "Python.Compare_different_trainingsdata.executor": "Run",
+    "Python.Comparson_Erd_vs_Naive.executor": "Run",
+    "Python.Comparson_of_physical_model.executor": "Debug",
+    "Python.Controler_Influence.executor": "Run",
+    "Python.Controller.executor": "Run",
+    "Python.Correlation_f_curr.executor": "Run",
+    "Python.Correlation_v_curr.executor": "Run",
+    "Python.Count_Timesteps.executor": "Run",
+    "Python.Create_Expert_Model_Plots.executor": "Run",
+    "Python.Create_LuGre_PiRNN_Plots.executor": "Run",
+    "Python.Create_Plots_for_Thesis.executor": "Run",
+    "Python.Create_RNN_heatmap_Plots_for_Thesis.executor": "Run",
+    "Python.Create_RNN_heatmap_Plots_for_Thesis_new.executor": "Run",
+    "Python.Create_Random_Forest_Plots.executor": "Run",
+    "Python.Create_Scatter_Plot_F.executor": "Run",
+    "Python.Create_TimeSeries_Erorr_with_Velocity_subplot.executor": "Run",
+    "Python.Create_TimeSeries_Plots_for_Thesis.executor": "Run",
+    "Python.Create_TimeSeries_Plots_for_Thesis_Detail.executor": "Run",
+    "Python.Create_TimeSeries_Plots_for_Thesis_Error.executor": "Run",
+    "Python.Create_TimeSeries_Section_Plots_for_Thesis.executor": "Run",
+    "Python.Create_TimeSeries_with_Velocity_subplot.executor": "Run",
+    "Python.DT9836_rename.executor": "Run",
+    "Python.DT9836_to_1kHz.executor": "Run",
+    "Python.DT9836_to_1kHz_Seperete.executor": "Run",
+    "Python.DT9836_to_500Hz.executor": "Run",
+    "Python.DT9836_to_50Hz.executor": "Run",
+    "Python.Data_to_50Hz.executor": "Run",
+    "Python.Different_DataSets.executor": "Run",
+    "Python.EmpiricModel.executor": "Run",
+    "Python.Erd.executor": "Run",
+    "Python.Evaluate_RNN_potential.executor": "Run",
+    "Python.Evaluate_Sequential_potential.executor": "Run",
+    "Python.Experiment.executor": "Run",
+    "Python.Experiment_AirCut.executor": "Run",
+    "Python.Experts.executor": "Run",
+    "Python.Experts_2.executor": "Run",
+    "Python.Experts_2_Mes.executor": "Run",
+    "Python.Experts_3.executor": "Run",
+    "Python.Experts_Fressen.executor": "Run",
+    "Python.Experts_Residual.executor": "Run",
+    "Python.FilterData.executor": "Run",
+    "Python.FilterMethod.executor": "Run",
+    "Python.Fit_Parameter.executor": "Run",
+    "Python.Friction_simple.executor": "Run",
+    "Python.Genaralist_and_Experts.executor": "Run",
+    "Python.Hyperopt.executor": "Run",
+    "Python.Hyperopt_Expert.executor": "Run",
+    "Python.Hyperopt_PiRNN.executor": "Run",
+    "Python.Hyperparameteroptimization_Methods_Comparsion.executor": "Run",
+    "Python.Hyprid-PiRNN.executor": "Run",
+    "Python.Hyprid_Models_Guided.executor": "Run",
+    "Python.Hyprid_Models_Residual.executor": "Run",
+    "Python.Integrate_Cont_Dev.executor": "Run",
+    "Python.Integrated.executor": "Run",
+    "Python.LRRC.executor": "Run",
+    "Python.LRRC_2.executor": "Run",
+    "Python.Linear_AirCut.executor": "Run",
+    "Python.Load_Data_Method_Comparsion.executor": "Debug",
+    "Python.Load_Single_Axis.executor": "Run",
+    "Python.Loss_Analysis.executor": "Run",
+    "Python.Loss_Functions_Test.executor": "Run",
+    "Python.Loss_functions.executor": "Run",
+    "Python.LuGre.executor": "Run",
+    "Python.MRRSimulation.executor": "Run",
+    "Python.MRRSimulationV2.executor": "Run",
+    "Python.MRRSimulationV3.executor": "Run",
+    "Python.Mathematic_model.executor": "Run",
+    "Python.Merge_Controler.executor": "Run",
+    "Python.Merge_Controller_with_OldData.executor": "Run",
+    "Python.Merge_Sinumerik_DT9836.executor": "Run",
+    "Python.MoE.executor": "Run",
+    "Python.MoE_Gating.executor": "Run",
+    "Python.MoE_Moirai.executor": "Run",
+    "Python.Model_Erd.executor": "Run",
+    "Python.NaiveModel.executor": "Run",
+    "Python.Naive_Dynamic.executor": "Run",
+    "Python.Naive_Model_analysy.executor": "Run",
+    "Python.Normierung.executor": "Run",
+    "Python.ODE_AirCut.executor": "Run",
+    "Python.ODE_Model_1.executor": "Run",
+    "Python.ODE_Model_integration.executor": "Run",
+    "Python.Optimize_Parameter.executor": "Run",
+    "Python.Phys_Model.executor": "Run",
+    "Python.Pi-Feature.executor": "Run",
+    "Python.PiNN_Erd.executor": "Run",
+    "Python.PiNN_Friction.executor": "Run",
+    "Python.PiNN_HyperOpt.executor": "Run",
+    "Python.PiNN_Thermo.executor": "Run",
+    "Python.PiNNs.executor": "Run",
+    "Python.PiRNN-Friction.executor": "Run",
+    "Python.PiRNN.executor": "Run",
+    "Python.Plot_Anomalie_Data.executor": "Run",
+    "Python.Potential_Transformer.executor": "Run",
+    "Python.PySINDy.executor": "Run",
+    "Python.RF_FiFo_load.executor": "Run",
+    "Python.RF_with_expo.executor": "Run",
+    "Python.Scatter_plot.executor": "Run",
+    "Python.Search_for_causality.executor": "Run",
+    "Python.SemiLuGre.executor": "Run",
+    "Python.SharplyValues.executor": "Run",
+    "Python.SimpleFriction.executor": "Run",
+    "Python.Simple_PI_Controler.executor": "Run",
+    "Python.Simple_PI_Controler_AirCut.executor": "Run",
+    "Python.Simple_PI_Controller_Adam.executor": "Run",
+    "Python.Simulate_force_mrr.executor": "Run",
+    "Python.Simulate_trainingsdata.executor": "Run",
+    "Python.Simulate_view_trainingsdata.executor": "Run",
+    "Python.Sinumerik_json_to_csv50Hz.executor": "Run",
+    "Python.SplitData.executor": "Run",
+    "Python.Thermo.executor": "Run",
+    "Python.Thermodynamic_Model.executor": "Run",
+    "Python.Visualisation_MRR.executor": "Run",
+    "Python.Visualization_Force.executor": "Run",
+    "Python.Visualization_Force_with_v.executor": "Run",
+    "Python.Visualization_Heatmap.executor": "Run",
+    "Python.Visualization_Heatmap_comparsion.executor": "Run",
+    "Python.Visualization_MRR_Detail.executor": "Run",
+    "Python.Visualization_Prediction.executor": "Run",
+    "Python.Visualization_Prediction_Subplot.executor": "Run",
+    "Python.Visualization_Predictions_V.executor": "Run",
+    "Python.Visualization_Vorschub.executor": "Run",
+    "Python.Visualization_time_series.executor": "Run",
+    "Python.Visualization_variance_time_series.executor": "Run",
+    "Python.analyse_Scatter_plot.executor": "Run",
+    "Python.analyse_a_e.executor": "Run",
+    "Python.analyse_dependence_3D_vf.executor": "Run",
+    "Python.analyse_dependence_a.executor": "Run",
+    "Python.analyse_dependence_a_state_oldData.executor": "Run",
+    "Python.analyse_dependence_f.executor": "Run",
+    "Python.analyse_dependence_v.executor": "Run",
+    "Python.analyse_dependence_v_state.executor": "Run",
+    "Python.analyse_dependence_v_state_oldData.executor": "Run",
+    "Python.analyse_parameter_simularity.executor": "Run",
+    "Python.analyse_process_start.executor": "Run",
+    "Python.data_v_zero_fit_model.executor": "Run",
+    "Python.data_visualisation.executor": "Run",
+    "Python.data_visualisation_2D.executor": "Run",
+    "Python.data_visualisation_3D.executor": "Run",
+    "Python.data_visualisation_corr.executor": "Run",
+    "Python.data_visualisation_curr.executor": "Run",
+    "Python.data_visualisation_similarity.executor": "Run",
+    "Python.data_visualisation_similarity_v_zero.executor": "Run",
+    "Python.data_visualisation_simularity.executor": "Run",
+    "Python.data_visualization.executor": "Run",
+    "Python.data_visualization_curr.executor": "Run",
+    "Python.data_visualization_simularity_v_zero.executor": "Run",
+    "Python.error_influence.executor": "Run",
+    "Python.experiment_material_dependency.executor": "Run",
+    "Python.handling_data.executor": "Debug",
+    "Python.handling_experiment.executor": "Run",
+    "Python.handling_plots.executor": "Run",
+    "Python.handling_read_data_from_json.executor": "Run",
+    "Python.identifiy_forces.executor": "Run",
+    "Python.influence_error.executor": "Run",
+    "Python.influence_test.executor": "Run",
+    "Python.merge_additional_information.executor": "Run",
+    "Python.model_base.executor": "Run",
+    "Python.model_neural_net.executor": "Run",
+    "Python.model_physical.executor": "Debug",
+    "Python.model_random_forest.executor": "Debug",
+    "Python.monitoring.executor": "Run",
+    "Python.plot_forces_from_DT.executor": "Run",
+    "Python.read_data_from_json.executor": "Run",
+    "Python.rename_force_columns.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.visualize_z_transform.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ToolWindow.Plots.ShowToolbar": "false",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/jonas_zrqomac/Documents/KIT/Master_thesis/Code/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_41_20",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\Referenzmodelle\Results\Recurrent_Neural_Net_z-2025_11_12_17_03_13" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\ML-Modelle\Results\Recurrent_Neural_Net_z-2025_11_12_16_53_00" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\ML-Modelle\Results\Recurrent_Neural_Net_y-2025_11_12_16_44_29" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\ML-Modelle\Results\Recurrent_Neural_Net_sp-2025_11_12_16_39_21" />
-      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\Referenzmodelle\Results\Recurrent_Neural_Net_sp-2025_11_12_16_34_59" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\PiML-Empiric\Results\EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_41_20" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\PiML-Empiric\Results\EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_39_11" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\PiML-Empiric\Results\EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_36_50" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\PiML-Empiric\Results\EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_34_27" />
+      <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Experiments_Thesis\PiML-Empiric\Results\EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_31_33" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\jonas_zrqomac\Documents\KIT\Master_thesis\Code\Archiv" />
@@ -659,7 +527,7 @@
       <workItem from="1762503449264" duration="24414000" />
       <workItem from="1762853110245" duration="13540000" />
       <workItem from="1762943531789" duration="8165000" />
-      <workItem from="1763021891262" duration="2189000" />
+      <workItem from="1763021891262" duration="6331000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -968,7 +836,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$Additional_Input.coverage" NAME="Additional_Input Coverage Results" MODIFIED="1751706342881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Cont_Dev" />
     <SUITE FILE_PATH="coverage/Master_thesis$Experiment_AirCut.coverage" NAME="Experiment_AirCut Coverage Results" MODIFIED="1752233513966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$Thermodynamic_Model.coverage" NAME="Thermodynamic_Model Coverage Results" MODIFIED="1756713420121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/PhysicalModel" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Create_TimeSeries_Plots_for_Thesis.coverage" NAME="Create_TimeSeries_Plots_for_Thesis Coverage Results" MODIFIED="1762870659790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/Expert-Models/Results/Mixed_Experts_2-2025_10_10_09_53_15" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Create_TimeSeries_Plots_for_Thesis.coverage" NAME="Create_TimeSeries_Plots_for_Thesis Coverage Results" MODIFIED="1763055722836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_34_27" />
     <SUITE FILE_PATH="coverage/Master_thesis$analyse_dependence_a_state_oldData.coverage" NAME="analyse_dependence_a_state_oldData Coverage Results" MODIFIED="1751901549584" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
     <SUITE FILE_PATH="coverage/Master_thesis$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1761040803294" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller" />
     <SUITE FILE_PATH="coverage/Master_thesis$Friction_simple.coverage" NAME="Friction_simple Coverage Results" MODIFIED="1751962079840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets" />
@@ -981,7 +849,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$read_data_from_json.coverage" NAME="read_data_from_json Coverage Results" MODIFIED="1752944257672" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSetsV2" />
     <SUITE FILE_PATH="coverage/Master_thesis$Compare_Activation_Functions.coverage" NAME="Compare Activation Functions Coverage Results" MODIFIED="1747662253865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/Activation_Function" />
     <SUITE FILE_PATH="coverage/Master_thesis$Merge_Sinumerik_DT9836.coverage" NAME="Merge_Sinumerik_DT9836 Coverage Results" MODIFIED="1757060194372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets_CMX_Plate_Notch_Gear" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Residual.coverage" NAME="Hyprid_Models_Residual Coverage Results" MODIFIED="1761842861928" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Hyprid_Models_Residual.coverage" NAME="Hyprid_Models_Residual Coverage Results" MODIFIED="1763055675747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric" />
     <SUITE FILE_PATH="coverage/Master_thesis$experiment_material_dependency.coverage" NAME="experiment_material_dependency Coverage Results" MODIFIED="1744641603565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments" />
     <SUITE FILE_PATH="coverage/Master_thesis$Optimize_Parameter.coverage" NAME="Optimize_Parameter Coverage Results" MODIFIED="1753360811401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Simulation" />
     <SUITE FILE_PATH="coverage/Master_thesis$Addition.coverage" NAME="Addition Coverage Results" MODIFIED="1758555159342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiements/Physik_motivatet_Architekture" />
@@ -1052,7 +920,7 @@
     <SUITE FILE_PATH="coverage/Master_thesis$RF_with_expo.coverage" NAME="RF_with_expo Coverage Results" MODIFIED="1752831224567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NewFeature" />
     <SUITE FILE_PATH="coverage/Master_thesis$Create_Scatter_Plot_F.coverage" NAME="Create_Scatter_Plot_F Coverage Results" MODIFIED="1762527963840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric" />
     <SUITE FILE_PATH="coverage/Master_thesis$RF_FiFo_load.coverage" NAME="RF_FiFo_load Coverage Results" MODIFIED="1752832396580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/NewFeature" />
-    <SUITE FILE_PATH="coverage/Master_thesis$Create_Plots_for_Thesis.coverage" NAME="Create_Plots_for_Thesis Coverage Results" MODIFIED="1763026972098" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Controller/Results/Controller_RNN-2025_10_06_22_55_24" />
+    <SUITE FILE_PATH="coverage/Master_thesis$Create_Plots_for_Thesis.coverage" NAME="Create_Plots_for_Thesis Coverage Results" MODIFIED="1763055905416" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/PiML-Empiric/Results/EmpiricLinearModel_Residual_PiRNN-2025_11_13_18_41_20" />
     <SUITE FILE_PATH="coverage/Master_thesis$ODE_Model_1.coverage" NAME="ODE_Model_1 Coverage Results" MODIFIED="1751701798783" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments/MachineStateSpace" />
     <SUITE FILE_PATH="coverage/Master_thesis$Count_Timesteps.coverage" NAME="Count_Timesteps Coverage Results" MODIFIED="1762878215165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataSets_DMC60H_Plate_Notch_Gear" />
     <SUITE FILE_PATH="coverage/Master_thesis$Experiment.coverage" NAME="Experiment Coverage Results" MODIFIED="1762963388983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Experiments_Thesis/Referenzmodelle" />

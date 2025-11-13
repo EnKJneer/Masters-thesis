@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import pandas as pd
 import torch
@@ -22,7 +24,10 @@ if __name__ == "__main__":
     past_values = 0
     future_values = 0
 
-    dataSets = [hdata.DataClass_ST_Plate_Notch]
+    dataSet = hdata.DataClass_ST_Plate_Notch
+    dataSet.add_padding = True
+
+    dataSets = [dataSet]
 
     model_phys = mphys.EmpiricLinearModel()
 
@@ -33,18 +38,19 @@ if __name__ == "__main__":
                     activation= 'ELU', optimizer_type= 'quasi_newton')
 
     model_pirnn = mnn.LuGre_PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
-                                  activation= 'ELU', optimizer_type= 'quasi_newton')
+                            activation= 'ELU', optimizer_type= 'quasi_newton')
 
     model_hybrid_rnn = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_rnn, name = 'Hybrid_RNN')
     model_hybrid_rf = mnn.HybridModelResidual(physical_model=model_phys, ml_model=model_rf, name = 'Hybrid_Random_Forest')
+    model_hybrid_pirnn = mnn.HybridModelResidual(physical_model=model_phys, ml_model=copy.deepcopy(model_pirnn), name='Hybrid_PiRNN')
 
     use_rf = False
     if use_rf:
         models = [model_phys, model_rf, model_hybrid_rf] # , model_nn, model_hybrid_nn
         postfix = 'RF'
     else:
-        models = [model_rnn, model_phys, model_hybrid_rnn]
-        postfix = 'RNN'
+        models = [copy.deepcopy(model_pirnn), model_phys, model_hybrid_pirnn]
+        postfix = 'PiRNN'
 
     # Run the experiment
     hexp.run_experiment(dataSets, models=models, NUMBEROFEPOCHS=NUMBEROFEPOCHS, NUMBEROFMODELS=NUMBEROFMODELS,

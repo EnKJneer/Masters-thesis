@@ -1628,7 +1628,7 @@ class LuGre_PiRNN(mb.BaseTorchModel):
         axis = self.target_channel.replace('curr_', '')
         self.col_v = f'v_{axis}_1_current'
         self.col_a = f'a_{axis}_1_current'
-        self.col_F = f'f_{axis}_sim_1_current' #_sim
+        self.col_F = f'f_{axis}_sim_1_current'
         self.col_materialremoved = 'materialremoved_sim_1_current'
 
         if isinstance(X, pd.DataFrame):

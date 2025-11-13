@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     model = mnn.LuGre_PiRNN(learning_rate= 0.1, n_hidden_size= 71, n_hidden_layers= 1,
                             activation= 'ELU', optimizer_type= 'quasi_newton')
-    model.target_channel = 'curr_y'
+    model.target_channel = f'curr_{axis}'
 
     # Run the experiment
     hexp.run_experiment([dataclass], models=[model], #, model_rnn

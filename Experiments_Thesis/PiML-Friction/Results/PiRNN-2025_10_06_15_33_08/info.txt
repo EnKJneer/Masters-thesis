@@ -1,1 +1,0 @@
-PiRNN with x as input
